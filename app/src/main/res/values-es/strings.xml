@@ -1,0 +1,535 @@
+<resources>
+    <string name="app_name">Diario TinyPaws</string>
+    <string name="attribution_label_logic">Lógica de TinyPaws</string>
+    <string name="onboarding_title">Diario TinyPaws</string>
+    <string name="onboarding_desc">Una guía mágica sin conexión y un santuario para apoyar y sanar a nuestros amigos felinos.</string>
+    <string name="onboarding_question">¿Cómo te llamas, cuidador?</string>
+    <string name="onboarding_placeholder">Introduce tu nombre...</string>
+    <string name="onboarding_btn">Entra suavemente</string>
+    <string name="hi_user">¡Hola, %1$s! 👋</string>
+    <string name="logout_content_description">Cerrar sesión</string>
+    <string name="dashboard_tagline">Cuidando a nuestros amigos gatos de la comunidad, una pata a la vez.</string>
+    <string name="select_diary_room">ELIGE TU SALA DE DIARIO</string>
+    <string name="nav_guide_title">Necesito una guía 📖</string>
+    <string name="nav_guide_subtitle">Guías de adopción, prevención de enfermedades y protocolos de triaje.</string>
+    <string name="nav_play_title">Quiero jugar 🎮</string>
+    <string name="nav_play_subtitle">5 niveles de cuestionarios sobre cuidados y salud con respuesta inmediata.</string>
+    <string name="nav_find_title">¿Dónde puedo encontrar? 📍</string>
+    <string name="nav_find_subtitle">Mapas dinámicos de clínicas veterinarias, tiendas y refugios.</string>
+    <string name="nav_cook_title">¿Qué debería cocinar? 🍳</string>
+    <string name="nav_cook_subtitle">Selecciona ingredientes para comidas saludables o explora recetas.</string>
+    <string name="nav_chat_title">Ayudante TinyPaws 🐾</string>
+    <string name="nav_chat_subtitle">Haz cualquier pregunta sobre el cuidado de gatos de la comunidad.</string>
+    <string name="menu_language">Idioma</string>
+    <string name="lang_en">Inglés 🇬🇧</string>
+    <string name="lang_ar">Árabe 🇸🇦</string>
+    <string name="lang_fr">Francés 🇫🇷</string>
+    <string name="lang_es">Español 🇪🇸</string>
+
+    <!-- Chat -->
+    <string name="chat_title">Ayudante TinyPaws</string>
+    <string name="chat_placeholder">Pregunta a tu mejor amigo rescatador cualquier cosa...</string>
+    <string name="chat_input_placeholder">Escribe una pregunta...</string>
+    <string name="chat_clear">Borrar chat</string>
+    <string name="chat_back">Volver</string>
+
+    <!-- Tracker -->
+    <string name="tracker_header">Seguimiento de cuidados comunitarios</string>
+    <string name="tracker_rank_label">TU RANGO COMUNITARIO</string>
+    <string name="tracker_points_needed">Faltan %1$d puntos para llegar a %2$s</string>
+    <string name="tracker_hero_tier">¡Excelente trabajo! ¡Has alcanzado el rango legendario de Héroe!</string>
+    <string name="tracker_badges_label">TUS ADORABLES INSIGNIAS</string>
+    <string name="tracker_log_form_label">REGISTRAR UNA ACTIVIDAD DE CUIDADO</string>
+    <string name="tracker_notes_placeholder">Añade detalles opcionales (ej. \'Vi un lindo calicó cerca del parque\')</string>
+    <string name="tracker_add_btn">Añadir al seguimiento (+%1$d)</string>
+    <string name="tracker_recent_entries">HISTORIAL DE ACTIVIDAD RECIENTE</string>
+    <string name="tracker_show_less">Mostrar menos</string>
+    <string name="tracker_view_all">Ver todo (%1$d)</string>
+    <string name="tracker_reset_data">Reiniciar datos de seguimiento</string>
+    <string name="tracker_activity_feed">🐟 Alimentar gato</string>
+    <string name="tracker_activity_water">💧 Agua</string>
+    <string name="tracker_activity_shelter">🏡 Refugio</string>
+    <string name="tracker_activity_medical">🩺 Médico</string>
+    <string name="tracker_activity_socialize">🧸 Socializar</string>
+    <string name="tracker_activity_donate">🎁 Donar</string>
+
+    <!-- Triage -->
+    <string name="triage_header">¿Encontraste un gato?</string>
+    <string name="triage_start_desc">¿Encontraste un gatito callejero, perdido o vulnerable? Nuestra guía de triaje interactiva te ayuda a tomar decisiones tranquilas y solidarias en los primeros momentos críticos.</string>
+    <string name="triage_start_btn">Iniciar triaje interactivo 🐾</string>
+    <string name="triage_step_injury_title">Verificar lesiones inmediatas</string>
+    <string name="triage_step_injury_desc">Observa suavemente al gato. ¿Está sangrando, cojeando, tiene dificultad para respirar o muestra signos de dolor?</string>
+    <string name="triage_injury_yes">Sí, lesionado 🚨</string>
+    <string name="triage_injury_no">Sin lesiones 😊</string>
+    <string name="triage_cancel">Cancelar guía</string>
+    <string name="triage_step_age_title">Estimar la edad del gatito</string>
+    <string name="triage_step_age_desc">La edad dicta las necesidades nutricionales, térmicas y sociales. ¿Cuál de estas descripciones encaja mejor?</string>
+    <string name="triage_age_baby">🍼 Gatito diminuto (0-4 semanas)</string>
+    <string name="triage_age_baby_desc">Ojos cerrados, gatea lentamente, llora. Muy frágil; no puede regular el calor ni comer sólidos.</string>
+    <string name="triage_age_young">🐾 Gatito joven (4-12 semanas)</string>
+    <string name="triage_age_young_desc">Juguetón, corre rápido, tiene todos los dientes. Activo, curioso, listo para la socialización.</string>
+    <string name="triage_age_adult">🐈 Gato adulto (1+ año)</string>
+    <string name="triage_age_adult_desc">Tamaño adulto. Tranquilo, receloso o muy amigable. Puede ser una mascota perdida.</string>
+
+    <!-- Footer -->
+    <string name="footer_mission_label">📢 HABLA POR LOS QUE NO TIENEN VOZ</string>
+    <string name="footer_mission_title">Nuestra misión sagrada 🐾</string>
+    <string name="footer_mission_desc">El Diario TinyPaws nació de una promesa simple: hablar en nombre de cada gatito sin hogar y gato callejero que no puede hablar por sí mismo. Cada día, miles de almas silenciosas navegan solas por las calles frías. Creemos que ninguna pata es demasiado pequeña para ser cuidada, y ningún gatito es demasiado insignificante para ser protegido.\n\nAl unir a cuidadores compasivos con guías interactivas, ayudantes de nutrición y herramientas de apoyo vecinal, transformamos activamente las calles en santuarios seguros y cálidos. Gracias por dar un paso adelante, prestar tu voz y ayudarnos a coescribir una historia de seguridad y amor sin límites para nuestros compañeros felinos. ❤️</string>
+    <string name="footer_tagline">🐾 Diario TinyPaws 🐾</string>
+    <string name="footer_sub_tagline">Cada pequeño acto de bondad se expande hacia afuera para hacer nuestras calles más seguras, cálidas y amigables para los gatos. ¡Gracias por ser su cuidador!</string>
+
+    <!-- Guide Module -->
+    <string name="guide_title">Guías de Lily &amp; Pip</string>
+    <string name="guide_welcome">¡Bienvenido a la sala de guías! Selecciona cualquier módulo a continuación para comenzar tu viaje de cuidado útil con Lily y Pip.</string>
+    <string name="guide_banner_title">Sala de historias de Lily &amp; Pip</string>
+    <string name="guide_banner_desc">¡Sigue a Lily y a su juguetón gatito pelirrojo Pip mientras descubren cómo mantener a nuestros compañeros del patio trasero seguros, cómodos y vibrantes!</string>
+    <string name="guide_back_menu">← Volver al menú de guías</string>
+    <string name="guide_diseases_title">Enfermedades 🦠</string>
+    <string name="guide_diseases_subtitle">Aprende sobre 5 enfermedades felinas críticas, sus síntomas y los pasos de prevención que salvan vidas.</string>
+    <string name="guide_adoption_title">Adopción 🏡</string>
+    <string name="guide_adoption_subtitle">Una guía cronológica de 6 etapas para adoptar gatos callejeros con seguridad y amor.</string>
+    <string name="guide_diy_title">Proyectos DIY 🛠️</string>
+    <string name="guide_diy_subtitle">Refugios aislados, juegos activos y camas acogedoras. ¡10 etapas visuales por proyecto!</string>
+    <string name="guide_cook_title">¿Qué cocinar? 🍳</string>
+    <string name="guide_cook_subtitle">Selecciona ingredientes frescos para crear recetas personalizadas o explora la biblioteca de recetas caseras.</string>
+    <string name="guide_stray_title">¿Encontraste un gato callejero? 🐾</string>
+    <string name="guide_stray_subtitle">Protocolos esenciales de triaje, interacción segura y advertencias críticas sobre alimentos tóxicos.</string>
+    <string name="guide_diseases_header">5 enfermedades felinas críticas</string>
+    <string name="guide_diseases_desc">Explora los vectores de transmisión, el reconocimiento de síntomas y las pautas de cuidado preventivo con nuestros detalles visuales.</string>
+    <string name="guide_adoption_header">Cronología del viaje de adopción de 6 etapas</string>
+    <string name="guide_adoption_desc">Adoptar un gato callejero es un proceso reconfortante y progresivo. Cada etapa contiene índices visuales e hitos clave para guiarte.</string>
+    <string name="guide_diy_header">Divertidos proyectos DIY hechos a mano</string>
+    <string name="guide_diy_desc">Mejora el entorno físico de tu gatito y ayuda a los gatos de la comunidad a mantenerse seguros con estas manualidades.</string>
+    <string name="guide_diy_tab_shelter">Refugio 🏡</string>
+    <string name="guide_diy_tab_game">Juego 🧶</string>
+    <string name="guide_diy_tab_cozy">Acogedor 🛋️</string>
+    <string name="guide_diy_start_story">Iniciar guion gráfico 🎬</string>
+    <string name="guide_diy_back_list">← Volver a la lista de proyectos DIY</string>
+    <string name="guide_diy_requirements">📋 Requisitos y materiales</string>
+    <string name="guide_diy_storyboard">🎬 Guía paso a paso del guion gráfico</string>
+    <string name="guide_diy_milestone">Paso del guion gráfico %1$d de 10</string>
+    <string name="guide_diy_generating">Generando paso %1$d...</string>
+    <string name="disease_spreads">🔗 Cómo se propaga:</string>
+    <string name="disease_recognition">🔍 Reconocimiento:</string>
+    <string name="disease_prevention">🛡️ Prevención y cuidado:</string>
+    <string name="hi_caregiver">¡Hola, %1$s! 👋</string>
+    <string name="disease_prevention_guide">Guía de prevención de enfermedades</string>
+    <string name="adoption_journey_timeline">Cronología del viaje de adopción</string>
+    <string name="diy_craft_center">Centro de manualidades DIY</string>
+    <string name="stray_triage_protocol">Protocolo de triaje de gatos callejeros</string>
+    <string name="diy_craft_storyboard">Guion gráfico de manualidades DIY</string>
+    <string name="reset_game">Reiniciar juego</string>
+    <string name="growth_quiz_game">Juego de preguntas sobre el crecimiento</string>
+    <string name="data_loading_error">Error al cargar datos</string>
+    <string name="question_count">Pregunta %1$d de %2$d</string>
+    <string name="correct_answer">¡✨ Respuesta correcta!</string>
+    <string name="incorrect_answer">❌ Respuesta incorrecta</string>
+    <string name="next_question">Siguiente pregunta ➡️</string>
+    <string name="finish_level">Terminar nivel 🏁</string>
+    <string name="level_complete">¡🎉 Nivel completado! 🎉</string>
+    <string name="score_text">¡Has acertado %1$d de %2$d!</string>
+    <string name="guru_badge">🎖️ ¡Gurú certificado de gatos!</string>
+    <string name="effort_badge">❤️ ¡Maravilloso esfuerzo! Repite cuando quieras para practicar.</string>
+    <string name="growing_text">Pip está creciendo... ✨</string>
+    <string name="advance_to_level">Avanzar al nivel %1$d 🚀</string>
+    <string name="expert_badge">🏆 ¡Completaste los 5 niveles! ¡Ahora eres un cuidador experto oficial de TinyPaws! 👑</string>
+    <string name="reset_replay">Reiniciar y volver a jugar desde el nivel 1</string>
+    <string name="growth_journey_title">Viaje de crecimiento de Lily &amp; Pip por 5 islas</string>
+    <string name="tap_island_hint">Toca cualquier isla para revelar su historia de crecimiento</string>
+    <string name="island_label">Isla %1$d: %2$s</string>
+
+    <!-- Plan Views -->
+    <string name="plan_emergency_title">🚨 Respuesta de emergencia recomendada</string>
+    <string name="plan_care_guide_title">📋 Guía de cuidados recomendada</string>
+    <string name="plan_emergency_intro">Manténlos tranquilos, calientes y transpórtalos de forma segura:</string>
+    <string name="plan_emergency_step1_title">1. Colocar en una caja caliente</string>
+    <string name="plan_emergency_step1_desc">Coloca suavemente al gato en un transportín de cartón forrado con una manta suave. Mantén la caja en una habitación oscura y tranquila.</string>
+    <string name="plan_emergency_step2_title">2. Buscar atención profesional</string>
+    <string name="plan_emergency_step2_desc">Contacta inmediatamente con un hospital veterinario de emergencia o un refugio local. Tienen las herramientas especializadas para ayudar.</string>
+    <string name="plan_emergency_step3_title">3. Evitar alimentar</string>
+    <string name="plan_emergency_step3_desc">No des comida, agua ni medicamentos (especialmente analgésicos humanos, que son tóxicos para los gatos), ya que complica la anestesia o el tratamiento.</string>
+
+    <string name="plan_baby_intro">Los gatitos recién nacidos (menos de 4 semanas) son extremadamente frágiles:</string>
+    <string name="plan_baby_step1_title">1. Buscar a la madre</string>
+    <string name="plan_baby_step1_desc">Observa desde una distancia (al menos 6 metros) durante 2 a 4 horas. La madre gata es su mejor oportunidad de supervivencia y podría estar cazando.</string>
+    <string name="plan_baby_step2_title">2. Proporcionar calor suave</string>
+    <string name="plan_baby_step2_desc">Si no regresa, ¡manténlos calientes! Usa una almohadilla térmica envuelta en toallas o una botella de agua tibia. Nunca dejes que los gatitos pasen frío.</string>
+    <string name="plan_baby_step3_title">3. Nada de leche de vaca</string>
+    <string name="plan_baby_step3_desc">La leche estándar causará problemas digestivos fatales. Alimenta solo con sustituto de leche para gatitos (KMR) tibio con una jeringa sin aguja o un biberón pequeño.</string>
+    <string name="plan_baby_step4_title">4. Ayudar a la eliminación</string>
+    <string name="plan_baby_step4_desc">Los gatitos muy jóvenes no pueden hacer sus necesidades solos. Usa un algodón tibio y húmedo para acariciar suavemente la parte inferior de su abdomen después de alimentarlos.</string>
+
+    <string name="plan_young_intro">La socialización y una nutrición equilibrada son clave para gatitos de 4 a 12 semanas:</string>
+    <string name="plan_young_step1_title">1. Zona de cuarentena segura</string>
+    <string name="plan_young_step1_desc">Prepara un espacio tranquilo y cerrado (como un baño) con un pequeño arenero, agua fresca y comida para gatitos rica en proteínas.</string>
+    <string name="plan_young_step2_title">2. Fomentar la confianza y la amistad</string>
+    <string name="plan_young_step2_desc">Siéntate tranquilamente cerca de ellos. Ofrece comida húmeda sabrosa en una cuchara o con el dedo. Juega suavemente con cintas para demostrar que los humanos son seguros y divertidos.</string>
+    <string name="plan_young_step3_title">3. Hitos veterinarios</string>
+    <string name="plan_young_step3_desc">Programa una revisión veterinaria para desparasitación, vacunas iniciales y tratamientos profesionales contra pulgas.</string>
+    <string name="plan_young_step4_title">4. Adopción o TNR</string>
+    <string name="plan_young_step4_desc">A las 8-12 semanas, los gatitos son lo suficientemente grandes como para ser esterilizados y adoptados. Contacta con refugios locales para apoyo en casas de acogida.</string>
+
+    <string name="plan_adult_intro">Para un gato adulto, queremos descartar mascotas perdidas y apoyar a los gatos de la comunidad:</string>
+    <string name="plan_adult_step1_title">1. Escanear microchip</string>
+    <string name="plan_adult_step1_desc">Si es lo suficientemente amigable, asegúralo y llévalo a cualquier clínica veterinaria o refugio para escanear un chip de forma gratuita.</string>
+    <string name="plan_adult_step2_title">2. Compartir en redes de mascotas</string>
+    <string name="plan_adult_step2_desc">Toma fotos claras y publícalas en foros del vecindario. Cuelga folletos para reunirlos con sus posibles dueños.</string>
+    <string name="plan_adult_step3_title">3. Respetar a los vecinos ferales</string>
+    <string name="plan_adult_step3_desc">Si el gato está aterrorizado o agresivo (feral), probablemente vive al aire libre. Busca un programa local de Captura-Esterilización-Retorno (TNR).</string>
+    <string name="plan_adult_step4_title">4. Proporcionar apoyo exterior</string>
+    <string name="plan_adult_step4_desc">Instala una estación de comida seca simple y un refugio exterior aislado para mantenerlos cómodos en temporadas frías o lluviosas.</string>
+
+    <string name="plan_default_step1_title">1. Evaluar la seguridad primero</string>
+    <string name="plan_default_step1_desc">Nunca te pongas en peligro de arañazos o mordeduras.</string>
+    <string name="plan_default_step2_title">2. Proporcionar comida y agua fresca</string>
+    <string name="plan_default_step2_desc">Mantenlos sustentados mientras buscas ayuda.</string>
+    <string name="plan_default_step3_title">3. Llamar a un refugio local</string>
+    <string name="plan_default_step3_desc">Pueden verificar microchips y reportes de pérdida.</string>
+
+    <string name="triage_step_counter">PASO %1$d DE 2</string>
+    <string name="triage_plan_header">TU PLAN DE TRIAJE</string>
+    <string name="triage_completed_btn">¡Guía interactiva completada! ✓</string>
+    <string name="back_btn">← Volver</string>
+    <string name="reset_btn">Reiniciar</string>
+
+    <!-- Ranks -->
+    <string name="rank_kitten">Cuidador de gatitos 🍼</string>
+    <string name="rank_feline">Amigo felino 🐾</string>
+    <string name="rank_champion">Campeón de gatos 🌟</string>
+    <string name="rank_hero">Héroe de TinyPaws 👑</string>
+    <string name="rank_max">¡Nivel máximo alcanzado!</string>
+
+    <!-- Badges -->
+    <string name="badge_first_steps_name">Primeros pasos</string>
+    <string name="badge_first_steps_desc">¡Registraste tu primera actividad de cuidado comunitario!</string>
+    <string name="badge_kind_feeder_name">Alimentador amable</string>
+    <string name="badge_kind_feeder_desc">Alimentó gatos callejeros hambrientos 3 o más veces.</string>
+    <string name="badge_master_builder_name">Maestro constructor</string>
+    <string name="badge_master_builder_desc">Construyó un refugio aislado para mantener a los gatos calientes.</string>
+    <string name="badge_life_saver_name">Salvador de vidas</string>
+    <string name="badge_life_saver_desc">Ayudó a rescatar a un gato y lo puso a salvo.</string>
+    <string name="badge_health_guardian_name">Guardián de la salud</string>
+    <string name="badge_health_guardian_desc">Ayudó a un gato a recibir atención veterinaria o revisiones.</string>
+    <string name="badge_hero_name">Héroe de TinyPaws</string>
+    <string name="badge_hero_desc">¡Ganaste más de 500 puntos de impacto comunitario en total!</string>
+
+    <!-- Activity Names -->
+    <string name="activity_feed">Alimentó a un gato hambriento</string>
+    <string name="activity_shelter">Construyó un refugio cálido</string>
+    <string name="activity_rescue">Ayudó a rescatar a un gato</string>
+    <string name="activity_vet">Llevó a un gato al veterinario</string>
+    <string name="activity_socialize">Consoló y socializó a un gato</string>
+    <string name="activity_donate">Doné comida y suministros</string>
+    <string name="activity_quiz">Cuestionario completado</string>
+    <string name="activity_art">Arte de gato por IA creado</string>
+    <string name="activity_music">Música de gato por IA generada</string>
+    <string name="activity_default">Cuidó de un amigo felino</string>
+
+    <string name="guide_subtitle_stray">Protocolos de triaje esenciales, interacción segura y advertencias sobre alimentos tóxicos.</string>
+
+    <string name="guide_screen_diseases">Guía de prevención de enfermedades</string>
+    <string name="guide_screen_adoption">Cronología del viaje de adopción</string>
+    <string name="guide_screen_diy">Centro de manualidades DIY</string>
+    <string name="guide_screen_diy_storyboard">Storyboard del proyecto DIY</string>
+    <string name="guide_screen_stray">Protocolo de triaje de gatos callejeros</string>
+
+    <!-- Diseases Section -->
+    <string name="diseases_title">5 enfermedades felinas críticas</string>
+    <string name="diseases_desc">Explora los vectores de transmisión, el reconocimiento de síntomas y las pautas de cuidado preventivo con nuestros detalles visuales (representados con iconos de apoyo específicos).</string>
+
+    <!-- Adoption Section -->
+    <string name="adoption_title">Cronología del viaje de adopción de 6 etapas</string>
+    <string name="adoption_desc">Adoptar un gato callejero es un proceso reconfortante y progresivo. Cada etapa contiene índices visuales y hitos clave para guiarte.</string>
+
+    <!-- DIY Section -->
+    <string name="diy_title">Divertidos proyectos DIY hechos a mano</string>
+    <string name="diy_desc">Mejora el entorno físico de tu gatito y ayuda a los gatos de la comunidad a mantenerse seguros con estas manualidades. Organizadas de más fácil a más difícil, de menor a mayor costo, y de más rápida a más lenta.</string>
+    <string name="diy_tab_shelter">Refugio 🏡</string>
+    <string name="diy_tab_game">Juego 🧶</string>
+    <string name="diy_tab_cozy">Acogedor 🛋️</string>
+    <string name="diy_cost_label">Costo: %s</string>
+    <string name="diy_time_label">Tiempo: %s</string>
+    <string name="diy_start_storyboard">Iniciar Storyboard 🎬</string>
+    <string name="diy_back_to_list">← Volver a la lista de proyectos DIY</string>
+    <string name="diy_requirements">📋 Requisitos y materiales</string>
+    <string name="diy_storyboard_guide">🎬 Guía de storyboard paso a paso</string>
+    <string name="diy_visual_guide">🎬 Guía visual paso a paso</string>
+    <string name="diy_milestone_desc">Hemos destacado 3 hitos visuales clave para tu proyecto. ¡Síguelos para asegurar una construcción perfecta!</string>
+    <string name="diy_generating_milestone">Generando hito %d...</string>
+    <string name="diy_milestone_1">Hito 1: El cimiento</string>
+    <string name="diy_milestone_2">Hito 2: Ensamblaje principal</string>
+    <string name="diy_milestone_3">Hito 3: Resultado final</string>
+    <string name="diy_storyboard_step">Paso del storyboard %1$d de 10</string>
+
+    <!-- DIY Difficulty -->
+    <string name="diy_diff_easiest">El más fácil</string>
+    <string name="diy_diff_easy">Fácil</string>
+    <string name="diy_diff_medium">Medio</string>
+    <string name="diy_diff_hard">Difícil</string>
+    <string name="diy_diff_hardest">El más difícil</string>
+
+    <!-- Quiz Levels -->
+    <string name="quiz_level_0">Prado Soleado</string>
+    <string name="quiz_level_1">Bosque de Bigotes</string>
+    <string name="quiz_level_2">Camino de Huellas</string>
+    <string name="quiz_level_3">Callejón a la Luz de la Luna</string>
+    <string name="quiz_level_4">Pico del Guardián</string>
+
+    <!-- Chat Actions -->
+    <string name="chat_send">Enviar</string>
+    <string name="chat_delete">Eliminar</string>
+
+    <string name="footer_app_name">🐾 Diario TinyPaws 🐾</string>
+    <string name="footer_label">HABLA POR LOS QUE NO TIENEN VOZ</string>
+    <string name="footer_mission_text">El Diario TinyPaws nació de una promesa simple: hablar en nombre de cada gatito sin hogar y gato callejero que no puede hablar por sí mismo. Cada día, miles de almas silenciosas navegan solas por las calles frías. Creemos que ninguna pata es demasiado pequeña para ser cuidada, y ningún gatito es demasiado insignificante para ser protegido.\n\nAl unir a cuidadores compasivos con guías interactivas, ayudantes de nutrición y herramientas de apoyo vecinal, transformamos activamente las calles en santuarios seguros y cálidos. Gracias por dar un paso adelante, prestar tu voz y ayudarnos a coescribir una historia de seguridad y amor sin límites para nuestros compañeros felinos. ❤️</string>
+    <string name="footer_thank_you">Cada pequeño acto de bondad se expande hacia afuera para hacer nuestras calles más seguras, cálidas y amigables para los gatos. ¡Gracias por ser su cuidador!</string>
+
+    <string name="disease_rabies_name">Rabia 🦠</string>
+    <string name="disease_rabies_sub">Enfermedad viral mortal que afecta el sistema nervioso central.</string>
+    <string name="disease_rabies_spread">Se propaga principalmente a través de la transferencia de saliva profunda, como una mordida o un arañazo severo de un animal infectado (ej. gatos callejeros no vacunados).</string>
+    <string name="disease_rabies_recog">Cambios agudos de comportamiento (agresividad repentina o miedo), salivación excesiva, parálisis de la mandíbula y falta de coordinación.</string>
+    <string name="disease_rabies_prev">La vacunación anual obligatoria es 100% preventiva. En caso de arañazo/mordida, lavar inmediatamente con jabón bajo agua corriente y buscar vacunas humanas post-exposición.</string>
+
+    <string name="disease_toxo_name">Toxoplasmosis 🔬</string>
+    <string name="disease_toxo_sub">Infección sistémica causada por un parásito protozoario microscópico.</string>
+    <string name="disease_toxo_spread">Los gatos la contraen al cazar roedores infectados o comer carne cruda. Los humanos la contraen por contacto con las heces de gatos infectados (areneros).</string>
+    <string name="disease_toxo_recog">A menudo totalmente silenciosa. Los gatos enfermos muestran letargo, fiebre alta, dificultad para respirar o inflamación ocular.</string>
+    <string name="disease_toxo_prev">Mantén a los gatos en interiores para evitar la caza; dales comida cocida. Las mujeres embarazadas deben evitar limpiar los areneros o usar guantes y limpiar a diario.</string>
+
+    <string name="disease_csd_name">Enfermedad por arañazo de gato 🐾</string>
+    <string name="disease_csd_sub">Infección bacteriana causada por Bartonella henselae.</string>
+    <string name="disease_csd_spread">Se transmite entre gatos por las pulgas. Se propaga a los humanos por un arañazo o mordida contaminada con excrementos de pulga presentes en las garras.</string>
+    <string name="disease_csd_recog">Los gatos no muestran síntomas externos. En humanos, aparece un pequeño bulto rojo en el sitio del arañazo, seguido de una inflamación dolorosa de los ganglios linfáticos.</string>
+    <string name="disease_csd_prev">Usa mensualmente una prevención contra pulgas aprobada por un veterinario. Evita los juegos bruscos. Lava inmediatamente los arañazos con jabón antibacteriano.</string>
+
+    <string name="disease_ringworm_name">Tiña 🍄</string>
+    <string name="disease_ringworm_sub">Infección fúngica altamente contagiosa de la piel y las garras (¡no es un gusano!).</string>
+    <string name="disease_ringworm_spread">Se propaga por contacto directo de la piel con animales infectados, o al tocar mantas, cepillos o suelos contaminados que contienen esporas fúngicas.</string>
+    <string name="disease_ringworm_recog">Zonas circulares de pérdida de pelo, piel roja y escamosa, caspa y pelaje quebradizo. Picazón intensa.</string>
+    <string name="disease_ringworm_prev">Aísla inmediatamente a los animales infectados. Usa tratamientos antifúngicos tópicos. Lava la cama semanalmente con agua caliente y lejía.</string>
+
+    <string name="disease_pasteur_name">Pasteurelosis 🦷</string>
+    <string name="disease_pasteur_sub">Infección bacteriana rápida que se encuentra naturalmente en la saliva de los gatos.</string>
+    <string name="disease_pasteur_spread">Se propaga instantáneamente a través de heridas punzantes profundas por mordeduras de gato, empujando las bacterias bucales profundamente en el tejido muscular.</string>
+    <string name="disease_pasteur_recog">Dolor punzante intenso, hinchazón aguda, calor y enrojecimiento en el sitio de la mordida en solo 2 a 12 horas.</string>
+    <string name="disease_pasteur_prev">¡Cualquier mordida de gato es una emergencia médica! Busca atención médica humana inmediata para recibir antibióticos preventivos.</string>
+
+    <string name="adopt_stage_1_name">Etapa 1: Observación y Acercamiento 🔍</string>
+    <string name="adopt_stage_1_sum">Observa el lenguaje corporal del gato callejero y su nivel de socialización.</string>
+    <string-array name="adopt_stage_1_bullets">
+        <item>Observa desde la distancia para ver si son gatos ferales o mascotas perdidas amigables.</item>
+        <item>Ofrece comidas a horas fijas todos los días para establecer hábitos alimenticios locales.</item>
+        <item>No fuerces el contacto físico; deja que Pip haga su saludo suave para que pueda olerte primero.</item>
+    </string-array>
+
+    <string name="adopt_stage_2_name">Etapa 2: Primer chequeo veterinario 🩺</string>
+    <string name="adopt_stage_2_sum">Obtén confirmación veterinaria oficial sobre el estado de salud antes de introducirlo en casa.</string>
+    <string-array name="adopt_stage_2_bullets">
+        <item>Verifica si tiene microchip en caso de que sean mascotas perdidas de otra persona.</item>
+        <item>Realiza pruebas para virus críticos como FIV (SIDA felino) y FeLV (Leucemia felina).</item>
+        <item>Aplica tratamientos estándar contra pulgas, garrapatas y gusanos.</item>
+    </string-array>
+
+    <string name="adopt_stage_3_name">Etapa 3: Cuarentena en una habitación 🚪</string>
+    <string name="adopt_stage_3_sum">Crea un espacio de aislamiento dedicado y seguro para evitar contaminación o pánico.</string>
+    <string-array name="adopt_stage_3_bullets">
+        <item>Prepara una habitación tranquila (ej. baño) con una cama acogedora, arena limpia, comida y agua.</item>
+        <item>Deja que se relaje en esta habitación pequeña durante al menos 7 a 10 días.</item>
+        <item>Visítalo regularmente para hablarle suavemente y ofrecerle premios de gran valor para crear vínculos positivos.</item>
+    </string-array>
+
+    <string name="adopt_stage_4_name">Etapa 4: Intercambio de olores 🧶</string>
+    <string name="adopt_stage_4_sum">Introduce los olores de forma segura bajo la puerta cerrada sin estrés visual.</string>
+    <string-array name="adopt_stage_4_bullets">
+        <item>Frota una toalla limpia en el nuevo gato y colócala cerca del área de comida de tu gato residente.</item>
+        <item>Intercambia juguetes, rascadores y camas entre las habitaciones.</item>
+        <item>Alimenta a ambos gatos en lados opuestos de la puerta de aislamiento cerrada para asociar sus olores con el placer de comer.</item>
+    </string-array>
+
+    <string name="adopt_stage_5_name">Etapa 5: Encuentros visuales y Vínculos 🤝</string>
+    <string name="adopt_stage_5_sum">Permite sesiones visuales progresivas y supervisadas con una barrera protectora.</string>
+    <string-array name="adopt_stage_5_bullets">
+        <item>Abre la puerta un poco usando un tope de puerta seguro o una barrera de red.</item>
+        <item>Realiza sesiones visuales cortas de 5 minutos mientras premias a ambos gatos con golosinas.</item>
+        <item>Si hay bufidos u orejas planas, retrocede calmadamente un paso e inténtalo de nuevo mañana.</item>
+    </string-array>
+
+    <string name="adopt_stage_6_name">Etapa 6: Cuidados de por vida y Esterilización 💖</string>
+    <string name="adopt_stage_6_sum">Comprométete con cuidados veterinarios de por vida, comida de calidad y amor incondicional.</string>
+    <string-array name="adopt_stage_6_bullets">
+        <item>Programa una cirugía de esterilización o castración para estabilizar hormonas y prevenir la sobrepoblación.</item>
+        <item>Proporciona espacios verticales, estantes para trepar y rascadores para evitar la ansiedad interior.</item>
+        <item>Dales mantas cálidas infinitas, vacunas anuales y la garantía de un hogar seguro para siempre.</item>
+    </string-array>
+
+    <string name="stray_title">Guía de triaje de gatos callejeros 🐾</string>
+    <string name="stray_desc">Si encontraste un gatito al aire libre, utiliza esta guía de triaje para establecer la seguridad y brindar una mano de ayuda.</string>
+    <string name="stray_critical_title">CRÍTICO: ¡Qué NO alimentar a un gato!</string>
+    <string name="stray_critical_desc">El hígado y las células sanguíneas de un gato no pueden procesar alimentos humanos. Evita estos artículos altamente tóxicos:</string>
+
+    <string name="stray_toxic_1_name">Cebolla y Ajo 🧄</string>
+    <string name="stray_toxic_1_desc">Destruye los glóbulos rojos felinos, causando anemia hemolítica fatal.</string>
+    <string name="stray_toxic_2_name">Chocolate y Cafeína 🍫</string>
+    <string name="stray_toxic_2_desc">Contiene estimulantes que desencadenan temblores musculares fatales, ataques cardíacos y convulsiones.</string>
+    <string name="stray_toxic_3_name">Uvas y Pasas 🍇</string>
+    <string name="stray_toxic_3_desc">Causa insuficiencia renal aguda y repentina tanto en gatos como en perros.</string>
+    <string name="stray_toxic_4_name">Leche de vaca (Lactosa) 🥛</string>
+    <string name="stray_toxic_4_desc">Causa dolor intestinal intenso, hinchazón y diarrea severa porque los gatos adultos carecen de lactasa.</string>
+    <string name="stray_toxic_5_name">Masa cruda 🍞</string>
+    <string name="stray_toxic_5_desc">Se hincha dentro del estómago, liberando etanol tóxico que causa intoxicación por alcohol.</string>
+    <string name="stray_toxic_6_name">Alcohol 🍺</string>
+    <string name="stray_toxic_6_desc">Una sola cucharada causa falla cerebral fatal y depresión respiratoria.</string>
+
+    <string name="stray_protocol_title">Protocolo de Interacción Segura</string>
+    <string name="stray_protocol_step_1_name">Evaluar el lenguaje corporal 😾</string>
+    <string name="stray_protocol_step_1_desc">Nunca agarres a un gato que esté bufando, gruñendo o temblando. Dale su espacio.</string>
+    <string name="stray_protocol_step_2_name">Saludo con los nudillos 👧</string>
+    <string name="stray_protocol_step_2_desc">Siéntate bajo, evita el contacto visual y extiende la mano lentamente para dejar que te huelan.</string>
+    <string name="stray_protocol_step_3_name">Trampa de comida 🍲</string>
+    <string name="stray_protocol_step_3_desc">Coloca comida húmeda olorosa dentro de un transportín seguro para guiarlos a la seguridad.</string>
+    <string name="stray_protocol_step_4_name">Escanear microchip 🏥</string>
+    <string name="stray_protocol_step_4_desc">Los gatos callejeros amigables podrían ser mascotas perdidas. Llévalos a cualquier clínica veterinaria para escanear su chip de forma gratuita.</string>
+    <string name="stray_protocol_step_5_name">TNR para ferales ✂️</string>
+    <string name="stray_protocol_step_5_desc">Si el gato es temeroso y no está socializado, respeta su territorio y programa una cirugía de esterilización a través de TNR.</string>
+
+    <!-- Quiz Section -->
+    <string name="quiz_welcome">¡Hola, %1$s! 👋</string>
+    <string name="quiz_welcome_default">Cuidador</string>
+    <string name="quiz_title">Juego de preguntas sobre el crecimiento</string>
+    <string name="quiz_reset_btn">Reiniciar juego</string>
+    <string name="quiz_error_loading">Error al cargar datos</string>
+    <string name="quiz_error_details">Las preguntas del cuestionario para el nivel %1$d no están disponibles actualmente o no son válidas.</string>
+    <string name="quiz_question_progress">Pregunta %1$d de %2$d</string>
+    <string name="quiz_correct_title">¡✨ Respuesta correcta!</string>
+    <string name="quiz_wrong_title">❌ Respuesta incorrecta</string>
+    <string name="quiz_next_btn">Siguiente pregunta ➡️</string>
+    <string name="quiz_finish_btn">Terminar nivel 🏁</string>
+    <string name="quiz_complete_title">¡🎉 Nivel completado! 🎉</string>
+    <string name="quiz_score_msg">¡Has acertado %1$d de %2$d!</string>
+    <string name="quiz_guru_msg">🎖️ ¡Gurú certificado de gatos!</string>
+    <string name="quiz_effort_msg">❤️ ¡Maravilloso esfuerzo! Repite cuando quieras para practicar.</string>
+    <string name="quiz_advance_btn">Avanzar al nivel %1$d 🚀</string>
+    <string name="quiz_jumping_msg">Pip está creciendo... ✨</string>
+    <string name="quiz_all_complete">🏆 ¡Completaste los 5 niveles! ¡Ahora eres un cuidador experto oficial de TinyPaws! 👑</string>
+    <string name="quiz_reset_replay">Reiniciar y volver a jugar desde el nivel 1</string>
+
+    <!-- Quiz Level 0 Questions -->
+    <string name="quiz_q1_text">Los gatos son profesionales de las siestas. ¿Cuántas horas al día duermen? 😴</string>
+    <string-array name="quiz_q1_options">
+        <item>4-6 h</item>
+        <item>8-10 h</item>
+        <item>12-16 h</item>
+        <item>prácticamente nunca</item>
+    </string-array>
+    <string name="quiz_q1_correct">¡Sí! 12-16 h al día. Los gatos realmente dijeron \'dormir es lo más importante\' 🛌✨</string>
+    <string name="quiz_q1_wrong">No, pero respeto el intento 😅 Los gatos duermen 12-16 h al día. Campeones absolutos de la siesta.</string>
+
+    <string name="quiz_q2_text">¿Pueden los gatos comer chocolate? 🍫</string>
+    <string-array name="quiz_q2_options">
+        <item>¡Sí, es un premio!</item>
+        <item>NO. Nunca. Es tóxico.</item>
+        <item>Solo chocolate negro</item>
+        <item>Solo en cumpleaños</item>
+    </string-array>
+    <string name="quiz_q2_correct">Correcto 🚫🍫 El chocolate es tóxico para los gatos. Mantenlo muy lejos.</string>
+    <string name="quiz_q2_wrong">Gran no 🚫 El chocolate es tóxico para los gatos, sin excepciones, ni siquiera \'solo un poquito.\'</string>
+
+    <string name="quiz_q3_text">¿Cómo se llama un grupo de gatos? (esto es solo trivia divertida lol)</string>
+    <string-array name="quiz_q3_options">
+        <item>Un squad</item>
+        <item>Un clowder</item>
+        <item>Un pounce</item>
+        <item>Un meow-b</item>
+    </string-array>
+    <string name="quiz_q3_correct">Siii, un \'clowder\' 🐱🐱🐱 úsalo para sonar inteligente en las fiestas.</string>
+    <string name="quiz_q3_wrong">Energía cercana pero en realidad es un \'clowder\' 🐱 palabra icónica para ser honestos.</string>
+
+    <string name="quiz_q4_text">¿Debes darle a un gato callejero agua, o solo comida?</string>
+    <string-array name="quiz_q4_options">
+        <item>Solo comida</item>
+        <item>Agua Y comida 💧🍽️</item>
+        <item>Solo agua</item>
+        <item>Nada, los gatos se las apañan</item>
+    </string-array>
+    <string name="quiz_q4_correct">¡Correcto! El agua es honestamente igual de importante — muchos gatos andan por ahí un poco deshidratados 💧</string>
+    <string name="quiz_q4_wrong">No — el agua importa tanto como la comida. No la ignores 💧</string>
+
+    <string name="quiz_q5_text">¿Es la leche realmente buena para los gatos, a pesar de lo que dicen los dibujos animados? 🥛</string>
+    <string-array name="quiz_q5_options">
+        <item>Sí, es básicamente zumo de gato</item>
+        <item>No, la mayoría de los gatos son intolerantes a la lactosa</item>
+        <item>Solo leche con chocolate</item>
+        <item>Solo leche tibia</item>
+    </string-array>
+    <string name="quiz_q5_correct">Correcto — los dibujos animados nos mintieron 😭 La mayoría de los gatos no pueden digerir bien la leche.</string>
+    <string name="quiz_q5_wrong">Giro inesperado: la mayoría de los gatos son intolerantes a la lactosa. Los dibujos animados nos estafaron a todos 🥛😭</string>
+
+    <string name="toggle">Alternar</string>
+    <!-- DIY Categories -->
+    <string name="diy_cat_shelter">Refugio 🏡</string>
+    <string name="diy_cat_game">Juego 🧶</string>
+    <string name="diy_cat_cozy">Acogedor 🛋️</string>
+    <string name="diy_cat_all_blueprint">📋 Ver plano completo de un vistazo</string>
+    <string name="diy_blueprint_step">PASO %1$d</string>
+
+    <!-- DIY Projects Section Headers -->
+    <string name="diy_section_title">Proyectos de bricolaje hechos a mano</string>
+    <string name="diy_section_desc">Mejora el entorno físico de tu gatito y ayuda a los gatos de la comunidad a mantenerse seguros con estas manualidades. Organizado de más fácil a más difícil, de menor a mayor costo y de más rápido a más lento.</string>
+    <string name="diy_difficulty_easiest">Muy fácil</string>
+    <string name="diy_difficulty_easy">Fácil</string>
+    <string name="diy_difficulty_medium">Medio</string>
+    <string name="diy_difficulty_hard">Difícil</string>
+    <string name="diy_difficulty_hardest">Muy difícil</string>
+
+    <!-- Creation Module -->
+    <string name="creation_title">Estudio de creación mágica</string>
+    <string name="creation_art_studio">Estudio de arte felino 🎨</string>
+    <string name="creation_music_studio">Música relajante 🎵</string>
+    <string name="creation_generate_btn">Generar mi creación ✨</string>
+    <string name="creation_art_desc">¡Describe el arte de gato que quieres ver! Sé creativo.</string>
+    <string name="creation_music_desc">¿Qué tipo de melodía relajante deberíamos generar para los gatitos?</string>
+    <string name="creation_art_placeholder">Un lindo gato naranja con un traje espacial en una galaxia de lana...</string>
+    <string name="creation_music_placeholder">Melodía suave de piano con ronroneos y lluvia suave...</string>
+    <string name="creation_is_pro">Alto detalle (Modelo Pro)</string>
+    <string name="creation_is_full_track">Pista completa (Lyria)</string>
+    <string name="creation_download_btn">Descargar obra 📥</string>
+    <string name="creation_generating">La IA está creando tu magia...</string>
+
+    <!-- Location Module -->
+    <string name="location_screen_title">Buscador de lugares cercanos</string>
+    <string name="location_live_search">📍 Búsqueda de ubicación en vivo</string>
+    <string name="location_search_desc">Acceso a clínicas, suministros para mascotas y refugios cercanos. Los resultados se ordenan automáticamente de más cercano a más lejano según tus coordenadas.</string>
+    <string name="location_input_label">Tu ubicación / Dirección / Coordenadas</string>
+    <string name="location_input_placeholder">ej: Madrid, España o coordenadas GPS</string>
+    <string name="location_vets_btn">Veterinarios cercanos 🩺</string>
+    <string name="location_shops_btn">Tiendas cercanas 🛒</string>
+    <string name="location_shelters_btn">Refugios cercanos 🏡</string>
+    <string name="location_map_view">🗺️ Vista de mapa dinámica</string>
+    <string name="location_take_me_there">Llévame allí 🚀</string>
+    <string name="location_results_header">Resultados descubiertos ordenados por distancia:</string>
+    <string name="location_no_results">No se encontraron resultados. ¡Selecciona una categoría o ingresa una dirección arriba!</string>
+    <string name="location_distance_km">⚡ a ~%1$.1f km de distancia</string>
+    <string name="location_pin">🐾 PIN: %1$s</string>
+    <string name="location_coords">Coordenadas: Lat %1$.4f, Lon %2$.4f</string>
+    <string name="location_back_home">Volver al inicio</string>
+    <string name="location_close_map">Cerrar mapa</string>
+
+    <!-- Game/Quiz Module -->
+    <string name="quiz_journey_title">El viaje de crecimiento de Lily y Pip en 5 islas</string>
+    <string name="quiz_journey_desc">Toca cualquier isla para revelar su historia de crecimiento</string>
+    <string name="quiz_level_prefix">Niv %1$d</string>
+    <string name="quiz_island_num">Isla %1$d: %2$s</string>
+    <string name="quiz_character_name">Pip</string>
+
+    <!-- Log History -->
+    <string name="log_history_empty">Historial de registros vacío</string>
+    <string name="log_notes_quiz">Prueba del nivel %1$d completada (Puntuación: %2$d/20)</string>
+    <string name="log_notes_art">Arte de gato personalizado generado con AI Studio</string>
+    <string name="log_notes_music">Pista de ambiente para gatitos generada con Lyria</string>
+
+    <!-- UI Components -->
+    <string name="nav_impact">Impacto</string>
+    <string name="nav_navigation">Navegación</string>
+    <string name="step_indicator">PASO %1$d DE 2</string>
+
+</resources>

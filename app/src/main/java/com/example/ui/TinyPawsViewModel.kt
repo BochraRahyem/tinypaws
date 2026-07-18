@@ -1,0 +1,634 @@
+package com.example.ui
+
+import android.app.Application
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.Build
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.example.R
+import com.example.data.AppDatabase
+import com.example.data.GeminiClient
+import com.example.data.LogEntry
+import com.example.data.LogRepository
+import com.example.data.NearbyPlace
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import java.io.File
+import com.example.data.FavoriteDiy
+
+// Chat Message Model
+data class ChatMessage(
+    val role: String, // "user" or "model"
+    val text: String,
+    val isPending: Boolean = false
+)
+
+// Badge Model
+data class Badge(
+    val id: String,
+    val name: String,
+    val description: String,
+    val iconEmoji: String,
+    val isUnlocked: Boolean
+)
+
+// UI State representing the Game/Tracker state
+data class TrackerUiState(
+    val logs: List<LogEntry> = emptyList(),
+    val totalPoints: Int = 0,
+    val rankResId: Int = R.string.rank_kitten,
+    val pointsToNextRank: Int = 100,
+    val nextRankResId: Int = R.string.rank_feline,
+    val progressPercentage: Float = 0.0f,
+    val badges: List<Badge> = emptyList()
+)
+
+class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
+
+    // Favorites State
+    val favoriteDiyIds: StateFlow<Set<String>> = repository.allFavorites
+        .map { list -> list.map { it.projectId }.toSet() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
+    fun toggleFavoriteDiy(projectId: String) {
+        val isFav = favoriteDiyIds.value.contains(projectId)
+        viewModelScope.launch {
+            repository.toggleFavorite(projectId, !isFav)
+        }
+    }
+
+    // Connectivity state flow
+    private val _isOnline = MutableStateFlow(true)
+    val isOnline = _isOnline.asStateFlow()
+
+    private var connectivityManager: ConnectivityManager? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+
+    fun startNetworkMonitoring(context: Context) {
+        val cm = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        connectivityManager = cm
+        if (cm == null) {
+            _isOnline.value = true
+            return
+        }
+
+        // Initial check
+        _isOnline.value = isCurrentNetworkActive(cm)
+
+        // Dynamic network callback registration
+        try {
+            val request = NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
+
+            val callback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    _isOnline.value = true
+                }
+
+                override fun onLost(network: Network) {
+                    _isOnline.value = isCurrentNetworkActive(cm)
+                }
+
+                override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                    val hasInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    _isOnline.value = hasInternet
+                }
+            }
+            networkCallback = callback
+            cm.registerNetworkCallback(request, callback)
+        } catch (e: Exception) {
+            Log.e("TinyPawsViewModel", "Failed to register network callback", e)
+            _isOnline.value = isCurrentNetworkActive(cm)
+        }
+    }
+
+    fun stopNetworkMonitoring() {
+        try {
+            networkCallback?.let {
+                connectivityManager?.unregisterNetworkCallback(it)
+            }
+        } catch (e: Exception) {
+            Log.e("TinyPawsViewModel", "Failed to unregister network callback", e)
+        } finally {
+            networkCallback = null
+            connectivityManager = null
+        }
+    }
+
+
+    private fun isCurrentNetworkActive(cm: ConnectivityManager): Boolean {
+        val activeNet = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(activeNet) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val cm = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return false
+        val activeNet = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(activeNet) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    // Onboarded Name State
+    private val _onboardedName = MutableStateFlow("")
+    val onboardedName = _onboardedName.asStateFlow()
+
+    private val _currentLanguage = MutableStateFlow("en")
+    val currentLanguage = _currentLanguage.asStateFlow()
+
+    private val _streak = kotlinx.coroutines.flow.MutableStateFlow(0)
+    val streak = _streak.asStateFlow()
+
+    fun setStreak(s: Int) {
+        _streak.value = s
+    }
+
+    private val _isDarkMode = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isDarkMode = _isDarkMode.asStateFlow()
+
+    fun setDarkMode(dark: Boolean) {
+        _isDarkMode.value = dark
+    }
+
+    fun updateOnboardedName(name: String) {
+        _onboardedName.value = name
+    }
+
+    fun setLanguage(langCode: String) {
+        _currentLanguage.value = langCode
+    }
+
+    // 1. Triage Wizard States
+    private val _triageStep = MutableStateFlow(0) // 0: Start, 1: Injury Check, 2: Age Check, 3: Next Steps
+    val triageStep = _triageStep.asStateFlow()
+
+    private val _hasInjuries = MutableStateFlow<Boolean?>(null)
+    val hasInjuries = _hasInjuries.asStateFlow()
+
+    private val _catAgeGroup = MutableStateFlow<String?>(null) // "baby", "young", "adult"
+    val catAgeGroup = _catAgeGroup.asStateFlow()
+
+    // 2. Growth Journey Game States
+    private val _currentIsland = MutableStateFlow(0) // 0 to 4 (Islands 1 to 5)
+    val currentIsland = _currentIsland.asStateFlow()
+
+    private val _currentQuestionIndex = MutableStateFlow(0) // 0 to 19
+    val currentQuestionIndex = _currentQuestionIndex.asStateFlow()
+
+    private val _quizCompletedOnCurrentIsland = MutableStateFlow(false)
+    val quizCompletedOnCurrentIsland = _quizCompletedOnCurrentIsland.asStateFlow()
+
+    private val _completedIslands = MutableStateFlow<Set<Int>>(emptySet())
+    val completedIslands = _completedIslands.asStateFlow()
+
+    private val _scoreOnCurrentIsland = MutableStateFlow(0)
+    val scoreOnCurrentIsland = _scoreOnCurrentIsland.asStateFlow()
+
+    private val _selectedAnswers = MutableStateFlow<Map<Int, Int>>(emptyMap()) // index -> selectedOptionIndex
+    val selectedAnswers = _selectedAnswers.asStateFlow()
+
+    fun selectAnswer(questionIdx: Int, optionIdx: Int) {
+        val updated = _selectedAnswers.value.toMutableMap()
+        updated[questionIdx] = optionIdx
+        _selectedAnswers.value = updated
+    }
+
+    fun submitQuizForCurrentIsland(correctCount: Int) {
+        _scoreOnCurrentIsland.value = correctCount
+        _quizCompletedOnCurrentIsland.value = true
+        _completedIslands.value = _completedIslands.value + _currentIsland.value
+        // Award points for completing the quiz
+        logActivity("complete_quiz", "Completed Level ${_currentIsland.value + 1} Quiz (Score: $correctCount/10)")
+    }
+
+    fun nextIslandWithAnimation(onTriggerAnimation: () -> Unit) {
+        if (_currentIsland.value < 4) {
+            onTriggerAnimation()
+            _currentIsland.value += 1
+            _currentQuestionIndex.value = 0
+            _quizCompletedOnCurrentIsland.value = false
+            _scoreOnCurrentIsland.value = 0
+            _selectedAnswers.value = emptyMap()
+        _completedIslands.value = emptySet()
+        }
+    }
+
+    fun jumpToIsland(islandIndex: Int) {
+        if (islandIndex in 0..4) {
+            _currentIsland.value = islandIndex
+            _currentQuestionIndex.value = 0
+            _quizCompletedOnCurrentIsland.value = false
+            _scoreOnCurrentIsland.value = 0
+            _selectedAnswers.value = emptyMap()
+        _completedIslands.value = emptySet()
+        }
+    }
+
+    fun resetGameProgress() {
+        _currentIsland.value = 0
+        _currentQuestionIndex.value = 0
+        _quizCompletedOnCurrentIsland.value = false
+        _scoreOnCurrentIsland.value = 0
+        _selectedAnswers.value = emptyMap()
+        _completedIslands.value = emptySet()
+    }
+
+    // 3. Location Search States
+    private val _locationQuery = MutableStateFlow("")
+    val locationQuery = _locationQuery.asStateFlow()
+
+    private val _searchCategory = MutableStateFlow("vets") // "vets", "shops", "shelters"
+    val searchCategory = _searchCategory.asStateFlow()
+
+    private val _searchResults = MutableStateFlow<List<NearbyPlace>>(emptyList())
+    val searchResults = _searchResults.asStateFlow()
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
+
+    private val _userLocation = MutableStateFlow<Pair<Double, Double>>(Pair(36.8065, 10.1815)) // Default Tunis, Tunisia
+    val userLocation = _userLocation.asStateFlow()
+
+    fun updateLocationQuery(query: String) {
+        _locationQuery.value = query
+    }
+
+    fun updateSearchCategory(category: String) {
+        _searchCategory.value = category
+    }
+
+    fun updateUserLocation(lat: Double, lng: Double) {
+        _userLocation.value = Pair(lat, lng)
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371.0 // Earth's radius in km
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return r * c
+    }
+
+    fun searchPlaces(category: String, query: String) {
+        _searchCategory.value = category
+        _isSearching.value = true
+        viewModelScope.launch {
+            try {
+                val results = GeminiClient.searchNearbyPlaces(category, query)
+                val userLoc = _userLocation.value
+                val mappedResults = results.map { place ->
+                    val dist = calculateDistance(userLoc.first, userLoc.second, place.latitude, place.longitude)
+                    place.copy(distance = dist)
+                }
+                // Sort by distance (Nearest to Farthest)
+                _searchResults.value = mappedResults.sortedBy { it.distance }
+            } catch (e: Exception) {
+                _searchResults.value = emptyList()
+            } finally {
+                _isSearching.value = false
+            }
+        }
+    }
+
+    // 4. AI Studio Generation States
+    private val _generatedBitmap = MutableStateFlow<Bitmap?>(null)
+    val generatedBitmap = _generatedBitmap.asStateFlow()
+
+    private val _isGeneratingImage = MutableStateFlow(false)
+    val isGeneratingImage = _isGeneratingImage.asStateFlow()
+
+    // Runtime Step Image Cache
+    private val _stepImageCache = MutableStateFlow<Map<String, Bitmap>>(emptyMap())
+    val stepImageCache = _stepImageCache.asStateFlow()
+
+    fun generateStepImage(stepId: String, prompt: String) {
+        if (_stepImageCache.value.containsKey(stepId)) return
+
+        viewModelScope.launch {
+            try {
+                val bitmap = GeminiClient.generateImage(prompt, isProModel = false, imageSize = "1K")
+                if (bitmap != null) {
+                    val updatedCache = _stepImageCache.value.toMutableMap()
+                    updatedCache[stepId] = bitmap
+                    _stepImageCache.value = updatedCache
+                }
+            } catch (e: Exception) {
+                Log.e("TinyPawsViewModel", "Error generating step image", e)
+            }
+        }
+    }
+
+    private val _generatedMusicFile = MutableStateFlow<File?>(null)
+    val generatedMusicFile = _generatedMusicFile.asStateFlow()
+
+    private val _isGeneratingMusic = MutableStateFlow(false)
+    val isGeneratingMusic = _isGeneratingMusic.asStateFlow()
+
+    fun generateCatArt(prompt: String, isPro: Boolean, size: String) {
+        _isGeneratingImage.value = true
+        _generatedBitmap.value = null
+        viewModelScope.launch {
+            try {
+                val bitmap = GeminiClient.generateImage(prompt, isPro, size)
+                _generatedBitmap.value = bitmap
+                if (bitmap != null) {
+                    logActivity("generate_art", "Generated custom cat art using AI Studio")
+                }
+            } catch (e: Exception) {
+                _generatedBitmap.value = null
+            } finally {
+                _isGeneratingImage.value = false
+            }
+        }
+    }
+
+    fun generateKittenMusic(context: Application, prompt: String, isFullTrack: Boolean) {
+        _isGeneratingMusic.value = true
+        _generatedMusicFile.value = null
+        viewModelScope.launch {
+            try {
+                val file = GeminiClient.generateMusic(context, prompt, isFullTrack)
+                _generatedMusicFile.value = file
+                if (file != null) {
+                    logActivity("generate_music", "Generated custom ambient kitten track using Lyria")
+                }
+            } catch (e: Exception) {
+                _generatedMusicFile.value = null
+            } finally {
+                _isGeneratingMusic.value = false
+            }
+        }
+    }
+
+    // 5. Cat Researcher Chat States
+    private val _chatMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
+    val chatMessages = _chatMessages.asStateFlow()
+
+    private val _isChatLoading = MutableStateFlow(false)
+    val isChatLoading = _isChatLoading.asStateFlow()
+
+    fun sendChatMessage(text: String) {
+        if (text.isBlank() || _isChatLoading.value) return
+        
+        val userMessage = ChatMessage("user", text)
+        _chatMessages.value = _chatMessages.value + userMessage
+        
+        val modelMessage = ChatMessage("model", "", isPending = true)
+        _chatMessages.value = _chatMessages.value + modelMessage
+        
+        val systemInstruction = """
+            You are the TinyPaws Helper — a chill, funny Gen Z friend who knows their stuff about animal rescue. 
+            Talk casual, warm, and playful. Use natural slang sparingly. 
+            No corporate speak. No vet textbook vibes. 
+            
+            Language: Respond in the following language: ${_currentLanguage.value}.
+            
+            Scope: Answer questions about stray animal care (feeding, shelter, first aid, TNR, rescue etiquette). 
+            Give solid practical advice. Mention a source briefly if relevant (e.g., "ASPCA says...").
+            
+            PERSONALITY:
+            - If the user tells you their name, remember it and use it naturally (e.g., "Good question, [name]!").
+            - Use emojis to add warmth, but sparingly (max 1-2 per message).
+            
+            BOUNDARIES: 
+            - Keep answers short (a few sentences max). 
+            - If it's a real emergency (badly hurt or aggressive animal), tell them to use the app's Emergency Report feature or contact a local vet. 
+            - If asked about illegal topics, adult content, self-harm, or violence, respond warmly and redirect: "That's not really my thing — I'm just here to help with cats and stray animal care! Got a question about that? 🐾"
+            - Stay on topic: stray animal care and TinyPaws.
+        """.trimIndent()
+        
+        val history = _chatMessages.value.filter { !it.isPending }.map { it.role to it.text }
+
+        _isChatLoading.value = true
+        viewModelScope.launch {
+            var fullResponse = ""
+            com.example.data.GroqClient.chatStream(systemInstruction, history) { chunk ->
+                fullResponse += chunk
+                val currentMessages = _chatMessages.value.toMutableList()
+                if (currentMessages.isNotEmpty()) {
+                    val lastIdx = currentMessages.lastIndex
+                    currentMessages[lastIdx] = ChatMessage("model", fullResponse, isPending = false)
+                    _chatMessages.value = currentMessages
+                }
+            }
+            _isChatLoading.value = false
+        }
+    }
+
+    fun clearChat() {
+        _chatMessages.value = emptyList()
+    }
+
+    // 6. Tracker / Game States (Combining logs with computed metrics)
+    val trackerUiState: StateFlow<TrackerUiState> = repository.allLogs
+        .combine(MutableStateFlow(Unit)) { logs, _ ->
+            val totalPoints = logs.sumOf { it.points }
+            
+            // Calculate Rank
+            val rankResId: Int
+            val nextRankResId: Int
+            val pointsToNextRank: Int
+            val progressPercentage: Float
+            
+            when {
+                totalPoints < 100 -> {
+                    rankResId = R.string.rank_kitten
+                    nextRankResId = R.string.rank_feline
+                    pointsToNextRank = 100 - totalPoints
+                    progressPercentage = totalPoints.toFloat() / 100f
+                }
+                totalPoints < 300 -> {
+                    rankResId = R.string.rank_feline
+                    nextRankResId = R.string.rank_champion
+                    pointsToNextRank = 300 - totalPoints
+                    val currentProgress = totalPoints - 100
+                    progressPercentage = currentProgress.toFloat() / 200f
+                }
+                totalPoints < 600 -> {
+                    rankResId = R.string.rank_champion
+                    nextRankResId = R.string.rank_hero
+                    pointsToNextRank = 600 - totalPoints
+                    val currentProgress = totalPoints - 300
+                    progressPercentage = currentProgress.toFloat() / 300f
+                }
+                else -> {
+                    rankResId = R.string.rank_hero
+                    nextRankResId = R.string.rank_max
+                    pointsToNextRank = 0
+                    progressPercentage = 1.0f
+                }
+            }
+
+            // Calculate Badge Unlocks
+            val firstLog = logs.isNotEmpty()
+            val feedsCount = logs.count { it.activityType == "feed_cat" }
+            val sheltersCount = logs.count { it.activityType == "build_shelter" }
+            val rescuesCount = logs.count { it.activityType == "rescue_cat" }
+            val vetVisitsCount = logs.count { it.activityType == "vet_visit" }
+            
+            val badges = listOf(
+                Badge(
+                    id = "first_steps",
+                    name = "badge_first_steps_name",
+                    description = "badge_first_steps_desc",
+                    iconEmoji = "🐾",
+                    isUnlocked = firstLog
+                ),
+                Badge(
+                    id = "kind_feeder",
+                    name = "badge_kind_feeder_name",
+                    description = "badge_kind_feeder_desc",
+                    iconEmoji = "🐟",
+                    isUnlocked = feedsCount >= 3
+                ),
+                Badge(
+                    id = "master_builder",
+                    name = "badge_master_builder_name",
+                    description = "badge_master_builder_desc",
+                    iconEmoji = "🏡",
+                    isUnlocked = sheltersCount >= 1
+                ),
+                Badge(
+                    id = "life_saver",
+                    name = "badge_life_saver_name",
+                    description = "badge_life_saver_desc",
+                    iconEmoji = "❤️",
+                    isUnlocked = rescuesCount >= 1
+                ),
+                Badge(
+                    id = "health_guardian",
+                    name = "badge_health_guardian_name",
+                    description = "badge_health_guardian_desc",
+                    iconEmoji = "🩺",
+                    isUnlocked = vetVisitsCount >= 1
+                ),
+                Badge(
+                    id = "tiny_paws_hero",
+                    name = "badge_hero_name",
+                    description = "badge_hero_desc",
+                    iconEmoji = "🏆",
+                    isUnlocked = totalPoints >= 500
+                )
+            )
+
+            TrackerUiState(
+                logs = logs,
+                totalPoints = totalPoints,
+                rankResId = rankResId,
+                pointsToNextRank = pointsToNextRank,
+                nextRankResId = nextRankResId,
+                progressPercentage = progressPercentage,
+                badges = badges
+            )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = TrackerUiState()
+        )
+
+    // Triage Navigation Methods
+    fun startTriage() {
+        _triageStep.value = 1
+        _hasInjuries.value = null
+        _catAgeGroup.value = null
+    }
+
+    fun selectInjuries(injured: Boolean) {
+        _hasInjuries.value = injured
+        if (injured) {
+            // Straight to immediate action result (Step 3)
+            _triageStep.value = 3
+        } else {
+            // No injuries, proceed to age check (Step 2)
+            _triageStep.value = 2
+        }
+    }
+
+    fun selectAgeGroup(ageGroup: String) {
+        _catAgeGroup.value = ageGroup
+        _triageStep.value = 3 // Go to Next Steps/Result
+    }
+
+    fun resetTriage() {
+        _triageStep.value = 0
+        _hasInjuries.value = null
+        _catAgeGroup.value = null
+    }
+
+    // Activity Logging Methods
+    fun logActivity(type: String, notes: String = "") {
+        val (nameKey, points) = when (type) {
+            "feed_cat" -> "activity_feed" to 15
+            "build_shelter" -> "activity_shelter" to 60
+            "rescue_cat" -> "activity_rescue" to 100
+            "vet_visit" -> "activity_vet" to 50
+            "cuddle_socialize" -> "activity_socialize" to 10
+            "donate_supplies" -> "activity_donate" to 30
+            "complete_quiz" -> "activity_quiz" to 20
+            "generate_art" -> "activity_art" to 10
+            "generate_music" -> "activity_music" to 15
+            else -> "activity_default" to 10
+        }
+
+        viewModelScope.launch {
+            repository.insert(
+                LogEntry(
+                    activityType = type,
+                    activityName = nameKey, // Using the key for translation in UI
+                    points = points,
+                    notes = notes
+                )
+            )
+        }
+    }
+
+    fun deleteLog(id: Int) {
+        viewModelScope.launch {
+            repository.deleteById(id)
+        }
+    }
+
+    fun clearAllLogs() {
+        viewModelScope.launch {
+            repository.clearAll()
+        }
+    }
+}
+
+// ViewModel Factory
+class TinyPawsViewModelFactory(private val repository: LogRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(TinyPawsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return TinyPawsViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}

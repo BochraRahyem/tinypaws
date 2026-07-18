@@ -1,0 +1,2 @@
+sed -i 's/val TextDark: Color @Composable get() = Ink/val TextDark: Color @Composable get() = if (LocalIsDarkMode.current) BaseMauve else BaseInk/g' app/src/main/java/com/example/ui/theme/Color.kt
+sed -i 's/val TextMuted: Color @Composable get() = Wine/val TextMuted: Color @Composable get() = if (LocalIsDarkMode.current) BaseMauve.copy(alpha = 0.8f) else BaseWine/g' app/src/main/java/com/example/ui/theme/Color.kt

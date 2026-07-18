@@ -1,0 +1,6 @@
+{
+  "name": "TinyPaws Diary",
+  "description": "A polished, cozy diary and interactive care tracker for cats with pastel styling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

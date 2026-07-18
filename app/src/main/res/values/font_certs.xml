@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJAN5mkoUfS6nEMA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJV
+            UzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UE
+            ChMHR29vZ2xlMRAwDgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQDEwdBbmRyb2lkMCEGCSqGSIb3
+            DQEJARYUYW5kcm9pZEBhbmRyb2lkLmNvbTAeFw0wODA0MTUyMzM2NTZaFw0zNTA4MDIyMzM2
+            NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91
+            bnRhaW4gVmlldzEQMA4GA1UEChMHR29vZ2xlMRAwDgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQD
+            EwdBbmRyb2lkMCEGCSqGSIb3DQEJARYUYW5kcm9pZEBhbmRyb2lkLmNvbTCCASAwDQYJKoZI
+            hvcNAQEBBQADggENADCCAQgCggEBAL965nP6b6M0XUf0J4lR/mI3I229t28zX9m6f3p5Q7vF
+            9K7g8P4p8o3Q7F8N7C2+1D/4X16S5L2h8m8N/fX/S+1+9e2v8+mN7n8X3/E8N6Q8K28f8n9
+            9+9P5d7f3e8f8n8=
+        </item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJAN5mkoUfS6nEMA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJV
+            UzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UE
+            ChMHR29vZ2xlMRAwDgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQDEwdBbmRyb2lkMCEGCSqGSIb3
+            DQEJARYUYW5kcm9pZEBhbmRyb2lkLmNvbTAeFw0wODA0MTUyMzM2NTZaFw0zNTA4MDIyMzM2
+            NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91
+            bnRhaW4gVmlldzEQMA4GA1UEChMHR29vZ2xlMRAwDgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQD
+            EwdBbmRyb2lkMCEGCSqGSIb3DQEJARYUYW5kcm9pZEBhbmRyb2lkLmNvbTCCASAwDQYJKoZI
+            hvcNAQEBBQADggENADCCAQgCggEBAL965nP6b6M0XUf0J4lR/mI3I229t28zX9m6f3p5Q7vF
+            9K7g8P4p8o3Q7F8N7C2+1D/4X16S5L2h8m8N/fX/S+1+9e2v8+mN7n8X3/E8N6Q8K28f8n9
+            9+9P5d7f3e8f8n8=
+        </item>
+    </string-array>
+</resources>

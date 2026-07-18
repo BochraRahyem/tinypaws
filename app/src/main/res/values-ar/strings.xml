@@ -1,0 +1,531 @@
+<resources>
+    <string name="app_name">مذكرات تايني باوز</string>
+    <string name="attribution_label_logic">منطق تطبيق تايني باوز</string>
+    <string name="onboarding_title">مذكرات تايني باوز</string>
+    <string name="onboarding_desc">دليل مذكرات سحري غير متصل بالإنترنت لدعم ورعاية أصدقائنا من القطط في الفناء الخلفي.</string>
+    <string name="onboarding_question">ما هو اسمك أيها الراعي؟</string>
+    <string name="onboarding_placeholder">أدخل اسمك...</string>
+    <string name="onboarding_btn">ادخل بهدوء</string>
+    <string name="hi_user">أهلاً، %1$s! 👋</string>
+    <string name="logout_content_description">تسجيل الخروج</string>
+    <string name="dashboard_tagline">رعاية أصدقاء مجتمعنا من القطط، خطوة بخطوة.</string>
+    <string name="select_diary_room">اختر غرفتك في المذكرات</string>
+    <string name="nav_guide_title">أحتاج إلى دليل 📖</string>
+    <string name="nav_guide_subtitle">أدلة تبني زمنية، قصص الوقاية من الأمراض، وبروتوكولات فرز القطط الشاردة.</string>
+    <string name="nav_play_title">أريد أن ألعب 🎮</string>
+    <string name="nav_play_subtitle">5 مستويات من اختبارات الرعاية والنمو الصحي مع تعليقات فورية.</string>
+    <string name="nav_find_title">أين يمكنني أن أجد؟ 📍</string>
+    <string name="nav_find_subtitle">خرائط ديناميكية للعيادات البيطرية والمتاجر والملاجئ المفتوحة بالقرب منك.</string>
+    <string name="nav_cook_title">ماذا يجب أن أطبخ؟ 🍳</string>
+    <string name="nav_cook_subtitle">اختر المكونات لتحضير وجبات صحية، أو استكشف مكتبة الوصفات.</string>
+    <string name="nav_chat_title">مساعد تايني باوز 🐾</string>
+    <string name="nav_chat_subtitle">اسأل صديقك المنقذ عن أي شيء يخص رعاية القطط الشاردة.</string>
+    <string name="menu_language">اللغة</string>
+    <string name="lang_en">الإنجليزية 🇬🇧</string>
+    <string name="lang_ar">العربية 🇸🇦</string>
+    <string name="lang_fr">الفرنسية 🇫🇷</string>
+    <string name="lang_es">الإسبانية 🇪🇸</string>
+
+    <!-- Chat -->
+    <string name="chat_title">مساعد تايني باوز</string>
+    <string name="chat_placeholder">اسأل صديقك المنقذ عن أي شيء...</string>
+    <string name="chat_input_placeholder">اكتب سؤالاً...</string>
+    <string name="chat_clear">مسح المحادثة</string>
+    <string name="chat_back">عودة</string>
+
+    <!-- Tracker -->
+    <string name="tracker_header">متتبع رعاية المجتمع</string>
+    <string name="tracker_rank_label">رتبتك في المجتمع</string>
+    <string name="tracker_points_needed">%1$d نقطة مطلوبة للوصول إلى %2$s</string>
+    <string name="tracker_hero_tier">عمل رائع! لقد وصلت إلى رتبة البطل الأسطورية!</string>
+    <string name="tracker_badges_label">أوسمتك الرائعة</string>
+    <string name="tracker_log_form_label">تسجيل نشاط رعاية</string>
+    <string name="tracker_notes_placeholder">أضف تفاصيل اختيارية (مثلاً "رأيت قطاً جميلاً قرب الحديقة")</string>
+    <string name="tracker_add_btn">أضف إلى المتتبع (+%1$d)</string>
+    <string name="tracker_recent_entries">سجل النشاط الأخير</string>
+    <string name="tracker_show_less">عرض أقل</string>
+    <string name="tracker_view_all">عرض الكل (%1$d)</string>
+    <string name="tracker_reset_data">إعادة تعيين بيانات المتتبع</string>
+    <string name="tracker_activity_feed">🐟 أطعم قطة</string>
+    <string name="tracker_activity_water">💧 ماء</string>
+    <string name="tracker_activity_shelter">🏡 مأوى</string>
+    <string name="tracker_activity_medical">🩺 طبي</string>
+    <string name="tracker_activity_socialize">🧸 تواصل</string>
+    <string name="tracker_activity_donate">🎁 تبرع</string>
+
+    <!-- Triage -->
+    <string name="triage_header">هل وجدت قطاً؟</string>
+    <string name="triage_start_desc">هل وجدت قطة ضالة أو مفقودة أو ضعيفة؟ يساعدك دليل الفرز التفاعلي الخاص بنا على اتخاذ خيارات هادئة وداعمة في اللحظات الأولى الحرجة.</string>
+    <string name="triage_start_btn">ابدأ الفرز التفاعلي 🐾</string>
+    <string name="triage_step_injury_title">تحقق من وجود إصابات فورية</string>
+    <string name="triage_step_injury_desc">ألقِ نظرة فاحصة ولطيفة على القطة. هل تنزف، أو تعرج، أو تواجه صعوبة في التنفس، أو تظهر عليها علامات الألم؟</string>
+    <string name="triage_injury_yes">نعم، مصابة 🚨</string>
+    <string name="triage_injury_no">لا توجد إصابات 😊</string>
+    <string name="triage_cancel">إلغاء الدليل</string>
+    <string name="triage_step_age_title">تقدير عمر القطة</string>
+    <string name="triage_step_age_desc">يحدد العمر الاحتياجات الغذائية والحرارية والاجتماعية. أي من هذه الأوصاف يطابق القطة بشكل أفضل؟</string>
+    <string name="triage_age_baby">🍼 هريرة صغيرة جداً (0-4 أسابيع)</string>
+    <string name="triage_age_baby_desc">العيون مغلقة، تزحف ببطء، تبكي. هشة للغاية؛ لا يمكنها تنظيم الحرارة أو أكل الأطعمة الصلبة.</string>
+    <string name="triage_age_young">🐾 هريرة صغيرة (4-12 أسبوعاً)</string>
+    <string name="triage_age_young_desc">لعوبة، تجري بسرعة، لديها أسنان كاملة. نشيطة، فضولية، جاهزة للتواصل الاجتماعي.</string>
+    <string name="triage_age_adult">🐈 قط بالغ (سنة فأكثر)</string>
+    <string name="triage_age_adult_desc">حجم مكتمل النمو. هادئ، حذر، أو ودود للغاية. قد يكون حيواناً أليفاً مفقوداً.</string>
+
+    <!-- Footer -->
+    <string name="footer_mission_label">📢 تحدث باسم من لا صوت له</string>
+    <string name="footer_mission_title">مهمتنا المقدسة 🐾</string>
+    <string name="footer_mission_desc">ولدت مذكرات تايني باوز من وعد بسيط: التحدث نيابة عن كل قطة مفقودة أو شاردة لا تملك صوتاً. كل يوم، تعيش آلاف الأرواح الهادئة في الشوارع الباردة وحدها. نحن نؤمن أنه لا يوجد حيوان صغير جداً لدرجة لا تستحق الرعاية، ولا توجد قطة غير مهمة لدرجة لا تستحق الحماية.\n\nمن خلال توحيد مقدمي الرعاية المتعاطفين مع الأدلة التفاعلية، ومساعدي التغذية، وأدوات دعم الحي، نقوم بتحويل الشوارع إلى ملاذات آمنة ودافئة. شكراً لك على تقدمك، وإعارة صوتك، ومساعدتنا في كتابة قصة من الأمان والحب غير المحدود لرفاقنا من القطط. ❤️</string>
+    <string name="footer_tagline">🐾 مذكرات تايني باوز 🐾</string>
+    <string name="footer_sub_tagline">كل عمل طيب صغير يترك أثراً لجعل شوارعنا أكثر أماناً ودفئاً ولطفاً للقطط. شكراً لكونك راعياً لها!</string>
+
+    <!-- Guide Module -->
+    <string name="guide_title">أدلة ليلي وباب</string>
+    <string name="guide_welcome">مرحباً بك في غرفة الأدلة! اختر أي وحدة أدناه لبدء رحلة الرعاية المفيدة مع ليلي وباب.</string>
+    <string name="guide_banner_title">غرفة قصص ليلي وباب</string>
+    <string name="guide_banner_desc">اتبع ليلي وهرتها الزنجبيلية اللعوبة باب وهما تكتشفان كيفية الحفاظ على رفاقنا في الفناء الخلفي آمنين ومرتاحين ونشطين!</string>
+    <string name="guide_back_menu">← العودة إلى قائمة الأدلة</string>
+    <string name="guide_diseases_title">الأمراض 🦠</string>
+    <string name="guide_diseases_subtitle">تعرف على 5 أمراض قطط خطيرة، وأعراضها، وخطوات الوقاية المنقذة للحياة.</string>
+    <string name="guide_adoption_title">التبني 🏡</string>
+    <string name="guide_adoption_subtitle">دليل جدول زمني من 6 مراحل لتبني القطط الشاردة بأمان وحب.</string>
+    <string name="guide_diy_title">مشاريع يدوية 🛠️</string>
+    <string name="guide_diy_subtitle">ملاجئ معزولة، ألعاب نشطة، وأسرة مريحة. 10 مراحل قصصية بصرية لكل مشروع!</string>
+    <string name="guide_cook_title">ماذا أطبخ؟ 🍳</string>
+    <string name="guide_cook_subtitle">اختر مكونات طازجة لإنشاء وصفات مخصصة، أو استكشف مكتبة الوصفات المنزلية.</string>
+    <string name="guide_stray_title">وجدت قطاً شارداً؟ 🐾</string>
+    <string name="guide_stray_subtitle">بروتوكولات الفرز الأساسية، والمشاركة الآمنة، وتحذيرات الأطعمة السامة.</string>
+    <string name="guide_diseases_header">5 أمراض قطط خطيرة</string>
+    <string name="guide_diseases_desc">استكشف نواقل العدوى، والتعرف على الأعراض، وإرشادات الرعاية الوقائية من خلال تفاصيلنا البصرية.</string>
+    <string name="guide_adoption_header">جدول زمني لرحلة التبني من 6 مراحل</string>
+    <string name="guide_adoption_desc">تبني قطة شاردة هو عملية تدريجية تبعث على الدفء. تحتوي كل مرحلة على مؤشرات بصرية ومعالم رئيسية لإرشادك.</string>
+    <string name="guide_diy_header">مشاريع يدوية ممتعة</string>
+    <string name="guide_diy_desc">حسن البيئة المادية لقطتك وساعد قطط المجتمع على البقاء آمنة من خلال هذه الحرف اليدوية.</string>
+    <string name="guide_diy_tab_shelter">مأوى 🏡</string>
+    <string name="guide_diy_tab_game">لعبة 🧶</string>
+    <string name="guide_diy_tab_cozy">راحة 🛋️</string>
+    <string name="guide_diy_start_story">ابدأ القصة 🎬</string>
+    <string name="guide_diy_back_list">← العودة إلى قائمة المشاريع</string>
+    <string name="guide_diy_requirements">📋 المتطلبات والمواد</string>
+    <string name="guide_diy_storyboard">🎬 دليل القصة خطوة بخطوة</string>
+    <string name="guide_diy_milestone">خطوة القصة %1$d من 10</string>
+    <string name="guide_diy_generating">جاري إنشاء الخطوة %1$d...</string>
+    <string name="disease_spreads">🔗 كيف ينتشر:</string>
+    <string name="disease_recognition">🔍 التعرف عليه:</string>
+    <string name="disease_prevention">🛡️ الوقاية والرعاية:</string>
+    <string name="hi_caregiver">أهلاً، %1$s! 👋</string>
+    <string name="disease_prevention_guide">دليل الوقاية من الأمراض</string>
+    <string name="adoption_journey_timeline">الجدول الزمني لرحلة التبني</string>
+    <string name="diy_craft_center">مركز الحرف اليدوية</string>
+    <string name="stray_triage_protocol">بروتوكول فرز القطط الشاردة</string>
+    <string name="diy_craft_storyboard">قصة الحرف اليدوية</string>
+    <string name="reset_game">إعادة تعيين اللعبة</string>
+    <string name="growth_quiz_game">لعبة اختبار النمو</string>
+    <string name="data_loading_error">خطأ في تحميل البيانات</string>
+    <string name="question_count">السؤال %1$d من %2$d</string>
+    <string name="correct_answer">✨ إجابة صحيحة!</string>
+    <string name="incorrect_answer">❌ إجابة خاطئة</string>
+    <string name="next_question">السؤال التالي ➡️</string>
+    <string name="finish_level">إنهاء المستوى 🏁</string>
+    <string name="level_complete">🎉 اكتمل المستوى! 🎉</string>
+    <string name="score_text">لقد سجلت %1$d من أصل %2$d إجابة صحيحة!</string>
+    <string name="guru_badge">🎖️ خبير قطط معتمد!</string>
+    <string name="effort_badge">❤️ جهد رائع! أعد اللعب في أي وقت للتدريب.</string>
+    <string name="growing_text">باب ينمو... ✨</string>
+    <string name="advance_to_level">الانتقال إلى المستوى %1$d 🚀</string>
+    <string name="expert_badge">🏆 لقد أكملت جميع المستويات الخمسة! أنت الآن مقدم رعاية خبير رسمي في تايني باوز! 👑</string>
+    <string name="reset_replay">إعادة التعيين واللعب من المستوى 1</string>
+    <string name="growth_journey_title">رحلة نمو ليلي وباب عبر 5 جزر</string>
+    <string name="tap_island_hint">اضغط على أي جزيرة للكشف عن قصة نموها</string>
+    <string name="island_label">الجزيرة %1$d: %2$s</string>
+
+    <!-- Plan Views -->
+    <string name="plan_emergency_title">🚨 استجابة طارئة موصى بها</string>
+    <string name="plan_care_guide_title">📋 دليل الرعاية الموصى به</string>
+    <string name="plan_emergency_intro">حافظ على هدوئهم ودفئهم وانقلهم بأمان:</string>
+    <string name="plan_emergency_step1_title">1. ضعه في صندوق دافئ</string>
+    <string name="plan_emergency_step1_desc">ضع القطة بلطف في حامل من الورق المقوى مبطن ببطانية ناعمة. حافظ على الصندوق في غرفة مظلمة وهادئة.</string>
+    <string name="plan_emergency_step2_title">2. ابحث عن رعاية مهنية</string>
+    <string name="plan_emergency_step2_desc">اتصل بمستشفى بيطري للطوارئ أو بمركز إنقاذ محلي للقطط على الفور. لديهم الأدوات المتخصصة للمساعدة.</string>
+    <string name="plan_emergency_step3_title">3. تجنب التغذية</string>
+    <string name="plan_emergency_step3_desc">لا تعطِ طعاماً أو ماءً أو دواءً (خاصة مسكنات الألم البشرية، فهي سامة للقطط) لأن ذلك يعقد عملية التخدير أو العلاج.</string>
+
+    <string name="plan_baby_intro">الهريرات الصغيرة جداً (تحت 4 أسابيع) هشة للغاية:</string>
+    <string name="plan_baby_step1_title">1. ابحث عن الأم</string>
+    <string name="plan_baby_step1_desc">راقب من مسافة (على بعد 20 قدماً على الأقل) لمدة ساعتين إلى 4 ساعات. الأم هي أفضل فرصة لها للبقاء وقد تكون في رحلة صيد.</string>
+    <string name="plan_baby_step2_title">2. وفر حرارة لطيفة</string>
+    <string name="plan_baby_step2_desc">إذا لم تعد، حافظ على دفئهم! استخدم وسادة تدفئة ملفوفة بالمناشف أو زجاجة ماء دافئ. لا تدع الهريرات تبرد أبداً.</string>
+    <string name="plan_baby_step3_title">3. لا تستخدم حليب البقر</string>
+    <string name="plan_baby_step3_desc">الحليب العادي سيسبب مشاكل هضمية قاتلة. أطعم فقط بديل حليب الهريرات الدافئ (KMR) بحقنة بدون إبرة أو زجاجة صغيرة.</string>
+    <string name="plan_baby_step4_title">4. ساعد في عملية الإخراج</string>
+    <string name="plan_baby_step4_desc">الهريرات الصغيرة جداً لا يمكنها قضاء حاجتها بنفسها. استخدم قطنة دافئة ومبللة لتمسح بلطف على أسفل البطن بعد الإطعام.</string>
+
+    <string name="plan_young_intro">التنشئة الاجتماعية والتغذية المتوازنة هما المفتاح للهريرات من 4 إلى 12 أسبوعاً:</string>
+    <string name="plan_young_step1_title">1. منطقة حجر آمنة</string>
+    <string name="plan_young_step1_desc">وفر مساحة هادئة ومغلقة (مثل الحمام) مع صندوق رمل صغير، ماء عذب، وطعام هريرات عالي البروتين.</string>
+    <string name="plan_young_step2_title">2. ابنِ الثقة والصداقة</string>
+    <string name="plan_young_step2_desc">اجلس بهدوء بالقرب منها. قدم طعاماً رطباً لذيذاً بملعقة أو بالإصبع. العب بلطف بألعاب الشرائط لتظهر لها أن البشر آمنون وممتعون.</string>
+    <string name="plan_young_step3_title">3. معالم بيطرية</string>
+    <string name="plan_young_step3_desc">حدد موعداً لفحص بيطري للتخلص من الديدان، والتطعيمات الأولية، وعلاجات البراغيث المهنية.</string>
+    <string name="plan_young_step4_title">4. التبني أو TNR</string>
+    <string name="plan_young_step4_desc">في عمر 8-12 أسبوعاً، تكون الهريرات كبيرة بما يكفي لتعقيمها وتبنيها. تواصل مع الملاجئ المحلية للحصول على دعم الحضانة.</string>
+
+    <string name="plan_adult_intro">بالنسبة للقطط البالغة، نريد استبعاد الحيوانات الأليفة المفقودة ودعم قطط المجتمع:</string>
+    <string name="plan_adult_step1_title">1. ابحث عن رقاقة إلكترونية</string>
+    <string name="plan_adult_step1_desc">إذا كانت ودودة بما يكفي ليتم التعامل معها، أمّنها بأمان وخذها إلى أي عيادة بيطرية أو ملجأ لفحص الرقاقة مجاناً.</string>
+    <string name="plan_adult_step2_title">2. شارك في شبكات الحيوانات الأليفة</string>
+    <string name="plan_adult_step2_desc">التقط صوراً واضحة وانشرها في منتديات الحي (Nextdoor، مجموعات فيسبوك). علق منشورات للم شملها مع أصحابها المحتملين.</string>
+    <string name="plan_adult_step3_title">3. احترم الجيران البريين</string>
+    <string name="plan_adult_step3_desc">إذا كانت القطة خائفة أو عدوانية، فمن المرجح أنها تعيش في الهواء الطلق. ابحث عن برنامج محلي (TNR) لمنع التكاثر.</string>
+    <string name="plan_adult_step4_title">4. وفر دعماً خارجياً</string>
+    <string name="plan_adult_step4_desc">أعد محطة تغذية جافة بسيطة ومأوى خارجياً معزولاً ومقاوماً للطقس لإبقائها مرتاحة في المواسم الباردة أو الممطرة.</string>
+
+    <string name="plan_default_step1_title">1. قيم السلامة أولاً</string>
+    <string name="plan_default_step1_desc">لا تضع نفسك أبداً في خطر التعرض للخدش أو العض.</string>
+    <string name="plan_default_step2_title">2. وفر الطعام والماء العذب</string>
+    <string name="plan_default_step2_desc">حافظ على بقائها مدعومة أثناء البحث عن المساعدة.</string>
+    <string name="plan_default_step3_title">3. اتصل بملجأ محلي</string>
+    <string name="plan_default_step3_desc">يمكنهم التحقق من الرقائق الإلكترونية وتقارير الفقدان.</string>
+
+    <string name="triage_step_counter">الخطوة %1$d من 2</string>
+    <string name="triage_plan_header">خطة الفرز الخاصة بك</string>
+    <string name="triage_completed_btn">تم إكمال الدليل التفاعلي! ✓</string>
+    <string name="back_btn">← عودة</string>
+    <string name="reset_btn">إعادة تعيين</string>
+
+    <!-- Ranks -->
+    <string name="rank_kitten">راعي الهريرات 🍼</string>
+    <string name="rank_feline">صديق القطط 🐾</string>
+    <string name="rank_champion">بطل القطط 🌟</string>
+    <string name="rank_hero">بطل TinyPaws 👑</string>
+    <string name="rank_max">تم الوصول لأقصى مستوى!</string>
+
+    <!-- Badges -->
+    <string name="badge_first_steps_name">الخطوات الأولى</string>
+    <string name="badge_first_steps_desc">سجلت أول نشاط رعاية مجتمعي لك!</string>
+    <string name="badge_kind_feeder_name">المغذي الطيب</string>
+    <string name="badge_kind_feeder_desc">أطعمت القطط الضالة الجائعة 3 مرات أو أكثر.</string>
+    <string name="badge_master_builder_name">البناء الماهر</string>
+    <string name="badge_master_builder_desc">بنيت مأوى معزولاً للحفاظ على دفء القطط.</string>
+    <string name="badge_life_saver_name">منقذ الحياة</string>
+    <string name="badge_life_saver_desc">ساعدت في إنقاذ قطة وإيصالها إلى بر الأمان.</string>
+    <string name="badge_health_guardian_name">حارس الصحة</string>
+    <string name="badge_health_guardian_desc">ساعدت قطة في الحصول على رعاية بيطرية أو فحوصات.</string>
+    <string name="badge_hero_name">بطل TinyPaws</string>
+    <string name="badge_hero_desc">ربحت أكثر من 500 نقطة تأثير مجتمعي إجمالية!</string>
+
+    <!-- Activity Names -->
+    <string name="activity_feed">أطعم قطة جائعة</string>
+    <string name="activity_shelter">بنى مأوى دافئاً</string>
+    <string name="activity_rescue">ساعد في إنقاذ قطة</string>
+    <string name="activity_vet">أخذ قطة إلى البيطري</string>
+    <string name="activity_socialize">واسى ودمج قطة اجتماعياً</string>
+    <string name="activity_donate">تبرع بالطعام والإمدادات</string>
+    <string name="activity_quiz">أكمل الاختبار</string>
+    <string name="activity_art">أنشأ فن قطط بالذكاء الاصطناعي</string>
+    <string name="activity_music">أنشأ موسيقى قطط بالذكاء الاصطناعي</string>
+    <string name="activity_default">اعتنى بصديق قط</string>
+
+    <string name="guide_screen_diy">مركز مشاريع DIY</string>
+    <string name="guide_screen_diy_storyboard">لوحة قصة مشروع DIY</string>
+    <string name="guide_screen_stray">بروتوكول فرز القطط الضالة</string>
+
+    <!-- Diseases Section -->
+    <string name="diseases_title">5 أمراض قطط خطيرة</string>
+    <string name="diseases_desc">استكشف طرق الانتقال والتعرف على الأعراض وإرشادات الرعاية الوقائية مع تفاصيلنا المصورة (ممثلة بأيقونات داعمة محددة).</string>
+
+    <string name="disease_rabies_name">داء الكلب 🦠</string>
+    <string name="disease_rabies_sub">مرض فيروسي قاتل يصيب الجهاز العصبي المركزي.</string>
+    <string name="disease_rabies_spread">ينتشر بشكل أساسي من خلال انتقال اللعاب العميق، مثل عضة أو خدش شديد من حيوان مصاب (مثل القطط الضالة غير الملقحة).</string>
+    <string name="disease_rabies_recog">تحولات سلوكية حادة (عدوانية مفاجئة أو خوف)، سيلان اللعاب المفرط، شلل الفك، وفشل التنسيق.</string>
+    <string name="disease_rabies_prev">التطعيم السنوي الإلزامي وقائي بنسبة 100%. في حالة الخدش/العض، اغسل فوراً بالصابون تحت الماء الجاري واطلب لقاحات بشرية بعد التعرض.</string>
+
+    <string name="disease_toxo_name">داء المقوسات 🔬</string>
+    <string name="disease_toxo_sub">عدوى جهازية يسببها طفيل بروتوزوا مجهري.</string>
+    <string name="disease_toxo_spread">تصاب القطط به عن طريق صيد القوارض المصابة أو أكل اللحوم النيئة. يصاب البشر به من خلال ملامسة براز القطط المصابة (صناديق الرمل).</string>
+    <string name="disease_toxo_recog">غالباً ما يكون صامتاً تماماً. تظهر على القطط المصابة خمول وحمى شديدة وصعوبات في التنفس أو التهاب العين.</string>
+    <string name="disease_toxo_prev">ابقِ القطط في الداخل لمنع الصيد؛ أطعمها طعاماً مطبوخاً. يجب على النساء الحوامل تجنب تنظيف صناديق الرمل تماماً أو ارتداء القفازات والتنظيف يومياً.</string>
+
+    <string name="disease_csd_name">مرض خدش القطة 🐾</string>
+    <string name="disease_csd_sub">عدوى بكتيرية تسببها Bartonella henselae.</string>
+    <string name="disease_csd_spread">ينتقل بين القطط عن طريق البراغيث. ينتشر للبشر عن طريق خدش أو عضة ملوثة بفضلات البراغيث المحمولة على المخالب.</string>
+    <string name="disease_csd_recog">لا تظهر على القطط أي أعراض خارجية. في البشر، تظهر بثرة حمراء صغيرة في موقع الخدش، يليها تورم مؤلم في الغدد الليمفاوية.</string>
+    <string name="disease_csd_prev">استخدم أدوية وقاية من البراغيث معتمدة من الطبيب البيطري شهرياً. تجنب اللعب الخشن. اغسل الخدوش فوراً بصابون مضاد للبكتيريا.</string>
+
+    <string name="disease_ringworm_name">القوباء الحلقية 🍄</string>
+    <string name="disease_ringworm_sub">عدوى فطرية شديدة العدوى في الجلد والمخالب (ليست دودة!).</string>
+    <string name="disease_ringworm_spread">ينتشر عن طريق ملامسة الجلد المباشرة للحيوانات المصابة، أو لمس البطانيات الملوثة أو الفرش أو التربة التي تحتوي على أبواغ فطرية.</string>
+    <string name="disease_ringworm_recog">بقع دائرية من تساقط الشعر، جلد أحمر متقشر، قشرة الرأس، وفراء هش. مثير للحكة بشدة.</string>
+    <string name="disease_ringworm_prev">اعزل الحيوانات الأليفة المصابة فوراً. استخدم علاجات مضادة للفطريات موضعية. اغسل الفراش أسبوعياً بماء ساخن مع مبيض.</string>
+
+    <string name="disease_pasteur_name">داء الباستوريلات 🦷</string>
+    <string name="disease_pasteur_sub">عدوى بكتيرية سريعة توجد بشكل طبيعي في لعاب القطط.</string>
+    <string name="disease_pasteur_spread">ينتشر فوراً عن طريق الثقوب العميقة من عضات القطط، حيث يتم دفع بكتيريا الفم لعمق الأنسجة العضلية.</string>
+    <string name="disease_pasteur_recog">ألم نابض شديد، تورم حاد، حرارة، واحمرار في موقع العضة خلال ساعتين إلى 12 ساعة فقط.</string>
+    <string name="disease_pasteur_prev">كل عضة قط هي حالة طبية طارئة! اطلب رعاية طبية بشرية فورية للحصول على مضادات حيوية وقائية.</string>
+
+    <!-- Adoption Section -->
+    <string name="adoption_title">الجدول الزمني لرحلة التبني من 6 مراحل</string>
+    <string name="adoption_desc">تبني قط ضال في الهواء الطلق هو عملية تدريجية تبعث على التفاؤل. تحتوي كل مرحلة على مؤشرات مرئية ومعالم رئيسية لإرشادك.</string>
+
+    <string name="adopt_stage_1_name">المرحلة 1: المراقبة والفخ 🔍</string>
+    <string name="adopt_stage_1_sum">راقب لغة جسد القط الضال ومستوى اندماجه الاجتماعي.</string>
+    <string-array name="adopt_stage_1_bullets">
+        <item>راقب من مسافة بعيدة لمعرفة ما إذا كانت قططاً برية أو مجرد حيوانات أليفة مفقودة ودودة.</item>
+        <item>قدم الوجبات في أوقات ثابتة يومياً لبناء عادات تغذية محلية.</item>
+        <item>لا تجبر القط على اللمس الجسدي؛ اترك تحية مفاصل الأصابع الودودة من ليلي لتسمح له بشمك أولاً.</item>
+    </string-array>
+
+    <string name="adopt_stage_2_name">المرحلة 2: الفحص البيطري الأول 🩺</string>
+    <string name="adopt_stage_2_sum">اطلب تأكيداً بيطرياً رسمياً على الحالة الصحية قبل أي تقديم للمنزل.</string>
+    <string-array name="adopt_stage_2_bullets">
+        <item>افحص وجود الرقائق الدقيقة في حال كانت حيوانات مفقودة تخص شخصاً آخر.</item>
+        <item>افحص الفيروسات الخطيرة مثل FIV (فيروس نقص المناعة السنوري) و FeLV (فيروس ابيضاض الدم السنوري).</item>
+        <item>أعطِ علاجات البراغيث والقراد والديدان القياسية.</item>
+    </string-array>
+
+    <string name="adopt_stage_3_name">المرحلة 3: الحجر الصحي في غرفة 🚪</string>
+    <string name="adopt_stage_3_sum">قم بإنشاء مساحة عزل مخصصة وآمنة لمنع التلوث أو الذعر.</string>
+    <string-array name="adopt_stage_3_bullets">
+        <item>جهز غرفة هادئة (مثل الحمام) مع سرير دافئ، ورمل قطط نظيف غير متكتل، وطعام، وماء.</item>
+        <item>اسمح له بالاسترخاء في هذه الغرفة الصغيرة لمدة 7 إلى 10 أيام على الأقل.</item>
+        <item>قم بزيارته بانتظام للتحدث بهدوء وتقديم مكافآت عالية القيمة لإنشاء روابط إيجابية.</item>
+    </string-array>
+
+    <string name="adopt_stage_4_name">المرحلة 4: تبادل الروائح 🧶</string>
+    <string name="adopt_stage_4_sum">قدم الروائح بأمان تحت الباب المغلق دون توتر بصري.</string>
+    <string-array name="adopt_stage_4_bullets">
+        <item>افرك منشفة نظيفة على القط الجديد وضعها بالقرب من منطقة تغذية قطك المقيم.</item>
+        <item>بادل الألعاب وأعمدة الخدش والفراش بين الغرف.</item>
+        <item>أطعم كلا القطتين على جوانب متقابلة من باب العزل المغلق لربط روائحهما بمتعة الطعام.</item>
+    </string-array>
+
+    <string name="adopt_stage_5_name">المرحلة 5: اللقاءات البصرية والترابط 🤝</string>
+    <string name="adopt_stage_5_sum">اسمح بجلسات بصرية تدريجية وخاضعة للمراقبة مع حاجز واقٍ.</string>
+    <string-array name="adopt_stage_5_bullets">
+        <item>افتح الباب قليلاً باستخدام سدادة باب آمنة أو شبكة سلكية.</item>
+        <item>قم بإجراء جلسات بصرية قصيرة لمدة 5 دقائق مع مدح كلا القطتين بالمكافآت.</item>
+        <item>إذا حدث فحيح أو آذان مسطحة، تراجع بهدوء خطوة للوراء وحاول مرة أخرى غداً.</item>
+    </string-array>
+
+    <string name="adopt_stage_6_name">المرحلة 6: الرعاية مدى الحياة والتعقيم 💖</string>
+    <string name="adopt_stage_6_sum">التزم برعاية بيطرية مدى الحياة، وطعام عالي الجودة، وحب غير مشروط.</string>
+    <string-array name="adopt_stage_6_bullets">
+        <item>حدد موعداً لعملية تعقيم أو إخصاء لاستقرار الهرمونات ومنع نمو القطط الضالة.</item>
+        <item>وفر مساحات رأسية ورفوف تسلق وأعمدة خدش لتجنب قلق المناطق الداخلية.</item>
+        <item>أعطِ بطانيات دافئة لا تنتهي، وتطعيمات سنوية، وضماناً ناعماً لمنزل آمن دائم.</item>
+    </string-array>
+
+    <!-- DIY Section -->
+    <string name="diy_title">مشاريع DIY ممتعة مصنوعة يدوياً</string>
+    <string name="diy_desc">حسن البيئة المادية لقطتك وساعد قطط المجتمع على البقاء آمنة بهذه الحرف القصصية. مرتبة من الأسهل إلى الأصعب، ومن الأقل إلى الأعلى تكلفة، ومن الأسرع إلى الأكثر استهلاكاً للوقت.</string>
+    <string name="diy_tab_shelter">ملجأ 🏡</string>
+    <string name="diy_tab_game">لعبة 🧶</string>
+    <string name="diy_tab_cozy">مريح 🛋️</string>
+    <string name="diy_cost_label">التكلفة: %s</string>
+    <string name="diy_time_label">الوقت: %s</string>
+    <string name="diy_start_storyboard">ابدأ لوحة القصص 🎬</string>
+    <string name="diy_back_to_list">← العودة إلى قائمة مشاريع DIY</string>
+    <string name="diy_requirements">📋 المتطلبات والمواد</string>
+    <string name="diy_storyboard_guide">🎬 دليل لوحة القصص خطوة بخطوة</string>
+    <string name="diy_visual_guide">🎬 دليل مرئي خطوة بخطوة</string>
+    <string name="diy_milestone_desc">لقد أبرزنا 3 معالم مرئية رئيسية لمشروعك. اتبعها لضمان بناء مثالي!</string>
+    <string name="diy_generating_milestone">جاري إنشاء المعلم %d...</string>
+    <string name="diy_milestone_1">المعلم 1: الأساس</string>
+    <string name="diy_milestone_2">المعلم 2: التجميع الرئيسي</string>
+    <string name="diy_milestone_3">المعلم 3: النتيجة النهائية</string>
+    <string name="diy_storyboard_step">خطوة لوحة القصص %1$d من 10</string>
+
+    <!-- DIY Difficulty -->
+    <string name="diy_diff_easiest">الأسهل</string>
+    <string name="diy_diff_easy">سهل</string>
+    <string name="diy_diff_medium">متوسط</string>
+    <string name="diy_diff_hard">صعب</string>
+    <string name="diy_diff_hardest">الأصعب</string>
+
+    <!-- Quiz Levels -->
+    <string name="quiz_level_0">المروج المشمسة</string>
+    <string name="quiz_level_1">غابة الشوارب</string>
+    <string name="quiz_level_2">مسار بصمة المخلب</string>
+    <string name="quiz_level_3">زقاق ضوء القمر</string>
+    <string name="quiz_level_4">قمة الحارس</string>
+
+    <!-- Chat Actions -->
+    <string name="chat_send">إرسال</string>
+    <string name="chat_delete">حذف</string>
+
+    <string name="footer_label">تحدث باسم من لا صوت له</string>
+    <string name="footer_mission_text">ولدت مذكرات تايني باوز من وعد بسيط: التحدث نيابة عن كل قطة مفقودة أو شاردة لا تملك صوتاً. كل يوم، تعيش آلاف الأرواح الهادئة في الشوارع الباردة وحدها. نحن نؤمن أنه لا يوجد حيوان صغير جداً لدرجة لا تستحق الرعاية، ولا توجد قطة غير مهمة لدرجة لا تستحق الحماية.\n\nمن خلال توحيد مقدمي الرعاية المتعاطفين مع الأدلة التفاعلية، ومساعدي التغذية، وأدوات دعم الحي، نقوم بتحويل الشوارع إلى ملاذات آمنة ودافئة. شكراً لك على تقدمك، وإعارة صوتك، ومساعدتنا في كتابة قصة من الأمان والحب غير المحدود لرفاقنا من القطط. ❤️</string>
+    <string name="footer_app_name">🐾 مذكرات تايني باوز 🐾</string>
+    <string name="footer_thank_you">كل عمل طيب صغير يترك أثراً لجعل شوارعنا أكثر أماناً ودفئاً ولطفاً للقطط. شكراً لكونك راعياً لها!</string>
+
+    <string name="stray_title">دليل فرز القطط الشاردة 🐾</string>
+    <string name="stray_desc">إذا وجدت قطاً في الخارج، استخدم دليل الفرز هذا لضمان السلامة وتقديم يد العون.</string>
+    <string name="stray_critical_title">هام: ما الذي يجب ألا تطعمه للقطط!</string>
+    <string name="stray_critical_desc">لا يمكن لكبد وخلايا دم القطط معالجة الأطعمة البشرية. تجنب هذه المواد شديدة السمية تماماً:</string>
+
+    <string name="stray_toxic_1_name">البصل والثوم 🧄</string>
+    <string name="stray_toxic_1_desc">يدمر خلايا الدم الحمراء لدى القطط، مما يسبب فقر دم انحلالي قاتل.</string>
+    <string name="stray_toxic_2_name">الشوكولاتة والكافيين 🍫</string>
+    <string name="stray_toxic_2_desc">تحتوي على منشطات تسبب رعشات عضلية قاتلة، نوبات قلبية، وتشنجات.</string>
+    <string name="stray_toxic_3_name">العنب والزبيب 🍇</string>
+    <string name="stray_toxic_3_desc">يسبب فشلاً كلوياً حاداً ومفاجئاً في كل من القطط والكلاب.</string>
+    <string name="stray_toxic_4_name">حليب البقر (اللاكتوز) 🥛</string>
+    <string name="stray_toxic_4_desc">يسبب آلاماً معوية شديدة، انتفاخاً، وإسهالاً حاداً لأن القطط البالغة تفتقر إلى إنزيم اللاكتيز.</string>
+    <string name="stray_toxic_5_name">العجين النيئ 🍞</string>
+    <string name="stray_toxic_5_desc">ينتفخ داخل المعدة، مما يفرز إيثانولاً ساماً يسبب تسمم الكحول.</string>
+    <string name="stray_toxic_6_name">الكحول 🍺</string>
+    <string name="stray_toxic_6_desc">ملعقة واحدة كبيرة تسبب فشلاً دماغياً قاتلاً وضيقاً في التنفس.</string>
+
+    <string name="stray_protocol_title">بروتوكول التعامل الآمن</string>
+    <string name="stray_protocol_step_1_name">تقييم لغة الجسد 😾</string>
+    <string name="stray_protocol_step_1_desc">لا تمسك أبداً بقط يصدر فحيحاً أو يزمجر أو يرتجف. امنحه مساحة.</string>
+    <string name="stray_protocol_step_2_name">تحية مفاصل الأصابع 👧</string>
+    <string name="stray_protocol_step_2_desc">اجلس في مستوى منخفض، وتجنب التواصل البصري المباشر، ومد يدك ببطء ليدعك القط تشمه.</string>
+    <string name="stray_protocol_step_3_name">فخ الطعام 🍲</string>
+    <string name="stray_protocol_step_3_desc">ضع طعاماً رطباً ذا رائحة قوية داخل حامل آمن لقيادتهم إلى الأمان.</string>
+    <string name="stray_protocol_step_4_name">فحص الرقاقة الإلكترونية 🏥</string>
+    <string name="stray_protocol_step_4_desc">قد تكون القطط الشاردة الودودة حيوانات أليفة مفقودة. خذها إلى أي عيادة بيطرية لفحص الرقاقة مجاناً.</string>
+    <string name="stray_protocol_step_5_name">برنامج TNR للقطط البرية ✂️</string>
+    <string name="stray_protocol_step_5_desc">إذا كان القط خائفاً وغير اجتماعي، احترم منطقته وقم بجدولة عملية تعقيم عبر برنامج TNR.</string>
+
+    <!-- Quiz Section -->
+    <string name="quiz_welcome">أهلاً، %1$s! 👋</string>
+    <string name="quiz_welcome_default">أيها الراعي</string>
+    <string name="quiz_title">لعبة اختبار النمو</string>
+    <string name="quiz_reset_btn">إعادة تعيين اللعبة</string>
+    <string name="quiz_error_loading">خطأ في تحميل البيانات</string>
+    <string name="quiz_error_details">أسئلة الاختبار للمستوى %1$d غير متوفرة حالياً أو غير صالحة.</string>
+    <string name="quiz_question_progress">السؤال %1$d من %2$d</string>
+    <string name="quiz_correct_title">✨ إجابة صحيحة!</string>
+    <string name="quiz_wrong_title">❌ إجابة خاطئة</string>
+    <string name="quiz_next_btn">السؤال التالي ➡️</string>
+    <string name="quiz_finish_btn">إنهاء المستوى 🏁</string>
+    <string name="quiz_complete_title">🎉 اكتمل المستوى! 🎉</string>
+    <string name="quiz_score_msg">لقد سجلت %1$d من أصل %2$d إجابة صحيحة!</string>
+    <string name="quiz_guru_msg">🎖️ خبير قطط معتمد!</string>
+    <string name="quiz_effort_msg">❤️ جهد رائع! أعد اللعب في أي وقت للتدريب.</string>
+    <string name="quiz_advance_btn">الانتقال إلى المستوى %1$d 🚀</string>
+    <string name="quiz_jumping_msg">باب ينمو... ✨</string>
+    <string name="quiz_all_complete">🏆 لقد أكملت جميع المستويات الخمسة! أنت الآن مقدم رعاية خبير رسمي في تايني باوز! 👑</string>
+    <string name="quiz_reset_replay">إعادة التعيين واللعب من المستوى 1</string>
+
+    <!-- Quiz Level 0 Questions -->
+    <string name="quiz_q1_text">تعتبر القطط محترفة في القيلولة. كم ساعة تنام في اليوم؟ 😴</string>
+    <string-array name="quiz_q1_options">
+        <item>4-6 ساعات</item>
+        <item>8-10 ساعات</item>
+        <item>12-16 ساعة</item>
+        <item>تقريباً لا تنام</item>
+    </string-array>
+    <string name="quiz_q1_correct">نعم! 12-16 ساعة يومياً. القطط فعلاً تعتبر النوم هو النشاط الأساسي 🛌✨</string>
+    <string name="quiz_q1_wrong">لا، ولكن شكراً للمحاولة 😅 تنام القطط 12-16 ساعة يومياً. أبطال القيلولة بلا منازع.</string>
+
+    <string name="quiz_q2_text">هل يمكن للقطط أكل الشوكولاتة؟ 🍫</string>
+    <string-array name="quiz_q2_options">
+        <item>نعم، كافئهم بها!</item>
+        <item>لا. أبداً. إنها سامة.</item>
+        <item>الشوكولاتة الداكنة فقط</item>
+        <item>في أعياد الميلاد فقط</item>
+    </string-array>
+    <string name="quiz_q2_correct">صحيح 🚫🍫 الشوكولاتة سامة للقطط. ابعدها عنها تماماً.</string>
+    <string name="quiz_q2_wrong">خطأ كبير 🚫 الشوكولاتة سامة للقطط، بدون استثناءات، ولا حتى "قليلاً".</string>
+
+    <string name="quiz_q3_text">ماذا تسمى مجموعة من القطط؟ (هذه معلومة ممتعة فقط lol)</string>
+    <string-array name="quiz_q3_options">
+        <item>Squad (فريق)</item>
+        <item>Clowder (كلاودر)</item>
+        <item>Pounce (قفزة)</item>
+        <item>Meow-b (مواء)</item>
+    </string-array>
+    <string name="quiz_q3_correct">نعم، تسمى "clowder" 🐱🐱🐱 استخدم الكلمة لتبدو ذكياً في التجمعات.</string>
+    <string name="quiz_q3_wrong">قريب ولكنها تسمى "clowder" 🐱 كلمة أيقونية صراحة.</string>
+
+    <string name="quiz_q4_text">هل يجب أن تعطي قطة شاردة ماءً، أم طعاماً فقط؟</string>
+    <string-array name="quiz_q4_options">
+        <item>طعام فقط</item>
+        <item>ماء وطعام معاً 💧🍽️</item>
+        <item>ماء فقط</item>
+        <item>لا شيء، القطط تجد طعامها بنفسها</item>
+    </string-array>
+    <string name="quiz_q4_correct">صحيح! الماء لا يقل أهمية عن الطعام — الكثير من القطط تتجول وهي تعاني من الجفاف 💧</string>
+    <string name="quiz_q4_wrong">لا — الماء يهم بقدر الطعام. لا تتجاهله 💧</string>
+
+    <string name="quiz_q5_text">هل الحليب مفيد حقاً للقطط، رغم ما تقوله الرسوم المتحركة؟ 🥛</string>
+    <string-array name="quiz_q5_options">
+        <item>نعم، إنه عصير قطط أساسي</item>
+        <item>لا، معظم القطط تعاني من حساسية اللاكتوز</item>
+        <item>حليب الشوكولاتة فقط</item>
+        <item>الحليب الدافئ فقط</item>
+    </string-array>
+    <string name="quiz_q5_correct">صحيح — الرسوم المتحركة خدعتنا 😭 معظم القطط لا تستطيع هضم الحليب جيداً.</string>
+    <string name="quiz_q5_wrong">مفاجأة: معظم القطط تعاني من حساسية اللاكتوز. الرسوم المتحركة خدعتنا جميعاً 🥛😭</string>
+
+    <string name="toggle">تبديل</string>
+    <!-- DIY Categories -->
+    <string name="diy_cat_shelter">مأوى 🏡</string>
+    <string name="diy_cat_game">لعبة 🧶</string>
+    <string name="diy_cat_cozy">مريح 🛋️</string>
+    <string name="diy_cat_all_blueprint">📋 عرض المخطط الكامل بنظرة واحدة</string>
+    <string name="diy_blueprint_step">الخطوة %1$d</string>
+
+    <!-- DIY Projects Section Headers -->
+    <string name="diy_section_title">مشاريع يدوية ممتعة</string>
+    <string name="diy_section_desc">قم بتحسين البيئة المادية لقطتك وساعد قطط المجتمع على البقاء آمنة من خلال هذه الحرف القصصية. مرتبة من الأسهل إلى الأصعب، ومن الأقل إلى الأعلى تكلفة، ومن الأسرع إلى الأكثر استهلاكًا للوقت.</string>
+    <string name="diy_difficulty_easiest">الأسهل</string>
+    <string name="diy_difficulty_easy">سهل</string>
+    <string name="diy_difficulty_medium">متوسط</string>
+    <string name="diy_difficulty_hard">صعب</string>
+    <string name="diy_difficulty_hardest">الأصعب</string>
+
+    <!-- Creation Module -->
+    <string name="creation_title">استوديو الإبداع السحري</string>
+    <string name="creation_art_studio">استوديو فن القطط 🎨</string>
+    <string name="creation_music_studio">موسيقى هادئة 🎵</string>
+    <string name="creation_generate_btn">إنشاء إبداعي ✨</string>
+    <string name="creation_art_desc">صف فن القطة الذي تريد رؤيته! كن مبدعًا.</string>
+    <string name="creation_music_desc">ما هو نوع اللحن المهدئ الذي يجب أن ننشئه للقطط؟</string>
+    <string name="creation_art_placeholder">قطة زنجبيل لطيفة ترتدي بدلة فضاء في مجرة ​​من الخيوط...</string>
+    <string name="creation_music_placeholder">لحن بيانو ناعم مع أصوات خرخرة ومطر خفيف...</string>
+    <string name="creation_is_pro">تفاصيل عالية (موديل برو)</string>
+    <string name="creation_is_full_track">مسار كامل الطول (Lyria)</string>
+    <string name="creation_download_btn">تحميل العمل الفني 📥</string>
+    <string name="creation_generating">الذكاء الاصطناعي يصنع سحرك...</string>
+
+    <!-- Location Module -->
+    <string name="location_screen_title">الباحث عن المواقع القريبة</string>
+    <string name="location_live_search">📍 بحث حي عن الموقع</string>
+    <string name="location_search_desc">الوصول إلى العيادات القريبة ومستلزمات الحيوانات الأليفة والملاجئ. يتم فرز النتائج تلقائيًا من الأقرب إلى الأبعد بناءً على إحداثياتك.</string>
+    <string name="location_input_label">موقعك / عنوانك / إحداثياتك</string>
+    <string name="location_input_placeholder">على سبيل المثال، نيويورك، نيويورك أو إحداثيات GPS</string>
+    <string name="location_vets_btn">الأطباء البيطريون القريبون 🩺</string>
+    <string name="location_shops_btn">المتاجر القريبة 🛒</string>
+    <string name="location_shelters_btn">الملاجئ القريبة 🏡</string>
+    <string name="location_map_view">🗺️ عرض الخريطة الديناميكية</string>
+    <string name="location_take_me_there">خذني إلى هناك 🚀</string>
+    <string name="location_results_header">النتائج المكتشفة مرتبة حسب المسافة:</string>
+    <string name="location_no_results">لم يتم العثور على نتائج. اختر فئة أو أدخل عنوانًا أعلاه!</string>
+    <string name="location_distance_km">⚡ على بعد ~%1$.1f كم</string>
+    <string name="location_pin">🐾 الدبوس: %1$s</string>
+    <string name="location_coords">الإحداثيات: خط العرض %1$.4f، خط الطول %2$.4f</string>
+    <string name="location_back_home">العودة إلى الصفحة الرئيسية</string>
+    <string name="location_close_map">إغلاق الخريطة</string>
+
+    <!-- Game/Quiz Module -->
+    <string name="quiz_journey_title">رحلة نمو ليلي وبييب في 5 جزر</string>
+    <string name="quiz_journey_desc">اضغط على أي جزيرة للكشف عن لوحة قصة نموها</string>
+    <string name="quiz_level_prefix">المستوى %1$d</string>
+    <string name="quiz_island_num">الجزيرة %1$d: %2$s</string>
+    <string name="quiz_character_name">بييب</string>
+
+    <!-- Log History -->
+    <string name="log_history_empty">سجل النشاط فارغ</string>
+    <string name="log_notes_quiz">أكمل اختبار المستوى %1$d (النتيجة: %2$d/20)</string>
+    <string name="log_notes_art">تم إنشاء فن قطة مخصص باستخدام AI Studio</string>
+    <string name="log_notes_music">تم إنشاء مسار موسيقي مخصص للقطط باستخدام Lyria</string>
+
+    <!-- UI Components -->
+    <string name="nav_impact">التأثير</string>
+    <string name="nav_navigation">التنقل</string>
+    <string name="step_indicator">الخطوة %1$d من 2</string>
+
+</resources>

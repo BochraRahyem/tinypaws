@@ -1,0 +1,531 @@
+<resources>
+    <string name="app_name">Journal TinyPaws</string>
+    <string name="attribution_label_logic">Logique TinyPaws</string>
+    <string name="onboarding_title">Journal TinyPaws</string>
+    <string name="onboarding_desc">Un guide magique hors ligne et un sanctuaire pour soutenir et soigner nos amis félins.</string>
+    <string name="onboarding_question">Quel est votre nom, soigneur ?</string>
+    <string name="onboarding_placeholder">Entrez votre nom...</string>
+    <string name="onboarding_btn">Entrez doucement</string>
+    <string name="hi_user">Salut, %1$s ! 👋</string>
+    <string name="logout_content_description">Déconnexion</string>
+    <string name="dashboard_tagline">Prendre soin de nos amis les chats de la communauté, une patte à la fois.</string>
+    <string name="select_diary_room">CHOISISSEZ VOTRE SALLE DE JOURNAL</string>
+    <string name="nav_guide_title">J\'ai besoin d\'un guide 📖</string>
+    <string name="nav_guide_subtitle">Guides d\'adoption, prévention des maladies et protocoles de tri.</string>
+    <string name="nav_play_title">Je veux jouer 🎮</string>
+    <string name="nav_play_subtitle">5 niveaux de quiz sur les soins et la santé avec retour immédiat.</string>
+    <string name="nav_find_title">Où puis-je trouver ? 📍</string>
+    <string name="nav_find_subtitle">Cartes dynamiques des cliniques vétérinaires, magasins et refuges.</string>
+    <string name="nav_cook_title">Que dois-je cuisiner ? 🍳</string>
+    <string name="nav_cook_subtitle">Sélectionnez des ingrédients pour des repas sains ou explorez des recettes.</string>
+    <string name="nav_chat_title">Assistant TinyPaws 🐾</string>
+    <string name="nav_chat_subtitle">Posez n\'importe quelle question sur le soin des chats de la communauté.</string>
+    <string name="menu_language">Langue</string>
+    <string name="lang_en">Anglais 🇬🇧</string>
+    <string name="lang_ar">Arabe 🇸🇦</string>
+    <string name="lang_fr">Français 🇫🇷</string>
+    <string name="lang_es">Espagnol 🇪🇸</string>
+
+    <!-- Chat -->
+    <string name="chat_title">Assistant TinyPaws</string>
+    <string name="chat_placeholder">Demandez n\'importe quoi à votre meilleur ami sauveteur...</string>
+    <string name="chat_input_placeholder">Tapez une question...</string>
+    <string name="chat_clear">Effacer le chat</string>
+    <string name="chat_back">Retour</string>
+
+    <!-- Tracker -->
+    <string name="tracker_header">Suivi des soins communautaires</string>
+    <string name="tracker_rank_label">VOTRE RANG COMMUNAUTAIRE</string>
+    <string name="tracker_points_needed">%1$d points nécessaires pour atteindre %2$s</string>
+    <string name="tracker_hero_tier">Travail fantastique ! Vous avez atteint le rang légendaire de Héros !</string>
+    <string name="tracker_badges_label">VOS ADORABLES BADGES</string>
+    <string name="tracker_log_form_label">ENREGISTRER UNE ACTIVITÉ DE SOIN</string>
+    <string name="tracker_notes_placeholder">Ajouter des détails optionnels (ex: \'Vu un joli calicot près du parc\')</string>
+    <string name="tracker_add_btn">Ajouter au suivi (+%1$d)</string>
+    <string name="tracker_recent_entries">HISTORIQUE DES ACTIVITÉS RÉCENTES</string>
+    <string name="tracker_show_less">Afficher moins</string>
+    <string name="tracker_view_all">Voir tout (%1$d)</string>
+    <string name="tracker_reset_data">Réinitialiser les données de suivi</string>
+    <string name="tracker_activity_feed">🐟 Nourrir chat</string>
+    <string name="tracker_activity_water">💧 Eau</string>
+    <string name="tracker_activity_shelter">🏡 Abri</string>
+    <string name="tracker_activity_medical">🩺 Médical</string>
+    <string name="tracker_activity_socialize">🧸 Socialiser</string>
+    <string name="tracker_activity_donate">🎁 Donner</string>
+
+    <!-- Triage -->
+    <string name="triage_header">Avez-vous trouvé un chat ?</string>
+    <string name="triage_start_desc">Vous avez trouvé un chaton errant, perdu ou vulnérable ? Notre guide de tri interactif vous aide à faire des choix calmes et solidaires dans les premiers instants critiques.</string>
+    <string name="triage_start_btn">Démarrer le tri interactif 🐾</string>
+    <string name="triage_step_injury_title">Vérifier les blessures immédiates</string>
+    <string name="triage_step_injury_desc">Observez doucement le chat. Saigne-t-il, boite-t-il, a-t-il du mal à respirer ou montre-t-il des signes de douleur ?</string>
+    <string name="triage_injury_yes">Oui, blessé 🚨</string>
+    <string name="triage_injury_no">Pas de blessures 😊</string>
+    <string name="triage_cancel">Annuler le guide</string>
+    <string name="triage_step_age_title">Estimer l\'âge du chaton</string>
+    <string name="triage_step_age_desc">L\'âge dicte les besoins nutritionnels, thermiques et sociaux. Laquelle de ces descriptions correspond le mieux ?</string>
+    <string name="triage_age_baby">🍼 Minuscule chaton (0-4 semaines)</string>
+    <string name="triage_age_baby_desc">Yeux fermés, rampe lentement, pleure. Très fragile ; ne peut pas réguler sa chaleur ni manger de solides.</string>
+    <string name="triage_age_young">🐾 Jeune chaton (4-12 semaines)</string>
+    <string name="triage_age_young_desc">Joueur, court vite, a toutes ses dents. Actif, curieux, prêt pour la socialisation.</string>
+    <string name="triage_age_adult">🐈 Chat adulte (1+ an)</string>
+    <string name="triage_age_adult_desc">Taille adulte. Calme, méfiant ou très amical. Peut être un animal perdu.</string>
+
+    <!-- Footer -->
+    <string name="footer_mission_label">📢 PARLEZ POUR CEUX QUI N\'ONT PAS DE VOIX</string>
+    <string name="footer_mission_title">Notre mission sacrée 🐾</string>
+    <string name="footer_mission_desc">Le journal TinyPaws est né d\'une promesse simple : parler au nom de chaque chaton sans abri et chat errant qui ne peut pas parler pour lui-même. Chaque jour, des milliers d\'âmes silencieuses parcourent seules les rues froides. Nous croyons qu\'aucune patte n\'est trop petite pour qu\'on s\'en occupe, et qu\'aucun chaton n\'est trop insignifiant pour être protégé.\n\nEn unissant des soigneurs compatissants avec des guides interactifs, des assistants de nutrition et des outils de soutien de quartier, nous transformons activement les rues en sanctuaires sûrs et chaleureux. Merci de vous être manifesté, de prêter votre voix et de nous aider à co-écrire une histoire de sécurité et d\'amour sans bornes pour nos compagnons félins. ❤️</string>
+    <string name="footer_tagline">🐾 Journal TinyPaws 🐾</string>
+    <string name="footer_sub_tagline">Chaque petit acte de gentillesse rayonne vers l\'extérieur pour rendre nos rues plus sûres, plus chaleureuses et plus accueillantes pour les chats. Merci d\'être leur soigneur !</string>
+
+    <!-- Guide Module -->
+    <string name="guide_title">Guides de Lily &amp; Pip</string>
+    <string name="guide_welcome">Bienvenue dans la salle des guides ! Sélectionnez n\'importe quel module ci-dessous pour commencer votre voyage de soin utile avec Lily et Pip.</string>
+    <string name="guide_banner_title">Salle d\'histoires de Lily &amp; Pip</string>
+    <string name="guide_banner_desc">Suivez Lily et son chaton roux joueur Pip alors qu\'ils découvrent comment garder nos compagnons de jardin en sécurité, confortables et dynamiques !</string>
+    <string name="guide_back_menu">← Retour au menu des guides</string>
+    <string name="guide_diseases_title">Maladies 🦠</string>
+    <string name="guide_diseases_subtitle">Découvrez 5 maladies félines critiques, leurs symptômes et les étapes de prévention vitales.</string>
+    <string name="guide_adoption_title">Adoption 🏡</string>
+    <string name="guide_adoption_subtitle">Un guide chronologique en 6 étapes pour adopter des chats errants avec sécurité et amour.</string>
+    <string name="guide_diy_title">Projets DIY 🛠️</string>
+    <string name="guide_diy_subtitle">Abris isolés, jeux actifs et lits douillets. 10 étapes visuelles par projet !</string>
+    <string name="guide_cook_title">Que cuisiner ? 🍳</string>
+    <string name="guide_cook_subtitle">Sélectionnez des ingrédients frais pour créer des recettes personnalisées ou explorez la bibliothèque de recettes maison.</string>
+    <string name="guide_stray_title">Trouvé un chat errant ? 🐾</string>
+    <string name="guide_stray_subtitle">Protocoles de tri essentiels, engagement sécurisé et avertissements critiques sur la nourriture toxique.</string>
+    <string name="guide_diseases_header">5 maladies félines critiques</string>
+    <string name="guide_diseases_desc">Explorez les vecteurs de transmission, la reconnaissance des symptômes et les directives de soins préventifs avec nos détails visuels.</string>
+    <string name="guide_adoption_header">Calendrier du voyage d\'adoption en 6 étapes</string>
+    <string name="guide_adoption_desc">Adopter un chat errant est un processus réconfortant et progressif. Chaque étape contient des indices visuels et des jalons clés pour vous guider.</string>
+    <string name="guide_diy_header">Projets DIY amusants et faits main</string>
+    <string name="guide_diy_desc">Améliorez l\'environnement physique de votre chat et aidez les chats de la communauté à rester en sécurité avec ces bricolages.</string>
+    <string name="guide_diy_tab_shelter">Abri 🏡</string>
+    <string name="guide_diy_tab_game">Jeu 🧶</string>
+    <string name="guide_diy_tab_cozy">Douillet 🛋️</string>
+    <string name="guide_diy_start_story">Démarrer le storyboard 🎬</string>
+    <string name="guide_diy_back_list">← Retour à la liste des projets DIY</string>
+    <string name="guide_diy_requirements">📋 Exigences et matériaux</string>
+    <string name="guide_diy_storyboard">🎬 Guide du storyboard étape par étape</string>
+    <string name="guide_diy_milestone">Étape du storyboard %1$d sur 10</string>
+    <string name="guide_diy_generating">Génération de l\'étape %1$d...</string>
+    <string name="disease_spreads">🔗 Comment ça se propage :</string>
+    <string name="disease_recognition">🔍 Reconnaissance :</string>
+    <string name="disease_prevention">🛡️ Prévention et soins :</string>
+    <string name="hi_caregiver">Salut, %1$s ! 👋</string>
+    <string name="disease_prevention_guide">Guide de prévention des maladies</string>
+    <string name="adoption_journey_timeline">Calendrier du voyage d\'adoption</string>
+    <string name="diy_craft_center">Centre de bricolage DIY</string>
+    <string name="stray_triage_protocol">Protocole de tri des chats errants</string>
+    <string name="diy_craft_storyboard">Storyboard de bricolage DIY</string>
+    <string name="reset_game">Réinitialiser le jeu</string>
+    <string name="growth_quiz_game">Jeu de quiz sur la croissance</string>
+    <string name="data_loading_error">Erreur de chargement des données</string>
+    <string name="question_count">Question %1$d sur %2$d</string>
+    <string name="correct_answer">✨ Bonne réponse !</string>
+    <string name="incorrect_answer">❌ Mauvaise réponse</string>
+    <string name="next_question">Question suivante ➡️</string>
+    <string name="finish_level">Terminer le niveau 🏁</string>
+    <string name="level_complete">🎉 Niveau terminé ! 🎉</string>
+    <string name="score_text">Vous avez obtenu %1$d bonnes réponses sur %2$d !</string>
+    <string name="guru_badge">🎖️ Gourou certifié des chats !</string>
+    <string name="effort_badge">❤️ Magnifique effort ! Rejouez n\'importe quand pour vous entraîner.</string>
+    <string name="growing_text">Pip grandit... ✨</string>
+    <string name="advance_to_level">Passer au niveau %1$d 🚀</string>
+    <string name="expert_badge">🏆 Vous avez terminé les 5 niveaux ! Vous êtes maintenant un expert soigneur officiel TinyPaws ! 👑</string>
+    <string name="reset_replay">Réinitialiser et rejouer depuis le niveau 1</string>
+    <string name="growth_journey_title">Voyage de croissance de Lily &amp; Pip sur 5 îles</string>
+    <string name="tap_island_hint">Appuyez sur n\'importe quelle île pour révéler son storyboard de croissance</string>
+    <string name="island_label">Île %1$d : %2$s</string>
+
+    <!-- Plan Views -->
+    <string name="plan_emergency_title">🚨 Réponse d\'urgence recommandée</string>
+    <string name="plan_care_guide_title">📋 Guide de soins recommandé</string>
+    <string name="plan_emergency_intro">Gardez-les calmes, au chaud et transportez-les en toute sécurité :</string>
+    <string name="plan_emergency_step1_title">1. Placer dans une boîte chaude</string>
+    <string name="plan_emergency_step1_desc">Placez doucement le chat dans un transporteur en carton doublé d\'une couverture douce. Gardez la boîte dans une pièce sombre et calme.</string>
+    <string name="plan_emergency_step2_title">2. Rechercher des soins professionnels</string>
+    <string name="plan_emergency_step2_desc">Contactez immédiatement un hôpital vétérinaire d\'urgence ou un refuge local pour chats. Ils ont les outils spécialisés pour aider.</string>
+    <string name="plan_emergency_step3_title">3. Éviter de nourrir</string>
+    <string name="plan_emergency_step3_desc">Ne donnez pas de nourriture, d\'eau ou de médicaments (surtout les analgésiques humains, toxiques pour les chats) car cela complique l\'anesthésie ou le traitement.</string>
+
+    <string name="plan_baby_intro">Les chatons nouveau-nés (moins de 4 semaines) sont extrêmement fragiles :</string>
+    <string name="plan_baby_step1_title">1. Rechercher la mère</string>
+    <string name="plan_baby_step1_desc">Observez à distance (au moins 6 mètres) pendant 2 à 4 heures. La mère chat est leur meilleure chance de survie et pourrait être en train de chasser.</string>
+    <string name="plan_baby_step2_title">2. Fournir une chaleur douce</string>
+    <string name="plan_baby_step2_desc">Si elle ne revient pas, gardez-les au chaud ! Utilisez un coussin chauffant enveloppé dans des serviettes ou une bouillotte d\'eau chaude. Ne laissez jamais les chatons avoir froid.</string>
+    <string name="plan_baby_step3_title">3. Pas de lait de vache</string>
+    <string name="plan_baby_step3_desc">Le lait standard causera des problèmes digestifs mortels. Donnez uniquement du substitut de lait pour chatons (KMR) chaud avec une seringue sans aiguille ou un petit biberon.</string>
+    <string name="plan_baby_step4_title">4. Aider à l\'élimination</string>
+    <string name="plan_baby_step4_desc">Les très jeunes chatons ne peuvent pas faire leurs besoins seuls. Utilisez un coton chaud et humide pour frotter doucement le bas de leur abdomen après la tétée.</string>
+
+    <string name="plan_young_intro">La socialisation et une nutrition équilibrée sont essentielles pour les chatons de 4 à 12 semaines :</string>
+    <string name="plan_young_step1_title">1. Zone de quarantaine sûre</string>
+    <string name="plan_young_step1_desc">Aménagez un espace calme, fermé (comme une salle de bain) avec un petit bac à litière, de l\'eau fraîche et de la nourriture pour chatons riche en protéines.</string>
+    <string name="plan_young_step2_title">2. Établir la confiance et l\'amitié</string>
+    <string name="plan_young_step2_desc">Asseyez-vous tranquillement près d\'eux. Offrez de la nourriture humide savoureuse à la cuillère ou au doigt. Jouez doucement avec des rubans pour montrer que les humains sont sûrs et amusants.</string>
+    <string name="plan_young_step3_title">3. Jalons vétérinaires</string>
+    <string name="plan_young_step3_desc">Planifiez un examen vétérinaire pour le vermifuge, les premiers vaccins et les traitements antipuces professionnels.</string>
+    <string name="plan_young_step4_title">4. Adoption ou TNR</string>
+    <string name="plan_young_step4_desc">À 8-12 semaines, les chatons sont assez grands pour être stérilisés et adoptés. Contactez les refuges locaux pour un soutien en famille d\'accueil.</string>
+
+    <string name="plan_adult_intro">Pour un chat adulte, nous voulons exclure les animaux perdus et soutenir les chats de la communauté :</string>
+    <string name="plan_adult_step1_title">1. Rechercher une puce électronique</string>
+    <string name="plan_adult_step1_desc">S\'il est assez amical pour être manipulé, sécurisez-le et emmenez-le dans n\'importe quelle clinique vétérinaire ou refuge pour scanner une puce gratuitement.</string>
+    <string name="plan_adult_step2_title">2. Partager sur les réseaux pour animaux</string>
+    <string name="plan_adult_step2_desc">Prenez des photos claires et postez-les sur les forums de quartier. Accrochez des affiches pour les réunir avec leurs propriétaires potentiels.</string>
+    <string name="plan_adult_step3_title">3. Respecter les voisins sauvages</string>
+    <string name="plan_adult_step3_desc">Si le chat est terrifié ou agressif (sauvage), il vit probablement à l\'extérieur. Recherchez un programme local de Capture-Stérilisation-Retour (TNR).</string>
+    <string name="plan_adult_step4_title">4. Fournir un soutien extérieur</string>
+    <string name="plan_adult_step4_desc">Installez une station de nourriture sèche simple et un abri extérieur isolé pour les garder confortables pendant les saisons froides ou pluvieuses.</string>
+
+    <string name="plan_default_step1_title">1. Évaluer la sécurité d\'abord</string>
+    <string name="plan_default_step1_desc">Ne vous mettez jamais en danger de griffures ou de morsures.</string>
+    <string name="plan_default_step2_title">2. Fournir de la nourriture et de l\'eau fraîche</string>
+    <string name="plan_default_step2_desc">Maintenez-les en vie en attendant de l\'aide.</string>
+    <string name="plan_default_step3_title">3. Appeler un refuge local</string>
+    <string name="plan_default_step3_desc">Ils peuvent vérifier les puces et les signalements de disparition.</string>
+
+    <string name="triage_step_counter">ÉTAPE %1$d SUR 2</string>
+    <string name="triage_plan_header">VOTRE PLAN DE TRIAGE</string>
+    <string name="triage_completed_btn">Guide interactif terminé ! ✓</string>
+    <string name="back_btn">← Retour</string>
+    <string name="reset_btn">Réinitialiser</string>
+
+    <!-- Ranks -->
+    <string name="rank_kitten">Soigneur de chatons 🍼</string>
+    <string name="rank_feline">Ami des félins 🐾</string>
+    <string name="rank_champion">Champion des chats 🌟</string>
+    <string name="rank_hero">Héros TinyPaws 👑</string>
+    <string name="rank_max">Niveau maximum atteint !</string>
+
+    <!-- Badges -->
+    <string name="badge_first_steps_name">Premiers pas</string>
+    <string name="badge_first_steps_desc">Vous avez enregistré votre première activité de soin communautaire !</string>
+    <string name="badge_kind_feeder_name">Nourrisseur bienveillant</string>
+    <string name="badge_kind_feeder_desc">A nourri des chats errants affamés 3 fois ou plus.</string>
+    <string name="badge_master_builder_name">Maître constructeur</string>
+    <string name="badge_master_builder_desc">A construit un abri isolé pour garder les chats au chaud.</string>
+    <string name="badge_life_saver_name">Sauveur de vies</string>
+    <string name="badge_life_saver_desc">A aidé à sauver un chat et l\'a mis en sécurité.</string>
+    <string name="badge_health_guardian_name">Gardien de la santé</string>
+    <string name="badge_health_guardian_desc">A aidé un chat à obtenir des soins vétérinaires ou des examens.</string>
+    <string name="badge_hero_name">Héros TinyPaws</string>
+    <string name="badge_hero_desc">A gagné plus de 500 points d\'impact communautaire au total !</string>
+
+    <!-- Activity Names -->
+    <string name="activity_feed">A nourri un chat affamé</string>
+    <string name="activity_shelter">A construit un abri chaud</string>
+    <string name="activity_rescue">A aidé à sauver un chat</string>
+    <string name="activity_vet">A emmené un chat chez le vétérinaire</string>
+    <string name="activity_socialize">A réconforté et socialisé un chat</string>
+    <string name="activity_donate">A fait don de nourriture et de fournitures</string>
+    <string name="activity_quiz">Quiz terminé</string>
+    <string name="activity_art">Art félin IA créé</string>
+    <string name="activity_music">Musique féline IA générée</string>
+    <string name="activity_default">A pris soin d\'un ami félin</string>
+
+    <string name="guide_screen_diy">Centre de bricolage DIY</string>
+    <string name="guide_screen_diy_storyboard">Storyboard du projet DIY</string>
+    <string name="guide_screen_stray">Protocole de triage des chats errants</string>
+
+    <!-- Diseases Section -->
+    <string name="diseases_title">5 maladies félines critiques</string>
+    <string name="diseases_desc">Explorez les vecteurs de transmission, la reconnaissance des symptômes et les directives de soins préventifs avec nos détails visuels (représentés par des icônes de soutien spécifiques).</string>
+
+    <!-- Adoption Section -->
+    <string name="adoption_title">Chronologie du voyage d\'adoption en 6 étapes</string>
+    <string name="adoption_desc">Adopter un chat errant est un processus réconfortant et progressif. Chaque étape contient des indices visuels et des jalons clés pour vous guider.</string>
+
+    <!-- DIY Section -->
+    <string name="diy_title">Projets DIY faits à la main amusants</string>
+    <string name="diy_desc">Améliorez l\'environnement physique de votre minou et aidez les chats de la communauté à rester en sécurité avec ces bricolages. Organisés du plus facile au plus difficile, du coût le plus bas au plus élevé, et du plus rapide au plus long.</string>
+    <string name="diy_tab_shelter">Abri 🏡</string>
+    <string name="diy_tab_game">Jeu 🧶</string>
+    <string name="diy_tab_cozy">Douillet 🛋️</string>
+    <string name="diy_cost_label">Coût : %s</string>
+    <string name="diy_time_label">Temps : %s</string>
+    <string name="diy_start_storyboard">Démarrer le Storyboard 🎬</string>
+    <string name="diy_back_to_list">← Retour à la liste des projets DIY</string>
+    <string name="diy_requirements">📋 Exigences &amp; Matériaux</string>
+    <string name="diy_storyboard_guide">🎬 Guide Storyboard étape par étape</string>
+    <string name="diy_visual_guide">🎬 Guide visuel étape par étape</string>
+    <string name="diy_milestone_desc">Nous avons mis en évidence 3 jalons visuels clés pour votre projet. Suivez-les pour assurer une construction parfaite !</string>
+    <string name="diy_generating_milestone">Génération du jalon %d...</string>
+    <string name="diy_milestone_1">Jalon 1 : La fondation</string>
+    <string name="diy_milestone_2">Jalon 2 : Assemblage principal</string>
+    <string name="diy_milestone_3">Jalon 3 : Résultat final</string>
+    <string name="diy_storyboard_step">Étape du Storyboard %1$d sur 10</string>
+
+    <!-- DIY Difficulty -->
+    <string name="diy_diff_easiest">Le plus facile</string>
+    <string name="diy_diff_easy">Facile</string>
+    <string name="diy_diff_medium">Moyen</string>
+    <string name="diy_diff_hard">Difficile</string>
+    <string name="diy_diff_hardest">Le plus difficile</string>
+
+    <!-- Quiz Levels -->
+    <string name="quiz_level_0">Prairie Ensoleillée</string>
+    <string name="quiz_level_1">Bois des Moustaches</string>
+    <string name="quiz_level_2">Sentier des Empreintes</string>
+    <string name="quiz_level_3">Ruelle au Clair de Lune</string>
+    <string name="quiz_level_4">Pic du Gardien</string>
+
+    <!-- Chat Actions -->
+    <string name="chat_send">Envoyer</string>
+    <string name="chat_delete">Supprimer</string>
+
+    <string name="footer_app_name">🐾 Journal TinyPaws 🐾</string>
+    <string name="footer_label">PARLEZ POUR CEUX QUI N\'ONT PAS DE VOIX</string>
+    <string name="footer_mission_text">Le journal TinyPaws est né d\'une promesse simple : parler au nom de chaque chaton sans abri et chat errant qui ne peut pas parler pour lui-même. Chaque jour, des milliers d\'âmes silencieuses parcourent seules les rues froides. Nous croyons qu\'aucune patte n\'est trop petite pour qu\'on s\'en occupe, et qu\'aucun chaton n\'est trop insignifiant pour être protégé.\n\nEn unissant des soigneurs compatissants avec des guides interactifs, des assistants de nutrition et des outils de soutien de quartier, nous transformons activement les rues en sanctuaires sûrs et chaleureux. Merci de vous être manifesté, de prêter votre voix et de nous aider à co-écrire une histoire de sécurité et d\'amour sans bornes pour nos compagnons félins. ❤️</string>
+    <string name="footer_thank_you">Chaque petit acte de gentillesse rayonne vers l\'extérieur pour rendre nos rues plus sûres, plus chaleureuses et plus accueillantes pour les chats. Merci d\'être leur soigneur !</string>
+
+    <string name="disease_rabies_name">Rage 🦠</string>
+    <string name="disease_rabies_sub">Maladie virale mortelle affectant le système nerveux central.</string>
+    <string name="disease_rabies_spread">Se propage principalement par transfert de salive profonde, comme une morsure ou une griffure grave d\'un animal infecté (ex: chats errants non vaccinés).</string>
+    <string name="disease_rabies_recog">Changements de comportement aigus (agressivité soudaine ou peur), salivation excessive, paralysie de la mâchoire et perte de coordination.</string>
+    <string name="disease_rabies_prev">La vaccination annuelle obligatoire est préventive à 100%. En cas de griffure/morsure, lavez immédiatement au savon sous l\'eau courante et demandez des vaccins humains post-exposition.</string>
+
+    <string name="disease_toxo_name">Toxoplasmose 🔬</string>
+    <string name="disease_toxo_sub">Infection systémique causée par un parasite protozoaire microscopique.</string>
+    <string name="disease_toxo_spread">Les chats l\'attrapent en chassant des rongeurs infectés ou en mangeant de la viande crue. Les humains l\'attrapent par contact avec les excréments de chats infectés (litières).</string>
+    <string name="disease_toxo_recog">Souvent totalement silencieux. Les chats malades présentent léthargie, forte fièvre, difficultés respiratoires ou inflammation oculaire.</string>
+    <string name="disease_toxo_prev">Gardez les chats à l\'intérieur pour éviter la chasse ; donnez de la nourriture cuite. Les femmes enceintes doivent éviter de nettoyer les litières ou porter des gants et nettoyer quotidiennement.</string>
+
+    <string name="disease_csd_name">Maladie des griffes du chat 🐾</string>
+    <string name="disease_csd_sub">Infection bactérienne causée par Bartonella henselae.</string>
+    <string name="disease_csd_spread">Se transmet entre chats par les puces. Se propage aux humains par une griffure ou morsure contaminée par des déjections de puces portées sur les griffes.</string>
+    <string name="disease_csd_recog">Les chats ne montrent aucun symptôme extérieur. Chez l\'humain, une petite bosse rouge apparaît au site de la griffure, suivie d\'un gonflement douloureux des ganglions lymphatiques.</string>
+    <string name="disease_csd_prev">Utilisez mensuellement une prévention contre les puces approuvée par un vétérinaire. Évitez les jeux brutaux. Lavez immédiatement les griffures avec un savon antibactérien.</string>
+
+    <string name="disease_ringworm_name">Teigne 🍄</string>
+    <string name="disease_ringworm_sub">Infection fongique hautement contagieuse de la peau et des griffes (pas un ver !).</string>
+    <string name="disease_ringworm_spread">Se propage par contact cutané direct avec des animaux infectés, ou en touchant des couvertures, brosses ou sols contaminés contenant des spores fongiques.</string>
+    <string name="disease_ringworm_recog">Zones circulaires de perte de poils, peau rouge et squameuse, pellicules et pelage cassant. Démangeaisons intenses.</string>
+    <string name="disease_ringworm_prev">Isolez immédiatement les animaux infectés. Utilisez des traitements antifongiques topiques. Lavez la litière chaque semaine à l\'eau chaude avec de l\'eau de Javel.</string>
+
+    <string name="disease_pasteur_name">Pasteurellose 🦷</string>
+    <string name="disease_pasteur_sub">Infection bactérienne rapide trouvée naturellement dans la salive des chats.</string>
+    <string name="disease_pasteur_spread">Se propage instantanément par des plaies perforantes profondes dues à des morsures de chat, poussant les bactéries buccales profondément dans les tissus musculaires.</string>
+    <string name="disease_pasteur_recog">Douleur lancinante intense, gonflement aigu, chaleur et rougeur au site de la morsure en seulement 2 à 12 heures.</string>
+    <string name="disease_pasteur_prev">Toute morsure de chat est une urgence médicale ! Recherchez immédiatement des soins médicaux humains pour des antibiotiques préventifs.</string>
+
+    <string name="adopt_stage_1_name">Étape 1 : Observation &amp; Approche 🔍</string>
+    <string name="adopt_stage_1_sum">Observez le langage corporel du chat errant et son niveau de socialisation.</string>
+    <string-array name="adopt_stage_1_bullets">
+        <item>Observez à distance pour voir s\'il s\'agit de chats sauvages ou d\'animaux perdus amicaux.</item>
+        <item>Offrez des repas à heures fixes chaque jour pour établir des habitudes alimentaires locales.</item>
+        <item>Ne forcez pas le contact physique ; laissez Pip faire ses salutations douces pour qu\'il puisse vous sentir d\'abord.</item>
+    </string-array>
+
+    <string name="adopt_stage_2_name">Étape 2 : Premier examen vétérinaire 🩺</string>
+    <string name="adopt_stage_2_sum">Obtenez une confirmation vétérinaire officielle sur l\'état de santé avant toute introduction à la maison.</string>
+    <string-array name="adopt_stage_2_bullets">
+        <item>Vérifiez la présence de puces électroniques au cas où il s\'agirait d\'animaux perdus appartenant à quelqu\'un d\'autre.</item>
+        <item>Dépistez les virus critiques comme le FIV (Sida du chat) et le FeLV (Leucose féline).</item>
+        <item>Donnez les traitements standards contre les puces, les tiques et les vers.</item>
+    </string-array>
+
+    <string name="adopt_stage_3_name">Étape 3 : Quarantaine en chambre 🚪</string>
+    <string name="adopt_stage_3_sum">Créez un espace d\'isolement dédié et sûr pour éviter la contamination ou la panique.</string>
+    <string-array name="adopt_stage_3_bullets">
+        <item>Aménagez une pièce calme (ex: salle de bain) avec un lit douillet, une litière propre, de la nourriture et de l\'eau.</item>
+        <item>Laissez-le se détendre dans cette petite pièce pendant au moins 7 à 10 jours.</item>
+        <item>Visitez-le régulièrement pour parler doucement et offrir des friandises de haute valeur pour créer des liens positifs.</item>
+    </string-array>
+
+    <string name="adopt_stage_4_name">Étape 4 : Échange d\'odeurs 🧶</string>
+    <string name="adopt_stage_4_sum">Introduisez les odeurs en toute sécurité sous la porte fermée sans stress visuel.</string>
+    <string-array name="adopt_stage_4_bullets">
+        <item>Frottez une serviette propre sur le nouveau chat et placez-la près de la zone de repas de votre chat résident.</item>
+        <item>Échangez les jouets, les griffoirs et les litières entre les pièces.</item>
+        <item>Nourrissez les deux chats de part et d\'autre de la porte d\'isolement fermée pour associer leurs odeurs au plaisir de manger.</item>
+    </string-array>
+
+    <string name="adopt_stage_5_name">Étape 5 : Rencontres visuelles &amp; Liens 🤝</string>
+    <string name="adopt_stage_5_sum">Permettez des sessions visuelles progressives et supervisées avec une barrière protectrice.</string>
+    <string-array name="adopt_stage_5_bullets">
+        <item>Entrouvrez la porte en utilisant un arrêt de porte sécurisé ou une barrière en filet.</item>
+        <item>Faites de courtes sessions visuelles de 5 minutes tout en félicitant les deux chats avec des friandises.</item>
+        <item>En cas de feulements ou d\'oreilles aplaties, reculez calmement d\'un pas et réessayez demain.</item>
+    </string-array>
+
+    <string name="adopt_stage_6_name">Étape 6 : Soins à vie &amp; Stérilisation 💖</string>
+    <string name="adopt_stage_6_sum">Engagez-vous à des soins vétérinaires à vie, une nourriture de qualité et un amour inconditionnel.</string>
+    <string-array name="adopt_stage_6_bullets">
+        <item>Planifiez une chirurgie de stérilisation ou de castration pour stabiliser les hormones et prévenir la prolifération.</item>
+        <item>Fournissez des espaces verticaux, des étagères d\'escalade et des griffoirs pour éviter l\'anxiété intérieure.</item>
+        <item>Donnez des couvertures chaudes sans fin, des vaccins annuels et la garantie d\'un foyer sûr pour toujours.</item>
+    </string-array>
+
+    <string name="stray_title">Guide de tri des chats errants 🐾</string>
+    <string name="stray_desc">Si vous avez trouvé un minou à l\'extérieur, utilisez ce guide de tri pour établir la sécurité et apporter une main secourable.</string>
+    <string name="stray_critical_title">CRITIQUE : Ce qu\'il ne faut PAS donner à manger à un chat !</string>
+    <string name="stray_critical_desc">Le foie et les cellules sanguines d\'un chat ne peuvent pas traiter les aliments humains. Évitez entièrement ces articles hautement toxiques :</string>
+
+    <string name="stray_toxic_1_name">Oignon &amp; Ail 🧄</string>
+    <string name="stray_toxic_1_desc">Détruit les globules rouges félins, provoquant une anémie hémolytique mortelle.</string>
+    <string name="stray_toxic_2_name">Chocolat &amp; Caféine 🍫</string>
+    <string name="stray_toxic_2_desc">Contient des stimulants qui déclenchent des tremblements musculaires mortels, des crises cardiaques et des convulsions.</string>
+    <string name="stray_toxic_3_name">Raisins &amp; Raisins secs 🍇</string>
+    <string name="stray_toxic_3_desc">Provoque une insuffisance rénale aiguë et soudaine chez les chats et les chiens.</string>
+    <string name="stray_toxic_4_name">Lait de vache (Lactose) 🥛</string>
+    <string name="stray_toxic_4_desc">Provoque des douleurs intestinales intenses, des ballonnements et des diarrhées sévères car les chats adultes manquent de lactase.</string>
+    <string name="stray_toxic_5_name">Pâte crue 🍞</string>
+    <string name="stray_toxic_5_desc">Gonfle dans l\'estomac, libérant de l\'éthanol toxique qui provoque une intoxication alcoolique.</string>
+    <string name="stray_toxic_6_name">Alcool 🍺</string>
+    <string name="stray_toxic_6_desc">Une seule cuillère à soupe provoque une défaillance cérébrale mortelle et une dépression respiratoire.</string>
+
+    <string name="stray_protocol_title">Protocole d\'engagement sécurisé</string>
+    <string name="stray_protocol_step_1_name">Évaluer le langage corporel 😾</string>
+    <string name="stray_protocol_step_1_desc">N\'attrapez jamais un chat qui feule, grogne ou tremble. Laissez-lui de l\'espace.</string>
+    <string name="stray_protocol_step_2_name">Salutation des articulations 👧</string>
+    <string name="stray_protocol_step_2_desc">Asseyez-vous bas, évitez le contact visuel et tendez la main lentement pour les laisser vous sentir.</string>
+    <string name="stray_protocol_step_3_name">Piège à nourriture 🍲</string>
+    <string name="stray_protocol_step_3_desc">Placez de la nourriture humide odorante dans un transporteur sécurisé pour les mener vers la sécurité.</string>
+    <string name="stray_protocol_step_4_name">Scanner pour une puce 🏥</string>
+    <string name="stray_protocol_step_4_desc">Les chats errants amicaux peuvent être des animaux perdus. Emmenez-les chez un vétérinaire pour scanner leur puce gratuitement.</string>
+    <string name="stray_protocol_step_5_name">Stérilisation pour les chats sauvages ✂️</string>
+    <string name="stray_protocol_step_5_desc">Si le chat est craintif et non socialisé, respectez son territoire et planifiez une chirurgie de stérilisation via le TNR.</string>
+
+    <!-- Quiz Section -->
+    <string name="quiz_welcome">Salut, %1$s ! 👋</string>
+    <string name="quiz_welcome_default">Soigneur</string>
+    <string name="quiz_title">Jeu de quiz sur la croissance</string>
+    <string name="quiz_reset_btn">Réinitialiser le jeu</string>
+    <string name="quiz_error_loading">Erreur de chargement des données</string>
+    <string name="quiz_error_details">Les questions du quiz pour le niveau %1$d sont actuellement indisponibles ou invalides.</string>
+    <string name="quiz_question_progress">Question %1$d sur %2$d</string>
+    <string name="quiz_correct_title">✨ Bonne réponse !</string>
+    <string name="quiz_wrong_title">❌ Mauvaise réponse</string>
+    <string name="quiz_next_btn">Question suivante ➡️</string>
+    <string name="quiz_finish_btn">Terminer le niveau 🏁</string>
+    <string name="quiz_complete_title">🎉 Niveau terminé ! 🎉</string>
+    <string name="quiz_score_msg">Vous avez obtenu %1$d bonnes réponses sur %2$d !</string>
+    <string name="quiz_guru_msg">🎖️ Gourou certifié des chats !</string>
+    <string name="quiz_effort_msg">❤️ Magnifique effort ! Rejouez n\'importe quand pour vous entraîner.</string>
+    <string name="quiz_advance_btn">Passer au niveau %1$d 🚀</string>
+    <string name="quiz_jumping_msg">Pip grandit... ✨</string>
+    <string name="quiz_all_complete">🏆 Vous avez terminé les 5 niveaux ! Vous êtes maintenant un expert soigneur officiel TinyPaws ! 👑</string>
+    <string name="quiz_reset_replay">Réinitialiser et rejouer depuis le niveau 1</string>
+
+    <!-- Quiz Level 0 Questions -->
+    <string name="quiz_q1_text">Les chats sont des siesteurs professionnels. Combien d\'heures par jour dorment-ils ? 😴</string>
+    <string-array name="quiz_q1_options">
+        <item>4-6 h</item>
+        <item>8-10 h</item>
+        <item>12-16 h</item>
+        <item>pratiquement jamais</item>
+    </string-array>
+    <string name="quiz_q1_correct">Ouaip ! 12-16 h par jour. Les chats ont vraiment dit \'le sommeil est le personnage principal\' 🛌✨</string>
+    <string name="quiz_q1_wrong">Non, mais je respecte la tentative 😅 Les chats dorment 12-16 h par jour. Champions absolus de la sieste.</string>
+
+    <string name="quiz_q2_text">Les chats peuvent-ils manger du chocolat ? 🍫</string>
+    <string-array name="quiz_q2_options">
+        <item>Oui, pour les récompenser !</item>
+        <item>NON. Jamais. C\'est toxique.</item>
+        <item>Seulement le chocolat noir</item>
+        <item>Uniquement pour les anniversaires</item>
+    </string-array>
+    <string name="quiz_q2_correct">Correct 🚫🍫 Le chocolat est toxique pour les chats. Gardez-le très loin d\'eux.</string>
+    <string name="quiz_q2_wrong">Gros non 🚫 Le chocolat est toxique pour les chats, sans exception, pas même \'juste un petit peu\'.</string>
+
+    <string name="quiz_q3_text">Comment appelle-t-on un groupe de chats ? (c\'est juste pour le plaisir lol)</string>
+    <string-array name="quiz_q3_options">
+        <item>Un squad</item>
+        <item>Un clowder</item>
+        <item>Un pounce</item>
+        <item>Un meow-b</item>
+    </string-array>
+    <string name="quiz_q3_correct">Ouiii, un \'clowder\' 🐱🐱🐱 utilisez-le pour briller en société.</string>
+    <string name="quiz_q3_wrong">Proche dans l\'esprit mais c\'est en fait un \'clowder\' 🐱 mot iconique pour être honnête.</string>
+
+    <string name="quiz_q4_text">Faut-il donner de l\'eau à un chat errant, ou juste de la nourriture ?</string>
+    <string-array name="quiz_q4_options">
+        <item>Juste de la nourriture</item>
+        <item>De l\'eau ET de la nourriture 💧🍽️</item>
+        <item>Juste de l\'eau</item>
+        <item>Ni l\'un ni l\'autre, les chats se débrouillent</item>
+    </string-array>
+    <string name="quiz_q4_correct">Correct ! L\'eau est honnêtement tout aussi importante — beaucoup de chats se promènent en étant discrètement déshydratés 💧</string>
+    <string name="quiz_q4_wrong">Non — l\'eau compte tout autant que la nourriture. Ne l\'oubliez pas 💧</string>
+
+    <string name="quiz_q5_text">Le lait est-il vraiment bon pour les chats, malgré ce que disent les dessins animés ? 🥛</string>
+    <string-array name="quiz_q5_options">
+        <item>Oui, c\'est comme du jus de chat</item>
+        <item>Non, la plupart des chats sont intolérants au lactose</item>
+        <item>Seulement le lait au chocolat</item>
+        <item>Seulement le lait chaud</item>
+    </string-array>
+    <string name="quiz_q5_correct">Correct — les dessins animés nous ont menti 😭 La plupart des chats ne digèrent pas bien le lait.</string>
+    <string name="quiz_q5_wrong">Plot twist : la plupart des chats sont intolérants au lactose. Les dessins animés nous ont arnaqués 🥛😭</string>
+
+    <string name="toggle">Basculer</string>
+    <!-- DIY Categories -->
+    <string name="diy_cat_shelter">Abri 🏡</string>
+    <string name="diy_cat_game">Jeu 🧶</string>
+    <string name="diy_cat_cozy">Confortable 🛋️</string>
+    <string name="diy_cat_all_blueprint">📋 Voir le plan complet d\'un coup d\'œil</string>
+    <string name="diy_blueprint_step">ÉTAPE %1$d</string>
+
+    <!-- DIY Projects Section Headers -->
+    <string name="diy_section_title">Projets de bricolage faits à la main</string>
+    <string name="diy_section_desc">Améliorez l\'environnement physique de votre chat et aidez les chats de la communauté à rester en sécurité grâce à ces bricolages. Organisés du plus facile au plus difficile, du coût le plus bas au plus élevé, et du plus rapide au plus long.</string>
+    <string name="diy_difficulty_easiest">Très facile</string>
+    <string name="diy_difficulty_easy">Facile</string>
+    <string name="diy_difficulty_medium">Moyen</string>
+    <string name="diy_difficulty_hard">Difficile</string>
+    <string name="diy_difficulty_hardest">Très difficile</string>
+
+    <!-- Creation Module -->
+    <string name="creation_title">Studio de création magique</string>
+    <string name="creation_art_studio">Studio d\'art félin 🎨</string>
+    <string name="creation_music_studio">Musique apaisante 🎵</string>
+    <string name="creation_generate_btn">Générer ma création ✨</string>
+    <string name="creation_art_desc">Décrivez l\'art félin que vous voulez voir ! Soyez créatif.</string>
+    <string name="creation_music_desc">Quel genre de mélodie apaisante devrions-nous générer pour les chatons ?</string>
+    <string name="creation_art_placeholder">Un mignon chat roux portant une combinaison spatiale dans une galaxie de fil...</string>
+    <string name="creation_music_placeholder">Mélodie douce au piano avec des ronronnements et une pluie fine...</string>
+    <string name="creation_is_pro">Détails élevés (Modèle Pro)</string>
+    <string name="creation_is_full_track">Piste complète (Lyria)</string>
+    <string name="creation_download_btn">Télécharger l\'œuvre 📥</string>
+    <string name="creation_generating">L\'IA crée votre magie...</string>
+
+    <!-- Location Module -->
+    <string name="location_screen_title">Localisateur de proximité</string>
+    <string name="location_live_search">📍 Recherche de position en direct</string>
+    <string name="location_search_desc">Accès aux cliniques, fournitures pour animaux et abris à proximité. Les résultats sont automatiquement triés du plus proche au plus lointain en fonction de vos coordonnées.</string>
+    <string name="location_input_label">Votre emplacement / Adresse / Coordonnées</string>
+    <string name="location_input_placeholder">ex: Paris, France ou coordonnées GPS</string>
+    <string name="location_vets_btn">Vétérinaires à proximité 🩺</string>
+    <string name="location_shops_btn">Magasins à proximité 🛒</string>
+    <string name="location_shelters_btn">Abris à proximité 🏡</string>
+    <string name="location_map_view">🗺️ Vue cartographique dynamique</string>
+    <string name="location_take_me_there">Emmène-moi là-bas 🚀</string>
+    <string name="location_results_header">Résultats découverts triés par distance :</string>
+    <string name="location_no_results">Aucun résultat trouvé. Sélectionnez une catégorie ou saisissez une adresse ci-dessus !</string>
+    <string name="location_distance_km">⚡ ~%1$.1f km</string>
+    <string name="location_pin">🐾 PIN : %1$s</string>
+    <string name="location_coords">Coordonnées : Lat %1$.4f, Lng %2$.4f</string>
+    <string name="location_back_home">Retour à l\'accueil</string>
+    <string name="location_close_map">Fermer la carte</string>
+
+    <!-- Game/Quiz Module -->
+    <string name="quiz_journey_title">Le voyage de croissance de Lily &amp; Pip en 5 îles</string>
+    <string name="quiz_journey_desc">Appuyez sur n\'importe quelle île pour révéler son histoire de croissance</string>
+    <string name="quiz_level_prefix">Niv %1$d</string>
+    <string name="quiz_island_num">Île %1$d : %2$s</string>
+    <string name="quiz_character_name">Pip</string>
+
+    <!-- Log History -->
+    <string name="log_history_empty">Historique des journaux vide</string>
+    <string name="log_notes_quiz">Test du niveau %1$d terminé (Score : %2$d/20)</string>
+    <string name="log_notes_art">Art félin personnalisé généré avec AI Studio</string>
+    <string name="log_notes_music">Piste d\'ambiance pour chatons générée avec Lyria</string>
+
+    <!-- UI Components -->
+    <string name="nav_impact">Impact</string>
+    <string name="nav_navigation">Navigation</string>
+    <string name="step_indicator">ÉTAPE %1$d SUR 2</string>
+
+</resources>

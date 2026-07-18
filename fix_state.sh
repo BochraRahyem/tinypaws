@@ -1,0 +1,1 @@
+sed -i '100a\    var isJumping by remember { mutableStateOf(false) }\n    var targetIslandIndex by remember { mutableStateOf(safeLevelIndex) }\n    var animationProgress by remember { mutableFloatStateOf(0f) }\n' app/src/main/java/com/example/ui/GameModule.kt
