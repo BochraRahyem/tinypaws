@@ -45,7 +45,9 @@ import androidx.core.os.LocaleListCompat
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.platform.testTag
 import kotlinx.coroutines.launch
-import androidx.compose.ui.res.stringResource
+import com.example.ui.stringResource
+import com.example.ui.LocalLanguage
+import com.example.ui.FeedingStationsScreen
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,14 +59,23 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.AppDatabase
 import com.example.data.LogEntry
 import com.example.data.LogRepository
+import com.example.data.StrayReportRepository
+import com.example.data.CatRepository
 import com.example.ui.Badge
 import com.example.ui.TinyPawsViewModel
 import com.example.ui.TinyPawsViewModelFactory
 import com.example.ui.TrackerUiState
 import com.example.ui.GuideModuleScreen
+import com.example.ui.TinyPawsIntroSequence
+import com.example.ui.CatsNearMeScreen
 import com.example.ui.GameModuleScreen
 import com.example.ui.LocationModuleScreen
 import com.example.ui.CreationModuleScreen
+import com.example.ui.CookModuleScreen
+import com.example.ui.MyCatScreen
+import com.example.ui.MyCatHubScreen
+import com.example.ui.ReminderScreen
+import com.example.ui.CertificateScreen
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -96,10 +107,28 @@ class MainActivity : AppCompatActivity() {
         // Initialize Room Database & Repository
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = LogRepository(database.logDao(), database.favoriteDao())
+        val strayRepository = StrayReportRepository(database.strayReportDao())
+        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao())
         
         // Instantiate ViewModel
         val viewModel: TinyPawsViewModel by viewModels {
-            TinyPawsViewModelFactory(repository)
+            TinyPawsViewModelFactory(application, repository, strayRepository, catRepository)
+        }
+
+        // Schedule periodic background weather alerts using WorkManager
+        com.example.worker.WeatherAlertWorker.schedulePeriodicWeatherCheck(applicationContext)
+
+        // Request POST_NOTIFICATIONS permission on Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+
+        // Request location permissions on startup, just like notification permission
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED &&
+            androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), 102)
         }
 
         // Load existing onboarded name and language
@@ -135,6 +164,9 @@ class MainActivity : AppCompatActivity() {
         val savedDarkMode = sharedPrefs.getBoolean("user_dark_mode", false)
         viewModel.setDarkMode(savedDarkMode)
         
+        val savedExtremeWeather = sharedPrefs.getBoolean("extreme_weather_notifications", false)
+        viewModel.setExtremeWeatherNotify(savedExtremeWeather)
+        
         // Ensure AppCompatDelegate has the right locale on startup
         if (AppCompatDelegate.getApplicationLocales().isEmpty) {
             val appLocale = LocaleListCompat.forLanguageTags(savedLang)
@@ -145,9 +177,7 @@ class MainActivity : AppCompatActivity() {
             val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
             MyApplicationTheme(darkTheme = isDarkMode) {
                 val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
-                val layoutDirection = if (currentLang == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr
-
-                CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                ThemeProvider(currentLanguage = currentLang) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         containerColor = PastelBlueBg
@@ -169,6 +199,7 @@ class MainActivity : AppCompatActivity() {
                                 viewModel.updateOnboardedName("")
                                 viewModel.resetTriage()
                                 viewModel.resetGameProgress()
+
                             },
                             modifier = Modifier
                                 .fillMaxSize()
@@ -192,6 +223,7 @@ fun TinyPawsMainContainer(
     val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
     val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
     val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+    val isExtremeWeatherNotify by viewModel.isExtremeWeatherNotify.collectAsStateWithLifecycle()
     var currentScreen by remember { mutableStateOf("dashboard") } // "dashboard", "guide", "play", "find", "cook", "chat"
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -201,7 +233,16 @@ fun TinyPawsMainContainer(
     val context = androidx.compose.ui.platform.LocalContext.current
     val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE) }
 
-    if (onboardedName.isEmpty()) {
+    var hasSeenIntro by remember { mutableStateOf(sharedPrefs.getBoolean("has_seen_intro", false)) }
+
+    if (!hasSeenIntro) {
+        TinyPawsIntroSequence(
+            onComplete = {
+                sharedPrefs.edit().putBoolean("has_seen_intro", true).apply()
+                hasSeenIntro = true
+            }
+        )
+    } else if (onboardedName.isEmpty()) {
         OnboardingStartupScreen(onStepIn = onSaveName)
     } else {
         ModalNavigationDrawer(
@@ -253,7 +294,7 @@ fun TinyPawsMainContainer(
                                     ) 
                                 },
                                 selected = isSelected,
-                                onClick = {
+                                onClick = com.example.ui.theme.rememberHapticOnClick { 
                                     onLanguageChange(code)
                                     scope.launch { drawerState.close() }
                                 },
@@ -270,49 +311,37 @@ fun TinyPawsMainContainer(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            "Settings",
-                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                color = DeepBurgundy
-                            )
-                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 24.dp),
                             thickness = 1.dp,
                             color = Mauve.copy(alpha = 0.5f)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
+                        NavigationDrawerItem(
+                            label = { 
+                                Text(
+                                    text = stringResource(R.string.main_settings),
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                ) 
+                            },
+                            selected = currentScreen == "settings",
+                            onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                currentScreen = "settings"
+                                scope.launch { drawerState.close() }
+                            },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 32.dp, vertical = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                "Dark Mode",
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = Ink
-                                )
+                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                .height(56.dp)
+                                .testTag("drawer_settings_item"),
+                            shape = CircleShape,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = DeepBurgundy,
+                                unselectedContainerColor = BlushPink.copy(alpha = 0.25f),
+                                selectedTextColor = Cream,
+                                unselectedTextColor = Ink
                             )
-                            Switch(
-                                checked = isDarkMode,
-                                onCheckedChange = { dark -> 
-                                    sharedPrefs.edit().putBoolean("dark_mode", dark).apply()
-                                    viewModel.setDarkMode(dark)
-                                },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Cream,
-                                    checkedTrackColor = Wine
-                                )
-                            )
-                        }
-
+                        )
                     }
                 }
             }
@@ -327,13 +356,40 @@ fun TinyPawsMainContainer(
                         onMenuClick = { scope.launch { drawerState.open() } },
                         modifier = modifier
                     )
+                "my_cat_hub" -> MyCatHubScreen(
+                    onNavigate = { currentScreen = it },
+                    onBack = { currentScreen = "dashboard" },
+                    modifier = modifier
+                )
+                "my_cat_profile" -> MyCatScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
                 "guide" -> GuideModuleScreen(
                     viewModel = viewModel,
                     userName = onboardedName,
                     onBack = { currentScreen = "dashboard" },
+                    onNavigateToWeather = { currentScreen = "weather" },
+                    modifier = modifier
+                )
+                "weather" -> com.example.ui.WeatherAppScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" },
                     modifier = modifier
                 )
                 "play" -> GameModuleScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" },
+                    onClaimCertificate = { currentScreen = "certificate" },
+                    modifier = modifier
+                )
+                "cats_near_me" -> CatsNearMeScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" },
+                    modifier = modifier
+                )
+                "feeding_stations" -> FeedingStationsScreen(
                     viewModel = viewModel,
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
@@ -343,12 +399,28 @@ fun TinyPawsMainContainer(
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
                 )
-                "cook" -> CreationModuleScreen(
+                "cook" -> CookModuleScreen(
                     viewModel = viewModel,
+                    userName = onboardedName,
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
                 )
                 "chat" -> TinyPawsHelperScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" },
+                    modifier = modifier
+                )
+                "reminders" -> ReminderScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" },
+                    modifier = modifier
+                )
+                "certificate" -> CertificateScreen(
+                    userName = onboardedName,
+                    onClose = { currentScreen = "play" },
+                    modifier = modifier
+                )
+                "settings" -> com.example.ui.SettingsScreen(
                     viewModel = viewModel,
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
@@ -447,7 +519,7 @@ fun OnboardingStartupScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    onClick = {
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
                         if (nameInput.trim().isNotEmpty()) {
                             onStepIn(nameInput.trim())
                         }
@@ -493,45 +565,343 @@ fun TinyPawsDashboard(
 
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
-            .padding(bottom = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("chat") },
+                containerColor = DeepBurgundy,
+                contentColor = Cream,
+                shape = CircleShape
+            ) {
+                Text("🐾", fontSize = 24.sp)
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = modifier
+                .verticalScroll(scrollState)
+                .padding(padding)
+                .padding(bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // 1. Hero Header Banner
+            HeroHeader(streakCount = streakCount, userName = userName, onLogout = onLogout, onMenuClick = onMenuClick)
+
+            // Tip of the Day (top)
+            TipOfTheDayCard()
+
+            // Section 1: Choose your diary room
+            Text(
+                text = stringResource(R.string.diary_room_title),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = TextMuted,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            NavigationGridSection(onNavigate = onNavigate)
+
+            // Section 2: Help a stray cat
+            Text(
+                text = stringResource(R.string.help_stray_title),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = TextMuted,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            
+            // Cats Near Me
+            NavigationCard(
+                title = stringResource(R.string.nav_cats_near_me_title),
+                subtitle = stringResource(R.string.cats_near_me_subtitle),
+                backgroundColor = Color(0xFFE8F5E9), // Soft green
+                accentColor = Color(0xFF2E7D32),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onClick = com.example.ui.theme.rememberHapticOnClick { 
+                    viewModel.updateCatsNearMeTab("browse")
+                    onNavigate("cats_near_me")
+                }
+            )
+
+            // Heatwave & Extreme Weather Alert Tracker
+            NavigationCard(
+                title = "🔥 Heatwave & Weather Tracker",
+                subtitle = "7-day temperature warnings (>35°C red, <15°C blue) for cat safety.",
+                backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
+                accentColor = Color(0xFFD32F2F), // Red
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                onClick = com.example.ui.theme.rememberHapticOnClick { 
+                    onNavigate("weather")
+                }
+            )
+
+            // Feeding Stations
+            NavigationCard(
+                title = stringResource(R.string.nav_feeding_stations_title),
+                subtitle = stringResource(R.string.feeding_stations_subtitle),
+                backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
+                accentColor = Color(0xFFE65100), // Deep orange
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                onClick = com.example.ui.theme.rememberHapticOnClick { 
+                    onNavigate("feeding_stations")
+                }
+            )
+            
+            // Did You Find a Cat? (Interactive Triage Guide)
+            TriageGuideCard(
+                step = triageStep,
+                hasInjuries = hasInjuries,
+                catAgeGroup = catAgeGroup,
+                onStart = { viewModel.startTriage() },
+                onSelectInjuries = { viewModel.selectInjuries(it) },
+                onSelectAge = { viewModel.selectAgeGroup(it) },
+                onReset = { viewModel.resetTriage() }
+            )
+            
+            // Community Care Tracker
+            CommunityImpactTrackerCard(
+                state = trackerState,
+                onLogActivity = { type, notes -> viewModel.logActivity(type, notes) },
+                onDeleteLog = { id -> viewModel.deleteLog(id) },
+                onClearLogs = { viewModel.clearAllLogs() }
+            )
+
+            // Section 3: My Kitty's Corner
+            Text(
+                text = stringResource(R.string.main_my_kitty_corner),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = TextMuted,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+            )
+            
+            SurpriseMeSection(
+                viewModel = viewModel,
+                onNavigate = onNavigate
+            )
+            
+            // About Section
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .glassyCard(shape = RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.main_about_title),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = DeepBurgundy
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.main_about_desc),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontFamily = QuicksandFontFamily,
+                            color = Ink.copy(alpha = 0.8f)
+                        )
+                    )
+                }
+            }
+
+            // 5. Friendly Footer
+            FooterSection()
+        }
+    }
+}
+@Composable
+fun TipOfTheDayCard() {
+
+    val facts = androidx.compose.ui.res.stringArrayResource(id = R.array.cat_facts)
+    val fact = remember { facts.random() }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        colors = CardDefaults.cardColors(containerColor = BlushPink.copy(alpha = 0.3f)),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        // 1. Hero Header Banner
-        HeroHeader(streakCount = streakCount, userName = userName, onLogout = onLogout, onMenuClick = onMenuClick)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.tip_of_day_title), fontFamily = FrauncesFontFamily, fontWeight = FontWeight.Bold, color = DeepBurgundy)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(fact, fontFamily = QuicksandFontFamily, color = Ink)
+        }
+    }
+}
+@Composable
+fun SurpriseMeSection(
+    viewModel: TinyPawsViewModel,
+    onNavigate: (String) -> Unit
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE) }
 
-        // 2. 4 Large, Inviting Sub-Module Navigation Buttons
-        NavigationGridSection(onNavigate = onNavigate)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .glassyCard(shape = RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.main_discover_title),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontFamily = FrauncesFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = DeepBurgundy
+                    )
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = stringResource(R.string.main_discover_desc),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontFamily = QuicksandFontFamily,
+                        color = Ink.copy(alpha = 0.8f)
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Button(
+                onClick = com.example.ui.theme.rememberHapticOnClick { 
+                    val result = viewModel.selectRandomSurprise(sharedPrefs)
+                    val tab = result.first
+                    val projectId = result.second
+                    viewModel.updateActiveGuideTab(tab)
+                    viewModel.updateActiveDiyProject(projectId)
+                    onNavigate("guide")
+                },
+                modifier = Modifier
+                    .size(48.dp)
+                    .testTag("surprise_me_btn"),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DeepBurgundy,
+                    contentColor = Cream
+                ),
+                shape = CircleShape,
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Icon(Icons.Default.Star, contentDescription = "Surprise Me")
+            }
+        }
+    }
+}
 
-        // 3. Interactive Triage Guide Card (Preserved Core Action)
-        TipOfTheDayCard()
+@Composable
+fun CatsNearMeDashboardSection(
+    viewModel: TinyPawsViewModel,
+    onNavigate: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .glassyCard(shape = RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.main_cats_near_me_title),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontFamily = FrauncesFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = DeepBurgundy
+                )
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = stringResource(R.string.main_cats_near_me_desc),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontFamily = QuicksandFontFamily,
+                    color = Ink.copy(alpha = 0.8f)
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Button 1: Report Sighting (Oval)
+                Button(
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        viewModel.updateCatsNearMeTab("report")
+                        onNavigate("cats_near_me")
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .testTag("home_report_stray_btn"),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DeepBurgundy,
+                        contentColor = Cream
+                    ),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = stringResource(R.string.main_report_stray),
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = QuicksandFontFamily,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
-        TriageGuideCard(
-            step = triageStep,
-            hasInjuries = hasInjuries,
-            catAgeGroup = catAgeGroup,
-            onStart = { viewModel.startTriage() },
-            onSelectInjuries = { viewModel.selectInjuries(it) },
-            onSelectAge = { viewModel.selectAgeGroup(it) },
-            onReset = { viewModel.resetTriage() }
-        )
-
-        // Tip of the Day
-        TipOfTheDayCard()
-
-        // 4. Community Impact Tracker (Preserved Gamification)
-        CommunityImpactTrackerCard(
-            state = trackerState,
-            onLogActivity = { type, notes -> viewModel.logActivity(type, notes) },
-            onDeleteLog = { id -> viewModel.deleteLog(id) },
-            onClearLogs = { viewModel.clearAllLogs() }
-        )
-
-        // 5. Friendly Footer
-        FooterSection()
+                // Button 2: Browse Nearby (Oval, Outlined/Blush Theme)
+                Button(
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        viewModel.updateCatsNearMeTab("browse")
+                        onNavigate("cats_near_me")
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .border(1.5.dp, DeepBurgundy, CircleShape)
+                        .testTag("home_browse_strays_btn"),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Cream.copy(alpha = 0.6f),
+                        contentColor = DeepBurgundy
+                    ),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = stringResource(R.string.main_browse_nearby),
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = QuicksandFontFamily,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -583,7 +953,7 @@ fun HeroHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = onMenuClick,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onMenuClick() },
                 modifier = Modifier.size(32.dp)
             ) {
                 Icon(
@@ -628,7 +998,7 @@ fun HeroHeader(
             Spacer(modifier = Modifier.width(8.dp))
             
             IconButton(
-                onClick = onLogout,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onLogout() },
                 modifier = Modifier.size(24.dp)
             ) {
                 Icon(
@@ -689,14 +1059,6 @@ fun NavigationGridSection(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            text = stringResource(R.string.select_diary_room),
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = TextMuted,
-                fontWeight = FontWeight.Bold
-            )
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -707,7 +1069,7 @@ fun NavigationGridSection(
                 backgroundColor = LightPurpleBg,
                 accentColor = PastelPurpleDark,
                 modifier = Modifier.weight(1f),
-                onClick = { onNavigate("guide") }
+                onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("guide") }
             )
 
             NavigationCard(
@@ -716,7 +1078,7 @@ fun NavigationGridSection(
                 backgroundColor = Color(0xFFE0F2F1), // Soft mint green
                 accentColor = Color(0xFF00796B),
                 modifier = Modifier.weight(1f),
-                onClick = { onNavigate("play") }
+                onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("play") }
             )
         }
 
@@ -730,7 +1092,7 @@ fun NavigationGridSection(
                 backgroundColor = Color(0xFFFFF3E0), // Soft orange/peach
                 accentColor = Color(0xFFE65100),
                 modifier = Modifier.weight(1f),
-                onClick = { onNavigate("find") }
+                onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("find") }
             )
 
             NavigationCard(
@@ -739,18 +1101,9 @@ fun NavigationGridSection(
                 backgroundColor = Color(0xFFFCE4EC), // Soft pink
                 accentColor = Color(0xFFC2185B),
                 modifier = Modifier.weight(1f),
-                onClick = { onNavigate("cook") }
+                onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("cook") }
             )
         }
-
-        NavigationCard(
-            title = stringResource(R.string.nav_chat_title),
-            subtitle = stringResource(R.string.nav_chat_subtitle),
-            backgroundColor = Color(0xFFFFF8E1), // Warm amber tint
-            accentColor = Color(0xFFFF8F00),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onNavigate("chat") }
-        )
     }
 }
 @Composable
@@ -766,7 +1119,7 @@ fun NavigationCard(
         modifier = modifier
             .height(130.dp)
             .glassyCard(shape = RoundedCornerShape(20.dp), elevation = 4.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { onClick() }),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Column(
@@ -797,7 +1150,34 @@ fun NavigationCard(
 }
 
 @Composable
-
+fun MyCatAndRemindersSection(onNavigate: (String) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // My Cat Card (Small)
+        NavigationCard(
+            title = "My Cat 🐱",
+            subtitle = "Profile, Weight, Mood",
+            backgroundColor = BlushPink.copy(alpha = 0.2f),
+            accentColor = DeepBurgundy,
+            modifier = Modifier.weight(1f),
+            onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("my_cat") }
+        )
+        // Reminders Card (Small)
+        NavigationCard(
+            title = "Reminders ⏰",
+            subtitle = "Feeding, Vet",
+            backgroundColor = Color(0xFFE1F5FE),
+            accentColor = Color(0xFF0288D1),
+            modifier = Modifier.weight(1f),
+            onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("reminders") }
+        )
+    }
+}
+@Composable
 fun TriageGuideCard(
     step: Int,
     hasInjuries: Boolean?,
@@ -859,9 +1239,9 @@ fun TriageGuideCard(
                             lineHeight = 20.sp
                         )
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Button(
-                        onClick = onStart,
+                        onClick = com.example.ui.theme.rememberHapticOnClick { onStart() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("start_triage_btn"),
@@ -876,6 +1256,45 @@ fun TriageGuideCard(
                             ),
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
+                    }
+
+                    // Offline / No Mobile Data Quick Guidance
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Cream.copy(alpha = 0.5f)),
+                        border = BorderStroke(1.dp, DeepBurgundy.copy(alpha = 0.15f)),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = "No Mobile Data",
+                                    tint = DeepBurgundy,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Text(
+                                    text = stringResource(R.string.offline_tips_title),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = DeepBurgundy
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = stringResource(R.string.offline_tip_1) + "\n" +
+                                       stringResource(R.string.offline_tip_2) + "\n" +
+                                       stringResource(R.string.offline_tip_3) + "\n" +
+                                       stringResource(R.string.offline_tip_4),
+                                fontSize = 11.sp,
+                                color = Ink.copy(alpha = 0.9f),
+                                lineHeight = 16.sp
+                            )
+                        }
                     }
                 }
 
@@ -910,7 +1329,7 @@ fun TriageGuideCard(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Button(
-                            onClick = { onSelectInjuries(true) },
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectInjuries(true) },
                             modifier = Modifier
                                 .weight(1f)
                                 .testTag("injury_yes_btn"),
@@ -926,7 +1345,7 @@ fun TriageGuideCard(
                             )
                         }
                         Button(
-                            onClick = { onSelectInjuries(false) },
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectInjuries(false) },
                             modifier = Modifier
                                 .weight(1f)
                                 .testTag("injury_no_btn"),
@@ -944,7 +1363,7 @@ fun TriageGuideCard(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     TextButton(
-                        onClick = onReset,
+                        onClick = com.example.ui.theme.rememberHapticOnClick { onReset() },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text(
@@ -987,17 +1406,17 @@ fun TriageGuideCard(
                         AgeOptionCard(
                             title = stringResource(R.string.triage_age_baby),
                             description = stringResource(R.string.triage_age_baby_desc),
-                            onClick = { onSelectAge("baby") }
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectAge("baby") }
                         )
                         AgeOptionCard(
                             title = stringResource(R.string.triage_age_young),
                             description = stringResource(R.string.triage_age_young_desc),
-                            onClick = { onSelectAge("young") }
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectAge("young") }
                         )
                         AgeOptionCard(
                             title = stringResource(R.string.triage_age_adult),
                             description = stringResource(R.string.triage_age_adult_desc),
-                            onClick = { onSelectAge("adult") }
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectAge("adult") }
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -1005,10 +1424,10 @@ fun TriageGuideCard(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TextButton(onClick = { onSelectInjuries(false) }) {
+                        TextButton(onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectInjuries(false) }) {
                             Text(text = stringResource(R.string.back_btn), color = MaterialTheme.colorScheme.primary)
                         }
-                        TextButton(onClick = onReset) {
+                        TextButton(onClick = com.example.ui.theme.rememberHapticOnClick { onReset() }) {
                             Text(text = stringResource(R.string.reset_btn), color = MaterialTheme.colorScheme.secondary)
                         }
                     }
@@ -1048,7 +1467,7 @@ fun TriageGuideCard(
 
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
-                        onClick = onReset,
+                        onClick = com.example.ui.theme.rememberHapticOnClick { onReset() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("reset_triage_btn"),
@@ -1076,7 +1495,7 @@ fun AgeOptionCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { onClick() }),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = LightPurpleBg),
         border = BorderStroke(1.dp, PastelPurplePrimary.copy(alpha = 0.3f))
@@ -1105,6 +1524,7 @@ fun AgeOptionCard(
 
 @Composable
 fun EmergencyPlanView() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -1120,6 +1540,7 @@ fun EmergencyPlanView() {
 
 @Composable
 fun TinyKittenPlanView() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -1136,6 +1557,7 @@ fun TinyKittenPlanView() {
 
 @Composable
 fun YoungKittenPlanView() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -1152,6 +1574,7 @@ fun YoungKittenPlanView() {
 
 @Composable
 fun AdultCatPlanView() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -1168,6 +1591,7 @@ fun AdultCatPlanView() {
 
 @Composable
 fun DefaultPlanView() {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -1179,6 +1603,7 @@ fun DefaultPlanView() {
 
 @Composable
 fun BulletPoint(title: String, description: String) {
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -1432,7 +1857,7 @@ fun CommunityImpactTrackerCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = {
+                onClick = com.example.ui.theme.rememberHapticOnClick { 
                     onLogActivity(selectedActivityType, notesText)
                     notesText = ""
                 },
@@ -1477,7 +1902,7 @@ fun CommunityImpactTrackerCard(
                         )
                     )
                     if (state.logs.size > 3) {
-                        TextButton(onClick = { showAllHistory = !showAllHistory }) {
+                        TextButton(onClick = com.example.ui.theme.rememberHapticOnClick {  showAllHistory = !showAllHistory }) {
                             Text(
                                 text = if (showAllHistory) stringResource(R.string.tracker_show_less) else stringResource(R.string.tracker_view_all, state.logs.size),
                                 style = MaterialTheme.typography.bodySmall.copy(
@@ -1501,7 +1926,7 @@ fun CommunityImpactTrackerCard(
 
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedButton(
-                    onClick = onClearLogs,
+                    onClick = com.example.ui.theme.rememberHapticOnClick { onClearLogs() },
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Wine),
                     border = BorderStroke(1.dp, Mauve),
@@ -1519,6 +1944,7 @@ fun CommunityImpactTrackerCard(
 
 @Composable
 fun BadgeView(badge: Badge) {
+
     // Resolve translated name and description from keys
     val badgeName = when (badge.name) {
         "badge_first_steps_name" -> stringResource(R.string.badge_first_steps_name)
@@ -1681,7 +2107,7 @@ fun HistoryLogItem(
                 )
             }
             IconButton(
-                onClick = onDelete,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onDelete() },
                 modifier = Modifier.size(28.dp)
             ) {
                 Icon(
@@ -1711,44 +2137,41 @@ fun TinyPawsHelperScreen(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(com.example.ui.theme.OmbreGradientBrushLight)
     ) {
-        // Background Image
-        androidx.compose.foundation.Image(
-            painter = androidx.compose.ui.res.painterResource(id = R.drawable.chat_bg_cats),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
-        )
-
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             // Semi-transparent Top Bar
             Surface(
-                color = White.copy(alpha = 0.6f),
-                modifier = Modifier.fillMaxWidth()
+                color = White.copy(alpha = 0.5f),
+                modifier = Modifier.fillMaxWidth(),
+                tonalElevation = 2.dp
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .statusBarsPadding(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextDark)
+                    IconButton(onClick = com.example.ui.theme.rememberHapticOnClick { onBack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = DeepBurgundy)
                     }
                     Text(
                         text = stringResource(R.string.chat_title),
                         style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Light,
-                            color = TextDark
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FrauncesFontFamily,
+                            color = DeepBurgundy
                         ),
                         modifier = Modifier.padding(start = 8.dp)
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { viewModel.clearChat() }) {
-                        Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.chat_delete), tint = TextMuted)
+                    IconButton(onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.clearChat() }) {
+                        Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.chat_delete), tint = DeepBurgundy.copy(alpha = 0.7f))
                     }
                 }
             }
@@ -1762,49 +2185,75 @@ fun TinyPawsHelperScreen(
                     .padding(horizontal = 20.dp)
             ) {
                 if (messages.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
                         Text(
                             text = stringResource(R.string.chat_placeholder),
                             style = MaterialTheme.typography.bodyLarge.copy(
-                                color = TextMuted.copy(alpha = 0.6f),
-                                fontWeight = FontWeight.Light
-                            )
+                                color = Ink.copy(alpha = 0.6f),
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = QuicksandFontFamily
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 messages.forEach { message ->
                     val isUser = message.role == "user"
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 10.dp),
+                            .padding(vertical = 8.dp),
                         horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
                     ) {
                         Surface(
-                            color = if (isUser) White.copy(alpha = 0.85f) else Color(0xFFFFE4E1).copy(alpha = 0.85f),
-                            shape = RoundedCornerShape(28.dp),
-                            shadowElevation = 6.dp,
-                            border = BorderStroke(1.dp, White.copy(alpha = 0.4f))
+                            color = if (isUser) DeepBurgundy else White.copy(alpha = 0.95f),
+                            shape = if (isUser) RoundedCornerShape(24.dp, 24.dp, 4.dp, 24.dp) else RoundedCornerShape(24.dp, 24.dp, 24.dp, 4.dp),
+                            shadowElevation = 2.dp
                         ) {
                             Text(
                                 text = message.text,
-                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                                modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp),
                                 style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = TextDark,
+                                    color = if (isUser) Cream else Ink,
                                     lineHeight = 24.sp,
-                                    fontWeight = FontWeight.Normal
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = QuicksandFontFamily
                                 )
                             )
                         }
-                        if (message.isPending) {
-                            LinearProgressIndicator(
-                                modifier = Modifier
-                                    .width(40.dp)
-                                    .padding(top = 8.dp, start = 12.dp),
-                                color = TextDark,
-                                trackColor = Color.Transparent
-                            )
+                    }
+                }
+
+                if (isLoading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Surface(
+                            color = BlushPink.copy(alpha = 0.9f),
+                            shape = CircleShape,
+                            shadowElevation = 2.dp
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("🐾", fontSize = 18.sp)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Thinking & licking paws...",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = DeepBurgundy,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = QuicksandFontFamily
+                                    )
+                                )
+                            }
                         }
                     }
                 }
@@ -1814,12 +2263,13 @@ fun TinyPawsHelperScreen(
             // Glassy Input Field
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = White.copy(alpha = 0.7f),
-                tonalElevation = 4.dp
+                color = White.copy(alpha = 0.85f),
+                shadowElevation = 12.dp
             ) {
                 Row(
                     modifier = Modifier
                         .padding(16.dp)
+                        .navigationBarsPadding()
                         .imePadding(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -1829,36 +2279,39 @@ fun TinyPawsHelperScreen(
                         placeholder = { 
                             Text(
                                 stringResource(R.string.chat_input_placeholder), 
-                                style = MaterialTheme.typography.bodyLarge.copy(color = TextMuted.copy(alpha = 0.7f))
+                                style = MaterialTheme.typography.bodyLarge.copy(color = Ink.copy(alpha = 0.5f), fontFamily = QuicksandFontFamily)
                             ) 
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f)
+                            .background(Color.Transparent),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
+                            focusedContainerColor = Cream,
+                            unfocusedContainerColor = Cream,
+                            disabledContainerColor = Cream,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = TextDark,
-                            unfocusedTextColor = TextDark
+                            focusedTextColor = Ink,
+                            unfocusedTextColor = Ink
                         ),
+                        shape = CircleShape,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                        singleLine = false,
-                        maxLines = 4
+                        singleLine = true
                     )
+                    Spacer(modifier = Modifier.width(12.dp))
                     IconButton(
-                        onClick = {
+                        onClick = com.example.ui.theme.rememberHapticOnClick { 
                             if (inputText.isNotBlank() && !isLoading) {
                                 viewModel.sendChatMessage(inputText)
                                 inputText = ""
                             }
                         },
-                        enabled = inputText.isNotBlank() && !isLoading
+                        enabled = inputText.isNotBlank() && !isLoading,
+                        modifier = Modifier.background(if (inputText.isNotBlank()) DeepBurgundy else Mauve, CircleShape)
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.Send, 
                             contentDescription = stringResource(R.string.chat_send),
-                            tint = if (inputText.isNotBlank()) TextDark else TextMuted
+                            tint = Cream
                         )
                     }
                 }
@@ -1869,6 +2322,7 @@ fun TinyPawsHelperScreen(
 
 @Composable
 fun FooterSection() {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1929,64 +2383,10 @@ fun FooterSection() {
             text = stringResource(R.string.footer_thank_you),
             style = MaterialTheme.typography.bodySmall.copy(
                 color = TextMuted,
-                textAlign = TextAlign.Center,
-                lineHeight = 16.sp
+                textAlign = TextAlign.Center
             )
         )
     }
-}@Composable
-fun TipOfTheDayCard(modifier: Modifier = Modifier) {
-    val facts = listOf(
-        "Cats purr at a frequency of 25-150 Hz, which is known to improve bone density and promote healing.",
-        "A stray cat\'s ear might be 'tipped' (a small part removed) to indicate they have been spayed or neutered.",
-        "Never give cow's milk to cats. Most adult cats are lactose intolerant and it can cause stomach upset.",
-        "If a cat slowly blinks at you, it means they trust you. Try slowly blinking back!",
-        "Cats have 32 muscles in each ear, allowing them to swivel 180 degrees to pinpoint sounds.",
-        "A cat's nose print is unique, much like a human fingerprint.",
-        "Cats sleep 12-16 hours a day. They are conserving energy for hunting (or playing).",
-        "Kneading with their paws is a comforting behavior left over from kittenhood.",
-        "When a cat rubs their cheek against you, they are marking you with their scent glands.",
-        "Whiskers are highly sensitive sensory organs that help cats measure gaps and feel their way in the dark."
-    )
-    val dayOfYear = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_YEAR)
-    val fact = facts[dayOfYear % facts.size]
 
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .glassyCard(shape = RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ) {
-        Row(
-            modifier = Modifier.padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(BlushPink.copy(alpha = 0.5f), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("💡", fontSize = 20.sp)
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(
-                    text = "Tip of the Day",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = fact,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                )
-            }
-        }
-    }
 }
+

@@ -10,6 +10,8 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -80,6 +82,5 @@ fun Modifier.glassyButton(
         .clickable(
             interactionSource = interactionSource,
             indication = androidx.compose.foundation.LocalIndication.current,
-            onClick = onClick
-        )
+            onClick = com.example.ui.theme.rememberHapticOnClick { onClick() })
 }

@@ -19,52 +19,61 @@ object SunsetSoundscapePlayer {
     private val lock = Any()
 
     private fun requestFocus(context: android.content.Context): Boolean {
-        val safeContext = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) context.applicationContext.createAttributionContext("default") else context.applicationContext
-        val audioManager = safeContext.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val request = android.media.AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                )
-                .setOnAudioFocusChangeListener(
+        return try {
+            val targetCtx = context
+            val audioManager = targetCtx.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val request = android.media.AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build()
+                    )
+                    .setOnAudioFocusChangeListener(
+                        { focusChange ->
+                            if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                                stop()
+                            }
+                        },
+                        android.os.Handler(android.os.Looper.getMainLooper())
+                    )
+                    .build()
+                focusRequest = request
+                audioManager.requestAudioFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+            } else {
+                @Suppress("DEPRECATION")
+                audioManager.requestAudioFocus(
                     { focusChange ->
                         if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
                             stop()
                         }
                     },
-                    android.os.Handler(android.os.Looper.getMainLooper())
-                )
-                .build()
-            focusRequest = request
-            audioManager.requestAudioFocus(request) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.requestAudioFocus(
-                { focusChange ->
-                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                        stop()
-                    }
-                },
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN
-            ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN
+                ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+            }
+        } catch (e: Throwable) {
+            Log.e("SunsetSoundscape", "AudioFocus request warning: ${e.message}")
+            true
         }
     }
 
     private fun abandonFocus(context: android.content.Context) {
-        val safeContext = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) context.applicationContext.createAttributionContext("default") else context.applicationContext
-        val audioManager = safeContext.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            (focusRequest as? android.media.AudioFocusRequest)?.let {
-                audioManager.abandonAudioFocusRequest(it)
-                focusRequest = null
+        try {
+            val targetCtx = context
+            val audioManager = targetCtx.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                (focusRequest as? android.media.AudioFocusRequest)?.let {
+                    audioManager.abandonAudioFocusRequest(it)
+                    focusRequest = null
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                audioManager.abandonAudioFocus { }
             }
-        } else {
-            @Suppress("DEPRECATION")
-            audioManager.abandonAudioFocus { }
+        } catch (e: Throwable) {
+            Log.e("SunsetSoundscape", "AudioFocus abandon warning: ${e.message}")
         }
     }
 

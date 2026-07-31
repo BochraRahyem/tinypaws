@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import com.example.R
 import com.example.ui.theme.*
 import java.io.File
@@ -92,7 +91,7 @@ fun CreationModuleScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = onBack,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onBack() },
                 modifier = Modifier.testTag("back_to_dashboard")
             ) {
                 Icon(
@@ -120,12 +119,12 @@ fun CreationModuleScreen(
         ) {
             Tab(
                 selected = activeCreationTab == "art",
-                onClick = { activeCreationTab = "art" },
+                onClick = com.example.ui.theme.rememberHapticOnClick {  activeCreationTab = "art" },
                 text = { Text(stringResource(R.string.creation_art_studio), fontWeight = FontWeight.Bold) }
             )
             Tab(
                 selected = activeCreationTab == "music",
-                onClick = { activeCreationTab = "music" },
+                onClick = com.example.ui.theme.rememberHapticOnClick {  activeCreationTab = "music" },
                 text = { Text(stringResource(R.string.creation_music_studio), fontWeight = FontWeight.Bold) }
             )
         }
@@ -190,14 +189,14 @@ fun CreationModuleScreen(
                                 subtitle = stringResource(R.string.creation_model_pro_sub),
                                 active = selectProModel,
                                 modifier = Modifier.weight(1f),
-                                onClick = { selectProModel = true }
+                                onClick = com.example.ui.theme.rememberHapticOnClick {  selectProModel = true }
                             )
                             ModelSelectionButton(
                                 title = stringResource(R.string.creation_model_flash_title),
                                 subtitle = stringResource(R.string.creation_model_flash_sub),
                                 active = !selectProModel,
                                 modifier = Modifier.weight(1f),
-                                onClick = { selectProModel = false }
+                                onClick = com.example.ui.theme.rememberHapticOnClick {  selectProModel = false }
                             )
                         }
 
@@ -227,7 +226,7 @@ fun CreationModuleScreen(
 
                         Spacer(modifier = Modifier.height(4.dp))
                         Button(
-                            onClick = { viewModel.generateCatArt(artPrompt, selectProModel, imageSize) },
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.generateCatArt(artPrompt, selectProModel, imageSize) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
@@ -332,20 +331,20 @@ fun CreationModuleScreen(
                                 subtitle = stringResource(R.string.creation_music_short_sub),
                                 active = !useFullTrack,
                                 modifier = Modifier.weight(1f),
-                                onClick = { useFullTrack = false }
+                                onClick = com.example.ui.theme.rememberHapticOnClick {  useFullTrack = false }
                             )
                             ModelSelectionButton(
                                 title = stringResource(R.string.creation_music_full_title),
                                 subtitle = stringResource(R.string.creation_music_full_sub),
                                 active = useFullTrack,
                                 modifier = Modifier.weight(1f),
-                                onClick = { useFullTrack = true }
+                                onClick = com.example.ui.theme.rememberHapticOnClick {  useFullTrack = true }
                             )
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
                         Button(
-                            onClick = {
+                            onClick = com.example.ui.theme.rememberHapticOnClick { 
                                 viewModel.generateKittenMusic(context.applicationContext as Application, musicPrompt, useFullTrack)
                             },
                             modifier = Modifier
@@ -390,47 +389,53 @@ fun CreationModuleScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     IconButton(
-                                        onClick = {
-                                            val safeContext = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) context.applicationContext.createAttributionContext("default") else context.applicationContext
-                                            val audioManager = safeContext.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
-                                            
-                                            if (isMusicPlaying) {
-                                                mediaPlayer?.pause()
-                                                isMusicPlaying = false
-                                                @Suppress("DEPRECATION")
-                                                audioManager.abandonAudioFocus { }
-                                            } else {
-                                                @Suppress("DEPRECATION")
-                                                audioManager.requestAudioFocus(
-                                                    { focusChange ->
-                                                        if (focusChange == android.media.AudioManager.AUDIOFOCUS_LOSS) {
-                                                            mediaPlayer?.pause()
-                                                            isMusicPlaying = false
-                                                        }
-                                                    },
-                                                    android.media.AudioManager.STREAM_MUSIC,
-                                                    android.media.AudioManager.AUDIOFOCUS_GAIN
-                                                )
-                                                if (mediaPlayer == null) {
-                                                    mediaPlayer = MediaPlayer().apply {
-                                                        try {
-                                                            val fis = java.io.FileInputStream(audioFile)
-                                                            setDataSource(fis.fd)
-                                                            fis.close()
-                                                            prepare()
-                                                            isLooping = true
-                                                            setOnCompletionListener {
-                                                                isMusicPlaying = false
-                                                                @Suppress("DEPRECATION")
-                                                                audioManager.abandonAudioFocus { }
+                                        onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                            try {
+                                                val targetCtx = context
+                                                val audioManager = targetCtx.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
+                                                
+                                                if (isMusicPlaying) {
+                                                    mediaPlayer?.pause()
+                                                    isMusicPlaying = false
+                                                    @Suppress("DEPRECATION")
+                                                    try { audioManager.abandonAudioFocus { } } catch (_: Exception) {}
+                                                } else {
+                                                    @Suppress("DEPRECATION")
+                                                    try {
+                                                        audioManager.requestAudioFocus(
+                                                            { focusChange ->
+                                                                if (focusChange == android.media.AudioManager.AUDIOFOCUS_LOSS) {
+                                                                    mediaPlayer?.pause()
+                                                                    isMusicPlaying = false
+                                                                }
+                                                            },
+                                                            android.media.AudioManager.STREAM_MUSIC,
+                                                            android.media.AudioManager.AUDIOFOCUS_GAIN
+                                                        )
+                                                    } catch (_: Exception) {}
+                                                    if (mediaPlayer == null) {
+                                                        mediaPlayer = MediaPlayer().apply {
+                                                            try {
+                                                                val fis = java.io.FileInputStream(audioFile)
+                                                                setDataSource(fis.fd)
+                                                                fis.close()
+                                                                prepare()
+                                                                isLooping = true
+                                                                setOnCompletionListener {
+                                                                    isMusicPlaying = false
+                                                                    @Suppress("DEPRECATION")
+                                                                    try { audioManager.abandonAudioFocus { } } catch (_: Exception) {}
+                                                                }
+                                                            } catch (e: Exception) {
+                                                                android.util.Log.e("CreationModule", "Failed to prepare MediaPlayer via FD", e)
                                                             }
-                                                        } catch (e: Exception) {
-                                                            android.util.Log.e("CreationModule", "Failed to prepare MediaPlayer via FD", e)
                                                         }
                                                     }
+                                                    mediaPlayer?.start()
+                                                    isMusicPlaying = true
                                                 }
-                                                mediaPlayer?.start()
-                                                isMusicPlaying = true
+                                            } catch (e: Exception) {
+                                                android.util.Log.e("CreationModule", "Error controlling audio player", e)
                                             }
                                         },
                                         modifier = Modifier

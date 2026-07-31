@@ -5,10 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [LogEntry::class, FavoriteDiy::class], version = 1, exportSchema = false)
+@Database(entities = [LogEntry::class, FavoriteDiy::class, StrayReport::class, CatProfile::class, CatWeightLog::class, CatCheckInLog::class, Reminder::class], version = 6, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun logDao(): LogDao
     abstract fun favoriteDao(): FavoriteDao
+    abstract fun strayReportDao(): StrayReportDao
+    abstract fun catProfileDao(): CatProfileDao
+    abstract fun catWeightLogDao(): CatWeightLogDao
+    abstract fun catCheckInLogDao(): CatCheckInLogDao
+    abstract fun reminderDao(): ReminderDao
 
     companion object {
         @Volatile
@@ -20,7 +25,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "tinypaws_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

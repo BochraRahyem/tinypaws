@@ -5,29 +5,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 
 val LocalIsDarkMode = staticCompositionLocalOf { false }
 
 private val LightColorScheme = lightColorScheme(
-    primary = BaseDeepBurgundy,
+    primary = BaseMauve,
     onPrimary = BaseWhite,
-    primaryContainer = BaseBlushPink,
+    primaryContainer = PastelLightPink,
     onPrimaryContainer = BaseDeepBurgundy,
     secondary = BaseWine,
     onSecondary = BaseWhite,
-    secondaryContainer = BaseBlushPink,
-    onSecondaryContainer = BaseWine,
+    secondaryContainer = BaseSoftGray,
+    onSecondaryContainer = BaseDeepBurgundy,
     tertiary = BaseMauve,
-    onTertiary = BaseInk,
+    onTertiary = BaseWhite,
     background = BaseCream,
     onBackground = BaseInk,
-    surface = BaseCream,
+    surface = BaseWhite,
     onSurface = BaseInk,
-    surfaceVariant = BaseSoftGray,
-    onSurfaceVariant = BaseWine,
-    outline = BaseMauve
+    surfaceVariant = PastelMint,
+    onSurfaceVariant = BaseInk,
+    outline = PastelLavender.copy(alpha = 0.7f)
 )
 
 private val DarkColorScheme = darkColorScheme(

@@ -33,6 +33,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.map
 import java.io.File
 import com.example.data.FavoriteDiy
+import com.example.data.StrayReport
+import com.example.data.StrayReportRepository
+import com.example.data.CatProfile
+import com.example.data.CatRepository
 
 // Chat Message Model
 data class ChatMessage(
@@ -61,7 +65,182 @@ data class TrackerUiState(
     val badges: List<Badge> = emptyList()
 )
 
-class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
+class TinyPawsViewModel(
+    application: Application,
+    private val repository: LogRepository,
+    private val strayReportRepository: StrayReportRepository,
+    private val catRepository: CatRepository
+) : AndroidViewModel(application) {
+
+    private val sharedPrefs = application.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+
+    // Cat Profile State
+    val catProfile: StateFlow<CatProfile?> = catRepository.catProfile
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    fun saveCatProfile(name: String, ageYears: Int, ageMonths: Int, coatColor: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.saveProfile(CatProfile(name = name, ageYears = ageYears, ageMonths = ageMonths, coatColor = coatColor))
+        }
+    }
+
+    // Cat Weight Logs State
+    val allWeightLogs: StateFlow<List<com.example.data.CatWeightLog>> = catRepository.allWeightLogs
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun saveWeightLog(date: Long, weight: Float) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.saveWeightLog(date, weight)
+        }
+    }
+
+    fun deleteWeightLog(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.deleteWeightLog(id)
+        }
+    }
+
+    // Cat Check-In Logs State
+    val allCheckInLogs: StateFlow<List<com.example.data.CatCheckInLog>> = catRepository.allCheckInLogs
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun saveCheckInLog(date: Long, mood: String, healthStatus: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.saveCheckInLog(date, mood, healthStatus)
+        }
+    }
+
+    fun deleteCheckInLog(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.deleteCheckInLog(id)
+        }
+    }
+
+    // Reminders State
+    val allReminders: StateFlow<List<com.example.data.Reminder>> = catRepository.allReminders
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun saveReminder(title: String, timeMillis: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.saveReminder(title, timeMillis)
+        }
+    }
+
+    fun deleteReminder(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catRepository.deleteReminder(id)
+        }
+    }
+
+    // Stray Reports State
+    val allStrayReports: StateFlow<List<StrayReport>> = strayReportRepository.allReports
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun prepopulateStrayReportsIfEmpty(lat: Double, lng: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (allStrayReports.value.isEmpty()) {
+                strayReportRepository.insert(
+                    StrayReport(
+                        description = "Sweet orange tabby cat spotted resting near the garden wall. Appears friendly but very hungry.",
+                        needs = "Food & Water",
+                        latitude = lat + 0.009,
+                        longitude = lng + 0.011,
+                        photoUri = "cat_orange",
+                        timestamp = System.currentTimeMillis() - 3600000 * 2,
+                        reporterName = "Sarah Jenkins"
+                    )
+                )
+                strayReportRepository.insert(
+                    StrayReport(
+                        description = "Black kitten found shivering behind a trash bin. Needs a dry box or warm shelter ASAP.",
+                        needs = "Shelter",
+                        latitude = lat - 0.015,
+                        longitude = lng + 0.018,
+                        photoUri = "cat_black",
+                        timestamp = System.currentTimeMillis() - 3600000 * 5,
+                        reporterName = "Alex Rivera"
+                    )
+                )
+                strayReportRepository.insert(
+                    StrayReport(
+                        description = "Grey Siamese-mix cat with a limping left hind leg. Needs a medical checkup and treatment.",
+                        needs = "Medical Attention",
+                        latitude = lat + 0.042,
+                        longitude = lng - 0.035,
+                        photoUri = "cat_grey",
+                        timestamp = System.currentTimeMillis() - 3600000 * 12,
+                        reporterName = "Dr. Emma Taylor"
+                    )
+                )
+                strayReportRepository.insert(
+                    StrayReport(
+                        description = "Calico cat looking very thin near the local market. Super vocal and seeking attention.",
+                        needs = "Food & Water",
+                        latitude = lat - 0.075,
+                        longitude = lng - 0.068,
+                        photoUri = "cat_calico",
+                        timestamp = System.currentTimeMillis() - 3600000 * 24,
+                        reporterName = "Markus Vance"
+                    )
+                )
+            }
+        }
+    }
+
+    fun submitStrayReport(
+        description: String,
+        needs: String,
+        latitude: Double,
+        longitude: Double,
+        photoUri: String,
+        reporterName: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val report = StrayReport(
+                description = description,
+                needs = needs,
+                latitude = latitude,
+                longitude = longitude,
+                photoUri = photoUri,
+                reporterName = reporterName.ifEmpty { "Anonymous Caregiver" }
+            )
+            strayReportRepository.insert(report)
+            
+            try {
+                val notifHelper = com.example.util.NotificationHelper(getApplication())
+                notifHelper.triggerDuplicateReportAlert(
+                    reportId = report.id.toString(),
+                    title = "🐱 Community Cat Sighting Reported",
+                    message = "${report.reporterName} logged a stray cat: ${description.take(60)}",
+                    bypassCooldownForTesting = true
+                )
+            } catch (e: Exception) {
+                android.util.Log.e("TinyPawsViewModel", "Failed to trigger report notification", e)
+            }
+        }
+    }
+
+
 
     // Favorites State
     val favoriteDiyIds: StateFlow<Set<String>> = repository.allFavorites
@@ -173,6 +352,13 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
         _isDarkMode.value = dark
     }
 
+    private val _isExtremeWeatherNotify = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isExtremeWeatherNotify = _isExtremeWeatherNotify.asStateFlow()
+
+    fun setExtremeWeatherNotify(notify: Boolean) {
+        _isExtremeWeatherNotify.value = notify
+    }
+
     fun updateOnboardedName(name: String) {
         _onboardedName.value = name
     }
@@ -191,20 +377,26 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
     private val _catAgeGroup = MutableStateFlow<String?>(null) // "baby", "young", "adult"
     val catAgeGroup = _catAgeGroup.asStateFlow()
 
-    // 2. Growth Journey Game States
-    private val _currentIsland = MutableStateFlow(0) // 0 to 4 (Islands 1 to 5)
+    // 2. Growth Journey Game States (Persisted in SharedPreferences)
+    private val _currentIsland = MutableStateFlow(sharedPrefs.getInt("quiz_current_island", 0)) // 0 to 4 (Islands 1 to 5)
     val currentIsland = _currentIsland.asStateFlow()
 
     private val _currentQuestionIndex = MutableStateFlow(0) // 0 to 19
     val currentQuestionIndex = _currentQuestionIndex.asStateFlow()
 
-    private val _quizCompletedOnCurrentIsland = MutableStateFlow(false)
+    private val _quizCompletedOnCurrentIsland = MutableStateFlow(sharedPrefs.getBoolean("quiz_completed_on_current", false))
     val quizCompletedOnCurrentIsland = _quizCompletedOnCurrentIsland.asStateFlow()
 
-    private val _completedIslands = MutableStateFlow<Set<Int>>(emptySet())
+    private val _completedIslands = MutableStateFlow<Set<Int>>(
+        sharedPrefs.getString("quiz_completed_islands", "")?.takeIf { it.isNotEmpty() }
+            ?.split(",")?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet()
+    )
     val completedIslands = _completedIslands.asStateFlow()
 
-    private val _scoreOnCurrentIsland = MutableStateFlow(0)
+    val allQuizzesCompleted = _completedIslands.map { it.size == 5 }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _scoreOnCurrentIsland = MutableStateFlow(sharedPrefs.getInt("quiz_score_on_current", 0))
     val scoreOnCurrentIsland = _scoreOnCurrentIsland.asStateFlow()
 
     private val _selectedAnswers = MutableStateFlow<Map<Int, Int>>(emptyMap()) // index -> selectedOptionIndex
@@ -219,20 +411,30 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
     fun submitQuizForCurrentIsland(correctCount: Int) {
         _scoreOnCurrentIsland.value = correctCount
         _quizCompletedOnCurrentIsland.value = true
-        _completedIslands.value = _completedIslands.value + _currentIsland.value
-        // Award points for completing the quiz
+        val updated = _completedIslands.value + _currentIsland.value
+        _completedIslands.value = updated
+        sharedPrefs.edit()
+            .putInt("quiz_score_on_current", correctCount)
+            .putBoolean("quiz_completed_on_current", true)
+            .putString("quiz_completed_islands", updated.joinToString(","))
+            .apply()
         logActivity("complete_quiz", "Completed Level ${_currentIsland.value + 1} Quiz (Score: $correctCount/10)")
     }
 
     fun nextIslandWithAnimation(onTriggerAnimation: () -> Unit) {
         if (_currentIsland.value < 4) {
             onTriggerAnimation()
-            _currentIsland.value += 1
+            val next = _currentIsland.value + 1
+            _currentIsland.value = next
             _currentQuestionIndex.value = 0
             _quizCompletedOnCurrentIsland.value = false
             _scoreOnCurrentIsland.value = 0
             _selectedAnswers.value = emptyMap()
-        _completedIslands.value = emptySet()
+            sharedPrefs.edit()
+                .putInt("quiz_current_island", next)
+                .putBoolean("quiz_completed_on_current", false)
+                .putInt("quiz_score_on_current", 0)
+                .apply()
         }
     }
 
@@ -243,7 +445,11 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
             _quizCompletedOnCurrentIsland.value = false
             _scoreOnCurrentIsland.value = 0
             _selectedAnswers.value = emptyMap()
-        _completedIslands.value = emptySet()
+            sharedPrefs.edit()
+                .putInt("quiz_current_island", islandIndex)
+                .putBoolean("quiz_completed_on_current", false)
+                .putInt("quiz_score_on_current", 0)
+                .apply()
         }
     }
 
@@ -254,6 +460,12 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
         _scoreOnCurrentIsland.value = 0
         _selectedAnswers.value = emptyMap()
         _completedIslands.value = emptySet()
+        sharedPrefs.edit()
+            .putInt("quiz_current_island", 0)
+            .putBoolean("quiz_completed_on_current", false)
+            .putInt("quiz_score_on_current", 0)
+            .putString("quiz_completed_islands", "")
+            .apply()
     }
 
     // 3. Location Search States
@@ -282,17 +494,15 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
 
     fun updateUserLocation(lat: Double, lng: Double) {
         _userLocation.value = Pair(lat, lng)
+        prepopulateStrayReportsIfEmpty(lat, lng)
+    }
+
+    fun getDistanceInKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        return com.example.util.LocationUtils.calculateHaversineDistanceKm(lat1, lon1, lat2, lon2)
     }
 
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val r = 6371.0 // Earth's radius in km
-        val dLat = Math.toRadians(lat2 - lat1)
-        val dLon = Math.toRadians(lon2 - lon1)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return r * c
+        return com.example.util.LocationUtils.calculateHaversineDistanceKm(lat1, lon1, lat2, lon2)
     }
 
     fun searchPlaces(category: String, query: String) {
@@ -620,14 +830,80 @@ class TinyPawsViewModel(private val repository: LogRepository) : ViewModel() {
             repository.clearAll()
         }
     }
+
+    // Active Guide and DIY state for navigation & deep linking (like Surprise Me)
+    val activeGuideTab = MutableStateFlow("menu")
+    val activeDiyProjectId = MutableStateFlow<String?>(null)
+    val activeCatsNearMeTab = MutableStateFlow("browse") // "browse" or "report"
+
+    fun updateActiveGuideTab(tab: String) {
+        activeGuideTab.value = tab
+    }
+
+    fun updateActiveDiyProject(projectId: String?) {
+        activeDiyProjectId.value = projectId
+    }
+
+    fun updateCatsNearMeTab(tab: String) {
+        activeCatsNearMeTab.value = tab
+    }
+
+    // Tracks recently viewed guide sections and DIY projects to avoid repeating them in Surprise Me
+    fun trackItemViewed(itemId: String, sharedPrefs: android.content.SharedPreferences) {
+        val recentlyViewedStr = sharedPrefs.getString("recently_viewed_surprise", "") ?: ""
+        val recentlyViewed = recentlyViewedStr.split(",").filter { it.isNotEmpty() }.toMutableList()
+        if (!recentlyViewed.contains(itemId)) {
+            recentlyViewed.add(itemId)
+            if (recentlyViewed.size > 15) {
+                recentlyViewed.removeAt(0)
+            }
+            sharedPrefs.edit().putString("recently_viewed_surprise", recentlyViewed.joinToString(",")).apply()
+        }
+    }
+
+    // Selects a random guide section or DIY project that has not been viewed recently
+    fun selectRandomSurprise(sharedPrefs: android.content.SharedPreferences): Pair<String, String?> {
+        val guideTabs = listOf("diseases", "adoption", "stray", "cook")
+        val diyProjects = DiyProjectsData.projects.map { it.id }
+        val allOptions = guideTabs.map { "guide_$it" } + diyProjects.map { "diy_$it" }
+
+        val recentlyViewedStr = sharedPrefs.getString("recently_viewed_surprise", "") ?: ""
+        val recentlyViewed = recentlyViewedStr.split(",").filter { it.isNotEmpty() }.toMutableList()
+
+        var availableOptions = allOptions.filter { !recentlyViewed.contains(it) }
+
+        if (availableOptions.isEmpty()) {
+            recentlyViewed.clear()
+            availableOptions = allOptions
+        }
+
+        val selected = availableOptions.randomOrNull() ?: "guide_diseases"
+
+        recentlyViewed.add(selected)
+        if (recentlyViewed.size > 15) {
+            recentlyViewed.removeAt(0)
+        }
+        sharedPrefs.edit().putString("recently_viewed_surprise", recentlyViewed.joinToString(",")).apply()
+
+        return if (selected.startsWith("guide_")) {
+            Pair(selected.substringAfter("guide_"), null)
+        } else {
+            Pair("diy", selected.substringAfter("diy_"))
+        }
+    }
 }
 
 // ViewModel Factory
-class TinyPawsViewModelFactory(private val repository: LogRepository) : ViewModelProvider.Factory {
+class TinyPawsViewModelFactory(
+    private val application: Application,
+    private val repository: LogRepository,
+    private val strayReportRepository: StrayReportRepository,
+    private val catRepository: CatRepository
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TinyPawsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TinyPawsViewModel(repository) as T
+            return TinyPawsViewModel(application, repository, strayReportRepository, catRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

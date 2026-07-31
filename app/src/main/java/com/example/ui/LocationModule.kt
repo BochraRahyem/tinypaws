@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.NearbyPlace
-import androidx.compose.ui.res.stringResource
 import com.example.R
 import com.example.ui.theme.*
 
@@ -53,94 +52,32 @@ fun LocationModuleScreen(
     val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
 
     var activeMapPlace by remember { mutableStateOf<NearbyPlace?>(null) }
+    var locationTriggered by remember { mutableStateOf(false) }
 
-    // Launcher to request runtime location permissions
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val fineGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] == true
-        val coarseGranted = permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        if (fineGranted || coarseGranted) {
-            // Get last known location and search
-            try {
-                val safeContext = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) context.applicationContext.createAttributionContext("default") else context.applicationContext
-                val locationManager = safeContext.getSystemService(android.content.Context.LOCATION_SERVICE) as android.location.LocationManager
-                val providers = locationManager.getProviders(true)
-                var bestLocation: android.location.Location? = null
-                for (p in providers) {
-                    val loc = locationManager.getLastKnownLocation(p) ?: continue
-                    if (bestLocation == null || loc.accuracy < bestLocation.accuracy) {
-                        bestLocation = loc
-                    }
-                }
-                if (bestLocation != null) {
-                    viewModel.updateUserLocation(bestLocation.latitude, bestLocation.longitude)
-                    viewModel.updateLocationQuery("${"%.4f".format(bestLocation.latitude)}, ${"%.4f".format(bestLocation.longitude)}")
-                    viewModel.searchPlaces(searchCategory, "${bestLocation.latitude},${bestLocation.longitude}")
-                } else {
-                    // Fallback to default
-                    viewModel.updateUserLocation(36.8065, 10.1815)
-                    viewModel.updateLocationQuery("Tunis, Tunisia")
-                    viewModel.searchPlaces(searchCategory, "Tunis, Tunisia")
-                }
-            } catch (e: SecurityException) {
-                // permission not granted
-            }
-        } else {
-            // Denied fallback
+    com.example.util.LocationPermissionGate(
+        onPermissionGranted = { lat, lon ->
+            viewModel.updateUserLocation(lat, lon)
+            viewModel.updateLocationQuery("${"%.4f".format(lat)}, ${"%.4f".format(lon)}")
+            viewModel.searchPlaces(searchCategory, "$lat,$lon")
+        },
+        onPermissionDenied = {
             if (queryText.isEmpty()) {
                 viewModel.updateLocationQuery("Tunis, Tunisia")
                 viewModel.searchPlaces(searchCategory, "Tunis, Tunisia")
             }
         }
-    }
-
-    // On-load request permissions
-    LaunchedEffect(Unit) {
-        val hasFine = androidx.core.content.ContextCompat.checkSelfPermission(
-            context, android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        val hasCoarse = androidx.core.content.ContextCompat.checkSelfPermission(
-            context, android.Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
-        if (hasFine || hasCoarse) {
-            try {
-                val safeContext = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) context.applicationContext.createAttributionContext("default") else context.applicationContext
-                val locationManager = safeContext.getSystemService(android.content.Context.LOCATION_SERVICE) as android.location.LocationManager
-                val providers = locationManager.getProviders(true)
-                var bestLocation: android.location.Location? = null
-                for (p in providers) {
-                    val loc = locationManager.getLastKnownLocation(p) ?: continue
-                    if (bestLocation == null || loc.accuracy < bestLocation.accuracy) {
-                        bestLocation = loc
-                    }
-                }
-                if (bestLocation != null) {
-                    viewModel.updateUserLocation(bestLocation.latitude, bestLocation.longitude)
-                    viewModel.updateLocationQuery("${"%.4f".format(bestLocation.latitude)}, ${"%.4f".format(bestLocation.longitude)}")
-                    viewModel.searchPlaces(searchCategory, "${bestLocation.latitude},${bestLocation.longitude}")
-                } else {
-                    viewModel.updateUserLocation(36.8065, 10.1815)
-                    if (queryText.isEmpty()) {
-                        viewModel.updateLocationQuery("Tunis, Tunisia")
-                        viewModel.searchPlaces(searchCategory, "Tunis, Tunisia")
-                    }
-                }
-            } catch (e: SecurityException) {
-                // permission exception
+    ) { requestPermission ->
+        // On-load request permissions
+        LaunchedEffect(locationTriggered) {
+            android.util.Log.d("LocationPermissionUI", "Location trigger check in LocationModule: locationTriggered = $locationTriggered")
+            if (!locationTriggered) {
+                locationTriggered = true
+                android.util.Log.d("LocationPermissionUI", "Triggering location permission request now via PermissionManager")
+                requestPermission()
             }
-        } else {
-            permissionLauncher.launch(
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
         }
-    }
 
-    Column(
+        Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Transparent)
@@ -154,7 +91,7 @@ fun LocationModuleScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = onBack,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onBack() },
                 modifier = Modifier.testTag("back_to_dashboard")
             ) {
                 Icon(
@@ -239,13 +176,39 @@ fun LocationModuleScreen(
                         ),
                         shape = RoundedCornerShape(12.dp),
                         trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = stringResource(R.string.location_icon_desc),
-                                tint = PastelPurpleDark
-                            )
+                            IconButton(
+                                onClick = com.example.ui.theme.rememberHapticOnClick {
+                                    android.widget.Toast.makeText(context, "Location detection requested...", android.widget.Toast.LENGTH_SHORT).show()
+                                    requestPermission()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = stringResource(R.string.location_icon_desc),
+                                    tint = PastelPurpleDark
+                                )
+                            }
                         }
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    TextButton(
+                        onClick = com.example.ui.theme.rememberHapticOnClick {
+                            android.widget.Toast.makeText(context, "Location detection requested...", android.widget.Toast.LENGTH_SHORT).show()
+                            requestPermission()
+                        },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = PastelPurpleDark,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Detect my location", fontSize = 12.sp, color = PastelPurpleDark, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
                 }
             }
 
@@ -254,26 +217,42 @@ fun LocationModuleScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                val checkAndSearch = { category: String ->
+                    val hasLocationPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                        context, android.Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
+                    androidx.core.content.ContextCompat.checkSelfPermission(
+                        context, android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                    if (hasLocationPermission) {
+                        viewModel.searchPlaces(category, queryText)
+                    } else {
+                        android.widget.Toast.makeText(context, "Location permission required. Requesting now...", android.widget.Toast.LENGTH_SHORT).show()
+                        requestPermission()
+                    }
+                }
+
                 CategorySearchButton(
                     title = stringResource(R.string.location_vets_btn),
                     categoryKey = "vets",
                     isActive = searchCategory == "vets",
                     modifier = Modifier.weight(1f),
-                    onClick = { viewModel.searchPlaces("vets", queryText) }
+                    onClick = com.example.ui.theme.rememberHapticOnClick { checkAndSearch("vets") }
                 )
                 CategorySearchButton(
                     title = stringResource(R.string.location_shops_btn),
                     categoryKey = "shops",
                     isActive = searchCategory == "shops",
                     modifier = Modifier.weight(1f),
-                    onClick = { viewModel.searchPlaces("shops", queryText) }
+                    onClick = com.example.ui.theme.rememberHapticOnClick { checkAndSearch("shops") }
                 )
                 CategorySearchButton(
                     title = stringResource(R.string.location_shelters_btn),
                     categoryKey = "shelters",
                     isActive = searchCategory == "shelters",
                     modifier = Modifier.weight(1f),
-                    onClick = { viewModel.searchPlaces("shelters", queryText) }
+                    onClick = com.example.ui.theme.rememberHapticOnClick { checkAndSearch("shelters") }
                 )
             }
 
@@ -300,7 +279,7 @@ fun LocationModuleScreen(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = PastelPurpleDark
                                 )
-                                IconButton(onClick = { activeMapPlace = null }) {
+                                IconButton(onClick = com.example.ui.theme.rememberHapticOnClick {  activeMapPlace = null }) {
                                     Icon(Icons.Default.Close, contentDescription = "Close map")
                                 }
                             }
@@ -320,7 +299,7 @@ fun LocationModuleScreen(
                                     Text("Coordinates: Lat ${"%.4f".format(place.latitude)}, Lng ${"%.4f".format(place.longitude)}", fontSize = 10.sp, color = TextMuted)
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Button(
-                                        onClick = {
+                                        onClick = com.example.ui.theme.rememberHapticOnClick { 
                                             // Format the Google Maps search query to prioritize user's vicinity
                                             val searchUrl = "https://www.google.com/maps/search/${Uri.encode(place.name)}+near+me"
                                             val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(searchUrl))
@@ -449,6 +428,7 @@ fun LocationModuleScreen(
         }
     }
 }
+}
 
 @Composable
 fun CategorySearchButton(
@@ -459,7 +439,7 @@ fun CategorySearchButton(
     onClick: () -> Unit
 ) {
     Button(
-        onClick = onClick,
+        onClick = com.example.ui.theme.rememberHapticOnClick { onClick() },
         modifier = modifier
             .height(54.dp)
             .testTag("search_category_${categoryKey}"),

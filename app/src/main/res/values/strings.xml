@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">TinyPaws Diary</string>
     <string name="attribution_label_logic">TinyPaws Logic</string>
@@ -20,20 +21,20 @@
     <string name="nav_cook_subtitle">Select ingredients for healthy meals or explore recipes.</string>
     <string name="nav_chat_title">TinyPaws Helper 🐾</string>
     <string name="nav_chat_subtitle">Ask any question about community cat care.</string>
+    <string name="nav_reminders_title">Reminders ⏰</string>
+    <string name="nav_reminders_subtitle">Keep track of vet visits, feeding time, and more.</string>
     <string name="menu_language">Language</string>
     <string name="lang_en">English 🇬🇧</string>
     <string name="lang_ar">Arabic 🇸🇦</string>
     <string name="lang_fr">French 🇫🇷</string>
     <string name="lang_es">Spanish 🇪🇸</string>
-
-    <!-- Chat -->
+    <string name="main_extreme_weather">Notify me on extreme weather</string>
+    <string name="main_extreme_weather_desc">Receive extreme temperature alerts for your marked areas</string>
     <string name="chat_title">tinypaws helper</string>
     <string name="chat_placeholder">ask your rescue bestie anything...</string>
     <string name="chat_input_placeholder">type a question...</string>
     <string name="chat_clear">Clear chat</string>
     <string name="chat_back">Back</string>
-
-    <!-- Tracker -->
     <string name="tracker_header">Community Care Tracker</string>
     <string name="tracker_rank_label">YOUR COMMUNITY RANK</string>
     <string name="tracker_points_needed">%1$d points needed to reach %2$s</string>
@@ -52,8 +53,6 @@
     <string name="tracker_activity_medical">🩺 Medical</string>
     <string name="tracker_activity_socialize">🧸 Socialize</string>
     <string name="tracker_activity_donate">🎁 Donate</string>
-
-    <!-- Triage -->
     <string name="triage_header">Did You Find a Cat?</string>
     <string name="triage_start_desc">Found a stray, lost, or vulnerable kitten? Our interactive triage guide helps you make calm, supportive choices in the critical first moments.</string>
     <string name="triage_start_btn">Start Interactive Triage 🐾</string>
@@ -70,8 +69,6 @@
     <string name="triage_age_young_desc">Playful, runs fast, has all teeth. Active, curious, ready for socialization.</string>
     <string name="triage_age_adult">🐈 Adult Cat (1+ year)</string>
     <string name="triage_age_adult_desc">Full grown size. Calm, wary, or very friendly. May be a lost pet.</string>
-
-    <!-- Footer -->
     <string name="footer_mission_label">📢 SPEAK FOR THE VOICELESS</string>
     <string name="footer_mission_title">Our Sacred Mission 🐾</string>
     <string name="footer_label">SPEAK FOR THE VOICELESS</string>
@@ -81,8 +78,6 @@
     <string name="footer_mission_desc">TinyPaws Diary was born from a simple promise: to speak on behalf of every homeless kitten and backyard stray who cannot speak for themselves. Every day, thousands of quiet souls navigate the cold streets alone. We believe that no paw is too small to care for, and no kitten is too insignificant to protect.\n\nBy uniting compassionate caregivers with interactive guides, nutrition helpers, and neighborhood support tools, we actively transform streets into safe, warm sanctuaries. Thank you for stepping forward, lending your voice, and helping us co-author a story of safety and boundless love for our feline companions. ❤️</string>
     <string name="footer_tagline">🐾 TinyPaws Diary 🐾</string>
     <string name="footer_sub_tagline">Every small act of kindness ripples outwards to make our streets safer, warmer, and friendlier for cats. Thank you for being their caregiver!</string>
-
-    <!-- Guide Module -->
     <string name="guide_title">Lily &amp; Pip\'s Guides</string>
     <string name="guide_welcome">Welcome to the Guide Room! Select any module below to start your helpful caregiving journey with Lily and Pip.</string>
     <string name="guide_banner_title">Lily &amp; Pip\'s Storyroom</string>
@@ -141,8 +136,6 @@
     <string name="growth_journey_title">Lily &amp; Pip\'s 5-Island Growth Journey</string>
     <string name="tap_island_hint">Tap any island to reveal its growth storyboard</string>
     <string name="island_label">Island %1$d: %2$s</string>
-
-    <!-- Plan Views -->
     <string name="plan_emergency_title">🚨 Emergency Response Recommended</string>
     <string name="plan_care_guide_title">📋 Recommended Care Guide</string>
     <string name="plan_emergency_intro">Keep them calm, warm, and transport them safely:</string>
@@ -152,7 +145,6 @@
     <string name="plan_emergency_step2_desc">Contact an emergency veterinary hospital or local cat rescue immediately. They have the specialized tools to help.</string>
     <string name="plan_emergency_step3_title">3. Avoid feeding</string>
     <string name="plan_emergency_step3_desc">Do not give food, water, or medication (especially human pain relievers, which are toxic to cats) as it complicates anesthesia or treatment.</string>
-
     <string name="plan_baby_intro">Neonate kittens (under 4 weeks) are extremely fragile:</string>
     <string name="plan_baby_step1_title">1. Search for the Mother</string>
     <string name="plan_baby_step1_desc">Observe from a distance (at least 20 feet away) for 2 to 4 hours. The mother cat is their best chance at survival and might just be hunting.</string>
@@ -162,7 +154,6 @@
     <string name="plan_baby_step3_desc">Standard milk will cause fatal digestive issues. Feed only warm Kitten Milk Replacer (KMR) with a needleless syringe or small bottle.</string>
     <string name="plan_baby_step4_title">4. Assist Elimination</string>
     <string name="plan_baby_step4_desc">Very young kittens cannot relieve themselves. Use a warm, damp cotton ball to gently stroke their lower abdomen after feeding.</string>
-
     <string name="plan_young_intro">Socialization and balanced nutrition are key for kittens 4-12 weeks:</string>
     <string name="plan_young_step1_title">1. Safe Quarantine Zone</string>
     <string name="plan_young_step1_desc">Set up a warm, quiet, enclosed space (like a bathroom) with a tiny litter box, fresh water, and high-protein kitten food.</string>
@@ -172,7 +163,6 @@
     <string name="plan_young_step3_desc">Schedule a veterinary checkup for vital deworming, initial vaccinations, and professional flea treatments.</string>
     <string name="plan_young_step4_title">4. Adoption or TNR</string>
     <string name="plan_young_step4_desc">At 8-12 weeks, kittens are old enough to be spayed/neutered and adopted out. Reach out to local shelters for foster support.</string>
-
     <string name="plan_adult_intro">For a mature kitty, we want to rule out lost pets and support community cats:</string>
     <string name="plan_adult_step1_title">1. Scan for a Microchip</string>
     <string name="plan_adult_step1_desc">If they are friendly enough to be handled, safely secure them and take them to any local vet clinic or shelter to scan for a chip free of charge.</string>
@@ -182,28 +172,22 @@
     <string name="plan_adult_step3_desc">If the cat is terrified or aggressive (feral), they likely live outdoors. Research a local Trap-Neuter-Return (TNR) program to prevent breeding.</string>
     <string name="plan_adult_step4_title">4. Provide Outdoor Support</string>
     <string name="plan_adult_step4_desc">Set up a simple dry-feeding station and an insulated, weather-proof outdoor shelter to keep them comfortable in cold or rainy seasons.</string>
-
     <string name="plan_default_step1_title">1. Assess safety first</string>
     <string name="plan_default_step1_desc">Never place yourself in danger of scratches or bites.</string>
     <string name="plan_default_step2_title">2. Provide food &amp; fresh water</string>
     <string name="plan_default_step2_desc">Keep them sustained while seeking help.</string>
     <string name="plan_default_step3_title">3. Call a local shelter</string>
     <string name="plan_default_step3_desc">They can check for microchips and lost reports.</string>
-
     <string name="triage_step_counter">STEP %1$d OF 2</string>
     <string name="triage_plan_header">YOUR TRIAGE PLAN</string>
     <string name="triage_completed_btn">Interactive Guide Completed! ✓</string>
     <string name="back_btn">← Back</string>
     <string name="reset_btn">Reset</string>
-
-    <!-- Ranks -->
     <string name="rank_kitten">Kitten Caretaker 🍼</string>
     <string name="rank_feline">Feline Friend 🐾</string>
     <string name="rank_champion">Cat Champion 🌟</string>
     <string name="rank_hero">TinyPaws Hero 👑</string>
     <string name="rank_max">Max Tier Achieved!</string>
-
-    <!-- Badges -->
     <string name="badge_first_steps_name">First Steps</string>
     <string name="badge_first_steps_desc">Logged your first community care activity!</string>
     <string name="badge_kind_feeder_name">Kind Feeder</string>
@@ -216,8 +200,6 @@
     <string name="badge_health_guardian_desc">Helped a cat get veterinary care or checkups.</string>
     <string name="badge_hero_name">TinyPaws Hero</string>
     <string name="badge_hero_desc">Earned 500+ total community impact points!</string>
-
-    <!-- Activity Names -->
     <string name="activity_feed">Fed a hungry cat</string>
     <string name="activity_shelter">Built a warm shelter</string>
     <string name="activity_rescue">Helped rescue a cat</string>
@@ -228,49 +210,38 @@
     <string name="activity_art">Created AI Cat Art</string>
     <string name="activity_music">Generated AI Cat Music</string>
     <string name="activity_default">Cared for a feline friend</string>
-
     <string name="guide_screen_diy">DIY Craft Center</string>
     <string name="guide_screen_diy_storyboard">DIY Craft Storyboard</string>
     <string name="guide_screen_stray">Stray Triage Protocol</string>
-
-    <!-- Diseases Section -->
     <string name="diseases_title">5 Critical Feline Diseases</string>
     <string name="diseases_desc">Explore the transmission vectors, symptom recognition, and preventative care guidelines with our visual details (represented with specific supportive icons).</string>
-
     <string name="disease_rabies_name">Rabies 🦠</string>
     <string name="disease_rabies_sub">A fatal viral disease affecting the central nervous system.</string>
     <string name="disease_rabies_spread">Spreads primarily through deep saliva transfers, such as a bite or heavy scratch from an infected carrier animal (like unvaccinated strays).</string>
     <string name="disease_rabies_recog">Extreme behavior shifts (sudden aggression or fear), excessive salivation, jaw paralysis, and coordination failure.</string>
     <string name="disease_rabies_prev">Mandatory annual vaccination is 100% preventive. If scratched/bitten, wash immediately with soap under running water and seek human post-exposure vaccines.</string>
-
     <string name="disease_toxo_name">Toxoplasmosis 🔬</string>
     <string name="disease_toxo_sub">A systemic infection caused by a microscopic protozoan parasite.</string>
     <string name="disease_toxo_spread">Cats contract it by hunting infected rodents or eating raw meat. Humans contract it via contact with infected feline feces (litter boxes).</string>
     <string name="disease_toxo_recog">Often completely silent. Symptomatic cats exhibit lethargy, high fever, breathing struggles, or eye inflammation.</string>
     <string name="disease_toxo_prev">Keep cats indoors to prevent hunting; feed cooked food. Pregnant women must avoid cleaning litter boxes entirely or wear gloves and scoop daily.</string>
-
     <string name="disease_csd_name">Cat Scratch Disease 🐾</string>
     <string name="disease_csd_sub">A bacterial infection caused by Bartonella henselae.</string>
     <string name="disease_csd_spread">Transmitted among cats by fleas. Spreads to humans via a scratch or bite contaminated with flea dirt carried on claws.</string>
     <string name="disease_csd_recog">Cats show no outward symptoms. In humans, a tiny red papule appears at scratch site, followed by painful swelling of lymph nodes.</string>
     <string name="disease_csd_prev">Use strict vet-approved monthly flea preventatives. Avoid rough play. Wash scratches immediately with antibacterial soap.</string>
-
     <string name="disease_ringworm_name">Ringworm 🍄</string>
     <string name="disease_ringworm_sub">A highly contagious skin and claw fungal infection (not a worm!).</string>
     <string name="disease_ringworm_spread">Spreads via direct skin contact with infected animals, or touching contaminated blankets, brushes, or soil with fungal spores.</string>
     <string name="disease_ringworm_recog">Circular patches of hair loss (alopecia), red scaly skin, dandruff, and fragile fur. Highly itchy.</string>
     <string name="disease_ringworm_prev">Quarantine infected pets immediately. Apply topical anti-fungal treatments. Wash bedding weekly in hot bleach water.</string>
-
     <string name="disease_pasteur_name">Pasteurellosis 🦷</string>
     <string name="disease_pasteur_sub">A rapid bacterial infection found naturally in feline saliva.</string>
     <string name="disease_pasteur_spread">Spreads immediately via deep punctures from cat bites, where oral bacteria are forced deep into muscle tissues.</string>
     <string name="disease_pasteur_recog">Extreme throbbing pain, severe swelling, heat, and redness at the bite site within just 2 to 12 hours.</string>
     <string name="disease_pasteur_prev">Every cat bite is a medical emergency! Seek immediate human medical care for preventative antibiotics.</string>
-
-    <!-- Adoption Section -->
     <string name="adoption_title">6-Stage Adoption Journey Timeline</string>
     <string name="adoption_desc">Adopting an outdoor stray cat is a heartwarming, progressive process. Each stage contains visual indices and key milestones to guide you.</string>
-
     <string name="adopt_stage_1_name">Stage 1: Observation &amp; Trap 🔍</string>
     <string name="adopt_stage_1_sum">Observe the stray cat\'s body language and level of socialization.</string>
     <string-array name="adopt_stage_1_bullets">
@@ -278,7 +249,6 @@
         <item>Provide meals at consistent times daily to build localized feeding habits.</item>
         <item>Never force physical touch; let Lily\'s friendly knuckle greeting allow them to sniff you first.</item>
     </string-array>
-
     <string name="adopt_stage_2_name">Stage 2: First Veterinary Checkup 🩺</string>
     <string name="adopt_stage_2_sum">Seek formal vet confirmation on health status before any home introduction.</string>
     <string-array name="adopt_stage_2_bullets">
@@ -286,7 +256,6 @@
         <item>Test for critical viruses such as FIV (Feline Immunodeficiency Virus) and FeLV (Feline Leukemia).</item>
         <item>Administer standard flea, tick, and deworming treatments.</item>
     </string-array>
-
     <string name="adopt_stage_3_name">Stage 3: Room Quarantine 🚪</string>
     <string name="adopt_stage_3_sum">Establish a dedicated, secure isolation space to prevent contamination or panic.</string>
     <string-array name="adopt_stage_3_bullets">
@@ -294,7 +263,6 @@
         <item>Allow them to decompress in this tiny sanctuary room for at least 7 to 10 days.</item>
         <item>Visit them regularly to speak softly and feed high-value treats to create positive bonding associations.</item>
     </string-array>
-
     <string name="adopt_stage_4_name">Stage 4: Scent Swapping 🧶</string>
     <string name="adopt_stage_4_sum">Introduce scents safely under the closed door without visual tension.</string>
     <string-array name="adopt_stage_4_bullets">
@@ -302,7 +270,6 @@
         <item>Swap toys, scratching posts, and bedding between the rooms.</item>
         <item>Feed both cats on opposite sides of the closed isolation door to link their scents with food joy.</item>
     </string-array>
-
     <string name="adopt_stage_5_name">Stage 5: Visual Meetings &amp; Bonding 🤝</string>
     <string name="adopt_stage_5_sum">Allow gradual, monitored visual sessions with a protective barrier.</string>
     <string-array name="adopt_stage_5_bullets">
@@ -310,7 +277,6 @@
         <item>Conduct short, 5-minute visual sessions while praising both cats with treats.</item>
         <item>If hissed at or flattened ears occur, calmly retreat a step back and try again tomorrow.</item>
     </string-array>
-
     <string name="adopt_stage_6_name">Stage 6: Lifetime Care &amp; Spaying 💖</string>
     <string name="adopt_stage_6_sum">Commit to a lifetime of veterinary wellness, quality food, and unconditional love.</string>
     <string-array name="adopt_stage_6_bullets">
@@ -318,8 +284,6 @@
         <item>Provide vertical spaces, climbing shelves, and scratchers to avoid indoor territorial anxiety.</item>
         <item>Give endless warm blankets, annual vaccinations, and the soft assurance of a permanent safe home.</item>
     </string-array>
-
-    <!-- DIY Section -->
     <string name="diy_title">Fun Handcrafted DIY Projects</string>
     <string name="diy_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts. Organized from easiest to hardest, lowest to highest cost, and quickest to most time-consuming.</string>
     <string name="diy_tab_shelter">Shelter 🏡</string>
@@ -338,14 +302,11 @@
     <string name="diy_milestone_2">Milestone 2: Main Assembly</string>
     <string name="diy_milestone_3">Milestone 3: Finished Result</string>
     <string name="diy_storyboard_step">Storyboard Step %1$d of 10</string>
-
-    <!-- DIY Difficulty -->
     <string name="diy_diff_easiest">Easiest</string>
     <string name="diy_diff_easy">Easy</string>
     <string name="diy_diff_medium">Medium</string>
     <string name="diy_diff_hard">Hard</string>
     <string name="diy_diff_hardest">Hardest</string>
-
     <string name="guide_stray_header_title">Found a Stray? Let\'s Help Together</string>
     <string name="guide_stray_header_subtitle">Lily and Pip show you how to safely rescue and care for community cats.</string>
     <string name="guide_stray_tab_safety">Immediate Safety</string>
@@ -354,7 +315,6 @@
     <string name="guide_stray_tab_care">Ongoing Care</string>
     <string name="stray_critical_title">CRITICAL: What NOT to feed a Cat!</string>
     <string name="stray_critical_desc">A cat\'s liver and blood cells cannot process human foods. Avoid these highly toxic items entirely (represented as visual danger slots):</string>
-
     <string name="stray_toxic_1_name">Onion &amp; Garlic 🧄</string>
     <string name="stray_toxic_1_desc">Destroys feline red blood cells, causing fatal hemolytic anemia.</string>
     <string name="stray_toxic_2_name">Chocolate &amp; Caffeine 🍫</string>
@@ -367,20 +327,17 @@
     <string name="stray_toxic_5_desc">Swells inside the stomach, releasing toxic ethanol that causes alcohol poisoning.</string>
     <string name="stray_toxic_6_name">Alcohol 🍺</string>
     <string name="stray_toxic_6_desc">A single tablespoon causes fatal brain failure and respiratory depression.</string>
-
     <string name="stray_protocol_title">Safe Engagement Protocol</string>
     <string name="stray_protocol_step_1_name">Assess Body Language 😾</string>
     <string name="stray_protocol_step_1_desc">Never grab a hissing, growling, or shaking cat. Allow them space.</string>
     <string name="stray_protocol_step_2_name">Knuckle Greeting 👧</string>
     <string name="stray_protocol_step_2_desc">Sit low, avoid eye contact, and stretch your hand out slowly to let them smell you.</string>
     <string name="stray_protocol_step_3_name">Food Trap 🍲</string>
-    <string name="stray_protocol_step_3_desc">Place stinky wet food inside a secure humane carrier to lead them to safety.</string>
+    <string name="stray_protocol_step_3_desc">Place fragrant wet food inside a secure humane carrier to lead them to safety.</string>
     <string name="stray_protocol_step_4_name">Scan for Microchip 🏥</string>
     <string name="stray_protocol_step_4_desc">Friendly strays might be lost pets. Take them to any vet clinic to scan their chip free.</string>
     <string name="stray_protocol_step_5_name">TNR for Ferals ✂️</string>
     <string name="stray_protocol_step_5_desc">If the cat is fearful and unsocialized, respect their home range and schedule spay/neuter surgery via TNR.</string>
-
-    <!-- Quiz Section -->
     <string name="quiz_welcome">Hi, %1$s! 👋</string>
     <string name="quiz_welcome_default">Caregiver</string>
     <string name="quiz_title">Growth Quiz Game</string>
@@ -400,8 +357,6 @@
     <string name="quiz_jumping_msg">Pip is growing... ✨</string>
     <string name="quiz_all_complete">🏆 You completed all 5 levels! You are now an official TinyPaws Expert Caretaker! 👑</string>
     <string name="quiz_reset_replay">Reset &amp; Replay From Level 1</string>
-
-    <!-- Quiz Level 0 Questions -->
     <string name="quiz_q1_text">Cats are basically professional nappers. How many hours a day do they sleep? 😴</string>
     <string-array name="quiz_q1_options">
         <item>4-6 hrs</item>
@@ -411,7 +366,6 @@
     </string-array>
     <string name="quiz_q1_correct">Yep! 12-16 hrs a day. Cats really said \'sleep is the main character\' 🛌✨</string>
     <string name="quiz_q1_wrong">Nope, but respect the guess 😅 Cats sleep 12-16 hrs a day. Absolute nap champions.</string>
-
     <string name="quiz_q2_text">Can cats eat chocolate? 🍫</string>
     <string-array name="quiz_q2_options">
         <item>Yes, treat them!</item>
@@ -421,7 +375,6 @@
     </string-array>
     <string name="quiz_q2_correct">Correct 🚫🍫 Chocolate is toxic to cats. Keep it far, far away.</string>
     <string name="quiz_q2_wrong">Big no 🚫 Chocolate is toxic to cats, no exceptions, not even \'just a little.\'</string>
-
     <string name="quiz_q3_text">What\'s a group of cats called? (this one\'s just fun trivia lol)</string>
     <string-array name="quiz_q3_options">
         <item>A squad</item>
@@ -431,7 +384,6 @@
     </string-array>
     <string name="quiz_q3_correct">Yesss, a \'clowder\' 🐱🐱🐱 use it to sound smart at parties.</string>
     <string name="quiz_q3_wrong">Close energy but it\'s actually a \'clowder\' 🐱 iconic word tbh.</string>
-
     <string name="quiz_q4_text">Should you give a stray cat water, or just food?</string>
     <string-array name="quiz_q4_options">
         <item>Just food</item>
@@ -441,7 +393,6 @@
     </string-array>
     <string name="quiz_q4_correct">Correct! Water is honestly just as important — a lot of cats walk around lowkey dehydrated 💧</string>
     <string name="quiz_q4_wrong">Nope — water matters just as much as food. Don\'t skip it 💧</string>
-
     <string name="quiz_q5_text">Is milk actually good for cats, despite what cartoons say? 🥛</string>
     <string-array name="quiz_q5_options">
         <item>Yes, it\'s basically cat juice</item>
@@ -451,26 +402,19 @@
     </string-array>
     <string name="quiz_q5_correct">Correct — cartoons lied to us 😭 Most cats can\'t actually digest milk well.</string>
     <string name="quiz_q5_wrong">Plot twist: most cats are lactose intolerant. Cartoons scammed us all 🥛😭</string>
-
-    <!-- Quiz Levels -->
     <string name="quiz_level_0">Sunny Meadow</string>
     <string name="quiz_level_1">Whisker Woods</string>
     <string name="quiz_level_2">Paw Print Path</string>
     <string name="quiz_level_3">Moonlit Alley</string>
     <string name="quiz_level_4">Guardian\'s Peak</string>
-
-    <!-- Chat Actions -->
     <string name="chat_send">Send</string>
     <string name="chat_delete">Delete</string>
     <string name="toggle">Toggle</string>
-    <!-- DIY Categories -->
     <string name="diy_cat_shelter">Shelter 🏡</string>
     <string name="diy_cat_game">Game 🧶</string>
     <string name="diy_cat_cozy">Cozy 🛋️</string>
     <string name="diy_cat_all_blueprint">📋 View Full Blueprint at a Glance</string>
     <string name="diy_blueprint_step">STEP %1$d</string>
-
-    <!-- DIY Projects Section Headers -->
     <string name="diy_section_title">Fun Handcrafted DIY Projects</string>
     <string name="diy_section_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts. Organized from easiest to hardest, lowest to highest cost, and quickest to most time-consuming.</string>
     <string name="diy_difficulty_easiest">Easiest</string>
@@ -478,8 +422,6 @@
     <string name="diy_difficulty_medium">Medium</string>
     <string name="diy_difficulty_hard">Hard</string>
     <string name="diy_difficulty_hardest">Hardest</string>
-
-    <!-- Creation Module -->
     <string name="creation_title">Magic Creation Studio</string>
     <string name="creation_art_studio">Kitten Art Studio 🎨</string>
     <string name="creation_music_studio">Lullaby Music 🎵</string>
@@ -510,8 +452,6 @@
     <string name="creation_audio_success">Generated successfully! Tap to listen.</string>
     <string name="creation_no_audio">No audio file composed yet.</string>
     <string name="creation_submit_prompt">Submit a prompt above to start composing.</string>
-
-    <!-- Location Module -->
     <string name="location_screen_title">Nearby Location Finder</string>
     <string name="location_live_search">📍 Live Location Search</string>
     <string name="location_search_desc">Accessing nearby clinics, pet supplies, and shelters. Results are automatically sorted from nearest to farthest based on your coordinates.</string>
@@ -529,31 +469,23 @@
     <string name="location_coords">Coordinates: Lat %1$.4f, Lng %2$.4f</string>
     <string name="location_back_home">Back to home</string>
     <string name="location_close_map">Close map</string>
-
-    <!-- Game/Quiz Module -->
     <string name="quiz_journey_title">Lily &amp; Pip\'s 5-Island Growth Journey</string>
     <string name="quiz_journey_desc">Tap any island to reveal its growth storyboard</string>
     <string name="quiz_level_prefix">Lvl %1$d</string>
     <string name="quiz_island_num">Island %1$d: %2$s</string>
     <string name="quiz_character_name">Pip</string>
-
-    <!-- Log History -->
     <string name="log_history_empty">Log history empty</string>
     <string name="log_notes_quiz">Completed Level %1$d Quiz (Score: %2$d/20)</string>
     <string name="log_notes_art">Generated custom cat art using AI Studio</string>
     <string name="log_notes_music">Generated custom ambient kitten track using Lyria</string>
-
-    <!-- UI Components -->
     <string name="nav_impact">Impact</string>
     <string name="nav_navigation">Navigation</string>
     <string name="step_indicator">STEP %1$d OF 2</string>
-
     <string name="difficulty_easiest">Easiest</string>
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_hard">Hard</string>
     <string name="difficulty_hardest">Hardest</string>
-
     <string name="cost_0">$0</string>
     <string name="cost_1">$1</string>
     <string name="cost_2">$2</string>
@@ -575,7 +507,6 @@
     <string name="time_2h">2 hours</string>
     <string name="time_3h">3 hours</string>
     <string name="time_4h">4 hours</string>
-
     <string name="mat_newspaper">Newspaper</string>
     <string name="mat_stones">Stones</string>
     <string name="mat_sisal_twine">Sisal Twine</string>
@@ -592,119 +523,671 @@
     <string name="mat_feathers">Feathers</string>
     <string name="mat_stick">Stick</string>
     <string name="mat_glue">Glue</string>
-
-    <!-- Quiz Q6-10 (Level 0) -->
     <string name="quiz_q6_text">What is the safest way to approach a shy stray cat?</string>
-    <string name="quiz_q6_opt0">Run at it full speed</string>
-    <string name="quiz_q6_opt1">Move slowly, stay low, and speak softly 🤫</string>
-    <string name="quiz_q6_opt2">Stare directly into its eyes</string>
-    <string name="quiz_q6_opt3">Make loud clapping noises</string>
+    <string name="quiz_q6_opt0">Cheek rubbing &amp; scent glands</string>
+    <string name="quiz_q6_opt1">Running at full speed</string>
+    <string name="quiz_q6_opt2">Staring into your eyes</string>
+    <string name="quiz_q6_opt3">Loud clapping noises</string>
     <string name="quiz_q6_correct">Correct! Moving slowly and staying low makes you look way less like a predator 🤫</string>
     <string name="quiz_q6_wrong">Wrong — loud or fast moves will just scare them away. Slow and low is the way 🤫</string>
-
     <string name="quiz_q7_text">If a cat\'s ears are pinned flat against its head, it feels:</string>
-    <string name="quiz_q7_opt0">Super happy</string>
-    <string name="quiz_q7_opt1">Threatened or very angry 😾</string>
-    <string name="quiz_q7_opt2">Bored</string>
-    <string name="quiz_q7_opt3">Sleepy</string>
+    <string name="quiz_q7_opt0">Tail</string>
+    <string name="quiz_q7_opt1">Whiskers</string>
+    <string name="quiz_q7_opt2">Eyelashes</string>
+    <string name="quiz_q7_opt3">Claws</string>
     <string name="quiz_q7_correct">Correct! Pinned ears mean \'back off, I\'m not happy\' 😾</string>
     <string name="quiz_q7_wrong">Nope — that\'s a classic anger or fear sign. Give them some space! 😾</string>
-
-    <!-- ... more placeholders to ensure compilation ... -->
-    <string name="quiz_q8_text">placeholder</string><string name="quiz_q8_opt0">a</string><string name="quiz_q8_opt1">b</string><string name="quiz_q8_opt2">c</string><string name="quiz_q8_opt3">d</string><string name="quiz_q8_correct">e</string><string name="quiz_q8_wrong">f</string>
-    <string name="quiz_q9_text">placeholder</string><string name="quiz_q9_opt0">a</string><string name="quiz_q9_opt1">b</string><string name="quiz_q9_opt2">c</string><string name="quiz_q9_opt3">d</string><string name="quiz_q9_correct">e</string><string name="quiz_q9_wrong">f</string>
-    <string name="quiz_q10_text">placeholder</string><string name="quiz_q10_opt0">a</string><string name="quiz_q10_opt1">b</string><string name="quiz_q10_opt2">c</string><string name="quiz_q10_opt3">d</string><string name="quiz_q10_correct">e</string><string name="quiz_q10_wrong">f</string>
-    <string name="quiz_q11_text">placeholder</string><string name="quiz_q11_opt0">a</string><string name="quiz_q11_opt1">b</string><string name="quiz_q11_opt2">c</string><string name="quiz_q11_opt3">d</string><string name="quiz_q11_correct">e</string><string name="quiz_q11_wrong">f</string>
-    <string name="quiz_q12_text">placeholder</string><string name="quiz_q12_opt0">a</string><string name="quiz_q12_opt1">b</string><string name="quiz_q12_opt2">c</string><string name="quiz_q12_opt3">d</string><string name="quiz_q12_correct">e</string><string name="quiz_q12_wrong">f</string>
-    <string name="quiz_q13_text">placeholder</string><string name="quiz_q13_opt0">a</string><string name="quiz_q13_opt1">b</string><string name="quiz_q13_opt2">c</string><string name="quiz_q13_opt3">d</string><string name="quiz_q13_correct">e</string><string name="quiz_q13_wrong">f</string>
-    <string name="quiz_q14_text">placeholder</string><string name="quiz_q14_opt0">a</string><string name="quiz_q14_opt1">b</string><string name="quiz_q14_opt2">c</string><string name="quiz_q14_opt3">d</string><string name="quiz_q14_correct">e</string><string name="quiz_q14_wrong">f</string>
-    <string name="quiz_q15_text">placeholder</string><string name="quiz_q15_opt0">a</string><string name="quiz_q15_opt1">b</string><string name="quiz_q15_opt2">c</string><string name="quiz_q15_opt3">d</string><string name="quiz_q15_correct">e</string><string name="quiz_q15_wrong">f</string>
-    <string name="quiz_q16_text">placeholder</string><string name="quiz_q16_opt0">a</string><string name="quiz_q16_opt1">b</string><string name="quiz_q16_opt2">c</string><string name="quiz_q16_opt3">d</string><string name="quiz_q16_correct">e</string><string name="quiz_q16_wrong">f</string>
-    <string name="quiz_q17_text">placeholder</string><string name="quiz_q17_opt0">a</string><string name="quiz_q17_opt1">b</string><string name="quiz_q17_opt2">c</string><string name="quiz_q17_opt3">d</string><string name="quiz_q17_correct">e</string><string name="quiz_q17_wrong">f</string>
-    <string name="quiz_q18_text">placeholder</string><string name="quiz_q18_opt0">a</string><string name="quiz_q18_opt1">b</string><string name="quiz_q18_opt2">c</string><string name="quiz_q18_opt3">d</string><string name="quiz_q18_correct">e</string><string name="quiz_q18_wrong">f</string>
-    <string name="quiz_q19_text">placeholder</string><string name="quiz_q19_opt0">a</string><string name="quiz_q19_opt1">b</string><string name="quiz_q19_opt2">c</string><string name="quiz_q19_opt3">d</string><string name="quiz_q19_correct">e</string><string name="quiz_q19_wrong">f</string>
-    <string name="quiz_q20_text">placeholder</string><string name="quiz_q20_opt0">a</string><string name="quiz_q20_opt1">b</string><string name="quiz_q20_opt2">c</string><string name="quiz_q20_opt3">d</string><string name="quiz_q20_correct">e</string><string name="quiz_q20_wrong">f</string>
-    <string name="quiz_q21_text">placeholder</string><string name="quiz_q21_opt0">a</string><string name="quiz_q21_opt1">b</string><string name="quiz_q21_opt2">c</string><string name="quiz_q21_opt3">d</string><string name="quiz_q21_correct">e</string><string name="quiz_q21_wrong">f</string>
-    <string name="quiz_q22_text">placeholder</string><string name="quiz_q22_opt0">a</string><string name="quiz_q22_opt1">b</string><string name="quiz_q22_opt2">c</string><string name="quiz_q22_opt3">d</string><string name="quiz_q22_correct">e</string><string name="quiz_q22_wrong">f</string>
-    <string name="quiz_q23_text">placeholder</string><string name="quiz_q23_opt0">a</string><string name="quiz_q23_opt1">b</string><string name="quiz_q23_opt2">c</string><string name="quiz_q23_opt3">d</string><string name="quiz_q23_correct">e</string><string name="quiz_q23_wrong">f</string>
-    <string name="quiz_q24_text">placeholder</string><string name="quiz_q24_opt0">a</string><string name="quiz_q24_opt1">b</string><string name="quiz_q24_opt2">c</string><string name="quiz_q24_opt3">d</string><string name="quiz_q24_correct">e</string><string name="quiz_q24_wrong">f</string>
-    <string name="quiz_q25_text">placeholder</string><string name="quiz_q25_opt0">a</string><string name="quiz_q25_opt1">b</string><string name="quiz_q25_opt2">c</string><string name="quiz_q25_opt3">d</string><string name="quiz_q25_correct">e</string><string name="quiz_q25_wrong">f</string>
-    <string name="quiz_q26_text">placeholder</string><string name="quiz_q26_opt0">a</string><string name="quiz_q26_opt1">b</string><string name="quiz_q26_opt2">c</string><string name="quiz_q26_opt3">d</string><string name="quiz_q26_correct">e</string><string name="quiz_q26_wrong">f</string>
-    <string name="quiz_q27_text">placeholder</string><string name="quiz_q27_opt0">a</string><string name="quiz_q27_opt1">b</string><string name="quiz_q27_opt2">c</string><string name="quiz_q27_opt3">d</string><string name="quiz_q27_correct">e</string><string name="quiz_q27_wrong">f</string>
-    <string name="quiz_q28_text">placeholder</string><string name="quiz_q28_opt0">a</string><string name="quiz_q28_opt1">b</string><string name="quiz_q28_opt2">c</string><string name="quiz_q28_opt3">d</string><string name="quiz_q28_correct">e</string><string name="quiz_q28_wrong">f</string>
-    <string name="quiz_q29_text">placeholder</string><string name="quiz_q29_opt0">a</string><string name="quiz_q29_opt1">b</string><string name="quiz_q29_opt2">c</string><string name="quiz_q29_opt3">d</string><string name="quiz_q29_correct">e</string><string name="quiz_q29_wrong">f</string>
-    <string name="quiz_q30_text">placeholder</string><string name="quiz_q30_opt0">a</string><string name="quiz_q30_opt1">b</string><string name="quiz_q30_opt2">c</string><string name="quiz_q30_opt3">d</string><string name="quiz_q30_correct">e</string><string name="quiz_q30_wrong">f</string>
-    <string name="quiz_q31_text">placeholder</string><string name="quiz_q31_opt0">a</string><string name="quiz_q31_opt1">b</string><string name="quiz_q31_opt2">c</string><string name="quiz_q31_opt3">d</string><string name="quiz_q31_correct">e</string><string name="quiz_q31_wrong">f</string>
-    <string name="quiz_q32_text">placeholder</string><string name="quiz_q32_opt0">a</string><string name="quiz_q32_opt1">b</string><string name="quiz_q32_opt2">c</string><string name="quiz_q32_opt3">d</string><string name="quiz_q32_correct">e</string><string name="quiz_q32_wrong">f</string>
-    <string name="quiz_q33_text">placeholder</string><string name="quiz_q33_opt0">a</string><string name="quiz_q33_opt1">b</string><string name="quiz_q33_opt2">c</string><string name="quiz_q33_opt3">d</string><string name="quiz_q33_correct">e</string><string name="quiz_q33_wrong">f</string>
-    <string name="quiz_q34_text">placeholder</string><string name="quiz_q34_opt0">a</string><string name="quiz_q34_opt1">b</string><string name="quiz_q34_opt2">c</string><string name="quiz_q34_opt3">d</string><string name="quiz_q34_correct">e</string><string name="quiz_q34_wrong">f</string>
-    <string name="quiz_q35_text">placeholder</string><string name="quiz_q35_opt0">a</string><string name="quiz_q35_opt1">b</string><string name="quiz_q35_opt2">c</string><string name="quiz_q35_opt3">d</string><string name="quiz_q35_correct">e</string><string name="quiz_q35_wrong">f</string>
-    <string name="quiz_q36_text">placeholder</string><string name="quiz_q36_opt0">a</string><string name="quiz_q36_opt1">b</string><string name="quiz_q36_opt2">c</string><string name="quiz_q36_opt3">d</string><string name="quiz_q36_correct">e</string><string name="quiz_q36_wrong">f</string>
-    <string name="quiz_q37_text">placeholder</string><string name="quiz_q37_opt0">a</string><string name="quiz_q37_opt1">b</string><string name="quiz_q37_opt2">c</string><string name="quiz_q37_opt3">d</string><string name="quiz_q37_correct">e</string><string name="quiz_q37_wrong">f</string>
-    <string name="quiz_q38_text">placeholder</string><string name="quiz_q38_opt0">a</string><string name="quiz_q38_opt1">b</string><string name="quiz_q38_opt2">c</string><string name="quiz_q38_opt3">d</string><string name="quiz_q38_correct">e</string><string name="quiz_q38_wrong">f</string>
-    <string name="quiz_q39_text">placeholder</string><string name="quiz_q39_opt0">a</string><string name="quiz_q39_opt1">b</string><string name="quiz_q39_opt2">c</string><string name="quiz_q39_opt3">d</string><string name="quiz_q39_correct">e</string><string name="quiz_q39_wrong">f</string>
-    <string name="quiz_q40_text">placeholder</string><string name="quiz_q40_opt0">a</string><string name="quiz_q40_opt1">b</string><string name="quiz_q40_opt2">c</string><string name="quiz_q40_opt3">d</string><string name="quiz_q40_correct">e</string><string name="quiz_q40_wrong">f</string>
-    <string name="quiz_q41_text">placeholder</string><string name="quiz_q41_opt0">a</string><string name="quiz_q41_opt1">b</string><string name="quiz_q41_opt2">c</string><string name="quiz_q41_opt3">d</string><string name="quiz_q41_correct">e</string><string name="quiz_q41_wrong">f</string>
-    <string name="quiz_q42_text">placeholder</string><string name="quiz_q42_opt0">a</string><string name="quiz_q42_opt1">b</string><string name="quiz_q42_opt2">c</string><string name="quiz_q42_opt3">d</string><string name="quiz_q42_correct">e</string><string name="quiz_q42_wrong">f</string>
-    <string name="quiz_q43_text">placeholder</string><string name="quiz_q43_opt0">a</string><string name="quiz_q43_opt1">b</string><string name="quiz_q43_opt2">c</string><string name="quiz_q43_opt3">d</string><string name="quiz_q43_correct">e</string><string name="quiz_q43_wrong">f</string>
-    <string name="quiz_q44_text">placeholder</string><string name="quiz_q44_opt0">a</string><string name="quiz_q44_opt1">b</string><string name="quiz_q44_opt2">c</string><string name="quiz_q44_opt3">d</string><string name="quiz_q44_correct">e</string><string name="quiz_q44_wrong">f</string>
-    <string name="quiz_q45_text">placeholder</string><string name="quiz_q45_opt0">a</string><string name="quiz_q45_opt1">b</string><string name="quiz_q45_opt2">c</string><string name="quiz_q45_opt3">d</string><string name="quiz_q45_correct">e</string><string name="quiz_q45_wrong">f</string>
-    <string name="quiz_q46_text">placeholder</string><string name="quiz_q46_opt0">a</string><string name="quiz_q46_opt1">b</string><string name="quiz_q46_opt2">c</string><string name="quiz_q46_opt3">d</string><string name="quiz_q46_correct">e</string><string name="quiz_q46_wrong">f</string>
-    <string name="quiz_q47_text">placeholder</string><string name="quiz_q47_opt0">a</string><string name="quiz_q47_opt1">b</string><string name="quiz_q47_opt2">c</string><string name="quiz_q47_opt3">d</string><string name="quiz_q47_correct">e</string><string name="quiz_q47_wrong">f</string>
-    <string name="quiz_q48_text">placeholder</string><string name="quiz_q48_opt0">a</string><string name="quiz_q48_opt1">b</string><string name="quiz_q48_opt2">c</string><string name="quiz_q48_opt3">d</string><string name="quiz_q48_correct">e</string><string name="quiz_q48_wrong">f</string>
-    <string name="quiz_q49_text">placeholder</string><string name="quiz_q49_opt0">a</string><string name="quiz_q49_opt1">b</string><string name="quiz_q49_opt2">c</string><string name="quiz_q49_opt3">d</string><string name="quiz_q49_correct">e</string><string name="quiz_q49_wrong">f</string>
-    <string name="quiz_q50_text">placeholder</string><string name="quiz_q50_opt0">a</string><string name="quiz_q50_opt1">b</string><string name="quiz_q50_opt2">c</string><string name="quiz_q50_opt3">d</string><string name="quiz_q50_correct">e</string><string name="quiz_q50_wrong">f</string>
-    <string name="quiz_q51_text">placeholder</string><string name="quiz_q51_opt0">a</string><string name="quiz_q51_opt1">b</string><string name="quiz_q51_opt2">c</string><string name="quiz_q51_opt3">d</string><string name="quiz_q51_correct">e</string><string name="quiz_q51_wrong">f</string>
-    <string name="quiz_q52_text">placeholder</string><string name="quiz_q52_opt0">a</string><string name="quiz_q52_opt1">b</string><string name="quiz_q52_opt2">c</string><string name="quiz_q52_opt3">d</string><string name="quiz_q52_correct">e</string><string name="quiz_q52_wrong">f</string>
-    <string name="quiz_q53_text">placeholder</string><string name="quiz_q53_opt0">a</string><string name="quiz_q53_opt1">b</string><string name="quiz_q53_opt2">c</string><string name="quiz_q53_opt3">d</string><string name="quiz_q53_correct">e</string><string name="quiz_q53_wrong">f</string>
-    <string name="quiz_q54_text">placeholder</string><string name="quiz_q54_opt0">a</string><string name="quiz_q54_opt1">b</string><string name="quiz_q54_opt2">c</string><string name="quiz_q54_opt3">d</string><string name="quiz_q54_correct">e</string><string name="quiz_q54_wrong">f</string>
-    <string name="quiz_q55_text">placeholder</string><string name="quiz_q55_opt0">a</string><string name="quiz_q55_opt1">b</string><string name="quiz_q55_opt2">c</string><string name="quiz_q55_opt3">d</string><string name="quiz_q55_correct">e</string><string name="quiz_q55_wrong">f</string>
-    <string name="quiz_q56_text">placeholder</string><string name="quiz_q56_opt0">a</string><string name="quiz_q56_opt1">b</string><string name="quiz_q56_opt2">c</string><string name="quiz_q56_opt3">d</string><string name="quiz_q56_correct">e</string><string name="quiz_q56_wrong">f</string>
-    <string name="quiz_q57_text">placeholder</string><string name="quiz_q57_opt0">a</string><string name="quiz_q57_opt1">b</string><string name="quiz_q57_opt2">c</string><string name="quiz_q57_opt3">d</string><string name="quiz_q57_correct">e</string><string name="quiz_q57_wrong">f</string>
-    <string name="quiz_q58_text">placeholder</string><string name="quiz_q58_opt0">a</string><string name="quiz_q58_opt1">b</string><string name="quiz_q58_opt2">c</string><string name="quiz_q58_opt3">d</string><string name="quiz_q58_correct">e</string><string name="quiz_q58_wrong">f</string>
-    <string name="quiz_q59_text">placeholder</string><string name="quiz_q59_opt0">a</string><string name="quiz_q59_opt1">b</string><string name="quiz_q59_opt2">c</string><string name="quiz_q59_opt3">d</string><string name="quiz_q59_correct">e</string><string name="quiz_q59_wrong">f</string>
-    <string name="quiz_q60_text">placeholder</string><string name="quiz_q60_opt0">a</string><string name="quiz_q60_opt1">b</string><string name="quiz_q60_opt2">c</string><string name="quiz_q60_opt3">d</string><string name="quiz_q60_correct">e</string><string name="quiz_q60_wrong">f</string>
-    <string name="quiz_q61_text">placeholder</string><string name="quiz_q61_opt0">a</string><string name="quiz_q61_opt1">b</string><string name="quiz_q61_opt2">c</string><string name="quiz_q61_opt3">d</string><string name="quiz_q61_correct">e</string><string name="quiz_q61_wrong">f</string>
-    <string name="quiz_q62_text">placeholder</string><string name="quiz_q62_opt0">a</string><string name="quiz_q62_opt1">b</string><string name="quiz_q62_opt2">c</string><string name="quiz_q62_opt3">d</string><string name="quiz_q62_correct">e</string><string name="quiz_q62_wrong">f</string>
-    <string name="quiz_q63_text">placeholder</string><string name="quiz_q63_opt0">a</string><string name="quiz_q63_opt1">b</string><string name="quiz_q63_opt2">c</string><string name="quiz_q63_opt3">d</string><string name="quiz_q63_correct">e</string><string name="quiz_q63_wrong">f</string>
-    <string name="quiz_q64_text">placeholder</string><string name="quiz_q64_opt0">a</string><string name="quiz_q64_opt1">b</string><string name="quiz_q64_opt2">c</string><string name="quiz_q64_opt3">d</string><string name="quiz_q64_correct">e</string><string name="quiz_q64_wrong">f</string>
-    <string name="quiz_q65_text">placeholder</string><string name="quiz_q65_opt0">a</string><string name="quiz_q65_opt1">b</string><string name="quiz_q65_opt2">c</string><string name="quiz_q65_opt3">d</string><string name="quiz_q65_correct">e</string><string name="quiz_q65_wrong">f</string>
-    <string name="quiz_q66_text">placeholder</string><string name="quiz_q66_opt0">a</string><string name="quiz_q66_opt1">b</string><string name="quiz_q66_opt2">c</string><string name="quiz_q66_opt3">d</string><string name="quiz_q66_correct">e</string><string name="quiz_q66_wrong">f</string>
-    <string name="quiz_q67_text">placeholder</string><string name="quiz_q67_opt0">a</string><string name="quiz_q67_opt1">b</string><string name="quiz_q67_opt2">c</string><string name="quiz_q67_opt3">d</string><string name="quiz_q67_correct">e</string><string name="quiz_q67_wrong">f</string>
-    <string name="quiz_q68_text">placeholder</string><string name="quiz_q68_opt0">a</string><string name="quiz_q68_opt1">b</string><string name="quiz_q68_opt2">c</string><string name="quiz_q68_opt3">d</string><string name="quiz_q68_correct">e</string><string name="quiz_q68_wrong">f</string>
-    <string name="quiz_q69_text">placeholder</string><string name="quiz_q69_opt0">a</string><string name="quiz_q69_opt1">b</string><string name="quiz_q69_opt2">c</string><string name="quiz_q69_opt3">d</string><string name="quiz_q69_correct">e</string><string name="quiz_q69_wrong">f</string>
-    <string name="quiz_q70_text">placeholder</string><string name="quiz_q70_opt0">a</string><string name="quiz_q70_opt1">b</string><string name="quiz_q70_opt2">c</string><string name="quiz_q70_opt3">d</string><string name="quiz_q70_correct">e</string><string name="quiz_q70_wrong">f</string>
-    <string name="quiz_q71_text">placeholder</string><string name="quiz_q71_opt0">a</string><string name="quiz_q71_opt1">b</string><string name="quiz_q71_opt2">c</string><string name="quiz_q71_opt3">d</string><string name="quiz_q71_correct">e</string><string name="quiz_q71_wrong">f</string>
-    <string name="quiz_q72_text">placeholder</string><string name="quiz_q72_opt0">a</string><string name="quiz_q72_opt1">b</string><string name="quiz_q72_opt2">c</string><string name="quiz_q72_opt3">d</string><string name="quiz_q72_correct">e</string><string name="quiz_q72_wrong">f</string>
-    <string name="quiz_q73_text">placeholder</string><string name="quiz_q73_opt0">a</string><string name="quiz_q73_opt1">b</string><string name="quiz_q73_opt2">c</string><string name="quiz_q73_opt3">d</string><string name="quiz_q73_correct">e</string><string name="quiz_q73_wrong">f</string>
-    <string name="quiz_q74_text">placeholder</string><string name="quiz_q74_opt0">a</string><string name="quiz_q74_opt1">b</string><string name="quiz_q74_opt2">c</string><string name="quiz_q74_opt3">d</string><string name="quiz_q74_correct">e</string><string name="quiz_q74_wrong">f</string>
-    <string name="quiz_q75_text">placeholder</string><string name="quiz_q75_opt0">a</string><string name="quiz_q75_opt1">b</string><string name="quiz_q75_opt2">c</string><string name="quiz_q75_opt3">d</string><string name="quiz_q75_correct">e</string><string name="quiz_q75_wrong">f</string>
-    <string name="quiz_q76_text">placeholder</string><string name="quiz_q76_opt0">a</string><string name="quiz_q76_opt1">b</string><string name="quiz_q76_opt2">c</string><string name="quiz_q76_opt3">d</string><string name="quiz_q76_correct">e</string><string name="quiz_q76_wrong">f</string>
-    <string name="quiz_q77_text">placeholder</string><string name="quiz_q77_opt0">a</string><string name="quiz_q77_opt1">b</string><string name="quiz_q77_opt2">c</string><string name="quiz_q77_opt3">d</string><string name="quiz_q77_correct">e</string><string name="quiz_q77_wrong">f</string>
-    <string name="quiz_q78_text">placeholder</string><string name="quiz_q78_opt0">a</string><string name="quiz_q78_opt1">b</string><string name="quiz_q78_opt2">c</string><string name="quiz_q78_opt3">d</string><string name="quiz_q78_correct">e</string><string name="quiz_q78_wrong">f</string>
-    <string name="quiz_q79_text">placeholder</string><string name="quiz_q79_opt0">a</string><string name="quiz_q79_opt1">b</string><string name="quiz_q79_opt2">c</string><string name="quiz_q79_opt3">d</string><string name="quiz_q79_correct">e</string><string name="quiz_q79_wrong">f</string>
-    <string name="quiz_q80_text">placeholder</string><string name="quiz_q80_opt0">a</string><string name="quiz_q80_opt1">b</string><string name="quiz_q80_opt2">c</string><string name="quiz_q80_opt3">d</string><string name="quiz_q80_correct">e</string><string name="quiz_q80_wrong">f</string>
-    <string name="quiz_q81_text">placeholder</string><string name="quiz_q81_opt0">a</string><string name="quiz_q81_opt1">b</string><string name="quiz_q81_opt2">c</string><string name="quiz_q81_opt3">d</string><string name="quiz_q81_correct">e</string><string name="quiz_q81_wrong">f</string>
-    <string name="quiz_q82_text">placeholder</string><string name="quiz_q82_opt0">a</string><string name="quiz_q82_opt1">b</string><string name="quiz_q82_opt2">c</string><string name="quiz_q82_opt3">d</string><string name="quiz_q82_correct">e</string><string name="quiz_q82_wrong">f</string>
-    <string name="quiz_q83_text">placeholder</string><string name="quiz_q83_opt0">a</string><string name="quiz_q83_opt1">b</string><string name="quiz_q83_opt2">c</string><string name="quiz_q83_opt3">d</string><string name="quiz_q83_correct">e</string><string name="quiz_q83_wrong">f</string>
-    <string name="quiz_q84_text">placeholder</string><string name="quiz_q84_opt0">a</string><string name="quiz_q84_opt1">b</string><string name="quiz_q84_opt2">c</string><string name="quiz_q84_opt3">d</string><string name="quiz_q84_correct">e</string><string name="quiz_q84_wrong">f</string>
-    <string name="quiz_q85_text">placeholder</string><string name="quiz_q85_opt0">a</string><string name="quiz_q85_opt1">b</string><string name="quiz_q85_opt2">c</string><string name="quiz_q85_opt3">d</string><string name="quiz_q85_correct">e</string><string name="quiz_q85_wrong">f</string>
-    <string name="quiz_q86_text">placeholder</string><string name="quiz_q86_opt0">a</string><string name="quiz_q86_opt1">b</string><string name="quiz_q86_opt2">c</string><string name="quiz_q86_opt3">d</string><string name="quiz_q86_correct">e</string><string name="quiz_q86_wrong">f</string>
-    <string name="quiz_q87_text">placeholder</string><string name="quiz_q87_opt0">a</string><string name="quiz_q87_opt1">b</string><string name="quiz_q87_opt2">c</string><string name="quiz_q87_opt3">d</string><string name="quiz_q87_correct">e</string><string name="quiz_q87_wrong">f</string>
-    <string name="quiz_q88_text">placeholder</string><string name="quiz_q88_opt0">a</string><string name="quiz_q88_opt1">b</string><string name="quiz_q88_opt2">c</string><string name="quiz_q88_opt3">d</string><string name="quiz_q88_correct">e</string><string name="quiz_q88_wrong">f</string>
-    <string name="quiz_q89_text">placeholder</string><string name="quiz_q89_opt0">a</string><string name="quiz_q89_opt1">b</string><string name="quiz_q89_opt2">c</string><string name="quiz_q89_opt3">d</string><string name="quiz_q89_correct">e</string><string name="quiz_q89_wrong">f</string>
-    <string name="quiz_q90_text">placeholder</string><string name="quiz_q90_opt0">a</string><string name="quiz_q90_opt1">b</string><string name="quiz_q90_opt2">c</string><string name="quiz_q90_opt3">d</string><string name="quiz_q90_correct">e</string><string name="quiz_q90_wrong">f</string>
-    <string name="quiz_q91_text">placeholder</string><string name="quiz_q91_opt0">a</string><string name="quiz_q91_opt1">b</string><string name="quiz_q91_opt2">c</string><string name="quiz_q91_opt3">d</string><string name="quiz_q91_correct">e</string><string name="quiz_q91_wrong">f</string>
-    <string name="quiz_q92_text">placeholder</string><string name="quiz_q92_opt0">a</string><string name="quiz_q92_opt1">b</string><string name="quiz_q92_opt2">c</string><string name="quiz_q92_opt3">d</string><string name="quiz_q92_correct">e</string><string name="quiz_q92_wrong">f</string>
-    <string name="quiz_q93_text">placeholder</string><string name="quiz_q93_opt0">a</string><string name="quiz_q93_opt1">b</string><string name="quiz_q93_opt2">c</string><string name="quiz_q93_opt3">d</string><string name="quiz_q93_correct">e</string><string name="quiz_q93_wrong">f</string>
-    <string name="quiz_q94_text">placeholder</string><string name="quiz_q94_opt0">a</string><string name="quiz_q94_opt1">b</string><string name="quiz_q94_opt2">c</string><string name="quiz_q94_opt3">d</string><string name="quiz_q94_correct">e</string><string name="quiz_q94_wrong">f</string>
-    <string name="quiz_q95_text">placeholder</string><string name="quiz_q95_opt0">a</string><string name="quiz_q95_opt1">b</string><string name="quiz_q95_opt2">c</string><string name="quiz_q95_opt3">d</string><string name="quiz_q95_correct">e</string><string name="quiz_q95_wrong">f</string>
-    <string name="quiz_q96_text">placeholder</string><string name="quiz_q96_opt0">a</string><string name="quiz_q96_opt1">b</string><string name="quiz_q96_opt2">c</string><string name="quiz_q96_opt3">d</string><string name="quiz_q96_correct">e</string><string name="quiz_q96_wrong">f</string>
-    <string name="quiz_q97_text">placeholder</string><string name="quiz_q97_opt0">a</string><string name="quiz_q97_opt1">b</string><string name="quiz_q97_opt2">c</string><string name="quiz_q97_opt3">d</string><string name="quiz_q97_correct">e</string><string name="quiz_q97_wrong">f</string>
-    <string name="quiz_q98_text">placeholder</string><string name="quiz_q98_opt0">a</string><string name="quiz_q98_opt1">b</string><string name="quiz_q98_opt2">c</string><string name="quiz_q98_opt3">d</string><string name="quiz_q98_correct">e</string><string name="quiz_q98_wrong">f</string>
-    <string name="quiz_q99_text">placeholder</string><string name="quiz_q99_opt0">a</string><string name="quiz_q99_opt1">b</string><string name="quiz_q99_opt2">c</string><string name="quiz_q99_opt3">d</string><string name="quiz_q99_correct">e</string><string name="quiz_q99_wrong">f</string>
-    <string name="quiz_q100_text">placeholder</string><string name="quiz_q100_opt0">a</string><string name="quiz_q100_opt1">b</string><string name="quiz_q100_opt2">c</string><string name="quiz_q100_opt3">d</string><string name="quiz_q100_correct">e</string><string name="quiz_q100_wrong">f</string>
-
+    <string name="quiz_q8_text">placeholder</string>
+    <string name="quiz_q8_opt0">Angry and aggressive</string>
+    <string name="quiz_q8_opt1">Terrified</string>
+    <string name="quiz_q8_opt2">Happy &amp; friendly greeting</string>
+    <string name="quiz_q8_opt3">Extremely sleepy</string>
+    <string name="quiz_q8_correct">e</string>
+    <string name="quiz_q8_wrong">f</string>
+    <string name="quiz_q9_text">placeholder</string>
+    <string name="quiz_q9_opt0">1-2 days</string>
+    <string name="quiz_q9_opt1">7-14 days</string>
+    <string name="quiz_q9_opt2">1 month</string>
+    <string name="quiz_q9_opt3">6 weeks</string>
+    <string name="quiz_q9_correct">e</string>
+    <string name="quiz_q9_wrong">f</string>
+    <string name="quiz_q10_text">placeholder</string>
+    <string name="quiz_q10_opt0">Hygiene, cooling &amp; stress relief</string>
+    <string name="quiz_q10_opt1">To lose hair</string>
+    <string name="quiz_q10_opt2">To get dirty</string>
+    <string name="quiz_q10_opt3">To attract insects</string>
+    <string name="quiz_q10_correct">e</string>
+    <string name="quiz_q10_wrong">f</string>
+    <string name="quiz_q11_text">placeholder</string>
+    <string name="quiz_q11_opt0">Yes, daily</string>
+    <string name="quiz_q11_opt1">No, chocolate is toxic</string>
+    <string name="quiz_q11_opt2">Only dark chocolate</string>
+    <string name="quiz_q11_opt3">Only white chocolate</string>
+    <string name="quiz_q11_correct">e</string>
+    <string name="quiz_q11_wrong">f</string>
+    <string name="quiz_q12_text">placeholder</string>
+    <string name="quiz_q12_opt0">Yes, it is essential</string>
+    <string name="quiz_q12_opt1">No, most are lactose intolerant</string>
+    <string name="quiz_q12_opt2">Only for adult cats</string>
+    <string name="quiz_q12_opt3">Yes, all milk is safe</string>
+    <string name="quiz_q12_correct">e</string>
+    <string name="quiz_q12_wrong">f</string>
+    <string name="quiz_q13_text">placeholder</string>
+    <string name="quiz_q13_opt0">Vegan diet</string>
+    <string name="quiz_q13_opt1">Strict fruit diet</string>
+    <string name="quiz_q13_opt2">Meat-based (obligate carnivore)</string>
+    <string name="quiz_q13_opt3">High carbohydrate diet</string>
+    <string name="quiz_q13_correct">e</string>
+    <string name="quiz_q13_wrong">f</string>
+    <string name="quiz_q14_text">placeholder</string>
+    <string name="quiz_q14_opt0">It tastes bad</string>
+    <string name="quiz_q14_opt1">Contains dangerous parasites &amp; bacteria</string>
+    <string name="quiz_q14_opt2">It is too cold</string>
+    <string name="quiz_q14_opt3">Cats dislike water</string>
+    <string name="quiz_q14_correct">e</string>
+    <string name="quiz_q14_wrong">f</string>
+    <string name="quiz_q15_text">placeholder</string>
+    <string name="quiz_q15_opt0">Raw onions</string>
+    <string name="quiz_q15_opt1">Grapes</string>
+    <string name="quiz_q15_opt2">Plain cooked chicken</string>
+    <string name="quiz_q15_opt3">Chocolate</string>
+    <string name="quiz_q15_correct">e</string>
+    <string name="quiz_q15_wrong">f</string>
+    <string name="quiz_q16_text">placeholder</string>
+    <string name="quiz_q16_opt0">Once every 3 days</string>
+    <string name="quiz_q16_opt1">1-2 scheduled meals daily</string>
+    <string name="quiz_q16_opt2">10 times a day</string>
+    <string name="quiz_q16_opt3">Whenever they meow</string>
+    <string name="quiz_q16_correct">e</string>
+    <string name="quiz_q16_wrong">f</string>
+    <string name="quiz_q17_text">placeholder</string>
+    <string name="quiz_q17_opt0">Vitamin C</string>
+    <string name="quiz_q17_opt1">Taurine</string>
+    <string name="quiz_q17_opt2">Calcium</string>
+    <string name="quiz_q17_opt3">Iron</string>
+    <string name="quiz_q17_correct">e</string>
+    <string name="quiz_q17_wrong">f</string>
+    <string name="quiz_q18_text">placeholder</string>
+    <string name="quiz_q18_opt0">Yes, always</string>
+    <string name="quiz_q18_opt1">No, use Kitten Milk Replacer (KMR)</string>
+    <string name="quiz_q18_opt2">Only skim milk</string>
+    <string name="quiz_q18_opt3">Yes, mixed with water</string>
+    <string name="quiz_q18_correct">e</string>
+    <string name="quiz_q18_wrong">f</string>
+    <string name="quiz_q19_text">placeholder</string>
+    <string name="quiz_q19_opt0">Force drink with spoon</string>
+    <string name="quiz_q19_opt1">Feed wet cat food</string>
+    <string name="quiz_q19_opt2">Give fruit juice</string>
+    <string name="quiz_q19_opt3">Add salt to water</string>
+    <string name="quiz_q19_correct">e</string>
+    <string name="quiz_q19_wrong">f</string>
+    <string name="quiz_q20_text">placeholder</string>
+    <string name="quiz_q20_opt0">Yes, always</string>
+    <string name="quiz_q20_opt1">No, wet food provides vital hydration</string>
+    <string name="quiz_q20_opt2">Dry food is harmful</string>
+    <string name="quiz_q20_opt3">Cats do not need water</string>
+    <string name="quiz_q20_correct">e</string>
+    <string name="quiz_q20_wrong">f</string>
+    <string name="quiz_q21_text">placeholder</string>
+    <string name="quiz_q21_opt0">Trap-Neuter-Return</string>
+    <string name="quiz_q21_opt1">Train-Nourish-Rescue</string>
+    <string name="quiz_q21_opt2">Treat-Name-Relocate</string>
+    <string name="quiz_q21_opt3">Tag-Number-Register</string>
+    <string name="quiz_q21_correct">e</string>
+    <string name="quiz_q21_wrong">f</string>
+    <string name="quiz_q22_text">placeholder</string>
+    <string name="quiz_q22_opt0">Collared tag</string>
+    <string name="quiz_q22_opt1">Tipped ear (ear tip)</string>
+    <string name="quiz_q22_opt2">Shaved back</string>
+    <string name="quiz_q22_opt3">Forehead tattoo</string>
+    <string name="quiz_q22_correct">e</string>
+    <string name="quiz_q22_wrong">f</string>
+    <string name="quiz_q23_text">placeholder</string>
+    <string name="quiz_q23_opt0">95.0°F - 97.5°F</string>
+    <string name="quiz_q23_opt1">100.5°F - 102.5°F</string>
+    <string name="quiz_q23_opt2">105.0°F - 108.0°F</string>
+    <string name="quiz_q23_opt3">98.6°F exactly</string>
+    <string name="quiz_q23_correct">e</string>
+    <string name="quiz_q23_wrong">f</string>
+    <string name="quiz_q24_text">placeholder</string>
+    <string name="quiz_q24_opt0">Purring loudly</string>
+    <string name="quiz_q24_opt1">Matted fur, discharge &amp; lethargy</string>
+    <string name="quiz_q24_opt2">High energy</string>
+    <string name="quiz_q24_opt3">Shiny coat</string>
+    <string name="quiz_q24_correct">e</string>
+    <string name="quiz_q24_wrong">f</string>
+    <string name="quiz_q25_text">placeholder</string>
+    <string name="quiz_q25_opt0">Pet it gently</string>
+    <string name="quiz_q25_opt1">Stay away &amp; call Animal Control/Vet</string>
+    <string name="quiz_q25_opt2">Feed it by hand</string>
+    <string name="quiz_q25_opt3">Bring it inside</string>
+    <string name="quiz_q25_correct">e</string>
+    <string name="quiz_q25_wrong">f</string>
+    <string name="quiz_q26_text">placeholder</string>
+    <string name="quiz_q26_opt0">It makes them sleepy</string>
+    <string name="quiz_q26_opt1">Extremely toxic &amp; destroys red blood cells</string>
+    <string name="quiz_q26_opt2">Makes fur fall out</string>
+    <string name="quiz_q26_opt3">Has no effect</string>
+    <string name="quiz_q26_correct">e</string>
+    <string name="quiz_q26_wrong">f</string>
+    <string name="quiz_q27_text">placeholder</string>
+    <string name="quiz_q27_opt0">From eating grass</string>
+    <string name="quiz_q27_opt1">Contact with infested environments/animals</string>
+    <string name="quiz_q27_opt2">From drinking milk</string>
+    <string name="quiz_q27_opt3">Sleeping too much</string>
+    <string name="quiz_q27_correct">e</string>
+    <string name="quiz_q27_wrong">f</string>
+    <string name="quiz_q28_text">placeholder</string>
+    <string name="quiz_q28_opt0">Every 5 years</string>
+    <string name="quiz_q28_opt1">At least once a year</string>
+    <string name="quiz_q28_opt2">Only when severely ill</string>
+    <string name="quiz_q28_opt3">Never</string>
+    <string name="quiz_q28_correct">e</string>
+    <string name="quiz_q28_wrong">f</string>
+    <string name="quiz_q29_text">placeholder</string>
+    <string name="quiz_q29_opt0">Hot &amp; dry</string>
+    <string name="quiz_q29_opt1">Cool &amp; slightly damp</string>
+    <string name="quiz_q29_opt2">Bleeding</string>
+    <string name="quiz_q29_opt3">Bright yellow</string>
+    <string name="quiz_q29_correct">e</string>
+    <string name="quiz_q29_wrong">f</string>
+    <string name="quiz_q30_text">placeholder</string>
+    <string name="quiz_q30_opt0">To annoy humans</string>
+    <string name="quiz_q30_opt1">Shed nail sheaths &amp; stretch muscles</string>
+    <string name="quiz_q30_opt2">To sharpen teeth</string>
+    <string name="quiz_q30_opt3">To sleep on</string>
+    <string name="quiz_q30_correct">e</string>
+    <string name="quiz_q30_wrong">f</string>
+    <string name="quiz_q31_text">placeholder</string>
+    <string name="quiz_q31_opt0">Run towards it shouting</string>
+    <string name="quiz_q31_opt1">Move slowly, crouch low, let it sniff</string>
+    <string name="quiz_q31_opt2">Grab it by tail</string>
+    <string name="quiz_q31_opt3">Corner it quickly</string>
+    <string name="quiz_q31_correct">e</string>
+    <string name="quiz_q31_wrong">f</string>
+    <string name="quiz_q32_text">placeholder</string>
+    <string name="quiz_q32_opt0">Take them immediately</string>
+    <string name="quiz_q32_opt1">Observe from distance for 2-4 hours</string>
+    <string name="quiz_q32_opt2">Leave them forever</string>
+    <string name="quiz_q32_opt3">Give them cow\'s milk</string>
+    <string name="quiz_q32_correct">e</string>
+    <string name="quiz_q32_wrong">f</string>
+    <string name="quiz_q33_text">placeholder</string>
+    <string name="quiz_q33_opt0">Thick towel, blanket or humane trap</string>
+    <string name="quiz_q33_opt1">Bare hands</string>
+    <string name="quiz_q33_opt2">Cardboard box with no lid</string>
+    <string name="quiz_q33_opt3">Leash and collar</string>
+    <string name="quiz_q33_correct">e</string>
+    <string name="quiz_q33_wrong">f</string>
+    <string name="quiz_q34_text">placeholder</string>
+    <string name="quiz_q34_opt0">Ignore it completely</string>
+    <string name="quiz_q34_opt1">Wash with soap/water &amp; seek medical advice</string>
+    <string name="quiz_q34_opt2">Apply perfume</string>
+    <string name="quiz_q34_opt3">Put ice only</string>
+    <string name="quiz_q34_correct">e</string>
+    <string name="quiz_q34_wrong">f</string>
+    <string name="quiz_q35_text">placeholder</string>
+    <string name="quiz_q35_opt0">Noon under direct sun</string>
+    <string name="quiz_q35_opt1">Dawn and dusk (crepuscular hours)</string>
+    <string name="quiz_q35_opt2">Midnight only</string>
+    <string name="quiz_q35_opt3">3 AM</string>
+    <string name="quiz_q35_correct">e</string>
+    <string name="quiz_q35_wrong">f</string>
+    <string name="quiz_q36_text">placeholder</string>
+    <string name="quiz_q36_opt0">Citrus and lemon</string>
+    <string name="quiz_q36_opt1">Feline pheromones (Feliway)</string>
+    <string name="quiz_q36_opt2">Vinegar</string>
+    <string name="quiz_q36_opt3">Ammonia</string>
+    <string name="quiz_q36_correct">e</string>
+    <string name="quiz_q36_wrong">f</string>
+    <string name="quiz_q37_text">placeholder</string>
+    <string name="quiz_q37_opt0">It looks nice</string>
+    <string name="quiz_q37_opt1">Builds routine for easy TNR trapping</string>
+    <string name="quiz_q37_opt2">Keeps birds away</string>
+    <string name="quiz_q37_opt3">Makes cats fat</string>
+    <string name="quiz_q37_correct">e</string>
+    <string name="quiz_q37_wrong">f</string>
+    <string name="quiz_q38_text">placeholder</string>
+    <string name="quiz_q38_opt0">Extremely relaxed</string>
+    <string name="quiz_q38_opt1">High adrenaline (excited or scared)</string>
+    <string name="quiz_q38_opt2">Half asleep</string>
+    <string name="quiz_q38_opt3">Blind</string>
+    <string name="quiz_q38_correct">e</string>
+    <string name="quiz_q38_wrong">f</string>
+    <string name="quiz_q39_text">placeholder</string>
+    <string name="quiz_q39_opt0">Yes, always carry by scruff</string>
+    <string name="quiz_q39_opt1">Avoid if possible; use towel wrap</string>
+    <string name="quiz_q39_opt2">Scruff hard and swing</string>
+    <string name="quiz_q39_opt3">Never touch neck</string>
+    <string name="quiz_q39_correct">e</string>
+    <string name="quiz_q39_wrong">f</string>
+    <string name="quiz_q40_text">placeholder</string>
+    <string name="quiz_q40_opt0">Patience, space &amp; consistent feeding schedule</string>
+    <string name="quiz_q40_opt1">Force physical contact</string>
+    <string name="quiz_q40_opt2">Make loud noises</string>
+    <string name="quiz_q40_opt3">Follow them around</string>
+    <string name="quiz_q40_correct">e</string>
+    <string name="quiz_q40_wrong">f</string>
+    <string name="quiz_q41_text">placeholder</string>
+    <string name="quiz_q41_opt0">Give cold bath</string>
+    <string name="quiz_q41_opt1">Immediate warmth &amp; sugar/glucose on gums + vet</string>
+    <string name="quiz_q41_opt2">Put in dark closet</string>
+    <string name="quiz_q41_opt3">Feed solid kibble</string>
+    <string name="quiz_q41_correct">e</string>
+    <string name="quiz_q41_wrong">f</string>
+    <string name="quiz_q42_text">placeholder</string>
+    <string name="quiz_q42_opt0">Cotton blankets</string>
+    <string name="quiz_q42_opt1">Clean dry straw</string>
+    <string name="quiz_q42_opt2">Wet towels</string>
+    <string name="quiz_q42_opt3">Shredded paper</string>
+    <string name="quiz_q42_correct">e</string>
+    <string name="quiz_q42_wrong">f</string>
+    <string name="quiz_q43_text">placeholder</string>
+    <string name="quiz_q43_opt0">Check mouth carefully &amp; gentle compressions + vet</string>
+    <string name="quiz_q43_opt1">Shake upside down</string>
+    <string name="quiz_q43_opt2">Give water</string>
+    <string name="quiz_q43_opt3">Wait 1 hour</string>
+    <string name="quiz_q43_correct">e</string>
+    <string name="quiz_q43_wrong">f</string>
+    <string name="quiz_q44_text">placeholder</string>
+    <string name="quiz_q44_opt0">Cat grass</string>
+    <string name="quiz_q44_opt1">Lilies</string>
+    <string name="quiz_q44_opt2">Spider plant</string>
+    <string name="quiz_q44_opt3">Boston fern</string>
+    <string name="quiz_q44_correct">e</string>
+    <string name="quiz_q44_wrong">f</string>
+    <string name="quiz_q45_text">placeholder</string>
+    <string name="quiz_q45_opt0">Just constipation</string>
+    <string name="quiz_q45_opt1">Life-threatening urinary blockage emergency</string>
+    <string name="quiz_q45_opt2">Playing</string>
+    <string name="quiz_q45_opt3">Normal behavior</string>
+    <string name="quiz_q45_correct">e</string>
+    <string name="quiz_q45_wrong">f</string>
+    <string name="quiz_q46_text">placeholder</string>
+    <string name="quiz_q46_opt0">Pour hydrogen peroxide</string>
+    <string name="quiz_q46_opt1">Clean saline/water &amp; vet treatment</string>
+    <string name="quiz_q46_opt2">Cover with dirt</string>
+    <string name="quiz_q46_opt3">Ignore it</string>
+    <string name="quiz_q46_correct">e</string>
+    <string name="quiz_q46_wrong">f</string>
+    <string name="quiz_q47_text">placeholder</string>
+    <string name="quiz_q47_opt0">Chemical dog flea spray</string>
+    <string name="quiz_q47_opt1">Warm bath with Blue Dawn dish soap</string>
+    <string name="quiz_q47_opt2">Alcohol rub</string>
+    <string name="quiz_q47_opt3">Shave all fur</string>
+    <string name="quiz_q47_correct">e</string>
+    <string name="quiz_q47_wrong">f</string>
+    <string name="quiz_q48_text">placeholder</string>
+    <string name="quiz_q48_opt0">They smell too strong</string>
+    <string name="quiz_q48_opt1">Cats lack liver enzymes to metabolize oils</string>
+    <string name="quiz_q48_opt2">Oils make cats sneeze</string>
+    <string name="quiz_q48_opt3">No risk</string>
+    <string name="quiz_q48_correct">e</string>
+    <string name="quiz_q48_wrong">f</string>
+    <string name="quiz_q49_text">placeholder</string>
+    <string name="quiz_q49_opt0">Hold in arms</string>
+    <string name="quiz_q49_opt1">Closed carrier wrapped in dark towel</string>
+    <string name="quiz_q49_opt2">Cardboard box</string>
+    <string name="quiz_q49_opt3">Open laundry basket</string>
+    <string name="quiz_q49_correct">e</string>
+    <string name="quiz_q49_wrong">f</string>
+    <string name="quiz_q50_text">placeholder</string>
+    <string name="quiz_q50_opt0">Save animal at any cost</string>
+    <string name="quiz_q50_opt1">Ensure human safety first</string>
+    <string name="quiz_q50_opt2">Take photos</string>
+    <string name="quiz_q50_opt3">Act quickly without planning</string>
+    <string name="quiz_q50_correct">e</string>
+    <string name="quiz_q50_wrong">f</string>
+    <string name="quiz_q51_text">placeholder</string>
+    <string name="quiz_q51_opt0">a</string>
+    <string name="quiz_q51_opt1">b</string>
+    <string name="quiz_q51_opt2">c</string>
+    <string name="quiz_q51_opt3">d</string>
+    <string name="quiz_q51_correct">e</string>
+    <string name="quiz_q51_wrong">f</string>
+    <string name="quiz_q52_text">placeholder</string>
+    <string name="quiz_q52_opt0">a</string>
+    <string name="quiz_q52_opt1">b</string>
+    <string name="quiz_q52_opt2">c</string>
+    <string name="quiz_q52_opt3">d</string>
+    <string name="quiz_q52_correct">e</string>
+    <string name="quiz_q52_wrong">f</string>
+    <string name="quiz_q53_text">placeholder</string>
+    <string name="quiz_q53_opt0">a</string>
+    <string name="quiz_q53_opt1">b</string>
+    <string name="quiz_q53_opt2">c</string>
+    <string name="quiz_q53_opt3">d</string>
+    <string name="quiz_q53_correct">e</string>
+    <string name="quiz_q53_wrong">f</string>
+    <string name="quiz_q54_text">placeholder</string>
+    <string name="quiz_q54_opt0">a</string>
+    <string name="quiz_q54_opt1">b</string>
+    <string name="quiz_q54_opt2">c</string>
+    <string name="quiz_q54_opt3">d</string>
+    <string name="quiz_q54_correct">e</string>
+    <string name="quiz_q54_wrong">f</string>
+    <string name="quiz_q55_text">placeholder</string>
+    <string name="quiz_q55_opt0">a</string>
+    <string name="quiz_q55_opt1">b</string>
+    <string name="quiz_q55_opt2">c</string>
+    <string name="quiz_q55_opt3">d</string>
+    <string name="quiz_q55_correct">e</string>
+    <string name="quiz_q55_wrong">f</string>
+    <string name="quiz_q56_text">placeholder</string>
+    <string name="quiz_q56_opt0">a</string>
+    <string name="quiz_q56_opt1">b</string>
+    <string name="quiz_q56_opt2">c</string>
+    <string name="quiz_q56_opt3">d</string>
+    <string name="quiz_q56_correct">e</string>
+    <string name="quiz_q56_wrong">f</string>
+    <string name="quiz_q57_text">placeholder</string>
+    <string name="quiz_q57_opt0">a</string>
+    <string name="quiz_q57_opt1">b</string>
+    <string name="quiz_q57_opt2">c</string>
+    <string name="quiz_q57_opt3">d</string>
+    <string name="quiz_q57_correct">e</string>
+    <string name="quiz_q57_wrong">f</string>
+    <string name="quiz_q58_text">placeholder</string>
+    <string name="quiz_q58_opt0">a</string>
+    <string name="quiz_q58_opt1">b</string>
+    <string name="quiz_q58_opt2">c</string>
+    <string name="quiz_q58_opt3">d</string>
+    <string name="quiz_q58_correct">e</string>
+    <string name="quiz_q58_wrong">f</string>
+    <string name="quiz_q59_text">placeholder</string>
+    <string name="quiz_q59_opt0">a</string>
+    <string name="quiz_q59_opt1">b</string>
+    <string name="quiz_q59_opt2">c</string>
+    <string name="quiz_q59_opt3">d</string>
+    <string name="quiz_q59_correct">e</string>
+    <string name="quiz_q59_wrong">f</string>
+    <string name="quiz_q60_text">placeholder</string>
+    <string name="quiz_q60_opt0">a</string>
+    <string name="quiz_q60_opt1">b</string>
+    <string name="quiz_q60_opt2">c</string>
+    <string name="quiz_q60_opt3">d</string>
+    <string name="quiz_q60_correct">e</string>
+    <string name="quiz_q60_wrong">f</string>
+    <string name="quiz_q61_text">placeholder</string>
+    <string name="quiz_q61_opt0">a</string>
+    <string name="quiz_q61_opt1">b</string>
+    <string name="quiz_q61_opt2">c</string>
+    <string name="quiz_q61_opt3">d</string>
+    <string name="quiz_q61_correct">e</string>
+    <string name="quiz_q61_wrong">f</string>
+    <string name="quiz_q62_text">placeholder</string>
+    <string name="quiz_q62_opt0">a</string>
+    <string name="quiz_q62_opt1">b</string>
+    <string name="quiz_q62_opt2">c</string>
+    <string name="quiz_q62_opt3">d</string>
+    <string name="quiz_q62_correct">e</string>
+    <string name="quiz_q62_wrong">f</string>
+    <string name="quiz_q63_text">placeholder</string>
+    <string name="quiz_q63_opt0">a</string>
+    <string name="quiz_q63_opt1">b</string>
+    <string name="quiz_q63_opt2">c</string>
+    <string name="quiz_q63_opt3">d</string>
+    <string name="quiz_q63_correct">e</string>
+    <string name="quiz_q63_wrong">f</string>
+    <string name="quiz_q64_text">placeholder</string>
+    <string name="quiz_q64_opt0">a</string>
+    <string name="quiz_q64_opt1">b</string>
+    <string name="quiz_q64_opt2">c</string>
+    <string name="quiz_q64_opt3">d</string>
+    <string name="quiz_q64_correct">e</string>
+    <string name="quiz_q64_wrong">f</string>
+    <string name="quiz_q65_text">placeholder</string>
+    <string name="quiz_q65_opt0">a</string>
+    <string name="quiz_q65_opt1">b</string>
+    <string name="quiz_q65_opt2">c</string>
+    <string name="quiz_q65_opt3">d</string>
+    <string name="quiz_q65_correct">e</string>
+    <string name="quiz_q65_wrong">f</string>
+    <string name="quiz_q66_text">placeholder</string>
+    <string name="quiz_q66_opt0">a</string>
+    <string name="quiz_q66_opt1">b</string>
+    <string name="quiz_q66_opt2">c</string>
+    <string name="quiz_q66_opt3">d</string>
+    <string name="quiz_q66_correct">e</string>
+    <string name="quiz_q66_wrong">f</string>
+    <string name="quiz_q67_text">placeholder</string>
+    <string name="quiz_q67_opt0">a</string>
+    <string name="quiz_q67_opt1">b</string>
+    <string name="quiz_q67_opt2">c</string>
+    <string name="quiz_q67_opt3">d</string>
+    <string name="quiz_q67_correct">e</string>
+    <string name="quiz_q67_wrong">f</string>
+    <string name="quiz_q68_text">placeholder</string>
+    <string name="quiz_q68_opt0">a</string>
+    <string name="quiz_q68_opt1">b</string>
+    <string name="quiz_q68_opt2">c</string>
+    <string name="quiz_q68_opt3">d</string>
+    <string name="quiz_q68_correct">e</string>
+    <string name="quiz_q68_wrong">f</string>
+    <string name="quiz_q69_text">placeholder</string>
+    <string name="quiz_q69_opt0">a</string>
+    <string name="quiz_q69_opt1">b</string>
+    <string name="quiz_q69_opt2">c</string>
+    <string name="quiz_q69_opt3">d</string>
+    <string name="quiz_q69_correct">e</string>
+    <string name="quiz_q69_wrong">f</string>
+    <string name="quiz_q70_text">placeholder</string>
+    <string name="quiz_q70_opt0">a</string>
+    <string name="quiz_q70_opt1">b</string>
+    <string name="quiz_q70_opt2">c</string>
+    <string name="quiz_q70_opt3">d</string>
+    <string name="quiz_q70_correct">e</string>
+    <string name="quiz_q70_wrong">f</string>
+    <string name="quiz_q71_text">placeholder</string>
+    <string name="quiz_q71_opt0">a</string>
+    <string name="quiz_q71_opt1">b</string>
+    <string name="quiz_q71_opt2">c</string>
+    <string name="quiz_q71_opt3">d</string>
+    <string name="quiz_q71_correct">e</string>
+    <string name="quiz_q71_wrong">f</string>
+    <string name="quiz_q72_text">placeholder</string>
+    <string name="quiz_q72_opt0">a</string>
+    <string name="quiz_q72_opt1">b</string>
+    <string name="quiz_q72_opt2">c</string>
+    <string name="quiz_q72_opt3">d</string>
+    <string name="quiz_q72_correct">e</string>
+    <string name="quiz_q72_wrong">f</string>
+    <string name="quiz_q73_text">placeholder</string>
+    <string name="quiz_q73_opt0">a</string>
+    <string name="quiz_q73_opt1">b</string>
+    <string name="quiz_q73_opt2">c</string>
+    <string name="quiz_q73_opt3">d</string>
+    <string name="quiz_q73_correct">e</string>
+    <string name="quiz_q73_wrong">f</string>
+    <string name="quiz_q74_text">placeholder</string>
+    <string name="quiz_q74_opt0">a</string>
+    <string name="quiz_q74_opt1">b</string>
+    <string name="quiz_q74_opt2">c</string>
+    <string name="quiz_q74_opt3">d</string>
+    <string name="quiz_q74_correct">e</string>
+    <string name="quiz_q74_wrong">f</string>
+    <string name="quiz_q75_text">placeholder</string>
+    <string name="quiz_q75_opt0">a</string>
+    <string name="quiz_q75_opt1">b</string>
+    <string name="quiz_q75_opt2">c</string>
+    <string name="quiz_q75_opt3">d</string>
+    <string name="quiz_q75_correct">e</string>
+    <string name="quiz_q75_wrong">f</string>
+    <string name="quiz_q76_text">placeholder</string>
+    <string name="quiz_q76_opt0">a</string>
+    <string name="quiz_q76_opt1">b</string>
+    <string name="quiz_q76_opt2">c</string>
+    <string name="quiz_q76_opt3">d</string>
+    <string name="quiz_q76_correct">e</string>
+    <string name="quiz_q76_wrong">f</string>
+    <string name="quiz_q77_text">placeholder</string>
+    <string name="quiz_q77_opt0">a</string>
+    <string name="quiz_q77_opt1">b</string>
+    <string name="quiz_q77_opt2">c</string>
+    <string name="quiz_q77_opt3">d</string>
+    <string name="quiz_q77_correct">e</string>
+    <string name="quiz_q77_wrong">f</string>
+    <string name="quiz_q78_text">placeholder</string>
+    <string name="quiz_q78_opt0">a</string>
+    <string name="quiz_q78_opt1">b</string>
+    <string name="quiz_q78_opt2">c</string>
+    <string name="quiz_q78_opt3">d</string>
+    <string name="quiz_q78_correct">e</string>
+    <string name="quiz_q78_wrong">f</string>
+    <string name="quiz_q79_text">placeholder</string>
+    <string name="quiz_q79_opt0">a</string>
+    <string name="quiz_q79_opt1">b</string>
+    <string name="quiz_q79_opt2">c</string>
+    <string name="quiz_q79_opt3">d</string>
+    <string name="quiz_q79_correct">e</string>
+    <string name="quiz_q79_wrong">f</string>
+    <string name="quiz_q80_text">placeholder</string>
+    <string name="quiz_q80_opt0">a</string>
+    <string name="quiz_q80_opt1">b</string>
+    <string name="quiz_q80_opt2">c</string>
+    <string name="quiz_q80_opt3">d</string>
+    <string name="quiz_q80_correct">e</string>
+    <string name="quiz_q80_wrong">f</string>
+    <string name="quiz_q81_text">placeholder</string>
+    <string name="quiz_q81_opt0">a</string>
+    <string name="quiz_q81_opt1">b</string>
+    <string name="quiz_q81_opt2">c</string>
+    <string name="quiz_q81_opt3">d</string>
+    <string name="quiz_q81_correct">e</string>
+    <string name="quiz_q81_wrong">f</string>
+    <string name="quiz_q82_text">placeholder</string>
+    <string name="quiz_q82_opt0">a</string>
+    <string name="quiz_q82_opt1">b</string>
+    <string name="quiz_q82_opt2">c</string>
+    <string name="quiz_q82_opt3">d</string>
+    <string name="quiz_q82_correct">e</string>
+    <string name="quiz_q82_wrong">f</string>
+    <string name="quiz_q83_text">placeholder</string>
+    <string name="quiz_q83_opt0">a</string>
+    <string name="quiz_q83_opt1">b</string>
+    <string name="quiz_q83_opt2">c</string>
+    <string name="quiz_q83_opt3">d</string>
+    <string name="quiz_q83_correct">e</string>
+    <string name="quiz_q83_wrong">f</string>
+    <string name="quiz_q84_text">placeholder</string>
+    <string name="quiz_q84_opt0">a</string>
+    <string name="quiz_q84_opt1">b</string>
+    <string name="quiz_q84_opt2">c</string>
+    <string name="quiz_q84_opt3">d</string>
+    <string name="quiz_q84_correct">e</string>
+    <string name="quiz_q84_wrong">f</string>
+    <string name="quiz_q85_text">placeholder</string>
+    <string name="quiz_q85_opt0">a</string>
+    <string name="quiz_q85_opt1">b</string>
+    <string name="quiz_q85_opt2">c</string>
+    <string name="quiz_q85_opt3">d</string>
+    <string name="quiz_q85_correct">e</string>
+    <string name="quiz_q85_wrong">f</string>
+    <string name="quiz_q86_text">placeholder</string>
+    <string name="quiz_q86_opt0">a</string>
+    <string name="quiz_q86_opt1">b</string>
+    <string name="quiz_q86_opt2">c</string>
+    <string name="quiz_q86_opt3">d</string>
+    <string name="quiz_q86_correct">e</string>
+    <string name="quiz_q86_wrong">f</string>
+    <string name="quiz_q87_text">placeholder</string>
+    <string name="quiz_q87_opt0">a</string>
+    <string name="quiz_q87_opt1">b</string>
+    <string name="quiz_q87_opt2">c</string>
+    <string name="quiz_q87_opt3">d</string>
+    <string name="quiz_q87_correct">e</string>
+    <string name="quiz_q87_wrong">f</string>
+    <string name="quiz_q88_text">placeholder</string>
+    <string name="quiz_q88_opt0">a</string>
+    <string name="quiz_q88_opt1">b</string>
+    <string name="quiz_q88_opt2">c</string>
+    <string name="quiz_q88_opt3">d</string>
+    <string name="quiz_q88_correct">e</string>
+    <string name="quiz_q88_wrong">f</string>
+    <string name="quiz_q89_text">placeholder</string>
+    <string name="quiz_q89_opt0">a</string>
+    <string name="quiz_q89_opt1">b</string>
+    <string name="quiz_q89_opt2">c</string>
+    <string name="quiz_q89_opt3">d</string>
+    <string name="quiz_q89_correct">e</string>
+    <string name="quiz_q89_wrong">f</string>
+    <string name="quiz_q90_text">placeholder</string>
+    <string name="quiz_q90_opt0">a</string>
+    <string name="quiz_q90_opt1">b</string>
+    <string name="quiz_q90_opt2">c</string>
+    <string name="quiz_q90_opt3">d</string>
+    <string name="quiz_q90_correct">e</string>
+    <string name="quiz_q90_wrong">f</string>
+    <string name="quiz_q91_text">placeholder</string>
+    <string name="quiz_q91_opt0">a</string>
+    <string name="quiz_q91_opt1">b</string>
+    <string name="quiz_q91_opt2">c</string>
+    <string name="quiz_q91_opt3">d</string>
+    <string name="quiz_q91_correct">e</string>
+    <string name="quiz_q91_wrong">f</string>
+    <string name="quiz_q92_text">placeholder</string>
+    <string name="quiz_q92_opt0">a</string>
+    <string name="quiz_q92_opt1">b</string>
+    <string name="quiz_q92_opt2">c</string>
+    <string name="quiz_q92_opt3">d</string>
+    <string name="quiz_q92_correct">e</string>
+    <string name="quiz_q92_wrong">f</string>
+    <string name="quiz_q93_text">placeholder</string>
+    <string name="quiz_q93_opt0">a</string>
+    <string name="quiz_q93_opt1">b</string>
+    <string name="quiz_q93_opt2">c</string>
+    <string name="quiz_q93_opt3">d</string>
+    <string name="quiz_q93_correct">e</string>
+    <string name="quiz_q93_wrong">f</string>
+    <string name="quiz_q94_text">placeholder</string>
+    <string name="quiz_q94_opt0">a</string>
+    <string name="quiz_q94_opt1">b</string>
+    <string name="quiz_q94_opt2">c</string>
+    <string name="quiz_q94_opt3">d</string>
+    <string name="quiz_q94_correct">e</string>
+    <string name="quiz_q94_wrong">f</string>
+    <string name="quiz_q95_text">placeholder</string>
+    <string name="quiz_q95_opt0">a</string>
+    <string name="quiz_q95_opt1">b</string>
+    <string name="quiz_q95_opt2">c</string>
+    <string name="quiz_q95_opt3">d</string>
+    <string name="quiz_q95_correct">e</string>
+    <string name="quiz_q95_wrong">f</string>
+    <string name="quiz_q96_text">placeholder</string>
+    <string name="quiz_q96_opt0">a</string>
+    <string name="quiz_q96_opt1">b</string>
+    <string name="quiz_q96_opt2">c</string>
+    <string name="quiz_q96_opt3">d</string>
+    <string name="quiz_q96_correct">e</string>
+    <string name="quiz_q96_wrong">f</string>
+    <string name="quiz_q97_text">placeholder</string>
+    <string name="quiz_q97_opt0">a</string>
+    <string name="quiz_q97_opt1">b</string>
+    <string name="quiz_q97_opt2">c</string>
+    <string name="quiz_q97_opt3">d</string>
+    <string name="quiz_q97_correct">e</string>
+    <string name="quiz_q97_wrong">f</string>
+    <string name="quiz_q98_text">placeholder</string>
+    <string name="quiz_q98_opt0">a</string>
+    <string name="quiz_q98_opt1">b</string>
+    <string name="quiz_q98_opt2">c</string>
+    <string name="quiz_q98_opt3">d</string>
+    <string name="quiz_q98_correct">e</string>
+    <string name="quiz_q98_wrong">f</string>
+    <string name="quiz_q99_text">placeholder</string>
+    <string name="quiz_q99_opt0">a</string>
+    <string name="quiz_q99_opt1">b</string>
+    <string name="quiz_q99_opt2">c</string>
+    <string name="quiz_q99_opt3">d</string>
+    <string name="quiz_q99_correct">e</string>
+    <string name="quiz_q99_wrong">f</string>
+    <string name="quiz_q100_text">placeholder</string>
+    <string name="quiz_q100_opt0">a</string>
+    <string name="quiz_q100_opt1">b</string>
+    <string name="quiz_q100_opt2">c</string>
+    <string name="quiz_q100_opt3">d</string>
+    <string name="quiz_q100_correct">e</string>
+    <string name="quiz_q100_wrong">f</string>
     <string name="diy_s1_title">Cardboard Box Basic</string>
     <string name="diy_s1_desc">A quick, cheap, and effective emergency shelter for cold nights.</string>
     <string name="diy_s1_step1">Find a sturdy cardboard box.</string>
@@ -717,8 +1200,16 @@
     <string name="diy_s1_step8">Done!</string>
     <string name="diy_s1_step9">Done!</string>
     <string name="diy_s1_step10">Done!</string>
-    <string name="diy_s1_alt1">box</string><string name="diy_s1_alt2">box</string><string name="diy_s1_alt3">box</string><string name="diy_s1_alt4">box</string><string name="diy_s1_alt5">box</string><string name="diy_s1_alt6">box</string><string name="diy_s1_alt7">box</string><string name="diy_s1_alt8">box</string><string name="diy_s1_alt9">box</string><string name="diy_s1_alt10">box</string>
-
+    <string name="diy_s1_alt1">box</string>
+    <string name="diy_s1_alt2">box</string>
+    <string name="diy_s1_alt3">box</string>
+    <string name="diy_s1_alt4">box</string>
+    <string name="diy_s1_alt5">box</string>
+    <string name="diy_s1_alt6">box</string>
+    <string name="diy_s1_alt7">box</string>
+    <string name="diy_s1_alt8">box</string>
+    <string name="diy_s1_alt9">box</string>
+    <string name="diy_s1_alt10">box</string>
     <string name="diy_s2_title">Tote Bin Shelter</string>
     <string name="diy_s2_desc">A weather-resistant plastic shelter for rain and snow.</string>
     <string name="diy_s2_step1">Find a large plastic tote.</string>
@@ -731,8 +1222,16 @@
     <string name="diy_s2_step8">Done!</string>
     <string name="diy_s2_step9">Done!</string>
     <string name="diy_s2_step10">Done!</string>
-    <string name="diy_s2_alt1">tote</string><string name="diy_s2_alt2">tote</string><string name="diy_s2_alt3">tote</string><string name="diy_s2_alt4">tote</string><string name="diy_s2_alt5">tote</string><string name="diy_s2_alt6">tote</string><string name="diy_s2_alt7">tote</string><string name="diy_s2_alt8">tote</string><string name="diy_s2_alt9">tote</string><string name="diy_s2_alt10">tote</string>
-
+    <string name="diy_s2_alt1">tote</string>
+    <string name="diy_s2_alt2">tote</string>
+    <string name="diy_s2_alt3">tote</string>
+    <string name="diy_s2_alt4">tote</string>
+    <string name="diy_s2_alt5">tote</string>
+    <string name="diy_s2_alt6">tote</string>
+    <string name="diy_s2_alt7">tote</string>
+    <string name="diy_s2_alt8">tote</string>
+    <string name="diy_s2_alt9">tote</string>
+    <string name="diy_s2_alt10">tote</string>
     <string name="diy_s3_title">Styrofoam Cooler House</string>
     <string name="diy_s3_desc">Super-insulated and lightweight shelter for extreme cold.</string>
     <string name="diy_s3_step1">Get a styrofoam cooler.</string>
@@ -745,13 +1244,19 @@
     <string name="diy_s3_step8">Done!</string>
     <string name="diy_s3_step9">Done!</string>
     <string name="diy_s3_step10">Done!</string>
-    <string name="diy_s3_alt1">cooler</string><string name="diy_s3_alt2">cooler</string><string name="diy_s3_alt3">cooler</string><string name="diy_s3_alt4">cooler</string><string name="diy_s3_alt5">cooler</string><string name="diy_s3_alt6">cooler</string><string name="diy_s3_alt7">cooler</string><string name="diy_s3_alt8">cooler</string><string name="diy_s3_alt9">cooler</string><string name="diy_s3_alt10">cooler</string>
-
+    <string name="diy_s3_alt1">cooler</string>
+    <string name="diy_s3_alt2">cooler</string>
+    <string name="diy_s3_alt3">cooler</string>
+    <string name="diy_s3_alt4">cooler</string>
+    <string name="diy_s3_alt5">cooler</string>
+    <string name="diy_s3_alt6">cooler</string>
+    <string name="diy_s3_alt7">cooler</string>
+    <string name="diy_s3_alt8">cooler</string>
+    <string name="diy_s3_alt9">cooler</string>
+    <string name="diy_s3_alt10">cooler</string>
     <string name="guide_screen_adoption">Adoption Journey Timeline</string>
     <string name="guide_screen_diseases">Disease Prevention Guide</string>
     <string name="guide_subtitle_stray">Essential triage protocols, safe interaction, and toxic food warnings.</string>
-    
-    <!-- Island Journey -->
     <string name="island_0_name">Meadow</string>
     <string name="island_0_alt">Visual Storyboard: Lily sits on the soft Tunisian grass of Meadow island. She is gently holding newborn baby kitten Pip, who is drinking safely from a miniature Kitten Milk Replacer bottle. The warm sunset casts a golden pink glow around them.</string>
     <string name="island_0_desc">Baby steps! Learn the absolute basics of newborn care, feeding frequency, and warm nursery safety.</string>
@@ -774,7 +1279,6 @@
     <string name="island_status_completed">Completed</string>
     <string name="island_status_locked">Locked</string>
     <string name="storyboard_narrative_header">📖 Storyboard Scene Narrative:</string>
-
     <string name="guide_cook_header">Storytelling: How to Cook for a Cat</string>
     <string name="guide_cook_intro_title">Introduction: The Kitty Chef\'s Philosophy</string>
     <string name="guide_cook_intro_desc">Cooking for a cat is an act of love. Pip and Lily share their favorite safe, nutritious recipes that make every meal a celebration of health and happiness.</string>
@@ -790,7 +1294,6 @@
     <string name="guide_diy_header_alt">Fun Handcrafted DIY Projects for Cats</string>
     <string name="guide_diy_header_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts. Organized from easiest to hardest, lowest to highest cost, and quickest to most time-consuming.</string>
     <string name="guide_diy_blueprint_title">📋 View Full Blueprint at a Glance</string>
-    <!-- Recipes -->
     <string name="recipe_1_title">Steamed Salmon &amp; Carrot Puree 🐟🥕</string>
     <string name="recipe_1_desc">A vitamin-rich, omega-3 rich healthy dinner that is highly palatable even for picky eaters.</string>
     <string-array name="recipe_1_materials">
@@ -822,7 +1325,6 @@
         <item>Lily stirs the salmon and carrot puree in a small dish while Pip rubs her ankle.</item>
         <item>Lily sets the final dish on the floor and Pip immediately begins eating the delicious mash.</item>
     </string-array>
-
     <string name="recipe_2_title">Soothing Chicken &amp; Pumpkin Stew 🍗🎃</string>
     <string name="recipe_2_desc">The ultimate digestive-friendly comforting stew. Perfect for kitties with slightly sensitive tummies.</string>
     <string-array name="recipe_2_materials">
@@ -854,7 +1356,6 @@
         <item>Lily spoons fresh, unsalted chicken broth into the bowl, while Pip\'s tail wags with excitement.</item>
         <item>Lily places the soothing lukewarm stew on the floor, and Pip eagerly eats the entire meal.</item>
     </string-array>
-
     <string name="recipe_3_title">Lily\'s Comforting Chicken-Rice Porridge 🍗🌾</string>
     <string name="recipe_3_desc">A soft, easily digestible porridge designed to hydrate and nourish weak or recovering cats.</string>
     <string-array name="recipe_3_materials">
@@ -886,7 +1387,6 @@
         <item>Lily stirs the mixture with a wooden spoon to create a soft, even paste, while Pip circles her feet.</item>
         <item>Lily serves the lukewarm chicken rice porridge, and Pip enjoys the starchy, hydrating meal.</item>
     </string-array>
-    <!-- Materials -->
     <string name="mat_salmon">🐟 Salmon (100g)</string>
     <string name="mat_carrot">🥕 Carrot slice</string>
     <string name="mat_water">🍵 Warm Water</string>
@@ -898,8 +1398,6 @@
     <string name="mat_potato">🍠 Sweet Potato (50g)</string>
     <string name="mat_tuna">🐟 Tuna in water</string>
     <string name="mat_broccoli">🥦 Broccoli floret</string>
-
-    <!-- Time -->
     <string name="time_12m">12 mins</string>
     <string name="time_25m">25 mins</string>
     <string name="recipe_4_title">Yolk &amp; Sweet Potato Fluffy Soufflé 🥚🍠</string>
@@ -933,7 +1431,6 @@
         <item>Lily whisks in a splash of warm water to make the souffle extra light and fluffy, while Pip\'s tail wags.</item>
         <item>Lily places the fluffy yolk souffle on the floor, and Pip happily laps up the rich, creamy treat.</item>
     </string-array>
-
     <string name="recipe_5_title">Quick Gourmet Fish Pâté 🐟</string>
     <string name="recipe_5_desc">A simple, highly aromatic seafood feast packed with high-quality amino acids.</string>
     <string-array name="recipe_5_materials">
@@ -965,7 +1462,6 @@
         <item>Lily mashes the mixture into a perfectly smooth wet pate, while Pip licks his chops.</item>
         <item>Lily serves the quick gourmet fish pate, and Pip enthusiastically devours the aromatic meal.</item>
     </string-array>
-
     <string name="recipe_6_title">Essential Shredded Chicken Bowl 🍗</string>
     <string name="recipe_6_desc">A classic, high-protein staple that is completely safe and mirrors their natural obligate carnivore diet.</string>
     <string-array name="recipe_6_materials">
@@ -997,7 +1493,6 @@
         <item>Lily drizzles a tiny spoonful of plain chicken water over the shredded bowl, while Pip\'s tail wags.</item>
         <item>Lily puts the shredded chicken bowl on the floor, and Pip happily enjoys his favorite high-protein meal.</item>
     </string-array>
-
     <string name="recipe_7_title">Pip\'s Harvest Vegetable Medley 🥦🎃🍠</string>
     <string name="recipe_7_desc">A fiber-rich veggie base that can be mixed into commercial cat food to aid digestion and hairball control.</string>
     <string-array name="recipe_7_materials">
@@ -1029,6 +1524,99 @@
         <item>Lily stirs a spoonful of the veggie paste into Pip\'s dinner bowl, while Pip rubs against her ankles.</item>
         <item>Lily places the vegetable-boosted meal on the floor, and Pip happily eats the fiber-rich feast.</item>
     </string-array>
+    <string name="recipe_8_title">Turkey &amp; Peas Power Bowl 🦃🟢</string>
+    <string name="recipe_8_desc">A low-fat, high-protein bowl featuring lean turkey and fiber-rich peas, perfect for weight management and overall health.</string>
+    <string-array name="recipe_8_materials">
+        <item>🦃 Ground Turkey (100g)</item>
+        <item>🟢 Green Peas (1 tablespoon)</item>
+        <item>🚰 Water for boiling</item>
+    </string-array>
+    <string-array name="recipe_8_steps">
+        <item>Prepare 100g of fresh, unseasoned ground turkey.</item>
+        <item>Measure 1 tablespoon of fresh or frozen green peas.</item>
+        <item>Bring water to a boil in a small pot.</item>
+        <item>Add the ground turkey and cook until fully browned and cooked through.</item>
+        <item>In the last 2 minutes, add the peas to soften them.</item>
+        <item>Drain the water completely.</item>
+        <item>Mash the peas slightly to make them easier to digest.</item>
+        <item>Mix the turkey and mashed peas together.</item>
+        <item>Allow the mixture to cool down to room temperature.</item>
+        <item>Serve to your happy cat as a healthy, protein-packed meal.</item>
+    </string-array>
+    <string-array name="recipe_8_alt">
+        <item>Illustration of raw ground turkey and green peas.</item>
+        <item>Illustration of measuring the ingredients.</item>
+        <item>Illustration of water boiling in a pot.</item>
+        <item>Illustration of cooking the ground turkey.</item>
+        <item>Illustration of adding peas to the boiling water.</item>
+        <item>Illustration of draining the water from the pot.</item>
+        <item>Illustration of lightly mashing the peas.</item>
+        <item>Illustration of mixing the turkey and peas together.</item>
+        <item>Illustration of the meal cooling in a bowl.</item>
+        <item>Illustration of a cat enjoying the Turkey &amp; Peas Power Bowl.</item>
+    </string-array>
+    <string name="recipe_9_title">Lean Beef &amp; Zucchini Bites 🥩🥒</string>
+    <string name="recipe_9_desc">Nutrient-dense beef paired with hydrating zucchini for a hearty, iron-rich feast.</string>
+    <string-array name="recipe_9_materials">
+        <item>🥩 Lean Ground Beef (100g)</item>
+        <item>🥒 Zucchini (1 small slice, diced)</item>
+        <item>🍲 Water for boiling</item>
+    </string-array>
+    <string-array name="recipe_9_steps">
+        <item>Take 100g of lean ground beef (90% lean or more).</item>
+        <item>Finely dice a small slice of fresh zucchini.</item>
+        <item>Boil water in a saucepan.</item>
+        <item>Add the lean beef and cook thoroughly.</item>
+        <item>Add the diced zucchini in the last 3 minutes to soften.</item>
+        <item>Drain the excess water and fat.</item>
+        <item>Let the mixture sit until it reaches room temperature.</item>
+        <item>Form the mixture into tiny, bite-sized meatballs if desired.</item>
+        <item>Store any leftovers in the fridge for up to 3 days.</item>
+        <item>Serve a few bites as a delicious, hydrating treat.</item>
+    </string-array>
+    <string-array name="recipe_9_alt">
+        <item>Illustration of lean ground beef and a slice of zucchini.</item>
+        <item>Illustration of finely dicing the zucchini.</item>
+        <item>Illustration of boiling water in a pan.</item>
+        <item>Illustration of cooking the ground beef.</item>
+        <item>Illustration of adding diced zucchini to the pan.</item>
+        <item>Illustration of draining the liquid.</item>
+        <item>Illustration of the food cooling on a plate.</item>
+        <item>Illustration of shaping the mixture into tiny meatballs.</item>
+        <item>Illustration of storing leftovers in a container.</item>
+        <item>Illustration of a cat munching on the beef and zucchini bites.</item>
+    </string-array>
+    <string name="recipe_10_title">Chicken &amp; Apple Snack 🍗🍎</string>
+    <string name="recipe_10_desc">A sweet and savory treat combining classic chicken with vitamin-rich apples (no seeds!).</string>
+    <string-array name="recipe_10_materials">
+        <item>🍗 Boneless Chicken Breast (100g)</item>
+        <item>🍎 Apple (1 small slice, peeled and cored)</item>
+        <item>💦 Water for poaching</item>
+    </string-array>
+    <string-array name="recipe_10_steps">
+        <item>Prepare 100g of raw, boneless, skinless chicken breast.</item>
+        <item>Peel a small slice of apple, ensuring absolutely NO seeds or core.</item>
+        <item>Finely chop the apple slice.</item>
+        <item>Poach the chicken in simmering water until fully white and cooked.</item>
+        <item>Steam or boil the apple bits until very soft.</item>
+        <item>Shred the cooked chicken into very fine pieces.</item>
+        <item>Mash the soft apple and mix it into the chicken.</item>
+        <item>Let the snack cool completely to room temperature.</item>
+        <item>Offer a small amount as a special reward or treat.</item>
+        <item>Watch your cat enjoy this healthy, low-calorie snack.</item>
+    </string-array>
+    <string-array name="recipe_10_alt">
+        <item>Illustration of chicken breast and an apple slice.</item>
+        <item>Illustration of carefully removing the apple skin and seeds.</item>
+        <item>Illustration of chopping the apple into fine bits.</item>
+        <item>Illustration of poaching the chicken breast.</item>
+        <item>Illustration of steaming the apple bits.</item>
+        <item>Illustration of shredding the chicken finely.</item>
+        <item>Illustration of mixing mashed apple with the chicken.</item>
+        <item>Illustration of the mixture cooling down.</item>
+        <item>Illustration of serving a small portion on a plate.</item>
+        <item>Illustration of a cat happily eating the chicken and apple snack.</item>
+    </string-array>
     <string name="diy_s4_title">Plastic Storage Bin Retreat</string>
     <string name="diy_s4_desc">A heavy-duty, waterproof shelter made from common household storage bins, perfect for rainy climates.</string>
     <string name="diy_s4_step1">Find a large plastic storage bin with a lid.</string>
@@ -1051,7 +1639,6 @@
     <string name="diy_s4_alt8">The bin sitting under a porch.</string>
     <string name="diy_s4_alt9">A brick on top of the bin.</string>
     <string name="diy_s4_alt10">Pip peeking out of the bin entrance.</string>
-
     <string name="diy_g1_title">Lily\'s Magic Feather Wand</string>
     <string name="diy_g1_desc">A simple but irresistible teaser toy that encourages hunting behavior and exercise.</string>
     <string name="diy_g1_step1">Find a sturdy stick or a plastic rod.</string>
@@ -1074,7 +1661,6 @@
     <string name="diy_g1_alt8">Pip watching the feathers closely.</string>
     <string name="diy_g1_alt9">Pip pouncing on the feathers.</string>
     <string name="diy_g1_alt10">Pip carrying the wand proudly.</string>
-
     <string name="diy_c1_title">Cozy T-Shirt Tent</string>
     <string name="diy_c1_desc">Transform an old t-shirt into a private, breathable sanctuary that smells like home.</string>
     <string name="diy_c1_step1">Get two wire hangers and a square cardboard base.</string>
@@ -1110,8 +1696,6 @@
     <string name="nav_favorites_subtitle">Your saved DIY projects</string>
     <string name="favorites_diy_title">Favorited DIY Projects</string>
     <string name="favorites_empty">You haven\'t favorited any projects yet. Tap the heart icon on any project to save it here!</string>
-
-    <!-- NEW DIY MATERIALS -->
     <string name="mat_wooden_pallet">Wooden Pallet</string>
     <string name="mat_straw_bales">Straw Bales</string>
     <string name="mat_wool_sweater">Wool Sweater</string>
@@ -1121,8 +1705,6 @@
     <string name="mat_velvet">Velvet Fabric</string>
     <string name="mat_foam">Memory Foam</string>
     <string name="mat_fruit_crate">Wooden Fruit Crate</string>
-
-    <!-- SHARED STORYBOARD STEPS AND ALT TEXTS -->
     <string name="diy_step_gather">Gather all materials and tools in a clean workspace.</string>
     <string name="diy_step_measure">Measure the base dimensions for a perfect cat fit.</string>
     <string name="diy_step_cut_frame">Cut openings or frames carefully using safety tools.</string>
@@ -1133,7 +1715,6 @@
     <string name="diy_step_add_decor">Personalize with safe hand-painted patterns or trims.</string>
     <string name="diy_step_find_spot">Place the finished creation in a quiet, warm corner.</string>
     <string name="diy_step_cat_test">Watch Pip run a safety inspection and cuddle up happily inside!</string>
-
     <string name="diy_alt_gather">Lily preparing her worktable with tools.</string>
     <string name="diy_alt_measure">Lily using a measuring tape on materials.</string>
     <string name="diy_alt_cut_frame">Lily cutting a clean round opening.</string>
@@ -1144,8 +1725,6 @@
     <string name="diy_alt_add_decor">Lily coloring the exterior with cute cat designs.</string>
     <string name="diy_alt_find_spot">Lily placing the project in a warm sunny corner.</string>
     <string name="diy_alt_cat_test">Pip happily jumping inside and purring.</string>
-
-    <!-- NEW SHELTER PROJECTS (5-10) -->
     <string name="diy_s5_title">Elevated Pallet Lodge</string>
     <string name="diy_s5_desc">A raised shelter made from a wooden pallet, keeping community cats high and dry.</string>
     <string name="diy_s6_title">Straw Bale Cabin</string>
@@ -1158,8 +1737,6 @@
     <string name="diy_s9_desc">A double-compartment insulated box structure perfect for cat sibling bonding.</string>
     <string name="diy_s10_title">Premium Cedar Chalet</string>
     <string name="diy_s10_desc">A long-lasting, beautifully structured wooden miniature lodge for garden cats.</string>
-
-    <!-- NEW GAME PROJECTS (2-10) -->
     <string name="diy_g2_title">Crinkle Paper Sound Ball</string>
     <string name="diy_g2_desc">A noisy, crinkly paper toy that Pip loves to bat around the room for hours.</string>
     <string name="diy_g3_title">Cardboard Box Puzzle Maze</string>
@@ -1178,8 +1755,6 @@
     <string name="diy_g9_desc">A long, fluttering fleece ribbon wand that mimics fast-moving garden bugs.</string>
     <string name="diy_g10_title">Box Whack-A-Mole</string>
     <string name="diy_g10_desc">An interactive peek-a-boo toy where you poke toys through holes for cats to swat.</string>
-
-    <!-- NEW COZY PROJECTS (2-10) -->
     <string name="diy_c2_title">Felt Doughnut Bed</string>
     <string name="diy_c2_desc">A warm, circular felt nest that fits cats perfectly for security and comfort.</string>
     <string name="diy_c3_title">Soft Fleece Window Hammock</string>
@@ -1198,4 +1773,358 @@
     <string name="diy_c9_desc">A rustic, vintage wooden crate padded with plush flannel pillows.</string>
     <string name="diy_c10_title">Luxury Velvet Donut Nest</string>
     <string name="diy_c10_desc">A premium, plush velvet bed with raised edges for the ultimate royal slumber.</string>
+    <string name="nav_cats_near_me_title">Cats Near Me 🐾</string>
+    <string name="community_cooperative">COMMUNITY COOPERATIVE</string>
+    <string name="browse_nearby">🔍 Browse Nearby</string>
+    <string name="report_stray">📢 Report Stray</string>
+    <string name="simulated_mode">Simulated Community Mode Active</string>
+    <string name="location_denied_desc">Location access denied — no problem! You can manually tap anywhere on the map to drop a pin for cat sightings, or open Settings to grant permission.</string>
+    <string name="radius_filter">🎯 Search Radius Filter</string>
+    <string name="radius_km">%1$s km</string>
+    <string name="radius_desc">Slide to adjust the search distance from your current location.</string>
+    <string name="interactive_radar">📡 Interactive Stray Radar Map</string>
+    <string name="selected_on_radar">Selected on Radar: %1$s Cat Sighting</string>
+    <string name="dist_away">~%1$s km away</string>
+    <string name="stray_reports_count">📊 Stray reports within radius (%1$d):</string>
+    <string name="all_cats_accounted">All cats are accounted for!</string>
+    <string name="no_stray_reports">No stray cat reports were found in a %1$s km radius. Try extending your search slider to search further out, or report a cat you spotted!</string>
+    <string name="reported_by">Reported by: %1$s</string>
+    <string name="today_at">Today at %1$s</string>
+    <string name="register_stray_title">Register a stray in distress</string>
+    <string name="register_stray_desc">Provide details and submit. Other caregivers within 20km will immediately receive a sighting pin on their radar map!</string>
+    <string name="your_name_optional">Your Name (Optional)</string>
+    <string name="needs_most_label">What does the cat need most?</string>
+    <string name="sighting_details">Sighting Details</string>
+    <string name="add_photo_sighting">📸 Add Cat Photo Sighting</string>
+    <string name="add_photo_desc">Choose a cute cat illustration preset, or take/upload a photo from your device.</string>
+    <string name="active_preset">Active Preset: %1$s CAT</string>
+    <string name="location_capture">Automatic Sighting Location Capture</string>
+    <string name="captured_coords">Captured Coordinates: Lat %1$s, Lng %2$s</string>
+    <string name="submit_sighting">Submit Sighting Report</string>
+    <string name="report_registered">🎉 Report Registered!</string>
+    <string name="report_registered_desc">Thank you so much! Your report has been pinned to the shared community database. Caregivers nearby can now coordinate help.</string>
+    <string name="reminders_title">Reminders</string>
+    <string name="settings_weather_alerts">Weather Alerts</string>
+    <string name="settings_weather_alerts_desc">Notify me on extreme weather days</string>
+    <string name="map_mode_reports">Reports</string>
+    <string name="map_mode_feeding_spots">Feeding Spots</string>
+    <string name="cook_disclaimer_text">Always consult a veterinarian before introducing new homemade foods to your cat\'s regular diet. These recipes are intended as supplemental treats or emergency food options, never a full-time nutritional replacement.</string>
+    <string name="hub_cat_name_label">Cat\'s Name</string>
+    <string name="hub_cat_name_placeholder">e.g. Oliver</string>
+    <string name="hub_years_label">Years</string>
+    <string name="hub_years_placeholder">e.g. 3</string>
+    <string name="hub_months_label">Months</string>
+    <string name="hub_months_placeholder">e.g. 5</string>
+    <string name="hub_cancel_btn">Cancel</string>
+    <string name="hub_save_profile_btn">Save Profile</string>
+    <string name="hub_edit_profile_btn">Edit Profile</string>
+    <string name="hub_weight_placeholder">e.g. 4.5</string>
+    <string name="add_reminder">Add Reminder</string>
+    <string name="save_reminder">Save</string>
+    <string name="title_label">Title</string>
+    <string name="select_date_time">Select Date &amp; Time</string>
+    <string name="delete_desc">Delete</string>
+    <string name="weight_tracker_title">Weight Tracker</string>
+    <string name="log_weight_title">Log Cat\'s Weight</string>
+    <string name="weight_input_label">Weight (kg)</string>
+    <string name="select_date">Select Date</string>
+    <string name="log_weight_btn">Log Weight</string>
+    <string name="weight_history">Weight History</string>
+    <string name="no_weights_recorded">No weights recorded yet.</string>
+    <string name="weight_entry">%1$s kg</string>
+    <string name="weight_gained">📈 Gained +%1$s kg since last weigh-in</string>
+    <string name="weight_lost">📉 Lost -%1$s kg since last weigh-in</string>
+    <string name="weight_no_change">⚖️ No change in weight since last weigh-in</string>
+    <string name="weight_tracker_info">ℹ️ Log at least 2 weigh-ins to track difference</string>
+    <string name="offline_tips_title">No Mobile Data? Offline Quick Tips:</string>
+    <string name="offline_tip_1">1. Safety First: Don\'t get scratched. Move cat to a ventilated box.</string>
+    <string name="offline_tip_2">2. Keep Warm: Wrap in a blanket. Heat is crucial for weak kittens.</string>
+    <string name="offline_tip_3">3. Feeding: NO cow\'s milk! Keep them hydrated with plain water.</string>
+    <string name="offline_tip_4">4. Ask Around: Check collar/tags; neighbors might know the owner.</string>
+    <string name="diary_room_title">Choose your diary room</string>
+    <string name="help_stray_title">Help a stray cat</string>
+    <string name="cats_near_me_subtitle">Browse nearby reported strays.</string>
+    <string name="care_academy_title">TinyPaws Care Academy 🎓</string>
+    <string name="review_needed_title">Review Needed 🐾</string>
+    <string name="review_needed_desc">You got some questions incorrect. Let\'s go back and answer them correctly to complete the level and unlock the next one!</string>
+    <string name="retry_incorrect_btn">Retry Incorrect Questions (%1$d)</string>
+    <string name="certificate_title">Community Care Certificate 📜</string>
+    <string name="certificate_desc">This certifies that</string>
+    <string name="certificate_footer">Has successfully completed the TinyPaws Care Academy and demonstrated exceptional knowledge in community cat welfare.</string>
+    <string name="date_label">Date: %1$s</string>
+    <string name="back_desc">Back</string>
+    <string-array name="cat_facts">
+        <item>Cats have 32 muscles in each ear!</item>
+        <item>A group of kittens is called a kindle.</item>
+        <item>Cats spend 70% of their lives sleeping.</item>
+        <item>Cats can rotate their ears 180 degrees.</item>
+        <item>A cat\'s nose print is unique, like a human fingerprint.</item>
+    </string-array>
+    <string name="tip_of_day_title">💡 Tip of the Day</string>
+    <string name="cats_loc_active">Location access active!</string>
+    <string name="cats_loc_granted">Location access granted!</string>
+    <string name="cats_loc_denied">Permission denied. Using a simulated local community map.</string>
+    <string name="cats_back_home">Back to home</string>
+    <string name="cats_loc_warning">Location Warning</string>
+    <string name="cats_grant">Grant</string>
+    <string name="cats_radar_title">📡 Interactive Stray Radar Map</string>
+    <string name="cats_img_desc">Reported cat image</string>
+    <string name="cats_food_water">Food &amp; Water</string>
+    <string name="cats_medical">Medical Attention</string>
+    <string name="cats_shelter">Shelter</string>
+    <string name="cats_blanket">Warm Blanket</string>
+    <string name="cats_enter_name">Enter your name or leave anonymous</string>
+    <string name="cats_describe">Describe the cat\'s health, coat colors, exact hiding spot, or behavior...</string>
+    <string name="cats_orange">Orange</string>
+    <string name="cats_black">Black</string>
+    <string name="cats_grey">Grey</string>
+    <string name="cats_calico">Calico</string>
+    <string name="cats_device">Device</string>
+    <string name="cats_custom_photo">Selected custom photo</string>
+    <string name="cats_img_loaded">Custom Image Loaded ✅</string>
+    <string name="cats_loc_pin">Location Pin</string>
+    <string name="cats_add_icon">Add Icon</string>
+    <string name="cats_super_browse">Super, take me to Browse!</string>
+    <string name="cats_selected">Selected</string>
+    <string name="cats_reported_needing">Reported a stray cat needing %s</string>
+    <string name="cook_go_back">Go Back</string>
+    <string name="cook_hi_user">Hi, %s\'s Kitchen 👩‍🍳</string>
+    <string name="cook_guide_desc">A feline culinary guide by lead chef Lily &amp; Pip</string>
+    <string name="cook_tab_kitchen">Chef\'s Kitchen 🍳</string>
+    <string name="cook_tab_library">Recipe Library 📚</string>
+    <string name="cook_select_2_ing">🐾 Select at least 2 ingredients to begin your visual culinary guide!</string>
+    <string name="cook_lilys_creation">✨ Lily\'s Custom Creation: </string>
+    <string name="cook_step">Step %s</string>
+    <string name="cook_next">Next ▶</string>
+    <string name="cook_prev">◀ Prev</string>
+    <string name="cook_ingredients">Ingredients 🥣</string>
+    <string name="cook_time">Time ⏱️</string>
+    <string name="cook_difficulty">Difficulty 🧠</string>
+    <string name="cook_how_to_prepare">How to Prepare 🍳</string>
+    <string name="cook_curated_collection">📚 Pip\'s Curated Collection</string>
+    <string name="quiz_q1">Cats are basically professional nappers. How many hours a day do they sleep? 😴</string>
+    <string name="quiz_q1_opt0">4-6 hrs</string>
+    <string name="quiz_q1_opt1">8-10 hrs</string>
+    <string name="quiz_q1_opt2">12-16 hrs</string>
+    <string name="quiz_q1_opt3">Basically never</string>
+    <string name="quiz_q1_cf">Yep! 12-16 hrs a day. Cats really said \'sleep is the main character\' 🛌✨</string>
+    <string name="quiz_q1_wf">Nope, cats actually sleep 12-16 hrs a day. Absolute nap champions.</string>
+    <string name="quiz_q2">Why do cats purr? 🐱</string>
+    <string name="quiz_q2_opt0">Only when happy</string>
+    <string name="quiz_q2_opt1">Only when hungry</string>
+    <string name="quiz_q2_opt2">When happy, stressed, or healing</string>
+    <string name="quiz_q2_opt3">To clean their ears</string>
+    <string name="quiz_q2_cf">Correct! Purring releases endorphins and can even help soothe or heal their bones/muscles.</string>
+    <string name="quiz_q2_wf">Actually, cats purr to soothe themselves when stressed or injured, not just when happy!</string>
+    <string name="quiz_q3">If a cat\'s ears are pinned flat against its head, it feels: 😾</string>
+    <string name="quiz_q3_opt0">Super happy</string>
+    <string name="quiz_q3_opt1">Threatened or very angry</string>
+    <string name="quiz_q3_opt2">Bored</string>
+    <string name="quiz_q3_opt3">Sleepy</string>
+    <string name="quiz_q3_cf">Correct! Pinned ears mean \'back off, I\'m not happy\' 😾</string>
+    <string name="quiz_q3_wf">Nope — that\'s a classic anger or fear sign. Give them some space! 😾</string>
+    <string name="quiz_q4">What does a slow blink from a cat mean? 😉❤️</string>
+    <string name="quiz_q4_opt0">They are tired</string>
+    <string name="quiz_q4_opt1">They are plotting</string>
+    <string name="quiz_q4_opt2">They trust and love you</string>
+    <string name="quiz_q4_opt3">Dust in their eyes</string>
+    <string name="quiz_q4_cf">Yes! A slow blink is known as a \'kitty kiss\' — it\'s the ultimate sign of trust.</string>
+    <string name="quiz_q4_wf">It\'s actually a sign of affection and trust, often called a kitty kiss! ❤️</string>
+    <string name="quiz_q5">What\'s a group of cats called? (just fun trivia lol) 🐱🐱🐱</string>
+    <string name="quiz_q5_opt0">A clowder</string>
+    <string name="quiz_q5_opt1">A squad</string>
+    <string name="quiz_q5_opt2">A pack</string>
+    <string name="quiz_q5_opt3">A meow-b</string>
+    <string name="quiz_q5_cf">Yesss, a \'clowder\' 🐱🐱🐱 use it to sound smart at parties.</string>
+    <string name="quiz_q5_wf">Close energy but a group of cats is officially called a \'clowder\'.</string>
+    <string name="quiz_q6">How do cats usually mark their territory? 🐾</string>
+    <string name="quiz_q6_cf">Correct! Scent glands on cheeks and paws leave pheromone markers.</string>
+    <string name="quiz_q6_wf">Cheek rubbing and scratching release scents to mark their safe spaces!</string>
+    <string name="quiz_q7">What is a cat\'s primary sensory tool? 👁️👃</string>
+    <string name="quiz_q7_cf">Yes! Whiskers help them detect air currents and measure spaces!</string>
+    <string name="quiz_q7_wf">Whiskers are incredibly sensitive navigational and sensory tools!</string>
+    <string name="quiz_q8">A cat with a straight vertical tail with a tiny curl at the tip is feeling: 🐾</string>
+    <string name="quiz_q8_cf">Correct! A high tail with a hook means a happy greeting!</string>
+    <string name="quiz_q8_wf">A tail held high with a slight curl indicates friendliness and curiosity!</string>
+    <string name="quiz_q9">At what age do kittens typically open their eyes? 🍼👀</string>
+    <string name="quiz_q9_cf">Correct! Newborn kittens are blind and open their eyes around 1-2 weeks.</string>
+    <string name="quiz_q9_wf">Kittens open their eyes at 7-14 days after birth.</string>
+    <string name="quiz_q10">Why do cats groom themselves so much? 🧼👅</string>
+    <string name="quiz_q10_cf">Yes! Grooming keeps them clean, regulates body temp, and lowers stress.</string>
+    <string name="quiz_q10_wf">Grooming acts as a cooling mechanism, hygiene routine, and a self-soother.</string>
+    <string name="quiz_q11">Can cats eat chocolate? 🍫❌</string>
+    <string name="quiz_q11_cf">Correct! Chocolate contains theobromine, which is highly toxic to cats.</string>
+    <string name="quiz_q11_wf">No way! Chocolate contains theobromine which is highly toxic to cats.</string>
+    <string name="quiz_q12">Is cow\'s milk actually good for cats? 🥛🐾</string>
+    <string name="quiz_q12_cf">Correct! Most cats lack the enzyme to digest lactose properly, causing stomach upset.</string>
+    <string name="quiz_q12_wf">Cartoons lied! Most cats are actually lactose intolerant.</string>
+    <string name="quiz_q13">What type of diet do cats absolutely require? 🥩🥦</string>
+    <string name="quiz_q13_cf">Correct! Cats are obligate carnivores and need animal protein to survive.</string>
+    <string name="quiz_q13_wf">Cats are obligate carnivores. They cannot survive on vegetarian diets.</string>
+    <string name="quiz_q14">Why is raw or stagnant water outdoors risky for stray cats? 🦠💧</string>
+    <string name="quiz_q14_cf">Correct! Stagnant puddles can harbor giardia, leptospirosis, or chemical runoff.</string>
+    <string name="quiz_q14_wf">Unclean water carries dangerous parasites like Giardia. Fresh water is best.</string>
+    <string name="quiz_q15">Which of these is safe for cats to eat? 🍗🍇</string>
+    <string name="quiz_q15_cf">Yes! Plain, cooked chicken is a wonderful, safe high-protein treat.</string>
+    <string name="quiz_q15_wf">Onions, garlic, grapes, and raw dough are toxic. Plain cooked chicken is safe!</string>
+    <string name="quiz_q16">How often should adult cats be fed ideally? 🥣🕰️</string>
+    <string name="quiz_q16_cf">Correct! 1-2 measured meals per day helps maintain a healthy weight.</string>
+    <string name="quiz_q16_wf">Feeding 1-2 scheduled meals per day is ideal to prevent obesity.</string>
+    <string name="quiz_q17">What crucial nutrient do cats need from meat that they can\'t synthesize themselves? 👁️⚡</string>
+    <string name="quiz_q17_cf">Yes! Taurine is vital for their heart and eye health. Deficiency causes blindness.</string>
+    <string name="quiz_q17_wf">Taurine is an essential amino acid only found in meat that cats must eat!</string>
+    <string name="quiz_q18">Should you feed a newborn kitten (under 4 weeks) cow\'s milk? 🍼🥛</string>
+    <string name="quiz_q18_cf">Correct! Regular milk will cause severe diarrhea. KMR is the only safe option.</string>
+    <string name="quiz_q18_wf">Never give cow\'s milk. Newborn kittens need special Kitten Milk Replacer (KMR).</string>
+    <string name="quiz_q19">What\'s the best way to keep a cat hydrated if they don\'t drink enough water? 🥫💧</string>
+    <string name="quiz_q19_cf">Correct! Wet food has a high water content and helps prevent kidney disease.</string>
+    <string name="quiz_q19_wf">Wet food is an excellent way to boost hydration in cats who dislike water!</string>
+    <string name="quiz_q20">Is dry kibble alone always sufficient for a cat\'s lifetime diet? 🥩🦴</string>
+    <string name="quiz_q20_cf">Yes! Adding wet food keeps their kidneys flushed and healthy.</string>
+    <string name="quiz_q20_wf">Relying on dry kibble alone can lead to dehydration; mixing wet food is highly recommended.</string>
+    <string name="quiz_q21">What is \'TNR\' in community cat care? 🐾🏡</string>
+    <string name="quiz_q21_cf">Correct! Trap-Neuter-Return is the most humane, effective way to stabilize stray populations.</string>
+    <string name="quiz_q21_wf">TNR stands for Trap-Neuter-Return. It stops the cycle of stray overpopulation!</string>
+    <string name="quiz_q22">How can you tell if a stray community cat has already been neutered/vaccinated? 👂✂️</string>
+    <string name="quiz_q22_cf">Yes! A small, painless ear tip done during surgery is the universal sign of a TNR cat.</string>
+    <string name="quiz_q22_wf">Look for an ear tip! A straight cut across the left ear tip means they\'ve been fixed.</string>
+    <string name="quiz_q23">What is the normal body temperature of a healthy cat? 🌡️🐾</string>
+    <string name="quiz_q23_cf">Correct! Cats run warmer than humans. Anything above 103°F is a fever.</string>
+    <string name="quiz_q23_wf">Cats have a higher baseline temp: usually between 100.5°F and 102.5°F!</string>
+    <string name="quiz_q24">Which of these is a major sign of a sick stray cat needing vet care? 😿🩺</string>
+    <string name="quiz_q24_cf">Correct. Matted fur, eye discharge, or lethargy are clear distress signals.</string>
+    <string name="quiz_q24_wf">Lethargy, discharge, and unkempt fur mean a kitty is sick and needs help!</string>
+    <string name="quiz_q25">What should you do if you suspect a stray cat has rabies? 📞🐈</string>
+    <string name="quiz_q25_cf">Absolutely. Rabies is 100% fatal and highly contagious. Call professionals.</string>
+    <string name="quiz_q25_wf">Safety first! Keep away from aggressive/drooling animals and alert animal control.</string>
+    <string name="quiz_q26">Why should you never use human medication like Tylenol (Acetaminophen) on a cat? 🚫💊</string>
+    <string name="quiz_q26_cf">Correct! Even a tiny crumb of Tylenol destroys a cat\'s red blood cells and is fatal.</string>
+    <string name="quiz_q26_wf">Tylenol is highly poisonous to cats! Never give human meds without vet orders.</string>
+    <string name="quiz_q27">What is the primary way cats catch fleas? 🐜😿</string>
+    <string name="quiz_q27_cf">Correct! Fleas jump from infested spots or contact with untreated animals.</string>
+    <string name="quiz_q27_wf">Fleas are contracted from other animals or flea-laden outdoor spaces.</string>
+    <string name="quiz_q28">How often should indoor cats visit the vet for a checkup? 🩺🐈</string>
+    <string name="quiz_q28_cf">Correct! Annual visits catch hidden issues early (cats hide pain very well).</string>
+    <string name="quiz_q28_wf">Annual exams are crucial since cats are masters of hiding their illnesses!</string>
+    <string name="quiz_q29">A healthy cat\'s nose is usually: 👃🐈</string>
+    <string name="quiz_q29_cf">Correct! A cool, moist nose is healthy, though slight dry variation is normal.</string>
+    <string name="quiz_q29_wf">Normally, a cat\'s nose is cool and slightly damp. Extremes can signal fever.</string>
+    <string name="quiz_q30">Why do cats need scratching posts? 💅🐈</string>
+    <string name="quiz_q30_cf">Correct! Scratching is crucial for nail health, marking scent, and stretching.</string>
+    <string name="quiz_q30_wf">Scratching sheds the outer nail sheath and keeps their shoulder muscles strong!</string>
+    <string name="quiz_q31">How should you approach a stray cat for the first time? 🤫🐾</string>
+    <string name="quiz_q31_cf">Correct! Letting them sniff you first builds trust and avoids scratches.</string>
+    <string name="quiz_q31_wf">Never rush a stray. Speak softly, crouch low, and let them come to you.</string>
+    <string name="quiz_q32">If you find a litter of kittens without a mother, what\'s the first step? 👀🍼</string>
+    <string name="quiz_q32_cf">Yes! Mother cats are often out hunting or moving nests. Monitor for 2-4 hours first.</string>
+    <string name="quiz_q32_wf">Wait! The mom is usually nearby. Observe from a distance before intervening.</string>
+    <string name="quiz_q33">Which item is safest for capturing an injured stray cat? 📦🧣</string>
+    <string name="quiz_q33_cf">Correct! Wrapping them in a thick towel/blanket protects both of you, but a trap is safest.</string>
+    <string name="quiz_q33_wf">Bare hands lead to deep scratches. Use a towel/blanket or a proper trap.</string>
+    <string name="quiz_q34">What should you do if a stray cat scratches or bites you? 🩹🩸</string>
+    <string name="quiz_q34_cf">Yes! Cat bites carry bacteria that can cause serious infections (like Cat Scratch Fever) fast.</string>
+    <string name="quiz_q34_wf">Cat bites infect easily! Wash thoroughly with soap and seek medical advice.</string>
+    <string name="quiz_q35">What\'s the best time of day to spot or trap stray cats? 🌅🌌</string>
+    <string name="quiz_q35_cf">Correct! Cats are crepuscular, meaning they are most active during dawn and dusk.</string>
+    <string name="quiz_q35_wf">Cats are crepuscular. They are naturally active during twilight hours.</string>
+    <string name="quiz_q36">What kind of scent is known to soothe stressed-out cats? 🌸🐈</string>
+    <string name="quiz_q36_cf">Yes! Synthetic facial pheromones (Feliway) or mild lavender can calm them.</string>
+    <string name="quiz_q36_wf">Citrus is actually repulsive to cats! Use feline pheromones like Feliway instead.</string>
+    <string name="quiz_q37">Why is feeding stray cats in the exact same spot daily helpful? 🥣📅</string>
+    <string name="quiz_q37_cf">Correct! Predictable feeding times make trapping for neutering incredibly simple.</string>
+    <string name="quiz_q37_wf">Routine feeding makes trapping for TNR way more predictable and successful.</string>
+    <string name="quiz_q38">A cat with dilated (very large, round) pupils in bright light is likely: 😳🐈</string>
+    <string name="quiz_q38_cf">Correct! Dilated pupils in bright light mean adrenaline is pumping (fear or prey drive).</string>
+    <string name="quiz_q38_wf">Wide eyes mean adrenaline! The cat is highly excited, scared, or alert.</string>
+    <string name="quiz_q39">Should you hold a cat by the \'scruff\' (back of the neck) in an emergency? 🐈🚨</string>
+    <string name="quiz_q39_cf">Yes. Scruffing adult cats can stress them. Only do it briefly to prevent a bite, always supporting their weight.</string>
+    <string name="quiz_q39_wf">Scruffing can scare adult cats. Use a towel wrap (burrito style) instead if possible.</string>
+    <string name="quiz_q40">How can you gain a feral cat\'s trust over several weeks? 🥣⏳</string>
+    <string name="quiz_q40_cf">Perfect! Patience and consistent food are the keys to a feral cat\'s heart.</string>
+    <string name="quiz_q40_wf">Patience wins! Give them space, feed consistently, and let them set the pace.</string>
+    <string name="quiz_q41">What should you do if you find a kitten with \'fading kitten syndrome\' (lethargic, cold)? 🚨🍼</string>
+    <string name="quiz_q41_cf">Correct! Hypothermia and low blood sugar are the main threats. Warmth and sugar are critical first aid.</string>
+    <string name="quiz_q41_wf">Lethargic kittens need immediate warmth and glucose on their gums, then a vet!</string>
+    <string name="quiz_q42">What\'s the safest material to line an outdoor winter shelter for strays? 🌾❄️</string>
+    <string name="quiz_q42_cf">Correct! Blankets absorb air moisture and freeze, making the cat colder. Straw repels moisture and traps heat.</string>
+    <string name="quiz_q42_wf">Never use blankets outdoors! They hold moisture and freeze. Straw is the gold standard.</string>
+    <string name="quiz_q43">If a cat is choking, what should you do first? 🐱🚨</string>
+    <string name="quiz_q43_cf">Yes. Carefully check the mouth, or perform gentle abdominal compressions if trained, then vet immediately.</string>
+    <string name="quiz_q43_wf">Check mouth gently for obstructions, perform modified compressions, and rush to a vet!</string>
+    <string name="quiz_q44">Which of these household plants is EXTREMELY toxic to cats (even a single leaf can cause kidney failure)? 🚫💐</string>
+    <string name="quiz_q44_cf">Correct. Lilies are incredibly deadly. Even drinking the water from a lily vase can kill a cat.</string>
+    <string name="quiz_q44_wf">Lilies are fatal! Any contact with lilies requires emergency veterinary care.</string>
+    <string name="quiz_q45">What does it mean if a male cat is straining to urinate and crying in the litter box? 🚨🐈</string>
+    <string name="quiz_q45_cf">Yes! Male cats have narrow urethras. A blockage can be fatal within 24-48 hours. This is a red-alert emergency.</string>
+    <string name="quiz_q45_wf">Red Alert! A male cat unable to urinate is a life-threatening medical emergency.</string>
+    <string name="quiz_q46">What should you do if a community cat has a deep, open wound? 🩹🩺</string>
+    <string name="quiz_q46_cf">Correct. Hydrogen peroxide destroys healthy cells and slows healing. Professional wound care is needed.</string>
+    <string name="quiz_q46_wf">Skip the peroxide! Wash with clean water/saline and seek professional veterinary treatment.</string>
+    <string name="quiz_q47">If a kitten is severely flea-infested and too young for chemical flea meds, how do you treat them? 🧼🧴</string>
+    <string name="quiz_q47_cf">Correct! Blue Dawn dish soap safely drowns fleas on contact without chemical toxicity.</string>
+    <string name="quiz_q47_wf">Dawn dish soap bath is the safest, most effective way to save a flea-anemic kitten!</string>
+    <string name="quiz_q48">Why are essential oil diffusers risky around cats? 🚫💨</string>
+    <string name="quiz_q48_cf">Yes! Cats lack liver enzymes to metabolize essential oils, leading to rapid toxicity.</string>
+    <string name="quiz_q48_wf">Oils like tea tree, eucalyptus, and mint are toxic to cats\' livers. Avoid diffusers!</string>
+    <string name="quiz_q49">How can you safely transport a fractious (highly aggressive/terrified) stray cat to the vet? 🧺🐾</string>
+    <string name="quiz_q49_cf">Yes! Covering the carrier with a towel blocks visual triggers and keeps them calm.</string>
+    <string name="quiz_q49_wf">Use a safe, closed carrier wrapped in a dark towel to keep them feeling safe and hidden.</string>
+    <string name="quiz_q50">What is the primary rule of any animal rescue situation? 🛡️❤️</string>
+    <string name="quiz_q50_cf">Exactly! If you get severely injured, you cannot help the cat and become another casualty yourself.</string>
+    <string name="quiz_q50_wf">Safety first! Your safety is paramount. An injured rescuer cannot save anyone.</string>
+    <string name="main_my_kitty_corner">My Kitty\'s Corner</string>
+    <string name="main_about_title">About TinyPaws</string>
+    <string name="main_about_desc">Made by a teenager, for teenagers, and anyone who wants to help but doesn\'t have the tools.</string>
+    <string name="main_discover_title">✨ Discover TinyPaws</string>
+    <string name="main_discover_desc">Unlock a random guide or a fun DIY project you haven\'t seen recently!</string>
+    <string name="main_cats_near_me_title">🐾 Cats Near Me</string>
+    <string name="main_cats_near_me_desc">Help nearby stray cats by reporting sight logs or locating strays in distress within your immediate community.</string>
+    <string name="main_report_stray">📢 Report Stray</string>
+    <string name="main_browse_nearby">🔍 Browse Nearby</string>
+    <string name="main_settings">Settings</string>
+    <string name="main_dark_mode">Dark Mode</string>
+    <string name="hub_title">My Cat Hub</string>
+    <string name="hub_back">Back</string>
+    <string name="hub_cat_profile">Cat Profile</string>
+    <string name="hub_weight_tracker">Weight Tracker</string>
+    <string name="hub_daily_checkin">Daily Check-in</string>
+    <string name="hub_reminders">Reminders</string>
+    <string name="nav_feeding_stations_title">Feeding Stations</string>
+    <string name="feeding_stations_subtitle">Log and locate neighborhood street cat feeding spots</string>
+    <string name="menu_feeding_stations">Feeding Stations</string>
+    <string name="log_feeding_station_btn">Log a Feeding Station</string>
+    <string name="feeding_station_name">Station Name</string>
+    <string name="feeding_station_desc">Station Details</string>
+    <string name="feeding_station_needs">Station Needs</string>
+    <string name="feeding_station_success">Feeding station successfully logged! 🥣</string>
+    <string name="feeding_station_welcome_title">Log a Neighborhood Feeding Spot</string>
+    <string name="feeding_station_welcome_desc">Help other caregivers know which areas are taken care of, who is feeding, and what supplies are needed.</string>
+    <string name="feeding_station_placeholder">e.g. Sidi Bou Said Main Street Feeding Station</string>
+    <string name="feeding_station_desc_placeholder">Describe the feeding station (e.g., "We feed them kibble every morning around 8 AM. Needs clean bowls.")</string>
+    <string name="stray_feeding_stations_count">Feeding Stations Near You (%1$d)</string>
+    <string name="no_feeding_stations_reports">No feeding stations found within %1$.1f km of your area.</string>
+    <string name="open_settings">Settings ⚙️</string>
+    <string name="manual_pin_instruction">📍 Manual Pin Mode: Tap anywhere on the map below to position your cat sighting pin.</string>
+    <string name="weather_cooldown_active">Weather alerts limited to max 1 per 4 hours to prevent duplicate notifications.</string>
+    <string name="report_cooldown_active">Duplicate report notification cooldown: max 1 alert per report per 24 hours.</string>
+    <string name="cached_weather_indicator">Offline Cached Forecast (Last Updated: %1$s)</string>
+    <string name="custom_notification_sound_label">Calming Kitty Chime Sound Enabled 🔔</string>
+    <string name="location_accuracy_label">Location Accuracy: %1$s</string>
+    <string name="map_preview_label">Map Preview &amp; Pin Selector</string>
+    <string name="offline_mode_indicator">Offline Mode Active</string>
+    <string name="settings_title">Caregiver Settings</string>
+    <string name="settings_header_desc">Customize your TinyPaws experience, language, and notifications.</string>
+    <string name="settings_preferences_title">Preferences &amp; Sounds</string>
+    <string name="settings_sound_effects">Sound Effects &amp; Chimes</string>
+    <string name="settings_privacy_title">Privacy &amp; Data Security</string>
+    <string name="settings_privacy_desc">All cat diaries and locations remain strictly offline and secure on your device.</string>
+    <string name="settings_app_version">TinyPaws Version %1$s</string>
+    <string name="settings_mission_statement">Crafted with love for cat caregivers everywhere. Dedicated to Lily &amp; Pip.</string>
+
+    <!-- Certificate Preview & Screen -->
+    <string name="cert_preview_title">🏆 Future Reward</string>
+    <string name="cert_preview_desc">Complete all 50 quizzes to unlock your Cat Champion Certificate!</string>
+    <string name="cert_preview_btn">Keep Playing</string>
+    <string name="cert_fallback_name">TinyPaws Cat Champion</string>
+    <string name="cert_content_desc">Certificate of Purrfection</string>
 </resources>

@@ -1,8 +1,6 @@
 package com.example.ui
 
 import android.graphics.Bitmap
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.stringArrayResource
 import com.example.R
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.draw.clip
@@ -50,11 +48,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.theme.*
 
 // Helper Character Card Component
 @Composable
 fun StorybookCharacterBanner() {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,21 +100,36 @@ fun GuideModuleScreen(
     viewModel: TinyPawsViewModel,
     userName: String,
     onBack: () -> Unit,
+    onNavigateToWeather: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // CurrentTab acts as our sub-screen tracker: "menu", "diseases", "adoption", "diy", "stray", "favorites"
-    var currentTab by remember { mutableStateOf("menu") }
-    // DIY Project sub-screen: null, "shelter", "game", "bed"
-    var selectedDiyProject by remember { mutableStateOf<String?>(null) }
+    // CurrentTab and selectedDiyProject are now managed by TinyPawsViewModel
+    val currentTab by viewModel.activeGuideTab.collectAsStateWithLifecycle()
+    val selectedDiyProject by viewModel.activeDiyProjectId.collectAsStateWithLifecycle()
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE) }
+
+    LaunchedEffect(currentTab) {
+        if (currentTab != "menu") {
+            viewModel.trackItemViewed("guide_$currentTab", sharedPrefs)
+        }
+    }
+
+    LaunchedEffect(selectedDiyProject) {
+        selectedDiyProject?.let {
+            viewModel.trackItemViewed("diy_$it", sharedPrefs)
+        }
+    }
 
     val scrollState = rememberScrollState()
 
     // Handle back action gracefully at the top bar
     val handleBack = {
         if (selectedDiyProject != null) {
-            selectedDiyProject = null
+            viewModel.updateActiveDiyProject(null)
         } else if (currentTab != "menu") {
-            currentTab = "menu"
+            viewModel.updateActiveGuideTab("menu")
         } else {
             onBack()
         }
@@ -134,7 +149,7 @@ fun GuideModuleScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = handleBack,
+                onClick = com.example.ui.theme.rememberHapticOnClick { handleBack() },
                 modifier = Modifier.testTag("back_to_dashboard")
             ) {
                 Icon(
@@ -196,37 +211,31 @@ fun GuideModuleScreen(
                         title = stringResource(R.string.nav_favorites_title),
                         subtitle = stringResource(R.string.nav_favorites_subtitle),
                         tag = "menu_btn_favorites",
-                        onClick = { currentTab = "favorites" }
+                        onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.updateActiveGuideTab("favorites") }
                     )
                     GuideMenuCard(
                         title = stringResource(R.string.guide_diseases_title),
                         subtitle = stringResource(R.string.guide_diseases_subtitle),
                         tag = "menu_btn_diseases",
-                        onClick = { currentTab = "diseases" }
+                        onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.updateActiveGuideTab("diseases") }
                     )
                     GuideMenuCard(
                         title = stringResource(R.string.guide_adoption_title),
                         subtitle = stringResource(R.string.guide_adoption_subtitle),
                         tag = "menu_btn_adoption",
-                        onClick = { currentTab = "adoption" }
+                        onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.updateActiveGuideTab("adoption") }
                     )
                     GuideMenuCard(
                         title = stringResource(R.string.guide_diy_title),
                         subtitle = stringResource(R.string.guide_diy_subtitle),
                         tag = "menu_btn_diy",
-                        onClick = { currentTab = "diy" }
-                    )
-                    GuideMenuCard(
-                        title = stringResource(R.string.guide_cook_title),
-                        subtitle = stringResource(R.string.guide_cook_subtitle),
-                        tag = "menu_btn_cook",
-                        onClick = { currentTab = "cook" }
+                        onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.updateActiveGuideTab("diy") }
                     )
                     GuideMenuCard(
                         title = stringResource(R.string.guide_stray_title),
                         subtitle = stringResource(R.string.guide_stray_subtitle),
                         tag = "menu_btn_stray",
-                        onClick = { currentTab = "stray" }
+                        onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.updateActiveGuideTab("stray") }
                     )
                 }
             } else {
@@ -237,7 +246,7 @@ fun GuideModuleScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(
-                        onClick = handleBack,
+                        onClick = com.example.ui.theme.rememberHapticOnClick { handleBack() },
                         colors = ButtonDefaults.textButtonColors(contentColor = PastelPurpleDark)
                     ) {
                         Text(stringResource(R.string.guide_back_menu), fontWeight = FontWeight.Bold, fontSize = 13.sp)
@@ -248,8 +257,8 @@ fun GuideModuleScreen(
                     "favorites" -> FavoritesSection(
                         viewModel = viewModel,
                         onSelectProject = { projId -> 
-                            selectedDiyProject = projId
-                            currentTab = "diy"
+                            viewModel.updateActiveDiyProject(projId)
+                            viewModel.updateActiveGuideTab("diy")
                         }
                     )
                     "diseases" -> DiseasesGuideSection()
@@ -257,9 +266,9 @@ fun GuideModuleScreen(
                     "diy" -> DiyProjectsSection(
                         viewModel = viewModel,
                         selectedProject = selectedDiyProject,
-                        onSelectProject = { selectedDiyProject = it }
+                        onSelectProject = { viewModel.updateActiveDiyProject(it) },
+                        onNavigateToWeather = onNavigateToWeather
                     )
-                    "cook" -> WhatToCookSection(viewModel = viewModel)
                     "stray" -> FoundStraySection()
                 }
             }
@@ -277,7 +286,7 @@ fun GuideMenuCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { onClick() })
             .testTag(tag)
             .glassyCard(shape = RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
@@ -329,6 +338,7 @@ fun GuideMenuCard(
 
 @Composable
 fun DiseasesGuideSection() {
+
     val diseases = listOf(
         DiseaseData(
             R.string.disease_rabies_name,
@@ -455,6 +465,7 @@ fun DiseasesGuideSection() {
 
 @Composable
 fun DiseaseDetailRow(title: String, desc: String) {
+
     Column {
         Text(
             text = title,
@@ -525,7 +536,7 @@ fun FavoritesSection(
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(project.titleRes),
+                                text = project.title,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = PastelPurpleDark
@@ -543,7 +554,7 @@ fun FavoritesSection(
                             )
                         }
                         IconButton(
-                            onClick = { viewModel.toggleFavoriteDiy(project.id) },
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.toggleFavoriteDiy(project.id) },
                             modifier = Modifier.testTag("fav_remove_${project.id}")
                         ) {
                             Icon(Icons.Default.Favorite, contentDescription = "Remove", tint = Color.Red)
@@ -557,6 +568,7 @@ fun FavoritesSection(
 
 @Composable
 fun AdoptionGuideSection() {
+
     val timelineStages = listOf(
         AdoptionStepData(
             R.string.adopt_stage_1_name,
@@ -672,6 +684,7 @@ fun VisualNarrativePlaceholder(
     stepDetailResId: Int, // Changed to ResId
     modifier: Modifier = Modifier
 ) {
+
     val stepImageCache by viewModel.stepImageCache.collectAsState()
     val stepId = "diy_step_$stepIndex"
     val altText = stringResource(altTextResId)
@@ -720,6 +733,7 @@ fun LilyAndPipIllustration(
     stepIndex: Int,
     modifier: Modifier = Modifier
 ) {
+
     Canvas(
         modifier = modifier
             .fillMaxWidth()
@@ -1115,16 +1129,18 @@ fun LilyAndPipIllustration(
 fun DiyProjectsSection(
     viewModel: TinyPawsViewModel,
     selectedProject: String?,
-    onSelectProject: (String?) -> Unit
+    onSelectProject: (String?) -> Unit,
+    onNavigateToWeather: () -> Unit = {}
 ) {
-    NewDiyProjectsSection(viewModel, selectedProject, onSelectProject)
+    NewDiyProjectsSection(viewModel, selectedProject, onSelectProject, onNavigateToWeather)
 }
 
 @Composable
 fun NewDiyProjectsSection(
     viewModel: TinyPawsViewModel,
     selectedProject: String?,
-    onSelectProject: (String?) -> Unit
+    onSelectProject: (String?) -> Unit,
+    onNavigateToWeather: () -> Unit = {}
 ) {
     var activeCategory by remember { mutableStateOf("shelter") }
     val allProjects = DiyProjectsData.projects
@@ -1136,6 +1152,50 @@ fun NewDiyProjectsSection(
                 text = stringResource(R.string.guide_diy_header),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             )
+
+            // Heatwave & Extreme Weather Alert Banner Button
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToWeather() },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0)),
+                border = BorderStroke(1.dp, Color(0xFFFF8A80))
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("🔥", fontSize = 26.sp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Heatwave & Weather Tracker",
+                                style = MaterialTheme.typography.titleSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFB71C1C)
+                                )
+                            )
+                            Text(
+                                text = "Check 7-day temperature alerts (>35°C red, <15°C blue) for stray cat shelters.",
+                                style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF5D4037))
+                            )
+                        }
+                    }
+                    Button(
+                        onClick = com.example.ui.theme.rememberHapticOnClick { onNavigateToWeather() },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("Open", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
+                }
+            }
             
             // Actual, High-Quality Concept Image for the DIY category
             Card(
@@ -1168,7 +1228,7 @@ fun NewDiyProjectsSection(
                 ).forEach { (catId, catLabel) ->
                     val isSelected = activeCategory == catId
                     Button(
-                        onClick = { activeCategory = catId },
+                        onClick = com.example.ui.theme.rememberHapticOnClick {  activeCategory = catId },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isSelected) DeepBurgundy else White.copy(alpha = 0.5f),
                             contentColor = if (isSelected) White else DeepBurgundy
@@ -1207,14 +1267,14 @@ fun NewDiyProjectsSection(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = stringResource(project.titleRes),
+                                    text = project.title,
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 )
                                 IconButton(
-                                    onClick = { viewModel.toggleFavoriteDiy(project.id) },
+                                    onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.toggleFavoriteDiy(project.id) },
                                     modifier = Modifier.size(24.dp).testTag("fav_btn_${project.id}")
                                 ) {
                                     Icon(
@@ -1227,7 +1287,7 @@ fun NewDiyProjectsSection(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             DiyBadge(
-                                text = stringResource(project.difficultyRes),
+                                text = project.difficulty,
                                 containerColor = BlushPink.copy(alpha = 0.4f),
                                 contentColor = DeepBurgundy
                             )
@@ -1237,17 +1297,17 @@ fun NewDiyProjectsSection(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            DiyBadge(text = stringResource(project.costRes), containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
-                            DiyBadge(text = stringResource(project.timeRes), containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
+                            DiyBadge(text = project.cost, containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
+                            DiyBadge(text = project.time, containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = stringResource(project.descriptionRes),
+                            text = project.description,
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onBackground)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Button(
-                            onClick = { onSelectProject(project.id) },
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectProject(project.id) },
                             colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
                             shape = CircleShape,
                             modifier = Modifier
@@ -1269,7 +1329,7 @@ fun NewDiyProjectsSection(
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 TextButton(
-                    onClick = { onSelectProject(null) },
+                    onClick = com.example.ui.theme.rememberHapticOnClick {  onSelectProject(null) },
                     colors = ButtonDefaults.textButtonColors(contentColor = DeepBurgundy),
                     modifier = Modifier.testTag("back_to_diy_list")
                 ) {
@@ -1290,7 +1350,7 @@ fun NewDiyProjectsSection(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(project.titleRes),
+                                text = project.title,
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -1298,7 +1358,7 @@ fun NewDiyProjectsSection(
                                 modifier = Modifier.weight(1f)
                             )
                             IconButton(
-                                onClick = { viewModel.toggleFavoriteDiy(project.id) },
+                                onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.toggleFavoriteDiy(project.id) },
                                 modifier = Modifier.size(28.dp).testTag("fav_detail_btn_${project.id}")
                             ) {
                                 Icon(
@@ -1314,57 +1374,16 @@ fun NewDiyProjectsSection(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            DiyBadge(text = stringResource(project.difficultyRes), containerColor = BlushPink.copy(alpha = 0.4f), contentColor = DeepBurgundy)
-                            DiyBadge(text = stringResource(project.costRes), containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
-                            DiyBadge(text = stringResource(project.timeRes), containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
+                            DiyBadge(text = project.difficulty, containerColor = BlushPink.copy(alpha = 0.4f), contentColor = DeepBurgundy)
+                            DiyBadge(text = project.cost, containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
+                            DiyBadge(text = project.time, containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = stringResource(project.descriptionRes),
+                            text = project.description,
                             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground, lineHeight = 18.sp)
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                        HorizontalDivider(color = SoftGray.copy(alpha = 0.5f))
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text(
-                            text = stringResource(R.string.diy_requirements),
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            val materials = project.materialsRes
-                            materials.forEach { materialRes ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(20.dp)
-                                            .background(GreenSuccess.copy(alpha = 0.2f), CircleShape),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Check,
-                                            contentDescription = "Included",
-                                            tint = GreenSuccess,
-                                            modifier = Modifier.size(12.dp)
-                                        )
-                                    }
-                                    Text(
-                                        text = stringResource(materialRes),
-                                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
-                                    )
-                                }
-                            }
-                        }
 
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(color = SoftGray.copy(alpha = 0.5f))
@@ -1376,22 +1395,20 @@ fun NewDiyProjectsSection(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "A complete, step-by-step illustrated storyboard showing Pip the cat and Lily working together!",
+                            text = "Step-by-step action illustrations with Pip the cat and Lily working together!",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.secondary
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        val steps = project.stepsRes
-                        val altTexts = project.altTextsRes
+                        val steps = project.steps
 
-                        steps.forEachIndexed { index, stepRes ->
-                            val altTextRes = altTexts.getOrNull(index) ?: project.titleRes
-                            val stepId = "diy_${project.id}_vstep_$index"
-                            val altText = stringResource(altTextRes)
+                        steps.forEachIndexed { index, step ->
+                            val actionId = step.actionId
+                            val richPrompt = DiyProjectsData.getActionPrompt(actionId)
 
-                            LaunchedEffect(project.id) {
-                                viewModel.generateStepImage(stepId, altText)
+                            LaunchedEffect(actionId) {
+                                viewModel.generateStepImage(actionId, richPrompt)
                             }
 
                             Card(
@@ -1402,17 +1419,43 @@ fun NewDiyProjectsSection(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 Column {
-                                    LilyAndPipIllustration(
-                                        category = project.category,
-                                        stepIndex = index,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(180.dp)
-                                    )
+                                    val bitmap = stepImageCache[actionId]
+                                    if (bitmap != null) {
+                                        Image(
+                                            bitmap = bitmap.asImageBitmap(),
+                                            contentDescription = step.title,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(180.dp)
+                                                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else {
+                                        val fallbackResId = when (actionId) {
+                                            "gather_materials" -> R.drawable.diy_gather_step_1785341141776
+                                            "measure", "plan_sketch" -> R.drawable.diy_measure_step_1785341113912
+                                            "cut_opening", "cut_to_size", "sand_edges" -> R.drawable.diy_cut_step_1785341128336
+                                            "insulate_line", "add_straw", "waterproof_cover" -> R.drawable.diy_insulate_step_1785341157448
+                                            "build_frame", "attach_join", "secure_lid", "elevate_place" -> R.drawable.diy_assemble_step_1785341172903
+                                            "sew_edge", "stuff_fill", "tie_knot", "fold_shape" -> R.drawable.img_diy_craft_sew_1785340343515
+                                            "paint_decorate", "glue_pieces", "quality_check" -> R.drawable.diy_measure_step_1785341113912
+                                            "test_play", "final_placement" -> R.drawable.img_diy_cozy_bed_1785340326644
+                                            else -> R.drawable.diy_gather_step_1785341141776
+                                        }
+                                        Image(
+                                            painter = painterResource(id = fallbackResId),
+                                            contentDescription = step.title,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(180.dp)
+                                                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
 
                                     Column(modifier = Modifier.padding(14.dp)) {
                                         Text(
-                                            text = "Step ${index + 1} of 10",
+                                            text = "Step ${step.step} of ${steps.size}",
                                             style = MaterialTheme.typography.titleSmall.copy(
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -1420,10 +1463,88 @@ fun NewDiyProjectsSection(
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = stringResource(stepRes),
+                                            text = step.title,
                                             style = MaterialTheme.typography.bodyMedium.copy(
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 lineHeight = 18.sp
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Overview Paragraph without visuals & View More Full Guide
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .glassyCard(shape = RoundedCornerShape(20.dp)),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "📝 Project Overview",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = DiyProjectsData.getSimpleOverviewParagraph(project),
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        lineHeight = 20.sp
+                                    )
+                                )
+
+                                Spacer(modifier = Modifier.height(14.dp))
+
+                                var isExpanded by remember { mutableStateOf(false) }
+
+                                Button(
+                                    onClick = com.example.ui.theme.rememberHapticOnClick { isExpanded = !isExpanded },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = if (isExpanded) "Hide Full Guide ▲" else "View More (Full Step-by-Step Guide) ▼",
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+
+                                androidx.compose.animation.AnimatedVisibility(
+                                    visible = isExpanded,
+                                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically(),
+                                    exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.shrinkVertically()
+                                ) {
+                                    Column(modifier = Modifier.padding(top = 12.dp)) {
+                                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Text(
+                                            text = "📖 Full Step-by-Step Guide",
+                                            style = MaterialTheme.typography.titleSmall.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        )
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(
+                                            text = DiyProjectsData.getFullGuideParagraph(project),
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                lineHeight = 21.sp
                                             )
                                         )
                                     }
@@ -1439,6 +1560,7 @@ fun NewDiyProjectsSection(
 
 @Composable
 fun FoundStraySection() {
+
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = stringResource(R.string.stray_title),
@@ -1578,6 +1700,7 @@ fun DiyBadge(
     containerColor: Color,
     contentColor: Color
 ) {
+
     Box(
         modifier = Modifier
             .background(containerColor, RoundedCornerShape(8.dp))
@@ -1698,68 +1821,11 @@ fun generateLocalRecipe(selected: Set<String>): CuratedRecipeData {
 }
 
 
-@Composable
-fun WhatToCookSection(viewModel: TinyPawsViewModel) {
-    var activeMode by remember { mutableStateOf("picker") } // "picker", "library"
-    
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(
-            text = stringResource(R.string.guide_cook_header),
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = TextDark)
-        )
-        Text(
-            text = stringResource(R.string.guide_cook_intro_desc),
-            style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
-        )
 
-        // Pill switches
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Button(
-                onClick = { activeMode = "picker" },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (activeMode == "picker") PastelPurpleDark else SoftGray
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.guide_cook_picker_tab),
-                    fontWeight = FontWeight.Bold,
-                    color = if (activeMode == "picker") White else TextDark,
-                    fontSize = 12.sp
-                )
-            }
-
-            Button(
-                onClick = { activeMode = "library" },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (activeMode == "library") PastelPurpleDark else SoftGray
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.guide_cook_library_tab),
-                    fontWeight = FontWeight.Bold,
-                    color = if (activeMode == "library") White else TextDark,
-                    fontSize = 12.sp
-                )
-            }
-        }
-
-        if (activeMode == "picker") {
-            IngredientPickerSubSection(viewModel = viewModel)
-        } else {
-            RecipeLibrarySubSection(viewModel = viewModel)
-        }
-    }
-}
 
 @Composable
 fun IngredientPickerSubSection(viewModel: TinyPawsViewModel) {
+
     val ingredients = listOf(
         stringResource(R.string.mat_fish) to stringResource(R.string.cat_protein),
         stringResource(R.string.mat_chicken) to stringResource(R.string.cat_protein),
@@ -1857,7 +1923,7 @@ fun IngredientPickerSubSection(viewModel: TinyPawsViewModel) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "🐾 Select at least 2 ingredients to begin your visual culinary guide!",
+                        text = stringResource(R.string.cook_select_2_ing),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = PastelPinkDark,
@@ -1870,7 +1936,7 @@ fun IngredientPickerSubSection(viewModel: TinyPawsViewModel) {
                 }
 
                 Text(
-                    text = "✨ Lily's Custom Creation: " + stringResource(generatedRecipe.titleRes),
+                    text = stringResource(R.string.cook_lilys_creation) + stringResource(generatedRecipe.titleRes),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, color = PastelPurpleDark),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -1888,6 +1954,7 @@ fun IngredientPickerSubSection(viewModel: TinyPawsViewModel) {
 
 @Composable
 fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
+
     val curatedRecipes = listOf(
         CuratedRecipeData(
             titleRes = R.string.recipe_1_title,
@@ -1915,6 +1982,69 @@ fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
             descriptionRes = R.string.recipe_3_desc,
             stepsRes = R.array.recipe_3_steps,
             altTextsRes = R.array.recipe_3_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_4_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_12m,
+            materialsRes = R.array.recipe_4_materials,
+            descriptionRes = R.string.recipe_4_desc,
+            stepsRes = R.array.recipe_4_steps,
+            altTextsRes = R.array.recipe_4_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_5_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_10m,
+            materialsRes = R.array.recipe_5_materials,
+            descriptionRes = R.string.recipe_5_desc,
+            stepsRes = R.array.recipe_5_steps,
+            altTextsRes = R.array.recipe_5_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_6_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_15m,
+            materialsRes = R.array.recipe_6_materials,
+            descriptionRes = R.string.recipe_6_desc,
+            stepsRes = R.array.recipe_6_steps,
+            altTextsRes = R.array.recipe_6_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_7_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_20m,
+            materialsRes = R.array.recipe_7_materials,
+            descriptionRes = R.string.recipe_7_desc,
+            stepsRes = R.array.recipe_7_steps,
+            altTextsRes = R.array.recipe_7_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_8_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_15m,
+            materialsRes = R.array.recipe_8_materials,
+            descriptionRes = R.string.recipe_8_desc,
+            stepsRes = R.array.recipe_8_steps,
+            altTextsRes = R.array.recipe_8_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_9_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_10m,
+            materialsRes = R.array.recipe_9_materials,
+            descriptionRes = R.string.recipe_9_desc,
+            stepsRes = R.array.recipe_9_steps,
+            altTextsRes = R.array.recipe_9_alt
+        ),
+        CuratedRecipeData(
+            titleRes = R.string.recipe_10_title,
+            difficultyRes = R.string.difficulty_easy,
+            timeRes = R.string.time_10m,
+            materialsRes = R.array.recipe_10_materials,
+            descriptionRes = R.string.recipe_10_desc,
+            stepsRes = R.array.recipe_10_steps,
+            altTextsRes = R.array.recipe_10_alt
         )
     )
 
@@ -2022,6 +2152,7 @@ fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
 
 @Composable
 fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData) {
+
     var stepIdx by remember { mutableStateOf(0) }
     val stepImageCache by viewModel.stepImageCache.collectAsState()
     val steps = stringArrayResource(recipe.stepsRes)
@@ -2043,7 +2174,7 @@ fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                text = "Preparation Step ${stepIdx + 1} of 10",
+                text = "Preparation Step ${stepIdx + 1} of ${steps.size}",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = PastelPurpleDark,
@@ -2072,7 +2203,7 @@ fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
-                    onClick = { if (stepIdx > 0) stepIdx-- },
+                    onClick = com.example.ui.theme.rememberHapticOnClick {  if (stepIdx > 0) stepIdx-- },
                     enabled = stepIdx > 0,
                     colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
                     shape = RoundedCornerShape(8.dp),
@@ -2082,20 +2213,20 @@ fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData
                 }
 
                 Text(
-                    text = "Step ${stepIdx + 1} / 10",
+                    text = stringResource(R.string.cook_step, "${stepIdx + 1} / 10"),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextDark
                 )
 
                 Button(
-                    onClick = { if (stepIdx < 9) stepIdx++ },
+                    onClick = com.example.ui.theme.rememberHapticOnClick {  if (stepIdx < 9) stepIdx++ },
                     enabled = stepIdx < 9,
                     colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.height(32.dp)
                 ) {
-                    Text("Next ▶", fontSize = 10.sp, color = White)
+                    Text(stringResource(R.string.cook_next), fontSize = 10.sp, color = White)
                 }
             }
         }
@@ -2110,6 +2241,7 @@ fun CookModuleScreen(
     onBack: () -> Unit
 ) {
     var activeSubTab by remember { mutableStateOf("kitchen") }
+    var showDisclaimer by remember { mutableStateOf(true) }
 
     Column(
         modifier = modifier
@@ -2129,7 +2261,7 @@ fun CookModuleScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 IconButton(
-                    onClick = onBack,
+                    onClick = com.example.ui.theme.rememberHapticOnClick { onBack() },
                     modifier = Modifier
                         .size(36.dp)
                         .background(LightPurpleBg, CircleShape)
@@ -2137,18 +2269,18 @@ fun CookModuleScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = "Go Back",
+                        contentDescription = stringResource(R.string.cook_go_back),
                         tint = PastelPurpleDark,
                         modifier = Modifier.size(18.dp)
                     )
                 }
                 Column {
                     Text(
-                        text = "Hi, $userName's Kitchen 👩‍🍳",
+                        text = stringResource(R.string.cook_hi_user, userName),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = TextDark)
                     )
                     Text(
-                        text = "A feline culinary guide by lead chef Lily & Pip",
+                        text = stringResource(R.string.cook_guide_desc),
                         style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                     )
                 }
@@ -2164,12 +2296,12 @@ fun CookModuleScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             listOf(
-                "kitchen" to "Chef's Kitchen 🍳",
-                "library" to "Recipe Library 📚"
+                "kitchen" to stringResource(R.string.cook_tab_kitchen),
+                "library" to stringResource(R.string.cook_tab_library)
             ).forEach { (tabId, label) ->
                 val isSelected = activeSubTab == tabId
                 Button(
-                    onClick = { activeSubTab = tabId },
+                    onClick = com.example.ui.theme.rememberHapticOnClick {  activeSubTab = tabId },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isSelected) PastelPurpleDark else LightPurpleBg,
                         contentColor = if (isSelected) White else PastelPurpleDark
@@ -2194,6 +2326,57 @@ fun CookModuleScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (activeSubTab == "kitchen") {
+                if (showDisclaimer) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("nutrition_disclaimer_card"),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFF3CD)
+                        ),
+                        border = BorderStroke(1.dp, Color(0xFFFFC107)),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Text(
+                                    text = "⚠️",
+                                    fontSize = 18.sp
+                                )
+                                Text(
+                                    text = stringResource(R.string.cook_disclaimer_text),
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = Color(0xFF856404),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            }
+                            IconButton(
+                                onClick = com.example.ui.theme.rememberHapticOnClick { showDisclaimer = false },
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .testTag("dismiss_disclaimer_btn")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Dismiss",
+                                    tint = Color(0xFF856404),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    }
+                }
                 IngredientPickerSubSection(viewModel = viewModel)
             } else {
                 RecipeLibrarySubSection(viewModel = viewModel)
@@ -2236,7 +2419,14 @@ fun SideBySideVisualRow(
                 )
             } else {
                 val resId = when {
-                    imageFileName.contains("diy_step") -> R.drawable.img_diy_concept_fixed
+                    imageFileName.contains("diy_step") -> {
+                        when {
+                            imageFileName.contains("step1") -> R.drawable.img_diy_gather_1784487336795
+                            imageFileName.contains("step2") -> R.drawable.img_diy_measure_1784487351424
+                            imageFileName.contains("step3") -> R.drawable.img_diy_assemble_1784487371981
+                            else -> R.drawable.img_diy_concept_fixed
+                        }
+                    }
                     imageFileName.contains("cook_step") -> R.drawable.img_recipe_concept_fixed
                     else -> null
                 }

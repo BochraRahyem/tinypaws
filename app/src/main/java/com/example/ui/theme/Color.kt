@@ -3,6 +3,8 @@ package com.example.ui.theme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 
 // Base Colors
 val BaseDeepBurgundy = Color(0xFF5C1F2E)
@@ -14,6 +16,16 @@ val BaseGold = Color(0xFFD9A860)
 val BaseInk = Color(0xFF3A1620)
 val BaseDarkBgStart = Color(0xFF2C0F17)
 val BaseDarkBgEnd = Color(0xFF3A1620)
+
+// New Pastel Palette
+val PastelPink = Color(0xFFF8BBD0)
+val PastelLightPink = Color(0xFFFCE4EC)
+val PastelBlue = Color(0xFF8A3B4C) // Warm Wine Accent
+val PastelBlueContainer = Color(0xFFFDECE9) // Soft Warm Cream Container
+val PastelPeach = Color(0xFFFFCCBC)
+val PastelMint = Color(0xFFC8E6C9)
+val PastelLavender = Color(0xFFE1BEE7)
+val SoftCream = Color(0xFFFFF9C4)
 
 val BaseWhite = Color(0xFFFFFFFF)
 val BaseSoftGray = Color(0xFFFDECE9)

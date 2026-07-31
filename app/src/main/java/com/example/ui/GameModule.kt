@@ -27,6 +27,9 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.blur
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.stringArrayResource
 import com.example.R
 import com.example.ui.theme.*
 import kotlinx.coroutines.launch
@@ -58,24 +59,29 @@ sealed interface PreEvalResult {
 fun GameModuleScreen(
     viewModel: TinyPawsViewModel,
     onBack: () -> Unit,
+    onClaimCertificate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val currentLevelIndex by viewModel.currentIsland.collectAsStateWithLifecycle()
     val quizCompleted by viewModel.quizCompletedOnCurrentIsland.collectAsStateWithLifecycle()
     val savedScore by viewModel.scoreOnCurrentIsland.collectAsStateWithLifecycle()
 
-    val completedIslands by viewModel.completedIslands.collectAsStateWithLifecycle()
+    // Retrieve name to display "Hi, [Name]!"
+    val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
 
-    if (completedIslands.size >= 5) {
-        CertificateScreen(onBack = {
-            viewModel.resetGameProgress()
-            onBack()
-        })
+    val allQuizzesCompleted by viewModel.allQuizzesCompleted.collectAsStateWithLifecycle()
+
+    if (allQuizzesCompleted) {
+        CertificateScreen(
+            userName = onboardedName,
+            onClose = {
+                onBack()
+            }
+        )
         return
     }
 
-    // Retrieve name to display "Hi, [Name]!"
-    val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     // Safely coerce level index to avoid out of bounds in maps/lists
     val safeLevelIndex = currentLevelIndex.coerceIn(0, 4)
@@ -85,9 +91,25 @@ fun GameModuleScreen(
         emptyList()
     }
 
-    var currentQuestionIdx by remember(safeLevelIndex, quizCompleted) { mutableIntStateOf(0) }
-    var selectedOptionIdx by remember(safeLevelIndex, quizCompleted) { mutableStateOf<Int?>(null) }
-    var correctAnswersCount by remember(safeLevelIndex, quizCompleted) { mutableIntStateOf(0) }
+    var activeQuestionIndices by rememberSaveable(safeLevelIndex, quizCompleted) {
+        mutableStateOf(levelQuestions.indices.toList())
+    }
+    var wrongQuestionIndices by rememberSaveable(safeLevelIndex, quizCompleted) {
+        mutableStateOf(emptySet<Int>())
+    }
+    var currentQuestionIdx by rememberSaveable(safeLevelIndex, quizCompleted, activeQuestionIndices) {
+        mutableIntStateOf(0)
+    }
+    var selectedOptionIdx by rememberSaveable(safeLevelIndex, quizCompleted, activeQuestionIndices, currentQuestionIdx) {
+        mutableStateOf<Int?>(null)
+    }
+    var correctAnswersCount by rememberSaveable(safeLevelIndex, quizCompleted) { mutableIntStateOf(0) }
+    var showRetryRoundScreen by rememberSaveable(safeLevelIndex, quizCompleted) { mutableStateOf(false) }
+    var showPreviewDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showPreviewDialog) {
+        CertificatePreviewDialog(onDismiss = { showPreviewDialog = false })
+    }
 
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -107,43 +129,146 @@ fun GameModuleScreen(
             .fillMaxSize()
             .background(Color.Transparent)
     ) {
-            if (!quizCompleted) {
-                // Play Mode
-                var renderingError by remember { mutableStateOf<Throwable?>(null) }
-
-                // Pre-evaluate indices and data outside Composable function calls for safety
-                val currentError = renderingError
-                val preEvaluationResult = remember(levelQuestions, currentQuestionIdx, currentError) {
-                    try {
-                        if (currentError != null) {
-                            PreEvalResult.Error(currentError)
-                        } else if (levelQuestions.isEmpty()) {
-                            PreEvalResult.Empty
-                        } else {
-                            val safeQuestionIdx = currentQuestionIdx.coerceIn(0, levelQuestions.size - 1)
-                            val question = levelQuestions[safeQuestionIdx]
-                            val totalQuestions = levelQuestions.size
-                            val progress = (safeQuestionIdx + 1).toFloat() / totalQuestions
-
-                            // Access fields early to trigger potential exceptions in non-composable code
-                            question.questionRes
-                            question.optionsRes
-                            question.correctIndex
-                            question.correctFeedbackRes
-                            question.wrongFeedbackRes
-
-                            PreEvalResult.Success(
-                                safeQuestionIdx = safeQuestionIdx,
-                                question = question,
-                                totalQuestions = totalQuestions,
-                                progress = progress
-                            )
-                        }
-                    } catch (e: Throwable) {
-                        android.util.Log.e("GameModule", "Exception during quiz pre-evaluation", e)
-                        PreEvalResult.Error(e)
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Beautiful Header Row with clear Back Button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = com.example.ui.theme.rememberHapticOnClick { onBack() },
+                    modifier = Modifier.testTag("back_to_dashboard")
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_btn),
+                        tint = DeepBurgundy
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.hi_user, onboardedName),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        text = "TinyPaws Care Academy 🎓",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = DeepBurgundy
+                        )
+                    )
+                }
+                if (!allQuizzesCompleted) {
+                    IconButton(
+                        onClick = com.example.ui.theme.rememberHapticOnClick { showPreviewDialog = true },
+                        modifier = Modifier
+                            .background(PastelPinkAccent.copy(alpha = 0.5f), androidx.compose.foundation.shape.CircleShape)
+                    ) {
+                        Text("🏆", fontSize = 24.sp)
                     }
                 }
+            }
+
+            // Scrollable content area
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (!quizCompleted) {
+                    if (showRetryRoundScreen) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(containerColor = White),
+                            border = BorderStroke(1.5.dp, PastelPinkDark.copy(alpha = 0.5f))
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Review Needed 🐾",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = DeepBurgundy
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "You got some questions incorrect. Let's go back and answer them correctly to complete the level and unlock the next one!",
+                                    fontSize = 14.sp,
+                                    color = TextDark,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 20.sp
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Button(
+                                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                        activeQuestionIndices = wrongQuestionIndices.toList()
+                                        wrongQuestionIndices = emptySet()
+                                        showRetryRoundScreen = false
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp)
+                                ) {
+                                    Text(
+                                        text = "Retry Incorrect Questions (${wrongQuestionIndices.size})",
+                                        fontWeight = FontWeight.Bold,
+                                        color = White
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        // Play Mode
+                        var renderingError by remember { mutableStateOf<Throwable?>(null) }
+
+                        // Pre-evaluate indices and data outside Composable function calls for safety
+                        val currentError = renderingError
+                        val preEvaluationResult = remember(levelQuestions, activeQuestionIndices, currentQuestionIdx, currentError) {
+                            try {
+                                if (currentError != null) {
+                                    PreEvalResult.Error(currentError)
+                                } else if (levelQuestions.isEmpty() || activeQuestionIndices.isEmpty()) {
+                                    PreEvalResult.Empty
+                                } else {
+                                    val safeQuestionIdx = currentQuestionIdx.coerceIn(0, activeQuestionIndices.size - 1)
+                                    val actualQuestionIndexInLevel = activeQuestionIndices[safeQuestionIdx]
+                                    val question = levelQuestions[actualQuestionIndexInLevel]
+                                    val totalQuestions = activeQuestionIndices.size
+                                    val progress = (safeQuestionIdx + 1).toFloat() / totalQuestions
+
+                                    // Access fields early to trigger potential exceptions in non-composable code
+                                    question.questionRes
+                                    question.optionsRes
+                                    question.correctIndex
+                                    question.correctFeedbackRes
+                                    question.wrongFeedbackRes
+
+                                    PreEvalResult.Success(
+                                        safeQuestionIdx = safeQuestionIdx,
+                                        question = question,
+                                        totalQuestions = totalQuestions,
+                                        progress = progress
+                                    )
+                                }
+                            } catch (e: Throwable) {
+                                android.util.Log.e("GameModule", "Exception during quiz pre-evaluation", e)
+                                PreEvalResult.Error(e)
+                            }
+                        }
 
                 when (preEvaluationResult) {
                     is PreEvalResult.Error -> {
@@ -287,7 +412,8 @@ fun GameModuleScreen(
 
                                 // List of Options
                                 val options = question.optionsRes
-                                options.forEachIndexed { optIdx, optionRes ->
+                                options.forEachIndexed { optIdx, optionTextRes ->
+                                    val optionText = stringResource(id = optionTextRes)
                                     val isSelected = selectedOptionIdx == optIdx
                                     val isAnswered = selectedOptionIdx != null
                                     val isCorrectOption = optIdx == question.correctIndex
@@ -315,12 +441,18 @@ fun GameModuleScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 6.dp)
+                                            .testTag("quiz_option_$optIdx")
                                             .clickable(enabled = !isAnswered) {
                                                 selectedOptionIdx = optIdx
+                                                val originalQuestionIdx = activeQuestionIndices[safeQuestionIdx]
                                                 if (optIdx == question.correctIndex) {
                                                     correctAnswersCount++
+                                                    wrongQuestionIndices = wrongQuestionIndices - originalQuestionIdx
+                                                    playQuizSound(context, isCorrect = true)
                                                     flashColor = GreenSuccess.copy(alpha = 0.3f)
                                                 } else {
+                                                    wrongQuestionIndices = wrongQuestionIndices + originalQuestionIdx
+                                                    playQuizSound(context, isCorrect = false)
                                                     flashColor = RedError.copy(alpha = 0.3f)
                                                 }
                                             },
@@ -333,12 +465,31 @@ fun GameModuleScreen(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Text(
-                                                text = stringResource(id = optionRes),
-                                                style = MaterialTheme.typography.bodyLarge.copy(
+                                                text = optionText,
+                                                style = MaterialTheme.typography.bodyMedium.copy(
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = textColor
-                                                )
+                                                    color = textColor,
+                                                    lineHeight = 20.sp
+                                                ),
+                                                modifier = Modifier.weight(1f)
                                             )
+                                            if (isAnswered) {
+                                                if (isCorrectOption) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.CheckCircle,
+                                                        contentDescription = "Correct",
+                                                        tint = GreenSuccess,
+                                                        modifier = Modifier.size(24.dp)
+                                                    )
+                                                } else if (isSelected) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Close,
+                                                        contentDescription = "Incorrect",
+                                                        tint = RedError,
+                                                        modifier = Modifier.size(24.dp)
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
 
@@ -366,7 +517,7 @@ fun GameModuleScreen(
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = if (isCorrect) stringResource(question.correctFeedbackRes) else stringResource(question.wrongFeedbackRes),
+                                            text = stringResource(if (isCorrect) question.correctFeedbackRes else question.wrongFeedbackRes),
                                             fontSize = 12.sp,
                                             color = TextDark,
                                             lineHeight = 16.sp
@@ -375,12 +526,17 @@ fun GameModuleScreen(
 
                                         // Next Button
                                         Button(
-                                            onClick = {
-                                                if (safeQuestionIdx + 1 < levelQuestions.size) {
+                                            onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                                if (safeQuestionIdx + 1 < activeQuestionIndices.size) {
                                                     currentQuestionIdx++
                                                 } else {
-                                                    // Completed the level! Submit to viewModel
-                                                    viewModel.submitQuizForCurrentIsland(correctAnswersCount)
+                                                    // Completed the round!
+                                                    if (wrongQuestionIndices.isEmpty()) {
+                                                        // Completed the level! Submit to viewModel
+                                                        viewModel.submitQuizForCurrentIsland(levelQuestions.size)
+                                                    } else {
+                                                        showRetryRoundScreen = true
+                                                    }
                                                 }
                                             },
                                             colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
@@ -391,7 +547,7 @@ fun GameModuleScreen(
                                                 .testTag("next_question_button")
                                         ) {
                                             Text(
-                                                text = if (safeQuestionIdx + 1 < levelQuestions.size) stringResource(R.string.quiz_next_btn) else stringResource(R.string.quiz_finish_btn),
+                                                text = if (safeQuestionIdx + 1 < activeQuestionIndices.size) stringResource(R.string.quiz_next_btn) else stringResource(R.string.quiz_finish_btn),
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 13.sp,
                                                 color = White
@@ -403,6 +559,7 @@ fun GameModuleScreen(
                         }
                     }
                 }
+            }
             }
             } else {
                 // Completed State Screen
@@ -445,7 +602,7 @@ fun GameModuleScreen(
                         // Advance to next level or show all complete banner
                         if (currentLevelIndex < 4) {
                             Button(
-                                onClick = {
+                                onClick = com.example.ui.theme.rememberHapticOnClick { 
                                     isJumping = true
                                     targetIslandIndex = currentLevelIndex + 1
                                     coroutineScope.launch {
@@ -496,7 +653,7 @@ fun GameModuleScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
                         TextButton(
-                            onClick = { viewModel.resetGameProgress() },
+                            onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.resetGameProgress() },
                             modifier = Modifier.testTag("reset_all_progress_button")
                         ) {
                             Text(
@@ -508,14 +665,16 @@ fun GameModuleScreen(
                     }
                 }
             }
+        }
+    }
 
-    // Screen Flash Overlay
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(animatedFlashColor)
-    )
-}
+        // Screen Flash Overlay
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(animatedFlashColor)
+        )
+    }
 }
 
 data class IslandData(
@@ -835,74 +994,138 @@ fun IslandGrowthJourneyVisualizer(
     }
 }
 
+fun playQuizSound(context: android.content.Context, isCorrect: Boolean) {
+    kotlin.concurrent.thread(start = true, name = "QuizSoundPlayer") {
+        try {
+            val sampleRate = 22050
+            val durationSeconds = if (isCorrect) 0.3 else 0.4
+            val numSamples = (sampleRate * durationSeconds).toInt()
+            val samples = ShortArray(numSamples)
+
+            if (isCorrect) {
+                // Ascending beep triad
+                val noteDuration = (sampleRate * 0.1).toInt()
+                for (i in 0 until numSamples) {
+                    val freq = when {
+                        i < noteDuration -> 523.25 // C5
+                        i < noteDuration * 2 -> 659.25 // E5
+                        else -> 783.99 // G5
+                    }
+                    val t = i.toDouble() / sampleRate
+                    val value = kotlin.math.sin(2.0 * kotlin.math.PI * freq * t)
+                    
+                    // Smooth decay envelope for each segment
+                    val localIndex = i % noteDuration
+                    val envelope = 1.0 - (localIndex.toDouble() / noteDuration)
+                    samples[i] = (value * 32767.0 * 0.25 * envelope).toInt().toShort()
+                }
+            } else {
+                // Gentle sliding descending note
+                for (i in 0 until numSamples) {
+                    val progress = i.toDouble() / numSamples
+                    val freq = 349.23 - (progress * 120.0) // F4 down to A3 (229 Hz)
+                    val t = i.toDouble() / sampleRate
+                    val value = kotlin.math.sin(2.0 * kotlin.math.PI * freq * t)
+                    val envelope = 1.0 - progress
+                    samples[i] = (value * 32767.0 * 0.2 * envelope).toInt().toShort()
+                }
+            }
+
+            val minBufferSize = android.media.AudioTrack.getMinBufferSize(
+                sampleRate,
+                android.media.AudioFormat.CHANNEL_OUT_MONO,
+                android.media.AudioFormat.ENCODING_PCM_16BIT
+            )
+            
+            val audioTrack = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                android.media.AudioTrack(
+                    android.media.AudioAttributes.Builder()
+                        .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build(),
+                    android.media.AudioFormat.Builder()
+                        .setEncoding(android.media.AudioFormat.ENCODING_PCM_16BIT)
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(android.media.AudioFormat.CHANNEL_OUT_MONO)
+                        .build(),
+                    numSamples * 2,
+                    android.media.AudioTrack.MODE_STATIC,
+                    android.media.AudioManager.AUDIO_SESSION_ID_GENERATE
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                android.media.AudioTrack(
+                    android.media.AudioManager.STREAM_MUSIC,
+                    sampleRate,
+                    android.media.AudioFormat.CHANNEL_OUT_MONO,
+                    android.media.AudioFormat.ENCODING_PCM_16BIT,
+                    numSamples * 2,
+                    android.media.AudioTrack.MODE_STATIC
+                )
+            }
+
+            audioTrack.write(samples, 0, numSamples)
+            audioTrack.play()
+            
+            Thread.sleep((durationSeconds * 1000 + 50).toLong())
+            audioTrack.stop()
+            audioTrack.release()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+
 
 @Composable
-fun CertificateScreen(onBack: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(LightPurpleBg)
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "You're a Cat Boss! 🐾",
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
-            )
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Image(
-            painter = painterResource(id = R.drawable.ic_certificate_placeholder),
-            contentDescription = "Certificate Placeholder",
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1.4f)
-                .background(White, RoundedCornerShape(16.dp))
-                .border(2.dp, SoftGray, RoundedCornerShape(16.dp))
-                .padding(8.dp),
-            contentScale = ContentScale.Fit
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "(Upload/Replace 'ic_certificate_placeholder' with your custom certificate design)",
-            style = MaterialTheme.typography.bodySmall,
-            color = SoftGray,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        Text(
-            text = "Congratulations! You have completed all the levels and proven your feline expertise. Meow much respect! 😸",
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            ),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        
-        Spacer(modifier = Modifier.height(48.dp))
-        
-        Button(
-            onClick = onBack,
-            colors = ButtonDefaults.buttonColors(containerColor = PastelPinkAccent),
-            shape = RoundedCornerShape(50),
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .height(56.dp)
+fun CertificatePreviewDialog(onDismiss: () -> Unit) {
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            colors = CardDefaults.cardColors(containerColor = White)
         ) {
-            Text(
-                text = "Back to Home",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.cert_preview_title),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, color = DeepBurgundy)
                 )
-            )
+                Spacer(modifier = Modifier.height(16.dp))
+                Box(contentAlignment = Alignment.Center) {
+                    Image(
+                        painter = painterResource(id = R.drawable.certificate_bg),
+                        contentDescription = stringResource(R.string.cert_content_desc),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.4f)
+                            .background(White, RoundedCornerShape(12.dp))
+                            .border(2.dp, PastelPurplePrimary, RoundedCornerShape(12.dp))
+                            .blur(8.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Locked",
+                        tint = DeepBurgundy,
+                        modifier = Modifier.size(48.dp).background(White.copy(alpha=0.7f), androidx.compose.foundation.shape.CircleShape).padding(8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = stringResource(R.string.cert_preview_desc),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = TextDark, textAlign = TextAlign.Center)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy)
+                ) {
+                    Text(stringResource(R.string.cert_preview_btn), color = Cream)
+                }
+            }
         }
     }
 }
