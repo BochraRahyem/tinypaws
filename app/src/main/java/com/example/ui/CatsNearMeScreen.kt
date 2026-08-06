@@ -50,13 +50,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.R
 import com.example.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import com.example.data.StrayReport
+import com.example.data.CatReport
+import com.example.util.shimmerEffect
+import androidx.compose.material3.CircularProgressIndicator
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
@@ -83,8 +86,10 @@ fun CatsNearMeScreen(
 
     val activeTab by viewModel.activeCatsNearMeTab.collectAsStateWithLifecycle()
     val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
-    val allReports by viewModel.allStrayReports.collectAsStateWithLifecycle()
-    val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
+    val reportsLoading by viewModel.isReportsLoading.collectAsStateWithLifecycle()
+    val feedingStations by viewModel.feedingStations.collectAsStateWithLifecycle()
+    val stationsLoading by viewModel.isFeedingStationsLoading.collectAsStateWithLifecycle()
+    val userProfile by viewModel.firebaseUserProfile.collectAsStateWithLifecycle()
 
     var permissionStatusMessage by remember { mutableStateOf<String?>(null) }
     var showPermissionAlert by remember { mutableStateOf(false) }
@@ -339,7 +344,7 @@ fun CatsNearMeScreen(
                         viewModel = viewModel,
                         userLat = userLocation.first,
                         userLng = userLocation.second,
-                        feedingSpots = feedingSpots
+                        stations = feedingStations
                     )
                 }
                 "report" -> {
@@ -384,24 +389,24 @@ fun BrowseNearbySection(
     viewModel: TinyPawsViewModel,
     userLat: Double,
     userLng: Double,
-    feedingSpots: androidx.compose.runtime.snapshots.SnapshotStateList<FeedingSpot>
+    stations: List<com.example.data.FeedingStation>
 ) {
 
-    val allReports by viewModel.allStrayReports.collectAsStateWithLifecycle()
+    val allReports by viewModel.activeReports.collectAsStateWithLifecycle()
     var radiusKm by remember { mutableFloatStateOf(10f) }
     var activeMapMode by remember { mutableStateOf("reports") } // "reports" or "feeding_spots"
     val context = androidx.compose.ui.platform.LocalContext.current
     val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE) }
 
-    val filteredFeedingSpots = remember(feedingSpots, radiusKm, userLat, userLng) {
-        feedingSpots.map { spot ->
-            val dist = viewModel.getDistanceInKm(userLat, userLng, spot.latitude, spot.longitude)
-            spot to dist
+    val filteredFeedingStations = remember(stations, radiusKm, userLat, userLng) {
+        stations.map { station ->
+            val dist = viewModel.getDistanceInKm(userLat, userLng, station.latitude, station.longitude)
+            station to dist
         }.filter { it.second <= radiusKm }
          .sortedBy { it.second }
     }
 
-    var selectedFeedingSpotForHighlight by remember { mutableStateOf<FeedingSpot?>(null) }
+    var selectedFeedingStationForHighlight by remember { mutableStateOf<com.example.data.FeedingStation?>(null) }
 
     // Resolve @Composable colors safely in parent composable scope
     val burgundyColor = DeepBurgundy
@@ -426,7 +431,7 @@ fun BrowseNearbySection(
          .sortedBy { it.second }
     }
 
-    var selectedReportForHighlight by remember { mutableStateOf<StrayReport?>(null) }
+    var selectedReportForHighlight by remember { mutableStateOf<CatReport?>(null) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -551,7 +556,7 @@ fun BrowseNearbySection(
                             onClick = com.example.ui.theme.rememberHapticOnClick { 
                                 activeMapMode = "reports" 
                                 selectedReportForHighlight = null
-                                selectedFeedingSpotForHighlight = null
+                                selectedFeedingStationForHighlight = null
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (activeMapMode == "reports") burgundyColor else burgundyColor.copy(alpha = 0.1f),
@@ -566,7 +571,7 @@ fun BrowseNearbySection(
                             onClick = com.example.ui.theme.rememberHapticOnClick { 
                                 activeMapMode = "feeding_spots" 
                                 selectedReportForHighlight = null
-                                selectedFeedingSpotForHighlight = null
+                                selectedFeedingStationForHighlight = null
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (activeMapMode == "feeding_spots") blushPinkColor else blushPinkColor.copy(alpha = 0.2f),
@@ -579,15 +584,22 @@ fun BrowseNearbySection(
                         }
                     }
 
-                    // Radar Canvas Drawing
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp)
-                            .background(if (activeMapMode == "reports") burgundyColor.copy(alpha = 0.05f) else blushPinkColor.copy(alpha = 0.12f), CircleShape)
-                            .border(1.5.dp, if (activeMapMode == "reports") burgundyColor.copy(alpha = 0.2f) else blushPinkColor.copy(alpha = 0.4f), CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Canvas(modifier = Modifier.fillMaxSize()) {
+                        // Radar Canvas Drawing
+                        Box(
+                            modifier = Modifier
+                                .size(200.dp)
+                                .background(if (activeMapMode == "reports") burgundyColor.copy(alpha = 0.05f) else blushPinkColor.copy(alpha = 0.12f), CircleShape)
+                                .border(1.5.dp, if (activeMapMode == "reports") burgundyColor.copy(alpha = 0.2f) else blushPinkColor.copy(alpha = 0.4f), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if ((activeMapMode == "reports" && reportsLoading) || (activeMapMode == "feeding_spots" && stationsLoading)) {
+                                CircularProgressIndicator(
+                                    color = if (activeMapMode == "reports") burgundyColor else blushPinkColor,
+                                    modifier = Modifier.size(40.dp)
+                                )
+                            }
+            
+            Canvas(modifier = Modifier.fillMaxSize()) {
                             val center = Offset(size.width / 2, size.height / 2)
                             val maxRadius = size.width / 2
 
@@ -643,7 +655,7 @@ fun BrowseNearbySection(
                             // Floating Cat Icons on Radar Map
                             filteredReports.forEach { (report, dist) ->
                                 // Map the coordinate offset to radar visual coordinates
-                                val angle = (report.id * 73) % 360 // Pseudo-random fixed angle for consistency
+                                val angle = (report.id.hashCode() % 360).let { if (it < 0) it + 360 else it }
                                 val angleRad = Math.toRadians(angle.toDouble())
                                 val fraction = (dist / radiusKm).coerceIn(0.1, 1.0).toFloat()
                                 val distanceDp = 90.dp * fraction
@@ -676,7 +688,7 @@ fun BrowseNearbySection(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = when (report.photoUri) {
+                                        text = when (report.photoUrl) {
                                             "cat_orange" -> "🍊"
                                             "cat_black" -> "🐈‍⬛"
                                             "cat_grey" -> "🩶"
@@ -689,8 +701,8 @@ fun BrowseNearbySection(
                             }
                         } else {
                             // Floating Feeding Spot Icons on Radar Map (Green square pins)
-                            filteredFeedingSpots.forEach { (spot, dist) ->
-                                val angle = (spot.id * 109) % 360 // Pseudo-random fixed angle for consistency
+                            filteredFeedingStations.forEach { (station, dist) ->
+                                val angle = (station.id.hashCode() % 360).let { if (it < 0) it + 360 else it }
                                 val angleRad = Math.toRadians(angle.toDouble())
                                 val fraction = (dist / radiusKm).coerceIn(0.1, 1.0).toFloat()
                                 val distanceDp = 90.dp * fraction
@@ -698,7 +710,7 @@ fun BrowseNearbySection(
                                 val offsetX = distanceDp * cos(angleRad).toFloat()
                                 val offsetY = distanceDp * sin(angleRad).toFloat()
 
-                                val isSelected = selectedFeedingSpotForHighlight?.id == spot.id
+                                val isSelected = selectedFeedingStationForHighlight?.id == station.id
 
                                 val animatedSize by androidx.compose.animation.core.animateDpAsState(
                                     targetValue = if (isSelected) 36.dp else 26.dp,
@@ -719,11 +731,15 @@ fun BrowseNearbySection(
                                             ),
                                             spotShape
                                         )
-                                        .clickable { selectedFeedingSpotForHighlight = spot },
+                                        .clickable { selectedFeedingStationForHighlight = station },
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = spot.icon,
+                                        text = when (station.photoUrl) {
+                                            "bowl_full" -> "🥣"
+                                            "cat_house" -> "🏠"
+                                            else -> "🥫"
+                                        },
                                         fontSize = if (isSelected) 15.sp else 11.sp
                                     )
                                 }
@@ -779,8 +795,8 @@ fun BrowseNearbySection(
                     }
 
                     // Selected feeding spot callout
-                    AnimatedVisibility(visible = activeMapMode == "feeding_spots" && selectedFeedingSpotForHighlight != null) {
-                        val selSpot = selectedFeedingSpotForHighlight
+                    AnimatedVisibility(visible = activeMapMode == "feeding_spots" && selectedFeedingStationForHighlight != null) {
+                        val selSpot = selectedFeedingStationForHighlight
                         if (selSpot != null) {
                             val dist = viewModel.getDistanceInKm(userLat, userLng, selSpot.latitude, selSpot.longitude)
                             Column(
@@ -798,7 +814,7 @@ fun BrowseNearbySection(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "📍 ${selSpot.name}",
+                                        text = "📍 Feeding Station",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 12.sp,
                                         color = burgundyColor,
@@ -900,9 +916,9 @@ fun BrowseNearbySection(
                                 .background(creamColor),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (report.photoUri.startsWith("content://") || report.photoUri.startsWith("file://")) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(model = Uri.parse(report.photoUri)),
+                            if (report.photoUrl.startsWith("http") || report.photoUrl.startsWith("content://") || report.photoUrl.startsWith("file://")) {
+                                AsyncImage(
+                                    model = report.photoUrl,
                                     contentDescription = stringResource(R.string.cats_img_desc),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
@@ -913,7 +929,7 @@ fun BrowseNearbySection(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .background(
-                                            when (report.photoUri) {
+                                            when (report.photoUrl) {
                                                 "cat_orange" -> Color(0xFFFFCC80)
                                                 "cat_black" -> Color(0xFF424242)
                                                 "cat_grey" -> Color(0xFFB0BEC5)
@@ -924,7 +940,7 @@ fun BrowseNearbySection(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = when (report.photoUri) {
+                                        text = when (report.photoUrl) {
                                             "cat_orange" -> "🍊🐈"
                                             "cat_black" -> "🐈‍⬛🖤"
                                             "cat_grey" -> "🩶🐈"
@@ -1009,9 +1025,10 @@ fun BrowseNearbySection(
                                     fontFamily = QuicksandFontFamily
                                 )
 
-                                val dateText = remember(report.timestamp) {
+                                val ts = report.createdAt?.seconds ?: 0L
+                                val dateText = remember(ts) {
                                     val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
-                                    sdf.format(java.util.Date(report.timestamp))
+                                    sdf.format(java.util.Date(ts * 1000L))
                                 }
                                 Text(
                                     text = stringResource(R.string.today_at, dateText),
@@ -1392,13 +1409,12 @@ fun ReportStrayForm(
                 onClick = com.example.ui.theme.rememberHapticOnClick { 
                     if (description.trim().isNotEmpty()) {
                         val photoPath = customPhotoUri?.toString() ?: selectedPhotoTemplate
-                        viewModel.submitStrayReport(
+                        viewModel.createReport(
                             description = description,
                             needs = selectedNeed,
                             latitude = userLat,
                             longitude = userLng,
-                            photoUri = photoPath,
-                            reporterName = reporterName.trim()
+                            photoUrl = photoPath
                         )
                         // Trigger daily activity points for reporting a cat!
                         val ctx = context

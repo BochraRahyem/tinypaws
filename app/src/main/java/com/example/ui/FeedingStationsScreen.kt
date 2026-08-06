@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.R
 import com.example.ui.theme.*
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.data.FeedingStation
+import coil.compose.AsyncImage
 
 @Composable
 fun FeedingStationsScreen(
@@ -48,39 +48,11 @@ fun FeedingStationsScreen(
 ) {
     val context = LocalContext.current
     val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
+    val stations by viewModel.feedingStations.collectAsStateWithLifecycle()
+    val userProfile by viewModel.firebaseUserProfile.collectAsStateWithLifecycle()
     val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
 
     var activeTab by remember { mutableStateOf("browse_stations") } // "browse_stations" or "report_station"
-    val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE) }
-
-    val feedingSpots = remember {
-        mutableStateListOf<FeedingSpot>().apply {
-            val jsonStr = sharedPrefs.getString("saved_feeding_spots", null)
-            if (jsonStr != null) {
-                try {
-                    val arr = JSONArray(jsonStr)
-                    for (i in 0 until arr.length()) {
-                        val obj = arr.getJSONObject(i)
-                        add(
-                            FeedingSpot(
-                                id = obj.getInt("id"),
-                                name = obj.getString("name"),
-                                latitude = obj.getDouble("latitude"),
-                                longitude = obj.getDouble("longitude"),
-                                icon = obj.optString("icon", "🥣")
-                            )
-                        )
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            } else {
-                add(FeedingSpot(1, "Sidi Bou Said Feeding Station", userLocation.first + 0.003, userLocation.second - 0.002, "🥣"))
-                add(FeedingSpot(2, "La Marsa Port Feeding Station", userLocation.first - 0.002, userLocation.second + 0.003, "🐟"))
-                add(FeedingSpot(3, "Refuge Garden Feed Bowl", userLocation.first + 0.001, userLocation.second + 0.001, "🏡"))
-            }
-        }
-    }
 
     val burgundyColor = DeepBurgundy
     val creamColor = Cream
@@ -171,31 +143,14 @@ fun FeedingStationsScreen(
                     viewModel = viewModel,
                     userLat = userLocation.first,
                     userLng = userLocation.second,
-                    feedingSpots = feedingSpots
+                    stations = stations
                 )
             } else {
                 ReportFeedingStationForm(
                     viewModel = viewModel,
                     userLat = userLocation.first,
                     userLng = userLocation.second,
-                    onStationAdded = { newSpot ->
-                        feedingSpots.add(newSpot)
-                        // Save to sharedPrefs
-                        try {
-                            val arr = JSONArray()
-                            feedingSpots.forEach { spot ->
-                                arr.put(JSONObject().apply {
-                                    put("id", spot.id)
-                                    put("name", spot.name)
-                                    put("latitude", spot.latitude)
-                                    put("longitude", spot.longitude)
-                                    put("icon", spot.icon)
-                                })
-                            }
-                            sharedPrefs.edit().putString("saved_feeding_spots", arr.toString()).apply()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                    onSuccess = { 
                         activeTab = "browse_stations"
                         Toast.makeText(context, "Feeding station successfully registered! 🥣", Toast.LENGTH_SHORT).show()
                     }
@@ -210,7 +165,7 @@ fun BrowseFeedingStationsSection(
     viewModel: TinyPawsViewModel,
     userLat: Double,
     userLng: Double,
-    feedingSpots: List<FeedingSpot>
+    stations: List<FeedingStation>
 ) {
     var radiusKm by remember { mutableFloatStateOf(15f) }
     val burgundyColor = DeepBurgundy
@@ -219,8 +174,8 @@ fun BrowseFeedingStationsSection(
     val inkColor = Ink
     val whiteColor = White
 
-    val filteredSpots = remember(feedingSpots, radiusKm, userLat, userLng) {
-        feedingSpots.map { spot ->
+    val filteredSpots = remember(stations, radiusKm, userLat, userLng) {
+        stations.map { spot ->
             val dist = viewModel.getDistanceInKm(userLat, userLng, spot.latitude, spot.longitude)
             spot to dist
         }.filter { it.second <= radiusKm }
@@ -326,12 +281,19 @@ fun BrowseFeedingStationsSection(
                                 .background(creamColor, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = spot.icon, fontSize = 24.sp)
+                            Text(
+                                text = when (spot.photoUrl) {
+                                    "bowl_full" -> "🥣"
+                                    "cat_house" -> "🏠"
+                                    else -> "🥫"
+                                },
+                                fontSize = 24.sp
+                            )
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = spot.name,
+                                text = spot.description,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp,
                                 color = burgundyColor,
@@ -365,7 +327,7 @@ fun ReportFeedingStationForm(
     viewModel: TinyPawsViewModel,
     userLat: Double,
     userLng: Double,
-    onStationAdded: (FeedingSpot) -> Unit
+    onSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -542,15 +504,14 @@ fun ReportFeedingStationForm(
             Button(
                 onClick = com.example.ui.theme.rememberHapticOnClick {
                     if (stationName.isNotBlank()) {
-                        val newSpot = FeedingSpot(
-                            id = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
-                            name = stationName.trim(),
-                            latitude = userLat + (Math.random() - 0.5) * 0.002,
-                            longitude = userLng + (Math.random() - 0.5) * 0.002,
-                            icon = selectedIcon
+                        viewModel.createFeedingStation(
+                            description = stationName.trim(),
+                            latitude = userLat,
+                            longitude = userLng,
+                            photoUrl = selectedIcon
                         )
                         viewModel.logActivity("add_feeding_station", "Registered feeding station: ${stationName.trim()}")
-                        onStationAdded(newSpot)
+                        onSuccess()
                     }
                 },
                 modifier = Modifier

@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Users collection: owner can read/write their own profile
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+      
+      // Diary subcollection: only owner can read/write
+      match /diary/{entryId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Reports collection: anyone authenticated can read and create reports
+    match /reports/{reportId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      // Only authenticated users can update (for status changes or adding reaches)
+      allow update: if isAuthenticated();
+      
+      // Reaches subcollection: only the owner of the reach (the user reaching out) can create/update
+      match /reaches/{userId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isOwner(userId);
+        allow delete: if false;
+      }
+    }
+
+    // Feeding Stations collection
+    match /feedingStations/{stationId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      
+      // Reaches subcollection: only the owner of the reach can create/update
+      match /reaches/{userId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isOwner(userId);
+        allow delete: if false;
+      }
+    }
+
+    // Statistics collection: enforce schema by restricting client writes
+    match /statistics/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Statistics are restricted from direct client writes (managed by backend/functions)
+    }
+  }
+}

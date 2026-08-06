@@ -6,29 +6,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 
-// Base Colors
-val BaseDeepBurgundy = Color(0xFF5C1F2E)
-val BaseWine = Color(0xFF8A3B4C)
-val BaseMauve = Color(0xFFC97B8B)
-val BaseBlushPink = Color(0xFFF0C4C9)
-val BaseCream = Color(0xFFFBEEE9)
-val BaseGold = Color(0xFFD9A860)
-val BaseInk = Color(0xFF3A1620)
-val BaseDarkBgStart = Color(0xFF2C0F17)
-val BaseDarkBgEnd = Color(0xFF3A1620)
+// Base Colors (Updated for coziness)
+val BaseDeepBurgundy = Color(0xFF8D6E63) // Warm Brown-Burgundy
+val BaseWine = Color(0xFFBCAAA4)
+val BaseMauve = Color(0xFFD7CCC8)
+val BaseBlushPink = Color(0xFFFFEBEE)
+val BaseCream = Color(0xFFFFF9F5)
+val BaseGold = Color(0xFFFFD54F)
+val BaseInk = Color(0xFF4E342E)
+val BaseDarkBgStart = Color(0xFF2D2422)
+val BaseDarkBgEnd = Color(0xFF3E2723)
 
 // New Pastel Palette
-val PastelPink = Color(0xFFF8BBD0)
-val PastelLightPink = Color(0xFFFCE4EC)
-val PastelBlue = Color(0xFF8A3B4C) // Warm Wine Accent
-val PastelBlueContainer = Color(0xFFFDECE9) // Soft Warm Cream Container
-val PastelPeach = Color(0xFFFFCCBC)
-val PastelMint = Color(0xFFC8E6C9)
-val PastelLavender = Color(0xFFE1BEE7)
+val PastelPink = Color(0xFFFFE1E9) // Softer Pink
+val PastelLightPink = Color(0xFFFFF0F5)
+val PastelBlue = Color(0xFFD0E1F9) // Soft Blue
+val PastelBlueContainer = Color(0xFFE3F2FD)
+val PastelPeach = Color(0xFFFFE0B2)
+val PastelMint = Color(0xFFE8F5E9)
+val PastelLavender = Color(0xFFF3E5F5)
 val SoftCream = Color(0xFFFFF9C4)
 
 val BaseWhite = Color(0xFFFFFFFF)
-val BaseSoftGray = Color(0xFFFDECE9)
+val BaseSoftGray = Color(0xFFFAFAFA)
 
 // Dynamic Colors
 val DeepBurgundy: Color

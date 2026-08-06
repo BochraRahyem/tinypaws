@@ -37,6 +37,11 @@ import com.example.data.StrayReport
 import com.example.data.StrayReportRepository
 import com.example.data.CatProfile
 import com.example.data.CatRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.example.data.*
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 
 // Chat Message Model
 data class ChatMessage(
@@ -68,9 +73,122 @@ data class TrackerUiState(
 class TinyPawsViewModel(
     application: Application,
     private val repository: LogRepository,
-    private val strayReportRepository: StrayReportRepository,
-    private val catRepository: CatRepository
+    private val catRepository: CatRepository,
+    private val firebaseRepository: FirebaseRepository = FirebaseRepository(),
+    private val reportRepository: FirestoreReportRepository = FirestoreReportRepository(),
+    private val stationRepository: FirestoreFeedingStationRepository = FirestoreFeedingStationRepository()
 ) : AndroidViewModel(application) {
+
+    private val auth = FirebaseAuth.getInstance()
+    private val _user = MutableStateFlow(auth.currentUser)
+    val user: StateFlow<FirebaseUser?> = _user.asStateFlow()
+
+    // Firestore States with Loading
+    private val _isReportsLoading = MutableStateFlow(true)
+    val isReportsLoading = _isReportsLoading.asStateFlow()
+
+    val activeReports: StateFlow<List<CatReport>> = reportRepository.getActiveReports()
+        .map { 
+            _isReportsLoading.value = false
+            it 
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _isFeedingStationsLoading = MutableStateFlow(true)
+    val isFeedingStationsLoading = _isFeedingStationsLoading.asStateFlow()
+
+    val feedingStations: StateFlow<List<FeedingStation>> = stationRepository.getFeedingStations()
+        .map {
+            _isFeedingStationsLoading.value = false
+            it
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _isRescueStoriesLoading = MutableStateFlow(true)
+    val isRescueStoriesLoading = _isRescueStoriesLoading.asStateFlow()
+
+    val rescueStories: StateFlow<List<CatReport>> = reportRepository.getRescueStories()
+        .map {
+            _isRescueStoriesLoading.value = false
+            it
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val globalStats: StateFlow<GlobalStatistics?> = firebaseRepository.getGlobalStatistics()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val firebaseUserProfile: StateFlow<UserProfile?> = user.flatMapLatest { 
+        if (it != null) firebaseRepository.getUserProfile(it.uid) else flowOf(null)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    // Firestore Actions
+    fun createReport(description: String, latitude: Double, longitude: Double, photoUrl: String, needs: String = "") {
+        viewModelScope.launch {
+            reportRepository.createReport(
+                CatReport(
+                    latitude = latitude,
+                    longitude = longitude,
+                    description = description,
+                    photoUrl = photoUrl,
+                    needs = needs
+                )
+            )
+        }
+    }
+
+    fun createFeedingStation(description: String, latitude: Double, longitude: Double, photoUrl: String) {
+        viewModelScope.launch {
+            stationRepository.createFeedingStation(
+                FeedingStation(
+                    latitude = latitude,
+                    longitude = longitude,
+                    description = description,
+                    photoUrl = photoUrl
+                )
+            )
+        }
+    }
+
+    fun reachCat(reportId: String) {
+        viewModelScope.launch { reportRepository.reachCat(reportId) }
+    }
+
+    fun reachFeedingStation(stationId: String, foodAvailable: Boolean) {
+        viewModelScope.launch { stationRepository.reachFeedingStation(stationId, foodAvailable) }
+    }
+
+    fun markAsRescued(reportId: String, photoUrl: String, desc: String) {
+        viewModelScope.launch { reportRepository.markAsRescued(reportId, photoUrl, desc) }
+    }
+
+    fun signIn(email: String, pass: String, onResult: (Boolean, String?) -> Unit) {
+        auth.signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _user.value = auth.currentUser
+                    onResult(true, null)
+                } else {
+                    onResult(false, task.exception?.message ?: "Authentication failed")
+                }
+            }
+    }
+
+    fun signUp(email: String, pass: String, onResult: (Boolean, String?) -> Unit) {
+        auth.createUserWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _user.value = auth.currentUser
+                    onResult(true, null)
+                } else {
+                    onResult(false, task.exception?.message ?: "Registration failed")
+                }
+            }
+    }
+
+    fun signOut() {
+        auth.signOut()
+        _user.value = null
+    }
 
     private val sharedPrefs = application.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
 
@@ -108,23 +226,105 @@ class TinyPawsViewModel(
         }
     }
 
-    // Cat Check-In Logs State
-    val allCheckInLogs: StateFlow<List<com.example.data.CatCheckInLog>> = catRepository.allCheckInLogs
+    // Cat Check-In Logs State (Firestore)
+    private val _isDiaryLoading = MutableStateFlow(true)
+    val isDiaryLoading = _isDiaryLoading.asStateFlow()
+
+    val allCheckInLogs: StateFlow<List<DiaryEntry>> = firebaseRepository.getDiaryEntries()
+        .map {
+            _isDiaryLoading.value = false
+            it
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
-    fun saveCheckInLog(date: Long, mood: String, healthStatus: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            catRepository.saveCheckInLog(date, mood, healthStatus)
+    val allCareLogs: StateFlow<List<com.example.data.DailyCareLog>> = catRepository.allCareLogs
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    private val _cloudBackupState = MutableStateFlow<String?>(null)
+    val cloudBackupState = _cloudBackupState.asStateFlow()
+
+    private val _isCloudSyncing = MutableStateFlow(false)
+    val isCloudSyncing = _isCloudSyncing.asStateFlow()
+
+    fun backupDataToCloud(onResult: (String) -> Unit) {
+        if (_isCloudSyncing.value) return
+        _isCloudSyncing.value = true
+        viewModelScope.launch {
+            val res = com.example.data.FirestoreBackupHelper.backupDataToCloud(
+                profile = catProfile.value,
+                careLogs = allCareLogs.value,
+                weightLogs = allWeightLogs.value,
+                diaryLogs = allCheckInLogs.value,
+                reminders = allReminders.value
+            )
+            _isCloudSyncing.value = false
+            val message = res.getOrElse { "Cloud backup failed: ${it.localizedMessage}" }
+            _cloudBackupState.value = message
+            onResult(message)
         }
     }
 
-    fun deleteCheckInLog(id: Int) {
+    fun restoreDataFromCloud(onResult: (String) -> Unit) {
+        if (_isCloudSyncing.value) return
+        _isCloudSyncing.value = true
+        viewModelScope.launch {
+            val res = com.example.data.FirestoreBackupHelper.restoreDataFromCloud(catRepository)
+            _isCloudSyncing.value = false
+            val message = res.getOrElse { "Cloud restore failed: ${it.localizedMessage}" }
+            _cloudBackupState.value = message
+            onResult(message)
+        }
+    }
+
+    fun getCareLogForDate(dateStr: String): StateFlow<com.example.data.DailyCareLog?> {
+        return catRepository.getCareLogForDate(dateStr)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null
+            )
+    }
+
+    fun saveCareLog(careLog: com.example.data.DailyCareLog) {
         viewModelScope.launch(Dispatchers.IO) {
-            catRepository.deleteCheckInLog(id)
+            catRepository.saveCareLog(careLog)
+        }
+    }
+
+    fun saveCheckInLog(
+        date: Long,
+        mood: String,
+        notes: String,
+        weight: Float? = null,
+        photos: String = "",
+        diaryEntryType: String = "general",
+        reminderTimeMillis: Long? = null
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            firebaseRepository.saveDiaryEntry(
+                DiaryEntry(
+                    date = date,
+                    mood = mood,
+                    notes = notes,
+                    weight = weight,
+                    photos = photos,
+                    diaryEntryType = diaryEntryType
+                )
+            )
+        }
+    }
+
+    fun deleteCheckInLog(entryId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            firebaseRepository.deleteDiaryEntry(entryId)
         }
     }
 
@@ -136,9 +336,9 @@ class TinyPawsViewModel(
             initialValue = emptyList()
         )
 
-    fun saveReminder(title: String, timeMillis: Long) {
+    fun saveReminder(title: String, timeMillis: Long, type: String = "general") {
         viewModelScope.launch(Dispatchers.IO) {
-            catRepository.saveReminder(title, timeMillis)
+            catRepository.saveReminder(title, timeMillis, type)
         }
     }
 
@@ -148,99 +348,7 @@ class TinyPawsViewModel(
         }
     }
 
-    // Stray Reports State
-    val allStrayReports: StateFlow<List<StrayReport>> = strayReportRepository.allReports
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
-
-    fun prepopulateStrayReportsIfEmpty(lat: Double, lng: Double) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (allStrayReports.value.isEmpty()) {
-                strayReportRepository.insert(
-                    StrayReport(
-                        description = "Sweet orange tabby cat spotted resting near the garden wall. Appears friendly but very hungry.",
-                        needs = "Food & Water",
-                        latitude = lat + 0.009,
-                        longitude = lng + 0.011,
-                        photoUri = "cat_orange",
-                        timestamp = System.currentTimeMillis() - 3600000 * 2,
-                        reporterName = "Sarah Jenkins"
-                    )
-                )
-                strayReportRepository.insert(
-                    StrayReport(
-                        description = "Black kitten found shivering behind a trash bin. Needs a dry box or warm shelter ASAP.",
-                        needs = "Shelter",
-                        latitude = lat - 0.015,
-                        longitude = lng + 0.018,
-                        photoUri = "cat_black",
-                        timestamp = System.currentTimeMillis() - 3600000 * 5,
-                        reporterName = "Alex Rivera"
-                    )
-                )
-                strayReportRepository.insert(
-                    StrayReport(
-                        description = "Grey Siamese-mix cat with a limping left hind leg. Needs a medical checkup and treatment.",
-                        needs = "Medical Attention",
-                        latitude = lat + 0.042,
-                        longitude = lng - 0.035,
-                        photoUri = "cat_grey",
-                        timestamp = System.currentTimeMillis() - 3600000 * 12,
-                        reporterName = "Dr. Emma Taylor"
-                    )
-                )
-                strayReportRepository.insert(
-                    StrayReport(
-                        description = "Calico cat looking very thin near the local market. Super vocal and seeking attention.",
-                        needs = "Food & Water",
-                        latitude = lat - 0.075,
-                        longitude = lng - 0.068,
-                        photoUri = "cat_calico",
-                        timestamp = System.currentTimeMillis() - 3600000 * 24,
-                        reporterName = "Markus Vance"
-                    )
-                )
-            }
-        }
-    }
-
-    fun submitStrayReport(
-        description: String,
-        needs: String,
-        latitude: Double,
-        longitude: Double,
-        photoUri: String,
-        reporterName: String
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val report = StrayReport(
-                description = description,
-                needs = needs,
-                latitude = latitude,
-                longitude = longitude,
-                photoUri = photoUri,
-                reporterName = reporterName.ifEmpty { "Anonymous Caregiver" }
-            )
-            strayReportRepository.insert(report)
-            
-            try {
-                val notifHelper = com.example.util.NotificationHelper(getApplication())
-                notifHelper.triggerDuplicateReportAlert(
-                    reportId = report.id.toString(),
-                    title = "🐱 Community Cat Sighting Reported",
-                    message = "${report.reporterName} logged a stray cat: ${description.take(60)}",
-                    bypassCooldownForTesting = true
-                )
-            } catch (e: Exception) {
-                android.util.Log.e("TinyPawsViewModel", "Failed to trigger report notification", e)
-            }
-        }
-    }
-
-
+    // Tracks recently viewed guide sections and DIY projects to avoid repeating them in Surprise Me
 
     // Favorites State
     val favoriteDiyIds: StateFlow<Set<String>> = repository.allFavorites
@@ -488,13 +596,12 @@ class TinyPawsViewModel(
         _locationQuery.value = query
     }
 
-    fun updateSearchCategory(category: String) {
-        _searchCategory.value = category
+    fun updateSearchCategory(diaryEntryType: String) {
+        _searchCategory.value = diaryEntryType
     }
 
     fun updateUserLocation(lat: Double, lng: Double) {
         _userLocation.value = Pair(lat, lng)
-        prepopulateStrayReportsIfEmpty(lat, lng)
     }
 
     fun getDistanceInKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
@@ -505,12 +612,12 @@ class TinyPawsViewModel(
         return com.example.util.LocationUtils.calculateHaversineDistanceKm(lat1, lon1, lat2, lon2)
     }
 
-    fun searchPlaces(category: String, query: String) {
-        _searchCategory.value = category
+    fun searchPlaces(diaryEntryType: String, query: String) {
+        _searchCategory.value = diaryEntryType
         _isSearching.value = true
         viewModelScope.launch {
             try {
-                val results = GeminiClient.searchNearbyPlaces(category, query)
+                val results = GeminiClient.searchNearbyPlaces(diaryEntryType, query)
                 val userLoc = _userLocation.value
                 val mappedResults = results.map { place ->
                     val dist = calculateDistance(userLoc.first, userLoc.second, place.latitude, place.longitude)
@@ -897,13 +1004,13 @@ class TinyPawsViewModel(
 class TinyPawsViewModelFactory(
     private val application: Application,
     private val repository: LogRepository,
-    private val strayReportRepository: StrayReportRepository,
-    private val catRepository: CatRepository
+    private val catRepository: CatRepository,
+    private val firebaseRepository: FirebaseRepository = FirebaseRepository()
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TinyPawsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TinyPawsViewModel(application, repository, strayReportRepository, catRepository) as T
+            return TinyPawsViewModel(application, repository, catRepository, firebaseRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

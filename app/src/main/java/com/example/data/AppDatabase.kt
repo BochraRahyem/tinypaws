@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [LogEntry::class, FavoriteDiy::class, StrayReport::class, CatProfile::class, CatWeightLog::class, CatCheckInLog::class, Reminder::class], version = 6, exportSchema = false)
+@Database(entities = [LogEntry::class, FavoriteDiy::class, StrayReport::class, CatProfile::class, CatWeightLog::class, CatCheckInLog::class, Reminder::class, DailyCareLog::class], version = 7, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun logDao(): LogDao
     abstract fun favoriteDao(): FavoriteDao
@@ -14,6 +14,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun catWeightLogDao(): CatWeightLogDao
     abstract fun catCheckInLogDao(): CatCheckInLogDao
     abstract fun reminderDao(): ReminderDao
+    abstract fun dailyCareLogDao(): DailyCareLogDao
 
     companion object {
         @Volatile

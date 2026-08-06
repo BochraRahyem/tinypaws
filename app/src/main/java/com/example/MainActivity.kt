@@ -21,6 +21,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,7 +63,10 @@ import com.example.data.LogEntry
 import com.example.data.LogRepository
 import com.example.data.StrayReportRepository
 import com.example.data.CatRepository
+import com.example.ui.AuthScreen
 import com.example.ui.Badge
+import com.example.ui.FeedingMoodDialog
+import com.example.data.DiaryEntry
 import com.example.ui.TinyPawsViewModel
 import com.example.ui.TinyPawsViewModelFactory
 import com.example.ui.TrackerUiState
@@ -107,12 +112,11 @@ class MainActivity : AppCompatActivity() {
         // Initialize Room Database & Repository
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = LogRepository(database.logDao(), database.favoriteDao())
-        val strayRepository = StrayReportRepository(database.strayReportDao())
-        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao())
+        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao(), database.dailyCareLogDao())
         
         // Instantiate ViewModel
         val viewModel: TinyPawsViewModel by viewModels {
-            TinyPawsViewModelFactory(application, repository, strayRepository, catRepository)
+            TinyPawsViewModelFactory(application, repository, catRepository)
         }
 
         // Schedule periodic background weather alerts using WorkManager
@@ -221,6 +225,7 @@ fun TinyPawsMainContainer(
     modifier: Modifier = Modifier
 ) {
     val onboardedName by viewModel.onboardedName.collectAsStateWithLifecycle()
+    val user by viewModel.user.collectAsStateWithLifecycle()
     val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
     val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
     val isExtremeWeatherNotify by viewModel.isExtremeWeatherNotify.collectAsStateWithLifecycle()
@@ -235,7 +240,9 @@ fun TinyPawsMainContainer(
 
     var hasSeenIntro by remember { mutableStateOf(sharedPrefs.getBoolean("has_seen_intro", false)) }
 
-    if (!hasSeenIntro) {
+    if (user == null) {
+        AuthScreen(viewModel = viewModel, onAuthSuccess = { /* user flow continues */ })
+    } else if (!hasSeenIntro) {
         TinyPawsIntroSequence(
             onComplete = {
                 sharedPrefs.edit().putBoolean("has_seen_intro", true).apply()
@@ -357,11 +364,32 @@ fun TinyPawsMainContainer(
                         modifier = modifier
                     )
                 "my_cat_hub" -> MyCatHubScreen(
+                    viewModel = viewModel,
                     onNavigate = { currentScreen = it },
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
                 )
                 "my_cat_profile" -> MyCatScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "weight_tracker" -> MyCatScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "daily_checklist" -> com.example.ui.DailyChecklistScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "daily_checkin" -> com.example.ui.DiaryFeedScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "diary_feed" -> com.example.ui.DiaryFeedScreen(
                     viewModel = viewModel,
                     onBack = { currentScreen = "my_cat_hub" },
                     modifier = modifier
@@ -389,6 +417,10 @@ fun TinyPawsMainContainer(
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
                 )
+                "rescue_stories" -> com.example.ui.RescueStoriesScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" }
+                )
                 "feeding_stations" -> FeedingStationsScreen(
                     viewModel = viewModel,
                     onBack = { currentScreen = "dashboard" },
@@ -412,7 +444,7 @@ fun TinyPawsMainContainer(
                 )
                 "reminders" -> ReminderScreen(
                     viewModel = viewModel,
-                    onBack = { currentScreen = "dashboard" },
+                    onBack = { currentScreen = "my_cat_hub" },
                     modifier = modifier
                 )
                 "certificate" -> CertificateScreen(
@@ -562,166 +594,251 @@ fun TinyPawsDashboard(
     val catAgeGroup by viewModel.catAgeGroup.collectAsStateWithLifecycle()
     val trackerState by viewModel.trackerUiState.collectAsStateWithLifecycle()
     val streakCount by viewModel.streak.collectAsStateWithLifecycle()
+    val diaryLogs by viewModel.allCheckInLogs.collectAsStateWithLifecycle()
+    val globalStats by viewModel.globalStats.collectAsStateWithLifecycle()
+    val userProfile by viewModel.firebaseUserProfile.collectAsStateWithLifecycle()
 
-    val scrollState = rememberScrollState()
+    var showQuickLogDialog by remember { mutableStateOf(false) }
+
+    if (showQuickLogDialog) {
+        FeedingMoodDialog(
+            onDismiss = { showQuickLogDialog = false },
+            onSave = { type, notes ->
+                viewModel.saveCheckInLog(
+                    date = System.currentTimeMillis(),
+                    mood = if (type == "Mood") notes else "happy",
+                    notes = if (type == "Feeding") "Feeding: $notes" else notes,
+                    diaryEntryType = type.lowercase()
+                )
+                showQuickLogDialog = false
+            }
+        )
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("chat") },
-                containerColor = DeepBurgundy,
-                contentColor = Cream,
-                shape = CircleShape
+                onClick = com.example.ui.theme.rememberHapticOnClick { showQuickLogDialog = true },
+                containerColor = BlushPink,
+                contentColor = DeepBurgundy,
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Text("🐾", fontSize = 24.sp)
+                Icon(Icons.Filled.Add, contentDescription = "Add Quick Log")
             }
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = modifier
-                .verticalScroll(scrollState)
-                .padding(padding)
-                .padding(bottom = 32.dp),
+                .fillMaxSize()
+                .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 1. Hero Header Banner
-            HeroHeader(streakCount = streakCount, userName = userName, onLogout = onLogout, onMenuClick = onMenuClick)
+            item {
+                HeroHeader(
+                    streakCount = streakCount,
+                    userName = userName,
+                    onLogout = onLogout,
+                    onMenuClick = onMenuClick,
+                    globalStats = globalStats,
+                    onViewRescueStories = { onNavigate("rescue_stories") }
+                )
+            }
 
-            // Tip of the Day (top)
-            TipOfTheDayCard()
+            item {
+                TipOfTheDayCard()
+            }
 
-            // Section 1: Choose your diary room
-            Text(
-                text = stringResource(R.string.diary_room_title),
-                style = MaterialTheme.typography.labelSmall.copy(
-                    color = TextMuted,
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            NavigationGridSection(onNavigate = onNavigate)
+            item {
+                Text(
+                    text = stringResource(R.string.diary_room_title),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = TextMuted,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+                NavigationGridSection(onNavigate = onNavigate)
+            }
 
-            // Section 2: Help a stray cat
-            Text(
-                text = stringResource(R.string.help_stray_title),
-                style = MaterialTheme.typography.labelSmall.copy(
-                    color = TextMuted,
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            
-            // Cats Near Me
-            NavigationCard(
-                title = stringResource(R.string.nav_cats_near_me_title),
-                subtitle = stringResource(R.string.cats_near_me_subtitle),
-                backgroundColor = Color(0xFFE8F5E9), // Soft green
-                accentColor = Color(0xFF2E7D32),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                onClick = com.example.ui.theme.rememberHapticOnClick { 
-                    viewModel.updateCatsNearMeTab("browse")
-                    onNavigate("cats_near_me")
+            item {
+                Text(
+                    text = "Recent Diary Entries 📔",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = TextMuted,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            if (diaryLogs.isEmpty()) {
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .glassyCard(shape = RoundedCornerShape(20.dp)),
+                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("No diary entries yet.", fontFamily = QuicksandFontFamily, color = Ink.copy(alpha = 0.6f))
+                            TextButton(onClick = { onNavigate("daily_checkin") }) {
+                                Text("Start your first entry", color = DeepBurgundy, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
                 }
-            )
-
-            // Heatwave & Extreme Weather Alert Tracker
-            NavigationCard(
-                title = "🔥 Heatwave & Weather Tracker",
-                subtitle = "7-day temperature warnings (>35°C red, <15°C blue) for cat safety.",
-                backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
-                accentColor = Color(0xFFD32F2F), // Red
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                onClick = com.example.ui.theme.rememberHapticOnClick { 
-                    onNavigate("weather")
-                }
-            )
-
-            // Feeding Stations
-            NavigationCard(
-                title = stringResource(R.string.nav_feeding_stations_title),
-                subtitle = stringResource(R.string.feeding_stations_subtitle),
-                backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
-                accentColor = Color(0xFFE65100), // Deep orange
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                onClick = com.example.ui.theme.rememberHapticOnClick { 
-                    onNavigate("feeding_stations")
-                }
-            )
-            
-            // Did You Find a Cat? (Interactive Triage Guide)
-            TriageGuideCard(
-                step = triageStep,
-                hasInjuries = hasInjuries,
-                catAgeGroup = catAgeGroup,
-                onStart = { viewModel.startTriage() },
-                onSelectInjuries = { viewModel.selectInjuries(it) },
-                onSelectAge = { viewModel.selectAgeGroup(it) },
-                onReset = { viewModel.resetTriage() }
-            )
-            
-            // Community Care Tracker
-            CommunityImpactTrackerCard(
-                state = trackerState,
-                onLogActivity = { type, notes -> viewModel.logActivity(type, notes) },
-                onDeleteLog = { id -> viewModel.deleteLog(id) },
-                onClearLogs = { viewModel.clearAllLogs() }
-            )
-
-            // Section 3: My Kitty's Corner
-            Text(
-                text = stringResource(R.string.main_my_kitty_corner),
-                style = MaterialTheme.typography.labelSmall.copy(
-                    color = TextMuted,
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
-            )
-            
-            SurpriseMeSection(
-                viewModel = viewModel,
-                onNavigate = onNavigate
-            )
-            
-            // About Section
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .glassyCard(shape = RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = stringResource(R.string.main_about_title),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = FrauncesFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            color = DeepBurgundy
-                        )
+            } else {
+                items(diaryLogs.take(5), key = { it.id }) { log ->
+                    com.example.ui.SwipeableDiaryEntry(
+                        log = log,
+                        onDelete = { viewModel.deleteCheckInLog(log.id) }
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(R.string.main_about_desc),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontFamily = QuicksandFontFamily,
-                            color = Ink.copy(alpha = 0.8f)
-                        )
-                    )
+                }
+                item {
+                    TextButton(onClick = { onNavigate("diary_feed") }) {
+                        Text("View all entries", color = DeepBurgundy, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 
-            // 5. Friendly Footer
-            FooterSection()
+            item {
+                Text(
+                    text = stringResource(R.string.help_stray_title),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = TextMuted,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+            
+            item {
+                NavigationCard(
+                    title = stringResource(R.string.nav_cats_near_me_title),
+                    subtitle = stringResource(R.string.cats_near_me_subtitle),
+                    backgroundColor = Color(0xFFE8F5E9), // Soft green
+                    accentColor = Color(0xFF2E7D32),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        viewModel.updateCatsNearMeTab("browse")
+                        onNavigate("cats_near_me")
+                    }
+                )
+            }
+
+            item {
+                NavigationCard(
+                    title = "🔥 Heatwave & Weather Tracker",
+                    subtitle = "7-day temperature warnings (>35°C red, <15°C blue) for cat safety.",
+                    backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
+                    accentColor = Color(0xFFD32F2F), // Red
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        onNavigate("weather")
+                    }
+                )
+            }
+
+            item {
+                NavigationCard(
+                    title = stringResource(R.string.nav_feeding_stations_title),
+                    subtitle = stringResource(R.string.feeding_stations_subtitle),
+                    backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
+                    accentColor = Color(0xFFE65100), // Deep orange
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        onNavigate("feeding_stations")
+                    }
+                )
+            }
+            
+            item {
+                TriageGuideCard(
+                    step = triageStep,
+                    hasInjuries = hasInjuries,
+                    catAgeGroup = catAgeGroup,
+                    onStart = { viewModel.startTriage() },
+                    onSelectInjuries = { viewModel.selectInjuries(it) },
+                    onSelectAge = { viewModel.selectAgeGroup(it) },
+                    onReset = { viewModel.resetTriage() }
+                )
+            }
+            
+            item {
+                CommunityImpactTrackerCard(
+                    state = trackerState,
+                    onLogActivity = { type, notes -> viewModel.logActivity(type, notes) },
+                    onDeleteLog = { id -> viewModel.deleteLog(id) },
+                    onClearLogs = { viewModel.clearAllLogs() }
+                )
+            }
+
+            item {
+                Text(
+                    text = stringResource(R.string.main_my_kitty_corner),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = TextMuted,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+                )
+            }
+            
+            item {
+                SurpriseMeSection(
+                    viewModel = viewModel,
+                    onNavigate = onNavigate
+                )
+            }
+            
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .glassyCard(shape = RoundedCornerShape(20.dp)),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = stringResource(R.string.main_about_title),
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontFamily = FrauncesFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = DeepBurgundy
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.main_about_desc),
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontFamily = QuicksandFontFamily,
+                                color = Ink.copy(alpha = 0.8f)
+                            )
+                        )
+                    }
+                }
+            }
+
+            item {
+                FooterSection()
+                Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 }
+
 @Composable
 fun TipOfTheDayCard() {
 
@@ -910,12 +1027,14 @@ fun HeroHeader(
     streakCount: Int,
     userName: String,
     onLogout: () -> Unit,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    globalStats: com.example.data.GlobalStatistics? = null,
+    onViewRescueStories: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(290.dp)
+            .height(320.dp)
     ) {
         // Story-driven generated illustration
         Image(
@@ -941,111 +1060,88 @@ fun HeroHeader(
                 )
         )
 
-        // Top Header greeting "Hi, [Name]!" with log-out trigger and hamburger menu
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .glassyCard(shape = CircleShape, elevation = 4.dp)
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .align(Alignment.TopCenter),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = com.example.ui.theme.rememberHapticOnClick { onMenuClick() },
-                modifier = Modifier.size(32.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Open navigation menu",
-                    tint = DeepBurgundy
-                )
-            }
-            
-            Spacer(modifier = Modifier.weight(1f))
-            
-            // Streak badge
-            Row(
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .background(Gold.copy(alpha = 0.2f), CircleShape)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "🔥",
-                    fontSize = 14.sp
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "$streakCount day streak",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                )
-            }
-
-            Text(
-                text = stringResource(R.string.hi_user, userName),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            )
-            
-            Spacer(modifier = Modifier.width(8.dp))
-            
-            IconButton(
-                onClick = com.example.ui.theme.rememberHapticOnClick { onLogout() },
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ExitToApp,
-                    contentDescription = stringResource(R.string.logout_content_description),
-                    tint = Wine,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-        }
-
-        // Content overlay
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.Start
+                .align(Alignment.BottomStart)
+                .padding(24.dp)
         ) {
-            Card(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .glassyCard(shape = RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                ) {
+                Column {
                     Text(
-                        text = stringResource(R.string.onboarding_title),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            letterSpacing = 0.5.sp
+                        text = "Hello, $userName! 👋",
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            color = DeepBurgundy,
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold
                         )
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = stringResource(R.string.dashboard_tagline),
+                        text = "You're on a $streakCount day streak!",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = DeepBurgundy.copy(alpha = 0.7f),
+                            fontFamily = QuicksandFontFamily
                         )
                     )
                 }
+
+                Row {
+                    IconButton(onClick = onViewRescueStories) {
+                        Text("💖", fontSize = 24.sp)
+                    }
+                    IconButton(onClick = onMenuClick) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = DeepBurgundy)
+                    }
+                    IconButton(onClick = onLogout) {
+                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout", tint = DeepBurgundy)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Global Statistics Row
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = DeepBurgundy.copy(alpha = 0.05f)),
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, DeepBurgundy.copy(alpha = 0.1f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    StatItem("Saved", globalStats?.totalCatsRescued ?: 0, "🐾")
+                    StatItem("Spots", globalStats?.totalFeedingStations ?: 0, "🥣")
+                    StatItem("Users", globalStats?.totalRegisteredUsers ?: 0, "🏠")
+                }
             }
         }
+    }
+}
+
+@Composable
+fun StatItem(label: String, value: Int, icon: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(icon, fontSize = 18.sp)
+        Text(
+            text = value.toString(),
+            style = MaterialTheme.typography.titleSmall.copy(
+                color = DeepBurgundy,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FrauncesFontFamily
+            )
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall.copy(
+                color = DeepBurgundy.copy(alpha = 0.6f),
+                fontFamily = QuicksandFontFamily
+            )
+        )
     }
 }
 

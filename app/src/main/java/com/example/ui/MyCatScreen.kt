@@ -761,10 +761,10 @@ fun MyCatScreen(
                                                 color = Ink.copy(alpha = 0.6f)
                                             )
                                         }
-                                        if (log.healthStatus.isNotBlank()) {
+                                        if (log.notes.isNotBlank()) {
                                             Spacer(modifier = Modifier.height(4.dp))
                                             Text(
-                                                text = log.healthStatus,
+                                                text = log.notes,
                                                 fontFamily = QuicksandFontFamily,
                                                 fontSize = 13.sp,
                                                 color = Ink
