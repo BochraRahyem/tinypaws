@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "cat_check_in_logs")
 data class CatCheckInLog(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val catId: Int = 1,
     val date: Long, // timestamp
     val mood: String, // happy, tired, unwell, playful
     val healthStatus: String, // general health status or detailed notes

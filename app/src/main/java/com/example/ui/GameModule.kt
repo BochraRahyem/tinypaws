@@ -158,7 +158,7 @@ fun GameModuleScreen(
                         color = MaterialTheme.colorScheme.secondary
                     )
                     Text(
-                        text = "TinyPaws Care Academy 🎓",
+                        text = stringResource(R.string.quiz_academy_title),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             color = DeepBurgundy
@@ -197,14 +197,14 @@ fun GameModuleScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Review Needed 🐾",
+                                    text = stringResource(R.string.quiz_review_needed),
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = DeepBurgundy
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Text(
-                                    text = "You got some questions incorrect. Let's go back and answer them correctly to complete the level and unlock the next one!",
+                                    text = stringResource(R.string.quiz_retry_desc),
                                     fontSize = 14.sp,
                                     color = TextDark,
                                     textAlign = TextAlign.Center,
@@ -224,7 +224,7 @@ fun GameModuleScreen(
                                         .height(48.dp)
                                 ) {
                                     Text(
-                                        text = "Retry Incorrect Questions (${wrongQuestionIndices.size})",
+                                        text = stringResource(R.string.quiz_retry_btn, wrongQuestionIndices.size),
                                         fontWeight = FontWeight.Bold,
                                         color = White
                                     )
@@ -477,14 +477,14 @@ fun GameModuleScreen(
                                                 if (isCorrectOption) {
                                                     Icon(
                                                         imageVector = Icons.Default.CheckCircle,
-                                                        contentDescription = "Correct",
+                                                        contentDescription = stringResource(R.string.quiz_correct_title),
                                                         tint = GreenSuccess,
                                                         modifier = Modifier.size(24.dp)
                                                     )
                                                 } else if (isSelected) {
                                                     Icon(
                                                         imageVector = Icons.Default.Close,
-                                                        contentDescription = "Incorrect",
+                                                        contentDescription = stringResource(R.string.quiz_wrong_title),
                                                         tint = RedError,
                                                         modifier = Modifier.size(24.dp)
                                                     )

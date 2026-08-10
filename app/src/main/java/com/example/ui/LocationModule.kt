@@ -62,8 +62,8 @@ fun LocationModuleScreen(
         },
         onPermissionDenied = {
             if (queryText.isEmpty()) {
-                viewModel.updateLocationQuery("Tunis, Tunisia")
-                viewModel.searchPlaces(searchCategory, "Tunis, Tunisia")
+                viewModel.updateLocationQuery(context.getString(R.string.loc_tunis))
+                viewModel.searchPlaces(searchCategory, context.getString(R.string.loc_tunis))
             }
         }
     ) { requestPermission ->
@@ -96,7 +96,7 @@ fun LocationModuleScreen(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back to home",
+                    contentDescription = stringResource(R.string.loc_back_to_home),
                     tint = PastelPurpleDark
                 )
             }
@@ -178,7 +178,7 @@ fun LocationModuleScreen(
                         trailingIcon = {
                             IconButton(
                                 onClick = com.example.ui.theme.rememberHapticOnClick {
-                                    android.widget.Toast.makeText(context, "Location detection requested...", android.widget.Toast.LENGTH_SHORT).show()
+                                    android.widget.Toast.makeText(context, context.getString(R.string.cats_loc_req_toast), android.widget.Toast.LENGTH_SHORT).show()
                                     requestPermission()
                                 }
                             ) {
@@ -193,7 +193,7 @@ fun LocationModuleScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     TextButton(
                         onClick = com.example.ui.theme.rememberHapticOnClick {
-                            android.widget.Toast.makeText(context, "Location detection requested...", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, context.getString(R.string.cats_loc_req_toast), android.widget.Toast.LENGTH_SHORT).show()
                             requestPermission()
                         },
                         modifier = Modifier.align(Alignment.End)
@@ -206,7 +206,7 @@ fun LocationModuleScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Detect my location", fontSize = 12.sp, color = PastelPurpleDark, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.loc_detect_loc), fontSize = 12.sp, color = PastelPurpleDark, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -228,7 +228,7 @@ fun LocationModuleScreen(
                     if (hasLocationPermission) {
                         viewModel.searchPlaces(category, queryText)
                     } else {
-                        android.widget.Toast.makeText(context, "Location permission required. Requesting now...", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, context.getString(R.string.cats_loc_req_msg), android.widget.Toast.LENGTH_SHORT).show()
                         requestPermission()
                     }
                 }
@@ -274,13 +274,13 @@ fun LocationModuleScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "🗺️ Dynamic Map View",
+                                    text = stringResource(R.string.loc_dynamic_map_title),
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = PastelPurpleDark
                                 )
                                 IconButton(onClick = com.example.ui.theme.rememberHapticOnClick {  activeMapPlace = null }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Close map")
+                                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.loc_close_map))
                                 }
                             }
                             Spacer(modifier = Modifier.height(8.dp))
@@ -295,8 +295,8 @@ fun LocationModuleScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text("🐾 PIN: ${place.name}", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Color(0xFF2E7D32))
-                                    Text("Coordinates: Lat ${"%.4f".format(place.latitude)}, Lng ${"%.4f".format(place.longitude)}", fontSize = 10.sp, color = TextMuted)
+                                    Text(stringResource(R.string.loc_pin_name, place.name), fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Color(0xFF2E7D32))
+                                    Text(stringResource(R.string.loc_pin_coords, place.latitude, place.longitude), fontSize = 10.sp, color = TextMuted)
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Button(
                                         onClick = com.example.ui.theme.rememberHapticOnClick { 
@@ -308,7 +308,7 @@ fun LocationModuleScreen(
                                         colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
                                         shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        Text("Take me there 🚀", fontSize = 11.sp, color = White)
+                                        Text(stringResource(R.string.loc_take_me_there), fontSize = 11.sp, color = White)
                                     }
                                 }
                             }
@@ -319,7 +319,7 @@ fun LocationModuleScreen(
 
             // Results List Header
             Text(
-                text = "Discovered results sorted by distance:",
+                text = stringResource(R.string.loc_discovered_results),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextDark
@@ -341,7 +341,7 @@ fun LocationModuleScreen(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No results found. Select a category or input an address above!", color = TextMuted, textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.loc_no_results), color = TextMuted, textAlign = TextAlign.Center)
                 }
             } else {
                 searchResults.forEachIndexed { index, place ->
@@ -382,7 +382,7 @@ fun LocationModuleScreen(
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
                                     Text(
-                                        text = "★ ${place.rating}",
+                                        text = stringResource(R.string.loc_rating, place.rating),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = PastelPinkDark
@@ -408,14 +408,14 @@ fun LocationModuleScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Phone,
-                                        contentDescription = "Phone",
+                                        contentDescription = stringResource(R.string.loc_phone),
                                         modifier = Modifier.size(12.dp),
                                         tint = TextMuted
                                     )
                                     Text(place.contact, fontSize = 10.sp, color = TextMuted)
                                 }
                                 Text(
-                                    text = "⚡ ~${"%.1f".format(distanceEst)} km away",
+                                    text = stringResource(R.string.cats_dist_km_approx, distanceEst),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF2E7D32)

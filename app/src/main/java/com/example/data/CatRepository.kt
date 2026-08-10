@@ -7,30 +7,80 @@ class CatRepository(
     private val catWeightLogDao: CatWeightLogDao,
     private val catCheckInLogDao: CatCheckInLogDao,
     private val reminderDao: ReminderDao,
-    private val dailyCareLogDao: DailyCareLogDao
+    private val dailyCareLogDao: DailyCareLogDao,
+    private val catHistoryEntryDao: CatHistoryEntryDao
 ) {
+    val allCatProfiles: Flow<List<CatProfile>> = catProfileDao.getAllCatProfiles()
     val catProfile: Flow<CatProfile?> = catProfileDao.getCatProfile()
     val allWeightLogs: Flow<List<CatWeightLog>> = catWeightLogDao.getAllWeightLogs()
     val allCheckInLogs: Flow<List<CatCheckInLog>> = catCheckInLogDao.getAllCheckInLogs()
     val allReminders: Flow<List<Reminder>> = reminderDao.getAllReminders()
     val allCareLogs: Flow<List<DailyCareLog>> = dailyCareLogDao.getAllCareLogs()
+    val allHistoryEntries: Flow<List<CatHistoryEntry>> = catHistoryEntryDao.getAllHistoryEntries()
+
+    fun getCatProfileById(catId: Int): Flow<CatProfile?> = catProfileDao.getCatProfileById(catId)
+    suspend fun getCatProfileByIdSync(catId: Int): CatProfile? = catProfileDao.getCatProfileByIdSync(catId)
+    fun getWeightLogsForCat(catId: Int): Flow<List<CatWeightLog>> = catWeightLogDao.getWeightLogsForCat(catId)
+    fun getCheckInLogsForCat(catId: Int): Flow<List<CatCheckInLog>> = catCheckInLogDao.getCheckInLogsForCat(catId)
+    fun getRemindersForCat(catId: Int): Flow<List<Reminder>> = reminderDao.getRemindersForCat(catId)
+    fun getCareLogsForCat(catId: Int): Flow<List<DailyCareLog>> = dailyCareLogDao.getCareLogsForCat(catId)
+    fun getHistoryEntriesForCat(catId: Int): Flow<List<CatHistoryEntry>> = catHistoryEntryDao.getHistoryEntriesForCat(catId)
 
     fun getCareLogForDate(dateStr: String): Flow<DailyCareLog?> = dailyCareLogDao.getCareLogForDate(dateStr)
+    fun getCareLogForCatAndDate(catId: Int, dateStr: String): Flow<DailyCareLog?> = dailyCareLogDao.getCareLogForCatAndDate(catId, dateStr)
 
     suspend fun saveCareLog(careLog: DailyCareLog) {
         dailyCareLogDao.insertOrUpdateCareLog(careLog)
     }
 
-    suspend fun saveProfile(profile: CatProfile) {
-        catProfileDao.insertOrUpdateProfile(profile)
+    suspend fun saveProfile(profile: CatProfile): Long {
+        return catProfileDao.insertOrUpdateProfile(profile)
     }
 
-    suspend fun saveWeightLog(date: Long, weight: Float) {
-        catWeightLogDao.insertWeightLog(CatWeightLog(date = date, weight = weight))
+    suspend fun deleteCatProfile(catId: Int) {
+        catProfileDao.deleteCatProfileById(catId)
+        catWeightLogDao.deleteLogsForCat(catId)
+        catCheckInLogDao.deleteLogsForCat(catId)
+        dailyCareLogDao.deleteLogsForCat(catId)
+        catHistoryEntryDao.deleteEntriesForCat(catId)
+        
+        // Safely update or delete shared reminders
+        val allReminders = reminderDao.getAllRemindersSync()
+        for (reminder in allReminders) {
+            if (reminder.catIds == "all") {
+                // "all" automatically adjusts to remaining cats, no action needed
+                continue
+            }
+            if (reminder.catIds.isNotEmpty()) {
+                val ids = reminder.catIds.split(",").mapNotNull { it.toIntOrNull() }.toMutableList()
+                if (ids.contains(catId)) {
+                    ids.remove(catId)
+                    if (ids.isEmpty()) {
+                        reminderDao.deleteReminderById(reminder.id)
+                    } else {
+                        reminderDao.updateReminder(reminder.copy(catIds = ids.joinToString(",")))
+                    }
+                }
+            } else if (reminder.catId == catId) {
+                reminderDao.deleteReminderById(reminder.id)
+            }
+        }
+    }
+
+    suspend fun saveWeightLog(date: Long, weight: Float, id: Int = 0, catId: Int = 1) {
+        catWeightLogDao.insertWeightLog(CatWeightLog(id = id, catId = catId, date = date, weight = weight))
     }
 
     suspend fun deleteWeightLog(id: Int) {
         catWeightLogDao.deleteWeightLogById(id)
+    }
+
+    suspend fun saveHistoryEntry(entry: CatHistoryEntry) {
+        catHistoryEntryDao.insertHistoryEntry(entry)
+    }
+
+    suspend fun deleteHistoryEntry(id: Int) {
+        catHistoryEntryDao.deleteHistoryEntryById(id)
     }
 
     suspend fun saveCheckInLog(
@@ -40,10 +90,12 @@ class CatRepository(
         weight: Float? = null,
         photos: String = "",
         diaryEntryType: String = "general",
-        reminderTimeMillis: Long? = null
+        reminderTimeMillis: Long? = null,
+        catId: Int = 1
     ) {
         catCheckInLogDao.insertCheckInLog(
             CatCheckInLog(
+                catId = catId,
                 date = date,
                 mood = mood,
                 healthStatus = notes,
@@ -59,8 +111,16 @@ class CatRepository(
         catCheckInLogDao.deleteCheckInLogById(id)
     }
 
-    suspend fun saveReminder(title: String, timeMillis: Long, type: String = "general") {
-        reminderDao.insertReminder(Reminder(title = title, timeMillis = timeMillis, type = type))
+    suspend fun saveReminder(title: String, timeMillis: Long, type: String = "general", catId: Int = 1, catIds: String = ""): Long {
+        return reminderDao.insertReminder(Reminder(catId = catId, catIds = catIds, title = title, timeMillis = timeMillis, type = type))
+    }
+
+    suspend fun saveReminder(reminder: Reminder): Long {
+        return reminderDao.insertReminder(reminder)
+    }
+
+    suspend fun updateReminder(reminder: Reminder) {
+        reminderDao.updateReminder(reminder)
     }
 
     suspend fun deleteReminder(id: Int) {

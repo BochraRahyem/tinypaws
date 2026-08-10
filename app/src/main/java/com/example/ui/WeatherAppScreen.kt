@@ -1,5 +1,9 @@
 package com.example.ui
 
+import androidx.compose.ui.res.stringResource
+
+import com.example.R
+
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -315,7 +319,7 @@ fun WeatherAppScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🌤️ Weather & Heatwave Alert", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(stringResource(R.string.weather_title), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     }
                 },
                 navigationIcon = {
@@ -381,7 +385,7 @@ fun WeatherAppScreen(
                             }
 
                             Text(
-                                text = "Connection Required",
+                                text = stringResource(R.string.connection_required_title),
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.ExtraBold,
                                     color = MaterialTheme.colorScheme.error
@@ -390,7 +394,7 @@ fun WeatherAppScreen(
                             )
 
                             Text(
-                                text = "You need Wi-Fi or mobile data to access this part or this feature.",
+                                text = stringResource(R.string.connection_required_desc),
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                     fontWeight = FontWeight.Medium,
@@ -412,7 +416,7 @@ fun WeatherAppScreen(
                             ) {
                                 Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Retry Connection", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.weather_retry), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -446,9 +450,9 @@ fun WeatherAppScreen(
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
                                     text = if (!hasConnection) 
-                                        "An active internet connection is required to refresh live weather data. Displaying offline forecast."
+                                        stringResource(R.string.weather_offline_notice)
                                     else 
-                                        "Note: An active internet connection is required to fetch live weather updates for your area.",
+                                        stringResource(R.string.weather_online_notice),
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         color = if (!hasConnection) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer,
                                         fontWeight = FontWeight.Medium
@@ -483,14 +487,14 @@ fun WeatherAppScreen(
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column {
                                         Text(
-                                            text = "Extreme Weather Protection Alerts",
+                                            text = stringResource(R.string.weather_protection_title),
                                             style = MaterialTheme.typography.titleMedium.copy(
                                                 fontWeight = FontWeight.Bold,
                                                 color = DeepBurgundy
                                             )
                                         )
                                         Text(
-                                            text = if (isWarningEnabled) "Push alerts enabled for extreme cold & heatwaves" else "Get notified when street cats need emergency shelter",
+                                            text = if (isWarningEnabled) stringResource(R.string.weather_protection_enabled) else stringResource(R.string.weather_protection_disabled),
                                             style = MaterialTheme.typography.bodySmall.copy(
                                                 color = TextMuted
                                             )
@@ -521,7 +525,7 @@ fun WeatherAppScreen(
                     item {
                         Column {
                             Text(
-                                text = "📍 Select Location",
+                                text = stringResource(R.string.weather_select_location),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -539,7 +543,7 @@ fun WeatherAppScreen(
                                         onClick = rememberHapticOnClick { selectedCity = city },
                                         label = {
                                             Text(
-                                                text = if (city.country.contains("GPS")) "📡 Current GPS" else "${city.name}, ${city.country}",
+                                                text = if (city.country.contains("GPS")) stringResource(R.string.weather_gps_location) else "${city.name}, ${city.country}",
                                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                             )
                                         },
@@ -582,9 +586,9 @@ fun WeatherAppScreen(
                                             Column {
                                                 Text(
                                                     text = when {
-                                                        maxInWeek > 45.0 -> "EXTREME HEATWAVE WARNING (>45°C / 113°F)"
-                                                        maxInWeek > 40.0 -> "SEVERE HEATWAVE ALERT (>40°C / 104°F)"
-                                                        else -> "HEATWAVE WARNING (>35°C / 95°F)"
+                                                        maxInWeek > 45.0 -> stringResource(R.string.weather_heat_extreme)
+                                                        maxInWeek > 40.0 -> stringResource(R.string.weather_heat_severe)
+                                                        else -> stringResource(R.string.weather_heat_warning)
                                                     },
                                                     style = MaterialTheme.typography.titleMedium.copy(
                                                         fontWeight = FontWeight.ExtraBold,
@@ -593,7 +597,7 @@ fun WeatherAppScreen(
                                                 )
                                                 Spacer(modifier = Modifier.height(4.dp))
                                                 Text(
-                                                    text = "Temperatures reach up to ${formatTempDual(maxInWeek)} this week! Provide shade and shallow bowls of cool fresh water for outdoor cats.",
+                                                    text = stringResource(R.string.weather_heat_desc, formatTempDual(maxInWeek)),
                                                     style = MaterialTheme.typography.bodyMedium.copy(
                                                         color = MaterialTheme.colorScheme.onSurface,
                                                         lineHeight = 20.sp
@@ -622,7 +626,7 @@ fun WeatherAppScreen(
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text(
-                                                text = "🔔 Send Phone Notification",
+                                                text = stringResource(R.string.weather_send_notif),
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 12.sp
                                             )
@@ -651,9 +655,9 @@ fun WeatherAppScreen(
                                             Column {
                                                 Text(
                                                     text = when {
-                                                        lowestVal <= 5.0 -> "FREEZING COLD WARNING (≤5°C / 41°F)"
-                                                        lowestVal <= 10.0 -> "SEVERE COLD WEATHER (≤10°C / 50°F)"
-                                                        else -> "CHILLY WEATHER ALERT (≤15°C / 59°F)"
+                                                        lowestVal <= 5.0 -> stringResource(R.string.weather_cold_freezing)
+                                                        lowestVal <= 10.0 -> stringResource(R.string.weather_cold_severe)
+                                                        else -> stringResource(R.string.weather_cold_chilly)
                                                     },
                                                     style = MaterialTheme.typography.titleMedium.copy(
                                                         fontWeight = FontWeight.ExtraBold,
@@ -662,7 +666,7 @@ fun WeatherAppScreen(
                                                 )
                                                 Spacer(modifier = Modifier.height(4.dp))
                                                 Text(
-                                                    text = "Temperatures drop to ${formatTempDual(lowestVal)}! Keep cat shelters elevated off the ground and insulated with fresh dry straw.",
+                                                    text = stringResource(R.string.weather_cold_desc, formatTempDual(lowestVal)),
                                                     style = MaterialTheme.typography.bodyMedium.copy(
                                                         color = MaterialTheme.colorScheme.onSurface,
                                                         lineHeight = 20.sp
@@ -691,7 +695,7 @@ fun WeatherAppScreen(
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text(
-                                                text = "🔔 Send Phone Notification",
+                                                text = stringResource(R.string.weather_send_notif),
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 12.sp
                                             )
@@ -713,7 +717,7 @@ fun WeatherAppScreen(
                         ) {
                             Column(modifier = Modifier.padding(14.dp)) {
                                 Text(
-                                    text = "🎨 Temperature Color Highlighting Guide",
+                                    text = stringResource(R.string.weather_legend_title),
                                     style = MaterialTheme.typography.labelLarge.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -727,18 +731,18 @@ fun WeatherAppScreen(
                                 ) {
                                     // Hot Legend
                                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Text("🔥 Hot Weather:", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
-                                        LegendChip(color = Color(0xFFFF8A80), text = "> 35°C Pastel Red")
-                                        LegendChip(color = Color(0xFFD32F2F), text = "> 40°C Darker Red")
-                                        LegendChip(color = Color(0xFF8B0000), text = "> 45°C Dark Red")
+                                        Text(stringResource(R.string.weather_legend_hot), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                        LegendChip(color = Color(0xFFFF8A80), text = stringResource(R.string.weather_legend_35))
+                                        LegendChip(color = Color(0xFFD32F2F), text = stringResource(R.string.weather_legend_40))
+                                        LegendChip(color = Color(0xFF8B0000), text = stringResource(R.string.weather_legend_45))
                                     }
 
                                     // Cold Legend
                                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Text("❄️ Cold Weather:", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
-                                        LegendChip(color = Color(0xFF0277BD), text = "≤ 15°C Vibrant Blue")
-                                        LegendChip(color = Color(0xFF1976D2), text = "≤ 10°C Darker Blue")
-                                        LegendChip(color = Color(0xFF0D47A1), text = "≤ 5°C Dark Blue")
+                                        Text(stringResource(R.string.weather_legend_cold), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                        LegendChip(color = Color(0xFF0277BD), text = stringResource(R.string.weather_legend_15))
+                                        LegendChip(color = Color(0xFF1976D2), text = stringResource(R.string.weather_legend_10))
+                                        LegendChip(color = Color(0xFF0D47A1), text = stringResource(R.string.weather_legend_5))
                                     }
                                 }
                             }
@@ -756,14 +760,14 @@ fun WeatherAppScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "📅 7-Day Forecast",
+                                    text = stringResource(R.string.weather_forecast_title),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.ExtraBold,
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
                                 )
                                 Text(
-                                    text = "Updated for ${selectedCity.name}",
+                                    text = stringResource(R.string.weather_updated_for, selectedCity.name),
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -773,7 +777,8 @@ fun WeatherAppScreen(
                             FilledTonalButton(
                                 onClick = rememberHapticOnClick {
                                     fetchForecast()
-                                    Toast.makeText(context, "🔄 Syncing weather data for ${selectedCity.name}...", Toast.LENGTH_SHORT).show()
+                                    val syncMsg = context.getString(R.string.weather_syncing_toast, selectedCity.name)
+                                    Toast.makeText(context, syncMsg, Toast.LENGTH_SHORT).show()
                                 },
                                 enabled = !isLoading,
                                 shape = RoundedCornerShape(12.dp),
@@ -790,11 +795,11 @@ fun WeatherAppScreen(
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Syncing...", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.weather_syncing_btn), fontSize = 13.sp, fontWeight = FontWeight.Bold)
                                 } else {
                                     Icon(Icons.Default.Sync, contentDescription = "Sync Now", modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Sync Now", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.weather_sync_now), fontSize = 13.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -827,14 +832,14 @@ fun WeatherAppScreen(
                                         strokeWidth = 4.dp
                                     )
                                     Text(
-                                        text = "Fetching 7-Day Weather Forecast...",
+                                        text = stringResource(R.string.weather_fetching_forecast),
                                         style = MaterialTheme.typography.titleSmall.copy(
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onPrimaryContainer
                                         )
                                     )
                                     Text(
-                                        text = "Analyzing temperature thresholds for outdoor cat protection",
+                                        text = stringResource(R.string.weather_analyzing_thresholds),
                                         style = MaterialTheme.typography.bodySmall.copy(
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         ),
@@ -863,7 +868,7 @@ fun WeatherAppScreen(
                                     Text("🐾", fontSize = 24.sp)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Weather Safety Tips for Stray Cats",
+                                        text = stringResource(R.string.weather_safety_tips_title),
                                         style = MaterialTheme.typography.titleMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.primary
@@ -872,9 +877,7 @@ fun WeatherAppScreen(
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "• In Hot Weather (>35°C): Put out extra water dishes in shady areas. Avoid metal water bowls as they heat up quickly.\n" +
-                                            "• In Extreme Heat (>40°C): Create shaded shelters using damp towels or cardboard boxes.\n" +
-                                            "• In Cold Weather (≤15°C): Use dry straw inside DIY shelters. Never use blankets or towels outdoors because they absorb moisture and freeze.",
+                                    text = stringResource(R.string.weather_safety_tips_desc),
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                         lineHeight = 18.sp
@@ -919,7 +922,7 @@ fun DailyForecastCard(forecast: DailyWeatherForecast) {
             // Day & Date Column
             Column(modifier = Modifier.weight(1.2f)) {
                 Text(
-                    text = forecast.dayName,
+                    text = if (forecast.dayName == "Today") stringResource(R.string.weather_today) else forecast.dayName,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.ExtraBold,
                         color = textColor
@@ -972,7 +975,7 @@ fun DailyForecastCard(forecast: DailyWeatherForecast) {
                         )
                     )
                     Text(
-                        text = "Low ${formatTempDual(forecast.minTempC)}",
+                        text = stringResource(R.string.weather_low_temp, formatTempDual(forecast.minTempC)),
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = Color.White.copy(alpha = 0.9f),
                             fontSize = 10.sp

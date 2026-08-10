@@ -42,23 +42,74 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
+import android.content.Context
+import java.io.File
+import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyCatScreen(
     viewModel: TinyPawsViewModel,
+    mode: String = "profile",
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val catProfileState by viewModel.catProfile.collectAsStateWithLifecycle()
+    val dateFormatter = remember { SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()) }
     val isDarkMode = LocalIsDarkMode.current
     var isEditing by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     // Form states
     var nameInput by remember { mutableStateOf("") }
     var ageYearsInput by remember { mutableStateOf("") }
     var ageMonthsInput by remember { mutableStateOf("") }
     var selectedCoatColor by remember { mutableStateOf("orange") }
+    var personalityInput by remember { mutableStateOf("") }
+    var adoptionPhotoUrlInput by remember { mutableStateOf("") }
+    var foodPreferencesInput by remember { mutableStateOf("") }
+    var chronicConditionsInput by remember { mutableStateOf("") }
+
+    // Profile photo media states
+    var photoUrlInput by remember { mutableStateOf<String?>(null) }
+    var tempPhotoUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var tempPhotoFile by remember { mutableStateOf<java.io.File?>(null) }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
+    ) { uri: android.net.Uri? ->
+        if (uri != null) {
+            val savedFile = saveImageToInternalStorage(context, uri)
+            if (savedFile != null) {
+                photoUrlInput = savedFile.absolutePath
+            }
+        }
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.TakePicture()
+    ) { success: Boolean ->
+        if (success) {
+            val file = tempPhotoFile
+            if (file != null && file.exists()) {
+                photoUrlInput = file.absolutePath
+            }
+        }
+    }
+
+    // History Log states
+    val historyEntries by viewModel.allHistoryEntries.collectAsStateWithLifecycle()
+    val sortedHistoryEntries = remember(historyEntries) { historyEntries.sortedByDescending { it.date } }
+    var showHistoryDialog by remember { mutableStateOf(false) }
+    var editingHistoryEntry by remember { mutableStateOf<com.example.data.CatHistoryEntry?>(null) }
+    var dialogTitle by remember { mutableStateOf("") }
+    var dialogCategory by remember { mutableStateOf("Vet") }
+    var dialogDateMillis by remember { mutableStateOf(System.currentTimeMillis()) }
+    var dialogNotes by remember { mutableStateOf("") }
 
     // Synchronize form states when editing starts or profile changes
     LaunchedEffect(catProfileState, isEditing) {
@@ -68,6 +119,11 @@ fun MyCatScreen(
                 ageYearsInput = it.ageYears.toString()
                 ageMonthsInput = it.ageMonths.toString()
                 selectedCoatColor = it.coatColor
+                personalityInput = it.personality
+                photoUrlInput = it.photoUrl
+                adoptionPhotoUrlInput = it.adoptionPhotoUrl ?: ""
+                foodPreferencesInput = it.foodPreferences
+                chronicConditionsInput = it.chronicConditions ?: ""
             }
         }
     }
@@ -80,7 +136,7 @@ fun MyCatScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "My Cat Profile",
+                        text = if (mode == "profile") stringResource(R.string.my_cat_profile_title) else stringResource(R.string.my_cat_growth_title),
                         fontFamily = FrauncesFontFamily,
                         fontWeight = FontWeight.Bold,
                         color = DeepBurgundy
@@ -93,7 +149,7 @@ fun MyCatScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.my_cat_back_alt),
                             tint = DeepBurgundy
                         )
                     }
@@ -117,10 +173,11 @@ fun MyCatScreen(
         ) {
             val hasProfile = catProfileState != null
 
-            if (!hasProfile || isEditing) {
+            if (mode == "profile") {
+                if (!hasProfile || isEditing) {
                 // Edit/Create Profile Mode
                 Text(
-                    text = if (hasProfile) "Edit Profile" else "Create Cat Profile",
+                    text = if (hasProfile) stringResource(R.string.my_cat_edit_profile) else stringResource(R.string.my_cat_create_profile),
                     fontFamily = FrauncesFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
@@ -139,6 +196,101 @@ fun MyCatScreen(
                         modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        // Profile Photo Selector
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(110.dp)
+                                    .clip(CircleShape)
+                                    .background(BlushPink.copy(alpha = 0.4f))
+                                    .border(BorderStroke(2.dp, DeepBurgundy), shape = CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (!photoUrlInput.isNullOrBlank()) {
+                                    coil.compose.AsyncImage(
+                                        model = photoUrlInput,
+                                        contentDescription = stringResource(R.string.my_cat_preview_photo_alt),
+                                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                                    )
+                                } else {
+                                    val emoji = when (selectedCoatColor) {
+                                        "orange" -> "🍊🐱"
+                                        "gray" -> "🩶🐱"
+                                        "white" -> "🤍🐱"
+                                        "black" -> "🖤🐱"
+                                        "orange & white" -> "🍊🤍🐱"
+                                        "black & white" -> "🖤🤍🐱"
+                                        "tabby" -> "🐯🐱"
+                                        else -> "🐱"
+                                    }
+                                    Text(text = emoji, fontSize = 44.sp)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Button(
+                                    onClick = com.example.ui.theme.rememberHapticOnClick {
+                                        galleryLauncher.launch("image/*")
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Mauve.copy(alpha = 0.3f)),
+                                    shape = CircleShape,
+                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                    modifier = Modifier.testTag("gallery_picker_btn")
+                                ) {
+                                    Text(stringResource(R.string.hub_choose_gallery), fontFamily = QuicksandFontFamily, fontSize = 12.sp, color = DeepBurgundy)
+                                }
+
+                                Button(
+                                    onClick = com.example.ui.theme.rememberHapticOnClick {
+                                        try {
+                                            val file = java.io.File(context.filesDir, "cat_profile_${System.currentTimeMillis()}.jpg")
+                                            tempPhotoFile = file
+                                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                                context,
+                                                "${context.packageName}.fileprovider",
+                                                file
+                                            )
+                                            tempPhotoUri = uri
+                                            cameraLauncher.launch(uri)
+                                        } catch (e: Exception) {
+                                            android.util.Log.e("MyCatScreen", "Failed to launch camera", e)
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Mauve.copy(alpha = 0.3f)),
+                                    shape = CircleShape,
+                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                    modifier = Modifier.testTag("camera_picker_btn")
+                                ) {
+                                    Text(stringResource(R.string.hub_take_photo), fontFamily = QuicksandFontFamily, fontSize = 12.sp, color = DeepBurgundy)
+                                }
+
+                                 if (!photoUrlInput.isNullOrBlank()) {
+                                    IconButton(
+                                        onClick = com.example.ui.theme.rememberHapticOnClick {
+                                            photoUrlInput = null
+                                        },
+                                        modifier = Modifier.size(36.dp).background(Mauve.copy(alpha = 0.3f), CircleShape).testTag("remove_photo_btn")
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Remove Photo",
+                                            tint = Wine,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         // Cat Name Input
                         OutlinedTextField(
                             value = nameInput,
@@ -200,7 +352,7 @@ fun MyCatScreen(
 
                         // Coat pattern/color picker
                         Text(
-                            text = "Coat Pattern & Color",
+                            text = stringResource(R.string.my_cat_coat_pattern_title),
                             fontFamily = FrauncesFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
@@ -208,13 +360,23 @@ fun MyCatScreen(
                         )
 
                         val coatColors = listOf(
-                            "orange" to "Orange 🍊",
-                            "gray" to "Gray 🩶",
-                            "white" to "White 🤍",
-                            "black" to "Black 🖤",
-                            "orange & white" to "Orange & White 🍊🤍",
-                            "black & white" to "Black & White 🖤🤍",
-                            "tabby" to "Tabby 🐯"
+                            "orange" to stringResource(R.string.coat_orange),
+                            "gray" to stringResource(R.string.coat_gray),
+                            "white" to stringResource(R.string.coat_white),
+                            "black" to stringResource(R.string.coat_black),
+                            "orange & white" to stringResource(R.string.coat_orange_white),
+                            "black & white" to stringResource(R.string.coat_black_white),
+                            "tabby" to stringResource(R.string.coat_tabby),
+                            "caliby" to stringResource(R.string.coat_caliby),
+                            "calico" to stringResource(R.string.coat_calico),
+                            "tortoiseshell" to stringResource(R.string.coat_tortoiseshell),
+                            "siamese" to stringResource(R.string.coat_siamese),
+                            "persian" to stringResource(R.string.coat_persian),
+                            "maine_coon" to stringResource(R.string.coat_maine_coon),
+                            "ragdoll" to stringResource(R.string.coat_ragdoll),
+                            "bengal" to stringResource(R.string.coat_bengal),
+                            "mixed_breed" to stringResource(R.string.coat_mixed),
+                            "other" to stringResource(R.string.coat_other)
                         )
 
                         // Beautiful Grid or Row layout for selection
@@ -282,6 +444,67 @@ fun MyCatScreen(
                             }
                         }
 
+                        // Personality Input
+                        OutlinedTextField(
+                            value = personalityInput,
+                            onValueChange = { personalityInput = it },
+                            label = { Text(stringResource(R.string.cat_personality_label), fontFamily = QuicksandFontFamily) },
+                            placeholder = { Text(stringResource(R.string.my_cat_personality_hint), fontFamily = QuicksandFontFamily) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = DeepBurgundy,
+                                unfocusedBorderColor = Mauve,
+                                focusedLabelColor = DeepBurgundy,
+                                unfocusedLabelColor = Wine
+                            ),
+                            modifier = Modifier.fillMaxWidth().testTag("cat_personality_input")
+                        )
+
+                        // Adoption/Kitten Photo URL Input
+                        OutlinedTextField(
+                            value = adoptionPhotoUrlInput,
+                            onValueChange = { adoptionPhotoUrlInput = it },
+                            label = { Text(stringResource(R.string.cat_adoption_photo_label), fontFamily = QuicksandFontFamily) },
+                            placeholder = { Text(stringResource(R.string.my_cat_adoption_photo_hint), fontFamily = QuicksandFontFamily) },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = DeepBurgundy,
+                                unfocusedBorderColor = Mauve,
+                                focusedLabelColor = DeepBurgundy,
+                                unfocusedLabelColor = Wine
+                            ),
+                            modifier = Modifier.fillMaxWidth().testTag("cat_adoption_photo_input")
+                        )
+
+                        // Food Preferences Input
+                        OutlinedTextField(
+                            value = foodPreferencesInput,
+                            onValueChange = { foodPreferencesInput = it },
+                            label = { Text(stringResource(R.string.cat_food_pref_label), fontFamily = QuicksandFontFamily) },
+                            placeholder = { Text(stringResource(R.string.my_cat_food_pref_hint), fontFamily = QuicksandFontFamily) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = DeepBurgundy,
+                                unfocusedBorderColor = Mauve,
+                                focusedLabelColor = DeepBurgundy,
+                                unfocusedLabelColor = Wine
+                            ),
+                            modifier = Modifier.fillMaxWidth().testTag("cat_food_pref_input")
+                        )
+
+                        // Chronic Conditions Input
+                        OutlinedTextField(
+                            value = chronicConditionsInput,
+                            onValueChange = { chronicConditionsInput = it },
+                            label = { Text(stringResource(R.string.cat_chronic_cond_label), fontFamily = QuicksandFontFamily) },
+                            placeholder = { Text(stringResource(R.string.my_cat_chronic_cond_hint), fontFamily = QuicksandFontFamily) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = DeepBurgundy,
+                                unfocusedBorderColor = Mauve,
+                                focusedLabelColor = DeepBurgundy,
+                                unfocusedLabelColor = Wine
+                            ),
+                            modifier = Modifier.fillMaxWidth().testTag("cat_chronic_cond_input")
+                        )
+
                         Spacer(modifier = Modifier.height(8.dp))
 
                         // Action Buttons
@@ -306,7 +529,17 @@ fun MyCatScreen(
                                     val ageYears = ageYearsInput.toIntOrNull() ?: 0
                                     val ageMonths = ageMonthsInput.toIntOrNull() ?: 0
                                     if (nameInput.isNotBlank()) {
-                                        viewModel.saveCatProfile(nameInput, ageYears, ageMonths, selectedCoatColor)
+                                        viewModel.saveCatProfile(
+                                            name = nameInput,
+                                            ageYears = ageYears,
+                                            ageMonths = ageMonths,
+                                            coatColor = selectedCoatColor,
+                                            photoUrl = photoUrlInput,
+                                            personality = personalityInput,
+                                            adoptionPhotoUrl = adoptionPhotoUrlInput.ifBlank { null },
+                                            foodPreferences = foodPreferencesInput,
+                                            chronicConditions = chronicConditionsInput.ifBlank { null }
+                                        )
                                         isEditing = false
                                         focusManager.clearFocus()
                                     }
@@ -328,26 +561,69 @@ fun MyCatScreen(
                 // Profile Display Mode
                 val profile = catProfileState!!
 
-                // Display avatar based on selection
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .background(BlushPink.copy(alpha = 0.4f))
-                        .border(BorderStroke(2.dp, DeepBurgundy), shape = CircleShape),
-                    contentAlignment = Alignment.Center
+                // Display photos row (Main + Adoption photo)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val emoji = when (profile.coatColor) {
-                        "orange" -> "🍊🐱"
-                        "gray" -> "🩶🐱"
-                        "white" -> "🤍🐱"
-                        "black" -> "🖤🐱"
-                        "orange & white" -> "🍊🤍🐱"
-                        "black & white" -> "🖤🤍🐱"
-                        "tabby" -> "🐯🐱"
-                        else -> "🐱"
+                    // Main Avatar/Photo
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box(
+                            modifier = Modifier
+                                .size(110.dp)
+                                .clip(CircleShape)
+                                .background(BlushPink.copy(alpha = 0.4f))
+                                .border(BorderStroke(2.dp, DeepBurgundy), shape = CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (!profile.photoUrl.isNullOrBlank()) {
+                                coil.compose.AsyncImage(
+                                    model = profile.photoUrl,
+                                    contentDescription = stringResource(R.string.my_cat_main_photo_alt),
+                                    modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                                )
+                            } else {
+                                val emoji = when (profile.coatColor) {
+                                    "orange" -> "🍊🐱"
+                                    "gray" -> "🩶🐱"
+                                    "white" -> "🤍🐱"
+                                    "black" -> "🖤🐱"
+                                    "orange & white" -> "🍊🤍🐱"
+                                    "black & white" -> "🖤🤍🐱"
+                                    "tabby" -> "🐯🐱"
+                                    else -> "🐱"
+                                }
+                                Text(text = emoji, fontSize = 44.sp)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(stringResource(R.string.my_cat_current_photo_label), fontSize = 12.sp, fontFamily = QuicksandFontFamily, color = Wine, fontWeight = FontWeight.Bold)
                     }
-                    Text(text = emoji, fontSize = 48.sp)
+
+                    if (!profile.adoptionPhotoUrl.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.width(24.dp))
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Box(
+                                modifier = Modifier
+                                    .size(110.dp)
+                                    .clip(CircleShape)
+                                    .background(BlushPink.copy(alpha = 0.4f))
+                                    .border(BorderStroke(2.dp, Mauve), shape = CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                coil.compose.AsyncImage(
+                                    model = profile.adoptionPhotoUrl,
+                                    contentDescription = stringResource(R.string.my_cat_adoption_photo_alt),
+                                    modifier = Modifier.fillMaxSize().clip(CircleShape),
+                                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(stringResource(R.string.my_cat_adoption_photo_label), fontSize = 12.sp, fontFamily = QuicksandFontFamily, color = Wine, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
 
                 Text(
@@ -385,7 +661,7 @@ fun MyCatScreen(
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Text(
-                                    text = "Age:",
+                                    text = stringResource(R.string.my_cat_age_label),
                                     fontFamily = FrauncesFontFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
@@ -393,7 +669,7 @@ fun MyCatScreen(
                                 )
                             }
                             Text(
-                                text = "${profile.ageYears} years, ${profile.ageMonths} months",
+                                text = stringResource(R.string.my_cat_age_value, profile.ageYears, profile.ageMonths),
                                 fontFamily = QuicksandFontFamily,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp,
@@ -401,7 +677,7 @@ fun MyCatScreen(
                             )
                         }
 
-                        Divider(color = Mauve.copy(alpha = 0.3f))
+                        HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -419,7 +695,7 @@ fun MyCatScreen(
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Text(
-                                    text = "Coat Pattern:",
+                                    text = stringResource(R.string.my_cat_coat_pattern_label),
                                     fontFamily = FrauncesFontFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp,
@@ -427,12 +703,91 @@ fun MyCatScreen(
                                 )
                             }
                             Text(
-                                text = profile.coatColor.replaceFirstChar { it.uppercase() },
+                                text = when (profile.coatColor.lowercase().trim()) {
+                                    "orange" -> stringResource(R.string.coat_orange)
+                                    "gray" -> stringResource(R.string.coat_gray)
+                                    "white" -> stringResource(R.string.coat_white)
+                                    "black" -> stringResource(R.string.coat_black)
+                                    "orange & white" -> stringResource(R.string.coat_orange_white)
+                                    "black & white" -> stringResource(R.string.coat_black_white)
+                                    "tabby" -> stringResource(R.string.coat_tabby)
+                                    "caliby", "calico & tabby", "calico + tabby" -> stringResource(R.string.coat_caliby)
+                                    "calico" -> stringResource(R.string.coat_calico)
+                                    "tortoiseshell", "tortie" -> stringResource(R.string.coat_tortoiseshell)
+                                    "siamese" -> stringResource(R.string.coat_siamese)
+                                    "persian" -> stringResource(R.string.coat_persian)
+                                    "maine_coon", "maine coon" -> stringResource(R.string.coat_maine_coon)
+                                    "ragdoll" -> stringResource(R.string.coat_ragdoll)
+                                    "bengal" -> stringResource(R.string.coat_bengal)
+                                    "mixed_breed", "mixed" -> stringResource(R.string.coat_mixed)
+                                    "other", "unknown" -> stringResource(R.string.coat_other)
+                                    else -> profile.coatColor.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                                },
                                 fontFamily = QuicksandFontFamily,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp,
                                 color = Ink
                             )
+                        }
+
+                        if (profile.personality.isNotBlank()) {
+                            HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.my_cat_personality_title),
+                                    fontFamily = FrauncesFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = DeepBurgundy
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = profile.personality,
+                                    fontFamily = QuicksandFontFamily,
+                                    fontSize = 14.sp,
+                                    color = Ink
+                                )
+                            }
+                        }
+
+                        if (profile.foodPreferences.isNotBlank()) {
+                            HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.my_cat_food_pref_title),
+                                    fontFamily = FrauncesFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = DeepBurgundy
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = profile.foodPreferences,
+                                    fontFamily = QuicksandFontFamily,
+                                    fontSize = 14.sp,
+                                    color = Ink
+                                )
+                            }
+                        }
+
+                        if (!profile.chronicConditions.isNullOrBlank()) {
+                            HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.my_cat_chronic_cond_title),
+                                    fontFamily = FrauncesFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = DeepBurgundy
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = profile.chronicConditions,
+                                    fontFamily = QuicksandFontFamily,
+                                    fontSize = 14.sp,
+                                    color = Ink
+                                )
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -443,6 +798,10 @@ fun MyCatScreen(
                                 ageYearsInput = profile.ageYears.toString()
                                 ageMonthsInput = profile.ageMonths.toString()
                                 selectedCoatColor = profile.coatColor
+                                personalityInput = profile.personality
+                                adoptionPhotoUrlInput = profile.adoptionPhotoUrl ?: ""
+                                foodPreferencesInput = profile.foodPreferences
+                                chronicConditionsInput = profile.chronicConditions ?: ""
                                 isEditing = true
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Wine),
@@ -463,7 +822,209 @@ fun MyCatScreen(
                     }
                 }
 
-                // FEATURE 2: WEIGHT TRACKER SECTION
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .glassyCard(shape = RoundedCornerShape(24.dp)),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.hub_history_log_title),
+                                    fontFamily = FrauncesFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = DeepBurgundy
+                                )
+                                Text(
+                                    text = stringResource(R.string.hub_history_log_desc),
+                                    fontFamily = QuicksandFontFamily,
+                                    fontSize = 12.sp,
+                                    color = Wine
+                                )
+                            }
+
+                            Button(
+                                onClick = com.example.ui.theme.rememberHapticOnClick {
+                                    editingHistoryEntry = null
+                                    dialogTitle = ""
+                                    dialogCategory = "Vet"
+                                    dialogDateMillis = System.currentTimeMillis()
+                                    dialogNotes = ""
+                                    showHistoryDialog = true
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
+                                shape = CircleShape,
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                modifier = Modifier.testTag("add_history_entry_btn")
+                            ) {
+                                Text(stringResource(R.string.hub_history_add_entry), fontFamily = QuicksandFontFamily, fontSize = 12.sp, color = Cream, fontWeight = FontWeight.Bold)
+                            }
+                        }
+
+                        HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
+
+                        if (sortedHistoryEntries.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.hub_history_empty),
+                                    fontFamily = QuicksandFontFamily,
+                                    color = Wine.copy(alpha = 0.6f),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        } else {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                sortedHistoryEntries.forEach { entry ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .background(Color.White.copy(alpha = 0.15f))
+                                            .padding(12.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        val categoryIcon = when (entry.category) {
+                                            "Vet" -> "🩺"
+                                            "Vaccination" -> "💉"
+                                            "Medication" -> "💊"
+                                            "Milestone" -> "🎉"
+                                            else -> "🐾"
+                                        }
+
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            verticalAlignment = Alignment.Top
+                                        ) {
+                                            Text(text = categoryIcon, fontSize = 24.sp)
+
+                                            Column {
+                                                Text(
+                                                    text = entry.title,
+                                                    fontFamily = QuicksandFontFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 15.sp,
+                                                    color = Ink
+                                                )
+                                                Text(
+                                                    text = dateFormatter.format(Date(entry.date)),
+                                                    fontFamily = QuicksandFontFamily,
+                                                    fontSize = 12.sp,
+                                                    color = Wine,
+                                                    fontWeight = FontWeight.Medium
+                                                )
+                                                if (entry.notes.isNotBlank()) {
+                                                    Spacer(modifier = Modifier.height(4.dp))
+                                                    Text(
+                                                        text = entry.notes,
+                                                        fontFamily = QuicksandFontFamily,
+                                                        fontSize = 13.sp,
+                                                        color = Ink.copy(alpha = 0.8f)
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            IconButton(
+                                                onClick = com.example.ui.theme.rememberHapticOnClick {
+                                                    editingHistoryEntry = entry
+                                                    dialogTitle = entry.title
+                                                    dialogCategory = entry.category
+                                                    dialogDateMillis = entry.date
+                                                    dialogNotes = entry.notes
+                                                    showHistoryDialog = true
+                                                },
+                                                modifier = Modifier.size(28.dp).testTag("edit_history_btn_${entry.id}")
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Edit,
+                                                    contentDescription = "Edit",
+                                                    tint = DeepBurgundy.copy(alpha = 0.7f),
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+
+                                            IconButton(
+                                                onClick = com.example.ui.theme.rememberHapticOnClick {
+                                                    viewModel.deleteHistoryEntry(entry.id)
+                                                },
+                                                modifier = Modifier.size(28.dp).testTag("delete_history_btn_${entry.id}")
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Delete,
+                                                    contentDescription = "Delete",
+                                                    tint = RedError.copy(alpha = 0.7f),
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (mode == "weight") {
+                if (!hasProfile) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .border(BorderStroke(1.dp, Mauve.copy(alpha = 0.3f)), RoundedCornerShape(24.dp)),
+                        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.35f))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text("🐱", fontSize = 48.sp)
+                            Text(
+                                text = "Create Cat Profile First",
+                                fontFamily = FrauncesFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = DeepBurgundy
+                            )
+                            Text(
+                                text = "To log growth, weights, and view development trends, please set up your cat's profile first.",
+                                fontFamily = QuicksandFontFamily,
+                                fontSize = 14.sp,
+                                color = Ink.copy(alpha = 0.75f),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                } else {
+                    // FEATURE 2: WEIGHT TRACKER SECTION
                 Text(
                     text = stringResource(R.string.weight_tracker_title),
                     fontFamily = FrauncesFontFamily,
@@ -482,7 +1043,8 @@ fun MyCatScreen(
                 val context = LocalContext.current
                 var weightInput by remember { mutableStateOf("") }
                 var weightDateMillis by remember { mutableStateOf(System.currentTimeMillis()) }
-                val dateFormatter = remember { SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()) }
+                var editingWeightLogId by remember { mutableStateOf<Int?>(null) }
+                var showAllWeights by remember { mutableStateOf(false) }
 
                 Card(
                     modifier = Modifier
@@ -568,24 +1130,54 @@ fun MyCatScreen(
                             )
                         }
 
-                        Button(
-                            onClick = com.example.ui.theme.rememberHapticOnClick { 
-                                val weightVal = weightInput.toFloatOrNull()
-                                if (weightVal != null && weightVal > 0f) {
-                                    viewModel.saveWeightLog(weightDateMillis, weightVal)
-                                    weightInput = ""
-                                    focusManager.clearFocus()
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
-                            shape = CircleShape,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .testTag("save_weight_btn"),
-                            enabled = weightInput.toFloatOrNull() != null
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text(stringResource(R.string.log_weight_btn), fontFamily = QuicksandFontFamily, color = Cream, fontWeight = FontWeight.Bold)
+                            Button(
+                                onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                    val weightVal = weightInput.toFloatOrNull()
+                                    if (weightVal != null && weightVal > 0f) {
+                                        viewModel.saveWeightLog(weightDateMillis, weightVal, editingWeightLogId ?: 0)
+                                        weightInput = ""
+                                        editingWeightLogId = null
+                                        focusManager.clearFocus()
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
+                                shape = CircleShape,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(48.dp)
+                                    .testTag("save_weight_btn"),
+                                enabled = weightInput.toFloatOrNull() != null
+                            ) {
+                                Text(
+                                    text = if (editingWeightLogId != null) stringResource(R.string.my_cat_update_weight_btn) else stringResource(R.string.log_weight_btn),
+                                    fontFamily = QuicksandFontFamily,
+                                    color = Cream,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            if (editingWeightLogId != null) {
+                                OutlinedButton(
+                                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                        weightInput = ""
+                                        editingWeightLogId = null
+                                        focusManager.clearFocus()
+                                    },
+                                    shape = CircleShape,
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = DeepBurgundy),
+                                    border = BorderStroke(1.dp, Mauve),
+                                    modifier = Modifier
+                                        .weight(0.5f)
+                                        .height(48.dp)
+                                        .testTag("cancel_edit_weight_btn")
+                                ) {
+                                    Text(stringResource(R.string.my_cat_cancel_btn), fontFamily = QuicksandFontFamily, fontSize = 13.sp)
+                                }
+                            }
                         }
 
                         // WEIGHT DIFFERENCE BOX
@@ -630,7 +1222,7 @@ fun MyCatScreen(
                         // Weight Log History List
                         if (sortedWeightLogsDesc.isNotEmpty()) {
                             Text(
-                                text = "Weigh-in History",
+                                text = stringResource(R.string.my_cat_weigh_in_history),
                                 fontFamily = FrauncesFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
@@ -638,11 +1230,13 @@ fun MyCatScreen(
                                 modifier = Modifier.padding(top = 8.dp)
                             )
 
+                            val displayWeights = if (showAllWeights) sortedWeightLogsDesc else sortedWeightLogsDesc.take(5)
+
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                sortedWeightLogsDesc.take(5).forEach { log ->
+                                displayWeights.forEach { log ->
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -675,12 +1269,28 @@ fun MyCatScreen(
                                             )
 
                                             IconButton(
+                                                onClick = com.example.ui.theme.rememberHapticOnClick {
+                                                    editingWeightLogId = log.id
+                                                    weightInput = log.weight.toString()
+                                                    weightDateMillis = log.date
+                                                },
+                                                modifier = Modifier.size(24.dp).testTag("edit_weight_btn_${log.id}")
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Edit,
+                                                    contentDescription = stringResource(R.string.my_cat_edit_desc),
+                                                    tint = DeepBurgundy.copy(alpha = 0.8f),
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+
+                                            IconButton(
                                                 onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.deleteWeightLog(log.id) },
-                                                modifier = Modifier.size(24.dp)
+                                                modifier = Modifier.size(24.dp).testTag("delete_weight_btn_${log.id}")
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Delete,
-                                                    contentDescription = "Delete",
+                                                    contentDescription = stringResource(R.string.my_cat_delete_desc),
                                                     tint = RedError.copy(alpha = 0.8f),
                                                     modifier = Modifier.size(16.dp)
                                                 )
@@ -688,99 +1298,17 @@ fun MyCatScreen(
                                         }
                                     }
                                 }
-                            }
-                        }
-                    }
-                }
 
-                // FEATURE 3: DAILY CHECK-IN HISTORY SECTION
-                Text(
-                    text = "Daily Check-in History",
-                    fontFamily = FrauncesFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = DeepBurgundy,
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                    textAlign = TextAlign.Start
-                )
-
-                val checkInLogs by viewModel.allCheckInLogs.collectAsStateWithLifecycle()
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .glassyCard(shape = RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        if (checkInLogs.isEmpty()) {
-                            Text(
-                                text = "No daily check-ins logged yet. You can log them from the home dashboard!",
-                                fontFamily = QuicksandFontFamily,
-                                color = Wine.copy(alpha = 0.6f),
-                                fontSize = 14.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
-                            )
-                        } else {
-                            checkInLogs.take(10).forEach { log ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(Color.White.copy(alpha = 0.15f))
-                                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                        ) {
-                                            val moodText = when (log.mood) {
-                                                "happy" -> "😊 Happy"
-                                                "tired" -> "😴 Tired"
-                                                "unwell" -> "🤒 Unwell"
-                                                else -> log.mood
-                                            }
-                                            Text(
-                                                text = moodText,
-                                                fontFamily = QuicksandFontFamily,
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 14.sp,
-                                                color = DeepBurgundy
-                                            )
-                                            Text(
-                                                text = "• " + dateFormatter.format(Date(log.date)),
-                                                fontFamily = QuicksandFontFamily,
-                                                fontSize = 12.sp,
-                                                color = Ink.copy(alpha = 0.6f)
-                                            )
-                                        }
-                                        if (log.notes.isNotBlank()) {
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(
-                                                text = log.notes,
-                                                fontFamily = QuicksandFontFamily,
-                                                fontSize = 13.sp,
-                                                color = Ink
-                                            )
-                                        }
-                                    }
-
-                                    IconButton(
-                                        onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.deleteCheckInLog(log.id) },
-                                        modifier = Modifier.size(24.dp)
+                                if (sortedWeightLogsDesc.size > 5) {
+                                    TextButton(
+                                        onClick = { showAllWeights = !showAllWeights },
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete",
-                                            tint = RedError.copy(alpha = 0.8f),
-                                            modifier = Modifier.size(16.dp)
+                                        Text(
+                                            text = if (showAllWeights) stringResource(R.string.my_cat_show_less) else stringResource(R.string.my_cat_see_all, sortedWeightLogsDesc.size),
+                                            fontFamily = QuicksandFontFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            color = DeepBurgundy
                                         )
                                     }
                                 }
@@ -791,6 +1319,180 @@ fun MyCatScreen(
             }
         }
     }
+
+    if (showHistoryDialog) {
+        AlertDialog(
+            onDismissRequest = { showHistoryDialog = false },
+            title = {
+                Text(
+                    text = if (editingHistoryEntry != null) stringResource(R.string.hub_history_edit_entry) else stringResource(R.string.hub_history_add_entry),
+                    fontFamily = FrauncesFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = DeepBurgundy
+                )
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // Title Input
+                    OutlinedTextField(
+                        value = dialogTitle,
+                        onValueChange = { dialogTitle = it },
+                        label = { Text(stringResource(R.string.hub_history_title_label), fontFamily = QuicksandFontFamily) },
+                        placeholder = { Text(stringResource(R.string.my_cat_history_title_hint), fontFamily = QuicksandFontFamily) },
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = DeepBurgundy,
+                            unfocusedBorderColor = Mauve,
+                            focusedLabelColor = DeepBurgundy,
+                            unfocusedLabelColor = Wine
+                        ),
+                        modifier = Modifier.fillMaxWidth().testTag("history_title_input")
+                    )
+
+                    // Category Picker
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = stringResource(R.string.hub_history_category),
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = DeepBurgundy
+                        )
+
+                        val categories = listOf(
+                            "Vet" to R.string.hub_history_cat_vet,
+                            "Vaccination" to R.string.hub_history_cat_vac,
+                            "Medication" to R.string.hub_history_cat_med,
+                            "Milestone" to R.string.hub_history_cat_milestone,
+                            "Other" to R.string.hub_history_cat_other
+                        )
+
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            categories.forEach { (catValue, catResId) ->
+                                val isSelected = dialogCategory == catValue
+                                val bg = if (isSelected) DeepBurgundy else BlushPink.copy(alpha = 0.2f)
+                                val tc = if (isSelected) Cream else Ink
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(bg)
+                                        .border(BorderStroke(1.dp, if (isSelected) DeepBurgundy else Mauve.copy(alpha = 0.3f)), RoundedCornerShape(12.dp))
+                                        .clickable { dialogCategory = catValue }
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                        .testTag("history_category_$catValue"),
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    Text(
+                                        text = stringResource(catResId),
+                                        fontFamily = QuicksandFontFamily,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                        color = tc,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Date Picker Button
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.hub_history_date),
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = DeepBurgundy
+                        )
+
+                        OutlinedButton(
+                            onClick = {
+                                val calendar = Calendar.getInstance()
+                                calendar.timeInMillis = dialogDateMillis
+                                android.app.DatePickerDialog(
+                                    context,
+                                    { _, year, month, dayOfMonth ->
+                                        val cal = Calendar.getInstance()
+                                        cal.set(year, month, dayOfMonth)
+                                        dialogDateMillis = cal.timeInMillis
+                                    },
+                                    calendar.get(Calendar.YEAR),
+                                    calendar.get(Calendar.MONTH),
+                                    calendar.get(Calendar.DAY_OF_MONTH)
+                                ).show()
+                            },
+                            shape = CircleShape,
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = DeepBurgundy),
+                            border = BorderStroke(1.dp, Mauve),
+                            modifier = Modifier.testTag("history_date_picker_btn")
+                        ) {
+                            Text(
+                                text = dateFormatter.format(Date(dialogDateMillis)),
+                                fontFamily = QuicksandFontFamily,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    // Notes Input
+                    OutlinedTextField(
+                        value = dialogNotes,
+                        onValueChange = { dialogNotes = it },
+                        label = { Text(stringResource(R.string.hub_history_notes_label), fontFamily = QuicksandFontFamily) },
+                        placeholder = { Text("e.g. Weight: 4.2kg, next due in 1 year", fontFamily = QuicksandFontFamily) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = DeepBurgundy,
+                            unfocusedBorderColor = Mauve,
+                            focusedLabelColor = DeepBurgundy,
+                            unfocusedLabelColor = Wine
+                        ),
+                        modifier = Modifier.fillMaxWidth().testTag("history_notes_input")
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (dialogTitle.isNotBlank()) {
+                            val entry = com.example.data.CatHistoryEntry(
+                                id = editingHistoryEntry?.id ?: 0,
+                                title = dialogTitle,
+                                date = dialogDateMillis,
+                                category = dialogCategory,
+                                notes = dialogNotes
+                            )
+                            viewModel.saveHistoryEntry(entry)
+                            showHistoryDialog = false
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
+                    shape = CircleShape,
+                    enabled = dialogTitle.isNotBlank(),
+                    modifier = Modifier.testTag("history_dialog_save_btn")
+                ) {
+                    Text(stringResource(R.string.hub_history_save), fontFamily = QuicksandFontFamily, color = Cream, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showHistoryDialog = false },
+                    modifier = Modifier.testTag("history_dialog_cancel_btn")
+                ) {
+                    Text(stringResource(R.string.hub_cancel_btn), fontFamily = QuicksandFontFamily, color = DeepBurgundy, fontWeight = FontWeight.Bold)
+                }
+            }
+        )
+    }
+}
 }
 
 @Composable
@@ -964,5 +1666,22 @@ fun WeightHistoryChart(
                 }
             }
         }
+    }
+}
+
+fun saveImageToInternalStorage(context: android.content.Context, uri: android.net.Uri): java.io.File? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val file = java.io.File(context.filesDir, "cat_profile_${System.currentTimeMillis()}.jpg")
+        val outputStream = java.io.FileOutputStream(file)
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+        file
+    } catch (e: Exception) {
+        android.util.Log.e("MyCatScreen", "Failed to save image to internal storage", e)
+        null
     }
 }

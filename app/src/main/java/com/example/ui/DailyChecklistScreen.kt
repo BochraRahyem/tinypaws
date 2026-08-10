@@ -1,5 +1,9 @@
 package com.example.ui
 
+import androidx.compose.ui.res.stringResource
+
+import com.example.R
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,7 +29,7 @@ fun DailyChecklistScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Daily Care Checklist",
+                        stringResource(R.string.checklist_title),
                         fontFamily = FrauncesFontFamily,
                         fontWeight = FontWeight.Bold,
                         color = DeepBurgundy
@@ -38,7 +42,7 @@ fun DailyChecklistScreen(
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.loc_back_to_home),
                             tint = DeepBurgundy
                         )
                     }

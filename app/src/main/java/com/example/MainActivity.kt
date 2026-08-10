@@ -10,6 +10,7 @@ import androidx.core.view.WindowCompat
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.core.*
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize Room Database & Repository
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = LogRepository(database.logDao(), database.favoriteDao())
-        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao(), database.dailyCareLogDao())
+        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao(), database.dailyCareLogDao(), database.catHistoryEntryDao())
         
         // Instantiate ViewModel
         val viewModel: TinyPawsViewModel by viewModels {
@@ -179,12 +180,26 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+            val userProfile by viewModel.firebaseUserProfile.collectAsStateWithLifecycle()
+            val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
+
+            androidx.compose.runtime.LaunchedEffect(userProfile) {
+                userProfile?.preferredLanguage?.let { preferred ->
+                    if (preferred.isNotEmpty() && preferred != currentLang) {
+                        sharedPrefs.edit().putString("user_lang", preferred).apply()
+                        viewModel.setLanguage(preferred)
+                        val appLocale = LocaleListCompat.forLanguageTags(preferred)
+                        AppCompatDelegate.setApplicationLocales(appLocale)
+                    }
+                }
+            }
+
             MyApplicationTheme(darkTheme = isDarkMode) {
-                val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
                 ThemeProvider(currentLanguage = currentLang) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        containerColor = PastelBlueBg
+                        containerColor = PastelBlueBg,
+                        contentWindowInsets = WindowInsets(0, 0, 0, 0)
                     ) { innerPadding ->
                         TinyPawsMainContainer(
                             viewModel = viewModel,
@@ -200,14 +215,13 @@ class MainActivity : AppCompatActivity() {
                             },
                             onLogout = {
                                 sharedPrefs.edit().putString("user_name", "").apply()
-                                viewModel.updateOnboardedName("")
+                                viewModel.signOut()
                                 viewModel.resetTriage()
                                 viewModel.resetGameProgress()
-
                             },
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(innerPadding)
+                                .padding(bottom = innerPadding.calculateBottomPadding())
                         )
                     }
                 }
@@ -238,10 +252,31 @@ fun TinyPawsMainContainer(
     val context = androidx.compose.ui.platform.LocalContext.current
     val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE) }
 
+    var hasSelectedLang by remember { mutableStateOf(sharedPrefs.getBoolean("has_selected_lang", false)) }
     var hasSeenIntro by remember { mutableStateOf(sharedPrefs.getBoolean("has_seen_intro", false)) }
 
-    if (user == null) {
-        AuthScreen(viewModel = viewModel, onAuthSuccess = { /* user flow continues */ })
+    LaunchedEffect(Unit) {
+        viewModel.reloadUser()
+    }
+
+    if (!hasSelectedLang) {
+        com.example.ui.FirstLaunchLanguageScreen(
+            currentLangCode = currentLang,
+            onPreviewLanguage = { code ->
+                onLanguageChange(code)
+            },
+            onLanguageSelected = { code ->
+                onLanguageChange(code)
+                sharedPrefs.edit().putBoolean("has_selected_lang", true).apply()
+                hasSelectedLang = true
+            }
+        )
+    } else if (user == null && onboardedName.isEmpty()) {
+        AuthScreen(
+            viewModel = viewModel, 
+            onAuthSuccess = { /* user flow continues */ },
+            onGuestEntry = { name -> onSaveName(name) }
+        )
     } else if (!hasSeenIntro) {
         TinyPawsIntroSequence(
             onComplete = {
@@ -328,6 +363,83 @@ fun TinyPawsMainContainer(
                         NavigationDrawerItem(
                             label = { 
                                 Text(
+                                    text = stringResource(R.string.drawer_ai_chatbot),
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                ) 
+                            },
+                            selected = currentScreen == "chat",
+                            onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                currentScreen = "chat"
+                                scope.launch { drawerState.close() }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                .height(56.dp)
+                                .testTag("drawer_chat_item"),
+                            shape = CircleShape,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = DeepBurgundy,
+                                unselectedContainerColor = BlushPink.copy(alpha = 0.25f),
+                                selectedTextColor = Cream,
+                                unselectedTextColor = Ink
+                            )
+                        )
+                        NavigationDrawerItem(
+                            label = { 
+                                Text(
+                                    text = stringResource(R.string.drawer_rescue_profile),
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                ) 
+                            },
+                            selected = currentScreen == "profile",
+                            onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                currentScreen = "profile"
+                                scope.launch { drawerState.close() }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                .height(56.dp)
+                                .testTag("drawer_profile_item"),
+                            shape = CircleShape,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = DeepBurgundy,
+                                unselectedContainerColor = BlushPink.copy(alpha = 0.25f),
+                                selectedTextColor = Cream,
+                                unselectedTextColor = Ink
+                            )
+                        )
+                        NavigationDrawerItem(
+                            label = { 
+                                Text(
+                                    text = stringResource(R.string.drawer_discover_tinypaws),
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                ) 
+                            },
+                            selected = false,
+                            onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                val result = viewModel.selectRandomSurprise(sharedPrefs)
+                                val tab = result.first
+                                val projectId = result.second
+                                viewModel.updateActiveGuideTab(tab)
+                                viewModel.updateActiveDiyProject(projectId)
+                                currentScreen = "guide"
+                                scope.launch { drawerState.close() }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                .height(56.dp)
+                                .testTag("drawer_discover_item"),
+                            shape = CircleShape,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = DeepBurgundy,
+                                unselectedContainerColor = BlushPink.copy(alpha = 0.25f),
+                                selectedTextColor = Cream,
+                                unselectedTextColor = Ink
+                            )
+                        )
+                        NavigationDrawerItem(
+                            label = { 
+                                Text(
                                     text = stringResource(R.string.main_settings),
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                                 ) 
@@ -371,10 +483,17 @@ fun TinyPawsMainContainer(
                 )
                 "my_cat_profile" -> MyCatScreen(
                     viewModel = viewModel,
+                    mode = "profile",
                     onBack = { currentScreen = "my_cat_hub" },
                     modifier = modifier
                 )
                 "weight_tracker" -> MyCatScreen(
+                    viewModel = viewModel,
+                    mode = "weight",
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "data_sync" -> com.example.ui.DataSyncScreen(
                     viewModel = viewModel,
                     onBack = { currentScreen = "my_cat_hub" },
                     modifier = modifier
@@ -444,6 +563,19 @@ fun TinyPawsMainContainer(
                 )
                 "reminders" -> ReminderScreen(
                     viewModel = viewModel,
+                    initialCategory = "all",
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "vet_reminders" -> ReminderScreen(
+                    viewModel = viewModel,
+                    initialCategory = "vet_visit",
+                    onBack = { currentScreen = "my_cat_hub" },
+                    modifier = modifier
+                )
+                "care_reminders" -> ReminderScreen(
+                    viewModel = viewModel,
+                    initialCategory = "general",
                     onBack = { currentScreen = "my_cat_hub" },
                     modifier = modifier
                 )
@@ -457,6 +589,55 @@ fun TinyPawsMainContainer(
                     onBack = { currentScreen = "dashboard" },
                     modifier = modifier
                 )
+                "profile", "user_profile" -> com.example.ui.UserProfileScreen(
+                    viewModel = viewModel,
+                    onBack = { currentScreen = "dashboard" }
+                )
+                "community_tracker" -> {
+                    val trackerState by viewModel.trackerUiState.collectAsStateWithLifecycle()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(if (com.example.ui.theme.LocalIsDarkMode.current) com.example.ui.theme.OmbreGradientBrushDark else com.example.ui.theme.OmbreGradientBrushLight)
+                            .verticalScroll(rememberScrollState())
+                            .padding(bottom = 32.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = com.example.ui.theme.rememberHapticOnClick { currentScreen = "dashboard" },
+                                modifier = Modifier.testTag("tracker_back_btn")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = stringResource(R.string.back_btn),
+                                    tint = DeepBurgundy
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.tracker_header),
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontFamily = FrauncesFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    color = DeepBurgundy
+                                )
+                            )
+                        }
+                        
+                        CommunityImpactTrackerCard(
+                            state = trackerState,
+                            onLogActivity = { type, notes -> viewModel.logActivity(type, notes) },
+                            onDeleteLog = { id -> viewModel.deleteLog(id) },
+                            onClearLogs = { viewModel.clearAllLogs() }
+                        )
+                    }
+                }
             }
         }
     }
@@ -599,6 +780,15 @@ fun TinyPawsDashboard(
     val userProfile by viewModel.firebaseUserProfile.collectAsStateWithLifecycle()
 
     var showQuickLogDialog by remember { mutableStateOf(false) }
+    var isGuestBannerDismissed by remember { mutableStateOf(false) }
+    val firebaseAuthUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+    val isGuest = firebaseAuthUser?.isAnonymous == true
+
+    val isEmailVerified = firebaseAuthUser?.isEmailVerified == true
+    var isVerificationBannerDismissed by remember { mutableStateOf(false) }
+    var resendVerificationMessage by remember { mutableStateOf<String?>(null) }
+    val resendCooldownSeconds by viewModel.resendCooldownSeconds.collectAsStateWithLifecycle()
+    val currentActivityContext = androidx.compose.ui.platform.LocalContext.current
 
     if (showQuickLogDialog) {
         FeedingMoodDialog(
@@ -616,21 +806,38 @@ fun TinyPawsDashboard(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = com.example.ui.theme.rememberHapticOnClick { showQuickLogDialog = true },
-                containerColor = BlushPink,
-                contentColor = DeepBurgundy,
-                shape = RoundedCornerShape(16.dp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Quick Log")
+                ExtendedFloatingActionButton(
+                    onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("chat") },
+                    containerColor = DeepBurgundy,
+                    contentColor = Cream,
+                    shape = RoundedCornerShape(20.dp),
+                    icon = { Text("🤖", fontSize = 18.sp) },
+                    text = { Text(stringResource(R.string.ai_helper_fab_text), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold) },
+                    modifier = Modifier.testTag("ai_helper_fab")
+                )
+                FloatingActionButton(
+                    onClick = com.example.ui.theme.rememberHapticOnClick { showQuickLogDialog = true },
+                    containerColor = BlushPink,
+                    contentColor = DeepBurgundy,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.testTag("quick_log_fab")
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Quick Log")
+                }
             }
         }
     ) { padding ->
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(bottom = padding.calculateBottomPadding()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -640,9 +847,194 @@ fun TinyPawsDashboard(
                     userName = userName,
                     onLogout = onLogout,
                     onMenuClick = onMenuClick,
-                    globalStats = globalStats,
-                    onViewRescueStories = { onNavigate("rescue_stories") }
+                    globalStats = globalStats
                 )
+            }
+
+            if (isGuest && !isGuestBannerDismissed) {
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFADCE0)),
+                        border = BorderStroke(1.dp, Color(0xFFE57373))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Warning,
+                                        contentDescription = "Guest Warning",
+                                        tint = Color(0xFFC62828)
+                                    )
+                                    Text(
+                                        text = "Guest Mode Warning ⚠️",
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF601827),
+                                            fontFamily = QuicksandFontFamily
+                                        )
+                                    )
+                                }
+                                IconButton(onClick = { isGuestBannerDismissed = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Dismiss",
+                                        tint = Color(0xFF601827)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(R.string.guest_warning_banner),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = Color(0xFF2D1B1E),
+                                    fontFamily = QuicksandFontFamily
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = { onLogout() },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF601827)),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.align(Alignment.End)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.guest_upgrade_btn),
+                                    color = Color(0xFFFFF0F2),
+                                    fontFamily = QuicksandFontFamily,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!isGuest && firebaseAuthUser != null && !isEmailVerified && !isVerificationBannerDismissed) {
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0)),
+                        border = BorderStroke(1.dp, Color(0xFFFFB74D))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Email,
+                                        contentDescription = "Unverified Email Alert",
+                                        tint = Color(0xFFE65100)
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.auth_email_unverified_status),
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFFE65100),
+                                            fontFamily = QuicksandFontFamily
+                                        )
+                                    )
+                                }
+                                IconButton(onClick = { isVerificationBannerDismissed = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Dismiss",
+                                        tint = Color(0xFFE65100)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(R.string.auth_verification_sent_msg),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = Color(0xFF5D4037),
+                                    fontFamily = QuicksandFontFamily
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            if (resendVerificationMessage != null) {
+                                Text(
+                                    text = resendVerificationMessage!!,
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        color = Color(0xFF2E7D32),
+                                        fontFamily = QuicksandFontFamily,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                OutlinedButton(
+                                    onClick = {
+                                        viewModel.checkEmailVerificationStatus(currentActivityContext) { success, msg ->
+                                            resendVerificationMessage = msg
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(12.dp),
+                                    border = BorderStroke(1.dp, DeepBurgundy)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.auth_check_verification),
+                                        color = DeepBurgundy,
+                                        fontFamily = QuicksandFontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                                Button(
+                                    onClick = {
+                                        viewModel.resendVerificationEmail(currentActivityContext) { success, msg ->
+                                            resendVerificationMessage = msg
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
+                                    shape = RoundedCornerShape(12.dp),
+                                    enabled = resendCooldownSeconds == 0
+                                ) {
+                                    Text(
+                                        text = if (resendCooldownSeconds > 0)
+                                            stringResource(R.string.auth_resend_cooldown, resendCooldownSeconds)
+                                        else
+                                            stringResource(R.string.auth_resend_verification),
+                                        color = Cream,
+                                        fontFamily = QuicksandFontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             item {
@@ -650,11 +1042,17 @@ fun TinyPawsDashboard(
             }
 
             item {
+                Spacer(modifier = Modifier.height(10.dp))
+                SurpriseMeSection(viewModel = viewModel, onNavigate = onNavigate)
+            }
+
+            item {
                 Text(
                     text = stringResource(R.string.diary_room_title),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = TextMuted,
-                        fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = DeepBurgundy,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FrauncesFontFamily
                     ),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
@@ -663,60 +1061,17 @@ fun TinyPawsDashboard(
 
             item {
                 Text(
-                    text = "Recent Diary Entries 📔",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = TextMuted,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            if (diaryLogs.isEmpty()) {
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .glassyCard(shape = RoundedCornerShape(20.dp)),
-                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("No diary entries yet.", fontFamily = QuicksandFontFamily, color = Ink.copy(alpha = 0.6f))
-                            TextButton(onClick = { onNavigate("daily_checkin") }) {
-                                Text("Start your first entry", color = DeepBurgundy, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
-            } else {
-                items(diaryLogs.take(5), key = { it.id }) { log ->
-                    com.example.ui.SwipeableDiaryEntry(
-                        log = log,
-                        onDelete = { viewModel.deleteCheckInLog(log.id) }
-                    )
-                }
-                item {
-                    TextButton(onClick = { onNavigate("diary_feed") }) {
-                        Text("View all entries", color = DeepBurgundy, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-
-            item {
-                Text(
                     text = stringResource(R.string.help_stray_title),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = TextMuted,
-                        fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = DeepBurgundy,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FrauncesFontFamily
                     ),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
-            
+
+            // 1. Cats Near Me
             item {
                 NavigationCard(
                     title = stringResource(R.string.nav_cats_near_me_title),
@@ -725,7 +1080,8 @@ fun TinyPawsDashboard(
                     accentColor = Color(0xFF2E7D32),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .testTag("nav_cats_near_me_card"),
                     onClick = com.example.ui.theme.rememberHapticOnClick { 
                         viewModel.updateCatsNearMeTab("browse")
                         onNavigate("cats_near_me")
@@ -733,106 +1089,198 @@ fun TinyPawsDashboard(
                 )
             }
 
+            // 2. Heatwave & Weather Tracker
             item {
                 NavigationCard(
-                    title = "🔥 Heatwave & Weather Tracker",
-                    subtitle = "7-day temperature warnings (>35°C red, <15°C blue) for cat safety.",
+                    title = stringResource(R.string.nav_weather_title),
+                    subtitle = stringResource(R.string.nav_weather_subtitle),
                     backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
                     accentColor = Color(0xFFD32F2F), // Red
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .testTag("nav_weather_card"),
                     onClick = com.example.ui.theme.rememberHapticOnClick { 
                         onNavigate("weather")
                     }
                 )
             }
 
+            // 3. Feeding Stations Near Me
             item {
                 NavigationCard(
                     title = stringResource(R.string.nav_feeding_stations_title),
                     subtitle = stringResource(R.string.feeding_stations_subtitle),
-                    backgroundColor = Color(0xFFFFF3E0), // Soft warm peach
-                    accentColor = Color(0xFFE65100), // Deep orange
+                    backgroundColor = Color(0xFFE3F2FD), // Soft blue
+                    accentColor = Color(0xFF1565C0), // Deep blue
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .testTag("nav_feeding_stations_card"),
                     onClick = com.example.ui.theme.rememberHapticOnClick { 
                         onNavigate("feeding_stations")
                     }
                 )
             }
-            
+
+            // 4. Did You Find a Cat? (Triage Guide Card)
             item {
                 TriageGuideCard(
                     step = triageStep,
                     hasInjuries = hasInjuries,
                     catAgeGroup = catAgeGroup,
                     onStart = { viewModel.startTriage() },
-                    onSelectInjuries = { viewModel.selectInjuries(it) },
-                    onSelectAge = { viewModel.selectAgeGroup(it) },
+                    onSelectInjuries = { injured -> viewModel.selectInjuries(injured) },
+                    onSelectAge = { age -> viewModel.selectAgeGroup(age) },
                     onReset = { viewModel.resetTriage() }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            // 5. Community Care Tracker
+            item {
+                NavigationCard(
+                    title = stringResource(R.string.community_care_tracker_title),
+                    subtitle = stringResource(R.string.community_care_tracker_subtitle),
+                    backgroundColor = Color(0xFFF3E5F5), // Soft lavender/pink
+                    accentColor = Color(0xFF7B1FA2), // Deep purple / burgundy
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .testTag("nav_community_care_tracker_card"),
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        onNavigate("community_tracker")
+                    }
                 )
             }
             
             item {
-                CommunityImpactTrackerCard(
-                    state = trackerState,
-                    onLogActivity = { type, notes -> viewModel.logActivity(type, notes) },
-                    onDeleteLog = { id -> viewModel.deleteLog(id) },
-                    onClearLogs = { viewModel.clearAllLogs() }
+                Text(
+                    text = "🎀 " + stringResource(R.string.main_my_kitty_corner) + " 🐾",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = DeepBurgundy,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FrauncesFontFamily
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
 
             item {
-                Text(
-                    text = stringResource(R.string.main_my_kitty_corner),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = TextMuted,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
-                )
+                MyKittysCornerGrid(onNavigate = onNavigate)
             }
-            
+
             item {
-                SurpriseMeSection(
-                    viewModel = viewModel,
-                    onNavigate = onNavigate
+                val isDark = LocalIsDarkMode.current
+                val missionGradient = Brush.linearGradient(
+                    colors = if (isDark) {
+                        listOf(
+                            Color(0xFF3D151D).copy(alpha = 0.75f),
+                            Color(0xFF23112E).copy(alpha = 0.75f)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFFFECEF).copy(alpha = 0.85f),
+                            Color(0xFFF3EAF6).copy(alpha = 0.85f)
+                        )
+                    }
                 )
-            }
-            
-            item {
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .glassyCard(shape = RoundedCornerShape(20.dp)),
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                        .glassyCard(shape = RoundedCornerShape(26.dp))
+                        .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { }),
                     colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(missionGradient)
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
-                            text = stringResource(R.string.main_about_title),
-                            style = MaterialTheme.typography.titleMedium.copy(
+                            text = stringResource(R.string.about_title),
+                            style = MaterialTheme.typography.titleLarge.copy(
                                 fontFamily = FrauncesFontFamily,
                                 fontWeight = FontWeight.Bold,
-                                color = DeepBurgundy
-                            )
+                                color = DeepBurgundy,
+                                fontSize = 20.sp
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.about_subtitle),
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontFamily = QuicksandFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Wine,
+                                letterSpacing = 1.2.sp,
+                                fontSize = 12.sp
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "🐾🤍",
+                            fontSize = 24.sp,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Text(
+                            text = stringResource(R.string.about_mission_header),
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontFamily = FrauncesFontFamily,
+                                fontWeight = FontWeight.SemiBold,
+                                color = DeepBurgundy,
+                                fontSize = 16.sp
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = stringResource(R.string.main_about_desc),
-                            style = MaterialTheme.typography.bodySmall.copy(
+                            text = stringResource(R.string.about_mission_desc),
+                            style = MaterialTheme.typography.bodyMedium.copy(
                                 fontFamily = QuicksandFontFamily,
-                                color = Ink.copy(alpha = 0.8f)
-                            )
+                                color = Ink.copy(alpha = 0.85f),
+                                lineHeight = 20.sp,
+                                fontSize = 14.sp
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.about_creator_note),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontFamily = QuicksandFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = DeepBurgundy,
+                                fontSize = 14.sp,
+                                lineHeight = 19.sp
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = stringResource(R.string.about_final_note),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontFamily = QuicksandFontFamily,
+                                color = Ink.copy(alpha = 0.85f),
+                                fontSize = 13.5.sp,
+                                lineHeight = 18.sp
+                            ),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                     }
                 }
             }
-
+            
             item {
-                FooterSection()
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
@@ -1028,23 +1476,22 @@ fun HeroHeader(
     userName: String,
     onLogout: () -> Unit,
     onMenuClick: () -> Unit,
-    globalStats: com.example.data.GlobalStatistics? = null,
-    onViewRescueStories: () -> Unit = {}
+    globalStats: com.example.data.GlobalStatistics? = null
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(320.dp)
+            .height(290.dp)
     ) {
-        // Story-driven generated illustration
+        // Story-driven generated illustration (Lily and her cat Pip)
         Image(
-            painter = painterResource(id = R.drawable.img_hero_banner_1783532549587),
-            contentDescription = "Beautiful cozy illustration of a sleeping cat next to a diary",
+            painter = painterResource(id = R.drawable.img_hero_girl_cat_header_1786284269769),
+            contentDescription = "Beautiful cozy illustration of a girl with her cat",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
 
-        // Soft gradient overlay to blend into the cream top of ombre background
+        // Soft gradient overlay to blend beautifully into the background and ensure high contrast
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -1052,73 +1499,84 @@ fun HeroHeader(
                     Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Cream.copy(alpha = 0.4f),
-                            Cream
+                            Color.Black.copy(alpha = 0.2f),
+                            Color.Black.copy(alpha = 0.45f)
                         ),
-                        startY = 150f
+                        startY = 100f
                     )
                 )
         )
 
+        // Top Control Bar: Hamburger Menu (Left) and Logout Button (Right)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .align(Alignment.TopCenter),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = com.example.ui.theme.rememberHapticOnClick { onMenuClick() },
+                modifier = Modifier
+                    .testTag("home_hamburger_btn")
+                    .size(46.dp)
+                    .background(Color.White.copy(alpha = 0.85f), CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = DeepBurgundy,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+            IconButton(
+                onClick = com.example.ui.theme.rememberHapticOnClick { onLogout() },
+                modifier = Modifier
+                    .testTag("home_logout_btn")
+                    .size(46.dp)
+                    .background(Color.White.copy(alpha = 0.85f), CircleShape)
+            ) {
+                Text(
+                    text = "🚪",
+                    fontSize = 22.sp
+                )
+            }
+        }
+
+        // Bottom Content: Greeting & Streak (overlaid directly on the image with perfect contrast)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(24.dp)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Hello, $userName! 👋",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            color = DeepBurgundy,
-                            fontFamily = FrauncesFontFamily,
-                            fontWeight = FontWeight.Bold
-                        )
+            Text(
+                text = stringResource(R.string.home_greeting, userName),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    color = Color.White,
+                    fontFamily = FrauncesFontFamily,
+                    fontWeight = FontWeight.ExtraBold,
+                    shadow = androidx.compose.ui.graphics.Shadow(
+                        color = Color.Black.copy(alpha = 0.6f),
+                        blurRadius = 8f
                     )
-                    Text(
-                        text = "You're on a $streakCount day streak!",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = DeepBurgundy.copy(alpha = 0.7f),
-                            fontFamily = QuicksandFontFamily
-                        )
+                )
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.home_streak, streakCount),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = Color.White,
+                    fontFamily = QuicksandFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    shadow = androidx.compose.ui.graphics.Shadow(
+                        color = Color.Black.copy(alpha = 0.6f),
+                        blurRadius = 8f
                     )
-                }
-
-                Row {
-                    IconButton(onClick = onViewRescueStories) {
-                        Text("💖", fontSize = 24.sp)
-                    }
-                    IconButton(onClick = onMenuClick) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = DeepBurgundy)
-                    }
-                    IconButton(onClick = onLogout) {
-                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout", tint = DeepBurgundy)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Global Statistics Row
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = DeepBurgundy.copy(alpha = 0.05f)),
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, DeepBurgundy.copy(alpha = 0.1f))
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    StatItem("Saved", globalStats?.totalCatsRescued ?: 0, "🐾")
-                    StatItem("Spots", globalStats?.totalFeedingStations ?: 0, "🥣")
-                    StatItem("Users", globalStats?.totalRegisteredUsers ?: 0, "🏠")
-                }
-            }
+                )
+            )
         }
     }
 }
@@ -1198,6 +1656,110 @@ fun NavigationGridSection(
                 accentColor = Color(0xFFC2185B),
                 modifier = Modifier.weight(1f),
                 onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("cook") }
+            )
+        }
+    }
+}
+
+@Composable
+fun MyKittysCornerGrid(
+    onNavigate: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .clickable { onNavigate("my_cat_hub") }
+            .testTag("nav_my_cat_hub_card"),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = BlushPink.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, Mauve.copy(alpha = 0.3f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(54.dp)
+                    .clip(CircleShape)
+                    .background(DeepBurgundy.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("🎀", fontSize = 28.sp)
+            }
+            
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.step_into_cat_universe),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = DeepBurgundy,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FrauncesFontFamily
+                    )
+                )
+                Text(
+                    text = stringResource(R.string.step_into_cat_universe_subtitle),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Ink.copy(alpha = 0.75f),
+                        fontFamily = QuicksandFontFamily
+                    )
+                )
+            }
+            
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "Go",
+                tint = DeepBurgundy,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun KittyActionChip(
+    title: String,
+    subtitle: String,
+    color: Color,
+    textColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { onClick() }),
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.85f)),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = textColor,
+                    fontFamily = QuicksandFontFamily
+                )
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 11.sp,
+                    color = textColor.copy(alpha = 0.8f),
+                    fontFamily = QuicksandFontFamily
+                )
             )
         }
     }
@@ -2228,21 +2790,35 @@ fun TinyPawsHelperScreen(
     var inputText by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(messages.size) {
+    LaunchedEffect(messages.size, isLoading) {
         scrollState.animateScrollTo(scrollState.maxValue)
+    }
+
+    val topColor = Cream
+    val mid1Color = BlushPink.copy(alpha = 0.35f)
+    val mid2Color = PastelLavender.copy(alpha = 0.45f)
+    val cozyBackgroundBrush = remember(topColor, mid1Color, mid2Color) {
+        Brush.verticalGradient(
+            colors = listOf(
+                topColor,
+                mid1Color,
+                mid2Color,
+                topColor
+            )
+        )
     }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(com.example.ui.theme.OmbreGradientBrushLight)
+            .background(cozyBackgroundBrush)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Semi-transparent Top Bar
+            // Semi-transparent Cozy Top Bar
             Surface(
-                color = White.copy(alpha = 0.5f),
+                color = White.copy(alpha = 0.75f),
                 modifier = Modifier.fillMaxWidth(),
                 tonalElevation = 2.dp
             ) {
@@ -2254,7 +2830,7 @@ fun TinyPawsHelperScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = com.example.ui.theme.rememberHapticOnClick { onBack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = DeepBurgundy)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.chat_back), tint = DeepBurgundy)
                     }
                     Text(
                         text = stringResource(R.string.chat_title),
@@ -2324,6 +2900,17 @@ fun TinyPawsHelperScreen(
                 }
 
                 if (isLoading) {
+                    val infiniteTransition = rememberInfiniteTransition(label = "thinking_anim")
+                    val pulseAlpha by infiniteTransition.animateFloat(
+                        initialValue = 0.55f,
+                        targetValue = 1.0f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(700, easing = LinearEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "thinking_alpha"
+                    )
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -2331,7 +2918,7 @@ fun TinyPawsHelperScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Surface(
-                            color = BlushPink.copy(alpha = 0.9f),
+                            color = BlushPink.copy(alpha = pulseAlpha),
                             shape = CircleShape,
                             shadowElevation = 2.dp
                         ) {
@@ -2342,7 +2929,7 @@ fun TinyPawsHelperScreen(
                                 Text("🐾", fontSize = 18.sp)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Thinking & licking paws...",
+                                    text = stringResource(R.string.chat_thinking),
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         color = DeepBurgundy,
                                         fontWeight = FontWeight.Bold,
@@ -2356,17 +2943,18 @@ fun TinyPawsHelperScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            // Glassy Input Field
+            // Glassy Input Field container with smooth IME handling
             Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = White.copy(alpha = 0.85f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .imePadding(),
+                color = White.copy(alpha = 0.9f),
                 shadowElevation = 12.dp
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .navigationBarsPadding()
-                        .imePadding(),
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextField(
@@ -2378,7 +2966,8 @@ fun TinyPawsHelperScreen(
                                 style = MaterialTheme.typography.bodyLarge.copy(color = Ink.copy(alpha = 0.5f), fontFamily = QuicksandFontFamily)
                             ) 
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                             .background(Color.Transparent),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Cream,
@@ -2389,25 +2978,32 @@ fun TinyPawsHelperScreen(
                             focusedTextColor = Ink,
                             unfocusedTextColor = Ink
                         ),
-                        shape = CircleShape,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                        singleLine = true
+                        shape = RoundedCornerShape(24.dp),
+                        singleLine = true,
+                        maxLines = 3
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    val context = androidx.compose.ui.platform.LocalContext.current
                     IconButton(
                         onClick = com.example.ui.theme.rememberHapticOnClick { 
-                            if (inputText.isNotBlank() && !isLoading) {
-                                viewModel.sendChatMessage(inputText)
+                            if (inputText.isNotBlank()) {
+                                val textToSend = inputText
                                 inputText = ""
+                                viewModel.sendChatMessage(textToSend)
                             }
                         },
-                        enabled = inputText.isNotBlank() && !isLoading,
-                        modifier = Modifier.background(if (inputText.isNotBlank()) DeepBurgundy else Mauve, CircleShape)
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(DeepBurgundy, CircleShape)
+                            .testTag("chat_send_button"),
+                        enabled = inputText.isNotBlank() && !isLoading
                     ) {
                         Icon(
-                            Icons.AutoMirrored.Filled.Send, 
+                            imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = stringResource(R.string.chat_send),
-                            tint = Cream
+                            tint = if (inputText.isNotBlank() && !isLoading) Cream else Cream.copy(alpha = 0.5f)
                         )
                     }
                 }

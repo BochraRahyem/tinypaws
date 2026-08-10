@@ -7,8 +7,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.ui.theme.*
 
 @Composable
@@ -69,12 +71,12 @@ fun FeedingMoodDialog(
                 onClick = { onSave(selectedType, notes) },
                 colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy)
             ) {
-                Text("Save", color = Cream, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.save_reminder), color = Cream, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = DeepBurgundy)
+                Text(stringResource(R.string.cancel_btn), color = DeepBurgundy)
             }
         },
         containerColor = Cream,

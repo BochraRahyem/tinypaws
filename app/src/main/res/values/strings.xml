@@ -7,6 +7,20 @@
     <string name="onboarding_question">What is your name, caregiver?</string>
     <string name="onboarding_placeholder">Enter your name...</string>
     <string name="onboarding_btn">Step in Softly</string>
+    <string name="onboarding_intro_title_1">Welcome to TinyPaws</string>
+    <string name="onboarding_intro_desc_1">Our mission is to protect, nourish, and stand up for every street cat and kitten. Together, we can be their voice when they need it most.</string>
+    <string name="onboarding_intro_title_2">Profiles &amp; Health Tracking</string>
+    <string name="onboarding_intro_desc_2">Track stray cat profiles, keep detailed care logs, record feeding schedules, medical notes, and monitor health progress over time.</string>
+    <string name="onboarding_intro_title_3">Community &amp; Feeding Stations</string>
+    <string name="onboarding_intro_desc_3">Locate stray cat reports, add local feeding stations, receive extreme weather shelter alerts, and coordinate with nearby caregivers.</string>
+    <string name="onboarding_intro_title_4">Care Guides, Quizzes &amp; AI Helper</string>
+    <string name="onboarding_intro_desc_4">Learn winter survival tips, build DIY cat shelters, take educational quizzes to earn certificates, and ask the TinyPaws AI Helper for rescue advice 24/7.</string>
+    <string name="home_greeting">Hello, %1$s 🐱</string>
+    <string name="home_streak">🔥 %1$d day streak</string>
+    <string name="nav_weather_title">🔥 Heatwave &amp; Weather Tracker</string>
+    <string name="nav_weather_subtitle">7-day temperature warnings (&gt;35°C red, &lt;15°C blue) for cat safety.</string>
+    <string name="step_into_cat_universe">Step Into Your Cat\'s Universe 🐱🎀</string>
+    <string name="step_into_cat_universe_subtitle">Manage profile, growth charts, care checklist diaries, weight tracker, and veterinary care reminders in one dashboard.</string>
     <string name="hi_user">Hi, %1$s! 👋</string>
     <string name="logout_content_description">Logout</string>
     <string name="dashboard_tagline">Caring for our community cat friends, one paw at a time.</string>
@@ -35,6 +49,57 @@
     <string name="chat_input_placeholder">type a question...</string>
     <string name="chat_clear">Clear chat</string>
     <string name="chat_back">Back</string>
+    <string name="chat_thinking">Thinking &amp; licking paws... 🐾</string>
+
+    <!-- Coat colors / Cat types -->
+    <string name="coat_orange">Orange Tabby 🍊</string>
+    <string name="coat_gray">Gray / Blue 🩶</string>
+    <string name="coat_white">White 🤍</string>
+    <string name="coat_black">Black 🖤</string>
+    <string name="coat_orange_white">Orange &amp; White 🍊🤍</string>
+    <string name="coat_black_white">Tuxedo / Black &amp; White 🖤🤍</string>
+    <string name="coat_tabby">Tabby 🐯</string>
+    <string name="coat_caliby">Caliby (Calico + Tabby) 🌸🐯</string>
+    <string name="coat_calico">Calico 🎨</string>
+    <string name="coat_tortoiseshell">Tortoiseshell (Tortie) 🐢</string>
+    <string name="coat_siamese">Siamese 🐱</string>
+    <string name="coat_persian">Persian 👑</string>
+    <string name="coat_maine_coon">Maine Coon 🦁</string>
+    <string name="coat_ragdoll">Ragdoll 🧸</string>
+    <string name="coat_bengal">Bengal 🐆</string>
+    <string name="coat_mixed">Mixed / Domestic Shorthair 🐾</string>
+    <string name="coat_other">Other / Unknown ❓</string>
+
+    <!-- Rescue Profile -->
+    <string name="rescue_profile_title">My Rescue Profile</string>
+    <string name="profile_community_guardian">Community Guardian</string>
+    <string name="profile_anonymous_angel">Anonymous Rescue Angel</string>
+    <string name="profile_stat_reported">Reported</string>
+    <string name="profile_stat_rescued">Rescued</string>
+    <string name="profile_stat_stars">Stars ⭐</string>
+    <string name="profile_champions_impact_title">Community Champions &amp; Impact 🏆</string>
+    <string name="profile_reporting_champion">Reporting Champion 🐱</string>
+    <string name="profile_cat_badges_earned">Cat badges earned: %1$d 🐱</string>
+    <string name="profile_rescue_champion">Rescue Champion ⭐</string>
+    <string name="profile_rescue_stars_count">Rescue Spirit stars: %1$d ⭐</string>
+    <string name="profile_impact_summary">Impact Summary 🐾</string>
+    <string name="profile_cats_discovered">Cats discovered: %1$d</string>
+    <string name="profile_cats_helped">Cats helped: %1$d</string>
+    <string name="profile_cats_rescued">Cats rescued: %1$d</string>
+    <string name="profile_active_reports_title">My Active Cat Reports</string>
+    <string name="profile_no_reports_empty">You haven\'t reported any stray cats yet. Use the \'Cats Near Me\' map to report a stray in need! 🐾</string>
+    <string name="profile_stray_report_default">Stray Cat Report</string>
+    <string name="profile_needs_prefix">Needs: %1$s</string>
+    <string name="profile_people_reached_out">%1$d people reached out</string>
+    <string name="profile_hall_of_fame_title">My Rescue Hall of Fame 🏆</string>
+    <string name="profile_no_rescues_empty">No rescued cats yet. Every rescue starts with reaching out! ❤️</string>
+    <string name="profile_rescued_cat_default">Rescued Cat</string>
+    <string name="profile_status_safe_rescued">Status: Safe &amp; Rescued 🎉</string>
+
+    <!-- Community Care Tracker Card Home Screen -->
+    <string name="community_care_tracker_title">Community Care Tracker 💖</string>
+    <string name="community_care_tracker_subtitle">Log feeding, shelters &amp; rescues to earn badges &amp; level up!</string>
+    <string name="drawer_community_tracker">Community Care Tracker 💖</string>
     <string name="tracker_header">Community Care Tracker</string>
     <string name="tracker_rank_label">YOUR COMMUNITY RANK</string>
     <string name="tracker_points_needed">%1$d points needed to reach %2$s</string>
@@ -83,6 +148,13 @@
     <string name="guide_banner_title">Lily &amp; Pip\'s Storyroom</string>
     <string name="guide_banner_desc">Follow Lily and her playful ginger kitten Pip as they discover how to keep our backyard companions safe, cozy, and vibrant!</string>
     <string name="guide_back_menu">← Back to Guide Menu</string>
+    <string name="reminder_title_label">Reminder Title</string>
+    <string name="cancel_action">Cancel</string>
+    <string name="ok_action">OK</string>
+    <string name="distance_km_label">%1$.0fkm</string>
+    <string name="activity_desc_rescued">Adopted/rescued cat permanently</string>
+    <string name="activity_desc_fed">Fed individual stray cat</string>
+    <string name="activity_desc_station">Filled feeding station</string>
     <string name="guide_diseases_title">Diseases 🦠</string>
     <string name="guide_diseases_subtitle">Learn about 5 critical feline diseases, symptoms, and life-saving prevention steps.</string>
     <string name="guide_adoption_title">Adoption 🏡</string>
@@ -302,11 +374,33 @@
     <string name="diy_milestone_2">Milestone 2: Main Assembly</string>
     <string name="diy_milestone_3">Milestone 3: Finished Result</string>
     <string name="diy_storyboard_step">Storyboard Step %1$d of 10</string>
-    <string name="diy_diff_easiest">Easiest</string>
     <string name="diy_diff_easy">Easy</string>
     <string name="diy_diff_medium">Medium</string>
     <string name="diy_diff_hard">Hard</string>
     <string name="diy_diff_hardest">Hardest</string>
+    <string name="diy_diff_easiest">Easiest</string>
+    <string name="diy_cost_free">Free</string>
+    <string name="diy_cost_2">$2</string>
+    <string name="diy_cost_3">$3</string>
+    <string name="diy_cost_5">$5</string>
+    <string name="diy_cost_8">$8</string>
+    <string name="diy_cost_9">$9</string>
+    <string name="diy_cost_10">$10</string>
+    <string name="diy_cost_12">$12</string>
+    <string name="diy_cost_15">$15</string>
+    <string name="diy_cost_20">$20</string>
+    <string name="diy_time_3m">3 mins</string>
+    <string name="diy_time_5m">5 mins</string>
+    <string name="diy_time_10m">10 mins</string>
+    <string name="diy_time_12m">12 mins</string>
+    <string name="diy_time_15m">15 mins</string>
+    <string name="diy_time_20m">20 mins</string>
+    <string name="diy_time_25m">25 mins</string>
+    <string name="diy_time_35m">35 mins</string>
+    <string name="diy_time_40m">40 mins</string>
+    <string name="diy_time_45m">45 mins</string>
+    <string name="diy_time_60m">60 mins</string>
+    <string name="guide_diy_milestone_step">Step %1$d of %2$d</string>
     <string name="guide_stray_header_title">Found a Stray? Let\'s Help Together</string>
     <string name="guide_stray_header_subtitle">Lily and Pip show you how to safely rescue and care for community cats.</string>
     <string name="guide_stray_tab_safety">Immediate Safety</string>
@@ -1843,7 +1937,7 @@
     <string name="offline_tip_4">4. Ask Around: Check collar/tags; neighbors might know the owner.</string>
     <string name="diary_room_title">Choose your diary room</string>
     <string name="help_stray_title">Help a stray cat</string>
-    <string name="cats_near_me_subtitle">Browse nearby reported strays.</string>
+    <string name="cats_near_me_subtitle">Browse nearby reported stray cats or report a stray cat.</string>
     <string name="care_academy_title">TinyPaws Care Academy 🎓</string>
     <string name="review_needed_title">Review Needed 🐾</string>
     <string name="review_needed_desc">You got some questions incorrect. Let\'s go back and answer them correctly to complete the level and unlock the next one!</string>
@@ -2082,6 +2176,7 @@
     <string name="main_report_stray">📢 Report Stray</string>
     <string name="main_browse_nearby">🔍 Browse Nearby</string>
     <string name="main_settings">Settings</string>
+    <string name="main_leaderboard">Leaderboard 🏆</string>
     <string name="main_dark_mode">Dark Mode</string>
     <string name="hub_title">My Cat Hub</string>
     <string name="hub_back">Back</string>
@@ -2089,8 +2184,8 @@
     <string name="hub_weight_tracker">Weight Tracker</string>
     <string name="hub_daily_checkin">Daily Check-in</string>
     <string name="hub_reminders">Reminders</string>
-    <string name="nav_feeding_stations_title">Feeding Stations</string>
-    <string name="feeding_stations_subtitle">Log and locate neighborhood street cat feeding spots</string>
+    <string name="nav_feeding_stations_title">Feeding Stations Near Me</string>
+    <string name="feeding_stations_subtitle">Allows browsing feeding stations or reporting/adding a feeding station</string>
     <string name="menu_feeding_stations">Feeding Stations</string>
     <string name="log_feeding_station_btn">Log a Feeding Station</string>
     <string name="feeding_station_name">Station Name</string>
@@ -2127,4 +2222,824 @@
     <string name="cert_preview_btn">Keep Playing</string>
     <string name="cert_fallback_name">TinyPaws Cat Champion</string>
     <string name="cert_content_desc">Certificate of Purrfection</string>
+
+    <!-- Auth & Friendly Error Strings -->
+    <string name="auth_err_invalid_credentials">That email or password isn\'t right. Try again.</string>
+    <string name="auth_err_email_already_in_use">An account with this email already exists. Try logging in instead.</string>
+    <string name="auth_err_weak_password">Your password needs to be at least 6 characters.</string>
+    <string name="auth_err_invalid_email">That doesn\'t look like a valid email address.</string>
+    <string name="auth_err_network_error">No internet connection. Please check your connection and try again.</string>
+    <string name="auth_err_too_many_requests">Too many tries. Please wait a minute and try again.</string>
+    <string name="auth_err_passwords_dont_match">Passwords do not match. Please check and try again.</string>
+    <string name="auth_err_name_required">Please enter your full name.</string>
+    <string name="auth_err_default">An error occurred. Please try again.</string>
+    <string name="auth_err_configuration">Authentication is not configured in this app. Please try Guest Mode.</string>
+    <string name="cloud_restore_success">Successfully restored data from cloud (%1$s)!</string>
+    <string name="cloud_restore_no_data">No existing cloud data found. Starting fresh! ✨</string>
+    <string name="cloud_restore_failed">Cloud restore failed. Please try again later.</string>
+    <string name="cloud_backup_success">Backup uploaded to cloud (%1$s)</string>
+    <string name="cloud_backup_failed">Cloud backup failed. Check your connection.</string>
+    <string name="cloud_syncing_label">Syncing with cloud...</string>
+    <string name="cloud_backup_btn">Backup</string>
+    <string name="cloud_restore_btn">Restore</string>
+    <string name="datasync_title">Data Sync &amp; Export</string>
+    <string name="datasync_intro_title">Manage Your Cat\'s Data</string>
+    <string name="datasync_intro_desc">Export your cat\'s growth logs to CSV, share with your veterinarian, or backup your data securely with Firebase Cloud Sync.</string>
+    <string name="datasync_csv_title">Export Health Logs to CSV</string>
+    <string name="datasync_csv_desc">Share growth chart, care logs, and diary history directly with your veterinarian.</string>
+    <string name="datasync_csv_btn">Export &amp; Share CSV</string>
+    <string name="datasync_cloud_title">Cloud Sync &amp; Backup</string>
+    <string name="datasync_cloud_desc">Sync diary entries, care checklist &amp; weight logs securely via Firebase Firestore.</string>
+    <string name="datasync_csv_err">Unable to export CSV file.</string>
+    <string name="datasync_csv_success">CSV exported successfully!</string>
+    <string name="auth_reset_sent_msg">If an account exists for this email, a reset link has been sent.</string>
+    <string name="auth_signup_title">Create Account 🎒</string>
+    <string name="auth_login_title">Welcome Back! 🐾</string>
+    <string name="auth_forgot_title">Reset Password 🔑</string>
+    <string name="auth_forgot_desc">Enter your account email to receive a password reset link.</string>
+    <string name="auth_forgot_link">Forgot password?</string>
+    <string name="auth_send_reset_btn">Send Reset Link 📧</string>
+    <string name="auth_back_to_login">Back to Sign In</string>
+    <string name="auth_confirm_password_label">Confirm Password</string>
+    <string name="auth_full_name_label">Full Name</string>
+    <string name="auth_welcome_guest_title">Welcome to TinyPaws 🐾</string>
+    <string name="auth_welcome_guest_desc">Enter your name or rescue nickname to get started instantly!</string>
+    <string name="auth_login_desc">Sign in to access your cat\'s secure diary.</string>
+    <string name="auth_signup_desc">Join TinyPaws to start tracking stray rescue growth.</string>
+    <string name="auth_guest_entry_title">Guest Entry 🐾</string>
+    <string name="auth_guest_name_label">Your Name or Nickname</string>
+    <string name="auth_guest_name_hint">e.g. Alex or CatLover22</string>
+    <string name="auth_guest_submit_btn">Enter Without Account 🚀</string>
+    <string name="auth_switch_to_guest_btn">Or start instantly as Guest 🐾</string>
+    <string name="auth_switch_to_email_btn">Or sign in with email &amp; password ✉️</string>
+    <string name="auth_full_name_hint">e.g. Lily Smith</string>
+    <string name="auth_country_label">Country 🌍</string>
+    <string name="auth_country_hint">e.g. United States, France, Tunisia</string>
+    <string name="auth_email_label">Email Address</string>
+    <string name="auth_password_label">Password</string>
+    <string name="auth_sign_in_btn">Sign In</string>
+    <string name="auth_sign_up_btn">Sign Up</string>
+    <string name="auth_already_have_acc">Already have an account? Sign In</string>
+    <string name="auth_need_an_acc">Need an account? Sign Up</string>
+    <string name="auth_err_country_required">Country is required for community rankings</string>
+    <string name="auth_confirm_password_hint">Re-enter password</string>
+    <string name="auth_password_hint">Min 6 characters</string>
+    <string name="auth_toggle_password">Toggle password visibility</string>
+    <string name="auth_toggle_confirm_password">Toggle confirm password visibility</string>
+    <string name="auth_verification_sent_msg">We sent a verification link to your email — please confirm it. 📧</string>
+    <string name="auth_resend_verification">Resend verification email</string>
+    <string name="auth_resend_cooldown">Resend available in %1$d seconds</string>
+    <string name="auth_check_verification">Check Verification Status</string>
+    <string name="auth_verified_success">Your email has been verified! Welcome to TinyPaws.</string>
+    <string name="auth_not_verified_yet">Verification not detected yet. Please check your inbox and click the link.</string>
+    <string name="auth_account_created_email_failed">Account created, but failed to send verification email: %1$s</string>
+    <string name="auth_already_verified">Your email is already verified.</string>
+    <string name="auth_err_user_not_found">User account not found or session expired. Please sign in again.</string>
+    <string name="auth_verifying">Checking verification status...</string>
+    <string name="auth_email_verified_status">Email verified ✅</string>
+    <string name="auth_email_unverified_status">Email not verified — check your inbox.</string>
+    <string name="guest_warning_banner">You\'re using TinyPaws as a guest. Your data is only saved on this phone — if you lose this phone or delete the app, it\'s gone. Create a free account to keep it safe forever.</string>
+    <string name="guest_upgrade_btn">Create Account 🎒</string>
+    <string name="cat_personality_label">Personality &amp; Traits</string>
+    <string name="cat_adoption_photo_label">Kitten / Adoption Photo</string>
+    <string name="cat_food_pref_label">Food Preferences &amp; Allergies</string>
+    <string name="cat_chronic_cond_label">Chronic Conditions &amp; Health Notes</string>
+    <string name="choose_language_title">Choose your language 🌍</string>
+    <string name="choose_language_subtitle">Select your preferred language to customize your TinyPaws rescue experience.</string>
+    <string name="continue_btn">Continue 🐾</string>
+    <string name="cook_disclaimer_notice">Always consult a veterinarian before introducing new homemade foods to your cat\'s regular diet. These recipes are intended as supplemental treats or emergency food options, never a full-time nutritional replacement.</string>
+    <string name="ai_helper_fab_text">AI Helper</string>
+    <string name="hub_cat_profile_title">Cat Profile</string>
+    <string name="hub_cat_profile_desc">Manage cat details, breed, coat color, and age</string>
+    <string name="hub_growth_weight_title">Growth &amp; Weight</string>
+    <string name="hub_growth_weight_desc">Log history, view trend lines, and monitor development</string>
+    <string name="hub_vet_reminders_title">Vet Reminders</string>
+    <string name="hub_vet_reminders_desc">Schedule alerts for veterinary visits, vaccinations, and boosters</string>
+    <string name="hub_daily_care_title">Daily Care Checklist</string>
+    <string name="hub_daily_care_desc">Check off daily feeding, water, playing, and medicine routines</string>
+    <string name="hub_cat_care_diary_title">Cat Care Diary</string>
+    <string name="hub_cat_care_diary_desc">Log daily mood, behavior, preferences, and free-form notes</string>
+    <string name="hub_care_reminders_title">Care Reminders</string>
+    <string name="hub_care_reminders_desc">Custom care and feeding reminders with exact time, 10m, 20m, or 30m before alarms</string>
+    <string name="hub_data_sync_title">Data Export &amp; Cloud Sync</string>
+    <string name="hub_data_sync_desc">Share growth &amp; diary logs in CSV, or backup via Firebase Firestore</string>
+    <string name="stat_saved_cats">Saved Cats</string>
+    <string name="stat_community_users">Community Users</string>
+
+    <string name="hub_take_photo">Take Profile Photo 📸</string>
+    <string name="hub_choose_gallery">Choose from Gallery 🖼️</string>
+    <string name="hub_remove_photo">Remove Photo ❌</string>
+    <string name="hub_photo_preview">Photo Preview</string>
+    <string name="hub_camera_permission_denied">Camera permission is required to take photos.</string>
+    <string name="hub_weight_history">Weigh-in History</string>
+    <string name="hub_add_weight">Add Weight</string>
+    <string name="hub_edit_weight">Edit Weight</string>
+    <string name="hub_delete_weight">Delete Weight</string>
+    <string name="hub_weight_trend">Weight Trend (kg)</string>
+    <string name="hub_no_weight_data">No weight data points recorded yet.</string>
+    <string name="hub_previous_weight">Previous: %1$s kg</string>
+    <string name="hub_current_weight">Current: %1$s kg</string>
+    <string name="hub_weight_trend_title">Weight History Chart</string>
+    <string name="hub_history_log_title">Cat History Log 📖</string>
+    <string name="hub_history_log_desc">Keep track of vet visits, vaccinations, medications, and milestones.</string>
+    <string name="hub_history_add_entry">Add History Entry</string>
+    <string name="hub_history_edit_entry">Edit History Entry</string>
+    <string name="hub_history_empty">No history entries logged yet. Add your cat\'s first milestone!</string>
+    <string name="hub_history_category">Category</string>
+    <string name="hub_history_date">Date</string>
+    <string name="hub_history_title_label">Title</string>
+    <string name="hub_history_notes_label">Notes (Optional)</string>
+    <string name="hub_history_save">Save Entry</string>
+    <string name="hub_history_cat_vet">Vet Visit 🩺</string>
+    <string name="hub_history_cat_vac">Vaccination 💉</string>
+    <string name="hub_history_cat_med">Medication 💊</string>
+    <string name="hub_history_cat_milestone">Milestone 🎉</string>
+    <string name="hub_history_cat_other">Other Event 🐾</string>
+    <string name="settings_theme_title">App Theme</string>
+    <string name="theme_light_coral">🌸 Light Coral</string>
+    <string name="theme_dark_velvet">🌙 Dark Velvet</string>
+    <string name="reminder_type_meal">🍽️ Meal / Feeding</string>
+    <string name="reminder_type_medication">💊 Medication</string>
+    <string name="reminder_type_vet">🏥 Vet Visit</string>
+    <string name="reminder_type_vaccine">💉 Vaccination</string>
+    <string name="reminder_type_general">✨ General Care</string>
+    <string name="reminder_recurring_daily">Daily Recurring</string>
+    <string name="reminder_enabled">Enabled</string>
+    <string name="reminder_disabled">Disabled</string>
+    <string name="reminder_edit_title">Edit Care Reminder</string>
+    <string name="reminder_add_title">Schedule Care Reminder</string>
+    <string name="reminder_meal_default_text">It\'s time to feed your cat 🍽️</string>
+    <string name="reminder_medication_default_text">It\'s time for your cat\'s medication 💊</string>
+    <string name="multi_cat_active_label">Active Cat Profile</string>
+    <string name="multi_cat_add_new">+ Add Cat Profile</string>
+    <string name="multi_cat_switch">Switch Active Cat</string>
+    <string name="multi_cat_confirm_delete_title">Delete Cat Profile?</string>
+    <string name="multi_cat_confirm_delete_msg">Are you sure you want to delete %1$s? All weight logs, history, and care checklists for this cat will be deleted.</string>
+    <string name="multi_cat_new_cat_title">Add New Cat Profile 🐱</string>
+    <string name="multi_cat_new_cat_name">Cat\'s Name</string>
+    <string name="multi_cat_select_cats">Select Cat(s) for Reminder</string>
+    <string name="multi_cat_all_cats">All My Cats 🐾</string>
+    <string name="multi_cat_limit_reached">Maximum of 7 cats reached.</string>
+    <string name="multi_cat_count">%1$d / 7 Cats</string>
+    <string name="drawer_ai_chatbot">AI Chatbot 🤖</string>
+    <string name="drawer_rescue_profile">Rescue Profile 👤</string>
+    <string name="drawer_discover_tinypaws">Discover TinyPaws 🌟</string>
+    <string name="guest_warning_title">Guest Mode Warning ⚠️</string>
+    <string name="about_title">About TinyPaws</string>
+    <string name="about_subtitle">SPEAK FOR THE VOICELESS</string>
+    <string name="about_mission_header">Our Sacred Mission</string>
+    <string name="about_mission_desc">TinyPaws Diary was born from a simple promise: to speak on behalf of every stray cat and kitten who cannot speak for themselves. I’m Bochra Rhayem, a 17-year-old from Tunisia, and I created TinyPaws with the ambition of making it easier for people to help, even when they don’t have the resources to rescue a cat themselves. By bringing together care guides, health information, nutrition help, reporting tools, and community support, TinyPaws gives everyone a way to contribute and reminds us that every small act of kindness can make a difference.</string>
+    <string name="about_creator_note">Made by a teenager, for teenagers, and for anyone who wants to help but doesn’t have the tools.</string>
+    <string name="about_final_note">You don’t need to have everything to help. You just need to care enough to start. 🐾🤍</string>
+    <string name="diary_new_entry">New Entry</string>
+    <string name="diary_close">Close</string>
+    <string name="diary_add_title">Add Cat Diary Entry</string>
+    <string name="diary_category_label">Category:</string>
+    <string name="diary_mood_label">Cat Mood:</string>
+    <string name="diary_notes_label">Entry Notes &amp; Details</string>
+    <string name="diary_notes_placeholder">e.g. Received rabies vaccine booster, ate well.</string>
+    <string name="diary_weight_label">Cat Weight (kg)</string>
+    <string name="diary_weight_placeholder">e.g. 4.2</string>
+    <string name="diary_attach_photos">Attach Cat Photos:</string>
+    <string name="diary_save_btn">Save Entry</string>
+    <string name="weather_title">🌤️ Weather &amp; Heatwave Alert</string>
+    <string name="weather_retry">Retry Connection</string>
+    <string name="weather_syncing">Syncing...</string>
+    <string name="weather_sync_now">Sync Now</string>
+    <string name="weather_hot">🔥 Hot Weather:</string>
+    <string name="weather_cold">❄️ Cold Weather:</string>
+    <string name="cert_generating">Generating Image...</string>
+    <string name="cert_download">Download Certificate</string>
+    <string name="cert_share">Share Certificate</string>
+    <string name="cert_academy">TINYPAWS ACADEMY</string>
+    <string name="cert_mastery">CERTIFICATE OF MASTERY</string>
+    <string name="cert_presented">This is proudly presented to</string>
+    <string name="cert_dedication">For demonstrating extraordinary dedication, knowledge, and care in street cat welfare,</string>
+    <string name="cert_winter">winter shelter crafting, and feline nutrition across all TinyPaws Quizzes.</string>
+    <string name="cert_date">DATE:</string>
+    <string name="cert_seal">SEAL OF</string>
+    <string name="cert_honor">HONOR</string>
+    <string name="profile_notes_placeholder">e.g. Playful, shy around strangers, loves sunbathing</string>
+    <string name="profile_image_placeholder">Optional image link when first adopted</string>
+    <string name="profile_food_placeholder">e.g. Loves salmon pâté, allergic to chicken</string>
+    <string name="profile_medical_placeholder">e.g. Mild asthma, special renal diet</string>
+    <string name="profile_current_photo">Current Photo 📸</string>
+    <string name="profile_adopted_photo">When Adopted 🍼</string>
+    <string name="weight_checkup_placeholder">e.g. Annual Checkup</string>
+    <string name="weight_notes_placeholder">e.g. Weight: 4.2kg, next due in 1 year</string>
+    <string name="guide_prev">◀ Prev</string>
+    <string name="settings_trigger_email">Trigger Test Welcome Email 📩</string>
+    <string name="settings_no_mail">No mail documents found in Firestore queue.</string>
+    <string name="settings_no_fcm">No FCM payloads recorded yet. (Trigger a rescue report to test).</string>
+    <string name="diary_feed_title">Cat Diary Feed</string>
+    <string name="diary_search_placeholder">Search by date or keyword (e.g. vet, vaccine, happy)...</string>
+    <string name="diary_filter_all">All Feed</string>
+    <string name="diary_filter_vet">🏥 Vet Visits</string>
+    <string name="diary_filter_vaccination">💉 Vaccines</string>
+    <string name="diary_filter_grooming">✂️ Grooming</string>
+    <string name="diary_filter_general">📝 General Notes</string>
+    <string name="mood_happy">😊 Happy</string>
+    <string name="mood_playful">🧶 Playful</string>
+    <string name="mood_relaxed">😴 Relaxed</string>
+    <string name="mood_unwell">🤒 Unwell</string>
+    <string name="diary_saved_photos">Saved Photos (%1$d)</string>
+    <string name="diary_cat_general">📝 General</string>
+    <string name="diary_cat_vet">🏥 Vet</string>
+    <string name="diary_cat_vaccination">💉 Vaccine</string>
+    <string name="diary_cat_grooming">✂️ Groom</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="main_open">Open</string>
+    <string name="main_close">Close</string>
+    <string name="main_ok">OK</string>
+    <string name="main_prev">◀ Prev</string>
+    <string name="cats_near_me_current_needs">Current Needs</string>
+    <string name="cats_near_me_calc_dist">Calculated Distance</string>
+    <string name="cats_near_me_dist_away">%1$.2f km away</string>
+    <string name="cats_near_me_exact_loc">Exact Location</string>
+    <string name="cats_near_me_report_date">Report Date</string>
+    <string name="cats_near_me_take_me_there">Take me there 🗺️</string>
+    <string name="cats_near_me_helped_cat">I helped this cat 🐾 (+2 ⭐)</string>
+    <string name="cats_near_me_rescued_cat">Adopted / Permanently rescued 💜 (+5 ⭐)</string>
+    <string name="cats_near_me_fed_cat">I fed this cat 🥣 (+1 ⭐)</string>
+    <string name="connection_required_title">Connection Required</string>
+    <string name="connection_required_desc">You need Wi-Fi or mobile data to access this part or this feature.</string>
+    
+    <string name="weather_offline_notice">An active internet connection is required to refresh live weather data. Displaying offline forecast.</string>
+    <string name="weather_online_notice">Note: An active internet connection is required to fetch live weather updates for your area.</string>
+
+    <string name="weather_protection_title">Extreme Weather Protection Alerts</string>
+    <string name="weather_protection_enabled">Push alerts enabled for extreme cold &amp; heatwaves</string>
+    <string name="weather_protection_disabled">Get notified when street cats need emergency shelter</string>
+    <string name="weather_select_location">📍 Select Location</string>
+    <string name="weather_gps_location">📡 Current GPS</string>
+    <string name="weather_heat_extreme">EXTREME HEATWAVE WARNING (&gt;45°C / 113°F)</string>
+    <string name="weather_heat_severe">SEVERE HEATWAVE ALERT (&gt;40°C / 104°F)</string>
+    <string name="weather_heat_warning">HEATWAVE WARNING (&gt;35°C / 95°F)</string>
+    <string name="weather_heat_desc">Temperatures reach up to %1$s this week! Provide shade and shallow bowls of cool fresh water for outdoor cats.</string>
+    <string name="weather_send_notif">🔔 Send Phone Notification</string>
+    <string name="weather_cold_freezing">FREEZING COLD WARNING (≤5°C / 41°F)</string>
+    <string name="weather_cold_severe">SEVERE COLD WEATHER (≤10°C / 50°F)</string>
+    <string name="weather_cold_chilly">CHILLY WEATHER ALERT (≤15°C / 59°F)</string>
+    <string name="weather_cold_desc">Temperatures drop to %1$s! Keep cat shelters elevated off the ground and insulated with fresh dry straw.</string>
+    <string name="weather_legend_title">🎨 Temperature Color Highlighting Guide</string>
+    <string name="weather_legend_hot">🔥 Hot Weather:</string>
+    <string name="weather_legend_35">&gt; 35°C Pastel Red</string>
+    <string name="weather_legend_40">&gt; 40°C Darker Red</string>
+    <string name="weather_legend_45">&gt; 45°C Dark Red</string>
+    <string name="weather_legend_cold">❄️ Cold Weather:</string>
+    <string name="weather_legend_15">≤ 15°C Vibrant Blue</string>
+    <string name="weather_legend_10">≤ 10°C Darker Blue</string>
+    <string name="weather_legend_5">≤ 5°C Dark Blue</string>
+    <string name="weather_forecast_title">📅 7-Day Forecast</string>
+    <string name="weather_updated_for">Updated for %1$s</string>
+    <string name="weather_syncing_toast">🔄 Syncing weather data for %1$s...</string>
+    <string name="weather_syncing_btn">Syncing...</string>
+    <string name="weather_fetching_forecast">Fetching 7-Day Weather Forecast...</string>
+    <string name="weather_analyzing_thresholds">Analyzing temperature thresholds for outdoor cat protection</string>
+    <string name="weather_safety_tips_title">Weather Safety Tips for Stray Cats</string>
+    <string name="weather_safety_tips_desc">• In Hot Weather (&gt;35°C): Put out extra water dishes in shady areas. Avoid metal water bowls as they heat up quickly.\n• In Extreme Heat (&gt;40°C): Create shaded shelters using damp towels or cardboard boxes.\n• In Cold Weather (≤15°C): Use dry straw inside DIY shelters. Never use blankets or towels outdoors because they absorb moisture and freeze.</string>
+    <string name="weather_today">Today</string>
+    <string name="weather_low_temp">Low %1$s</string>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <string name="guide_badge_vaccine">💉 Vaccine</string>
+    <string name="guide_badge_hygiene">🧼 Hygiene</string>
+    <string name="guide_badge_flea">🦟 Flea Control</string>
+    <string name="guide_badge_quarantine">🧴 Quarantine</string>
+    <string name="guide_badge_emergency">🩹 Emergency Care</string>
+    <string name="guide_fav_remove">Remove</string>
+    <string name="guide_cook_ingredients_title">🥗 Ingredients &amp; Materials:</string>
+    <string name="guide_cook_visual_guide">🎬 Interactive Visual Cooking Guide:</string>
+    <string name="guide_cook_tap_open">✨ Tap to open full 10-step visual cooking storyboard</string>
+    <string name="guide_cook_prep_step">Preparation Step %1$d of %2$d</string>
+    <string name="guide_cook_prev">◀ Prev</string>
+    <string name="guide_cook_next">Next ▶</string>
+    <string name="guide_cook_dismiss">Dismiss</string>
+    <string name="guide_lily_pip_alt">Illustration of Lily &amp; Pip</string>
+    <string name="guide_cook_step">Step %1$s</string>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <string name="cost_free">Free</string>
+    <string name="cost_1d">$1</string>
+    <string name="cost_2d">$2</string>
+    <string name="cost_3d">$3</string>
+    <string name="cost_4d">$4</string>
+    <string name="cost_5d">$5</string>
+    <string name="cost_8d">$8</string>
+    <string name="cost_9d">$9</string>
+    <string name="cost_10d">$10</string>
+    <string name="cost_12d">$12</string>
+    <string name="cost_15d">$15</string>
+    <string name="cost_20d">$20</string>
+    <string name="time_3m">3 mins</string>
+    
+    <string name="time_8m">8 mins</string>
+    
+    
+    
+    
+    
+    
+    
+    <string name="time_35m">35 mins</string>
+    <string name="time_40m">40 mins</string>
+    
+    <string name="time_60m">60 mins</string>
+    <string name="cat_shelter">Shelter</string>
+    <string name="cat_game">Game</string>
+    <string name="cat_cozy">Cozy</string>
+    
+    <string name="diy_sh_e1_title">Shoebox Speed Shelter</string>
+    <string name="diy_sh_e1_desc">Quick &amp; easy indoor/porch cozy shelter made from a repurposed shoebox.</string>
+    <string name="diy_sh_e1_step1">Grab a shoebox + scissors</string>
+    <string name="diy_sh_e1_step2">Cut a doorway</string>
+    <string name="diy_sh_e1_step3">Add soft lining &amp; place it</string>
+
+    <string name="diy_sh_e2_title">No-Sew Blanket Fort</string>
+    <string name="diy_sh_e2_desc">Cozy draped blanket hideaway requiring zero sewing or tools.</string>
+    <string name="diy_sh_e2_step1">Pick two old blankets</string>
+    <string name="diy_sh_e2_step2">Drape over two boxes to form a tent</string>
+    <string name="diy_sh_e2_step3">Line the floor &amp; tuck edges</string>
+
+    <string name="diy_sh_e3_title">Bubble Wrap Insulated Box</string>
+    <string name="diy_sh_e3_desc">Lightweight thermal insulated box shelter using recycled bubble wrap.</string>
+    <string name="diy_sh_e3_step1">Gather a box + bubble wrap</string>
+    <string name="diy_sh_e3_step2">Line the inside walls</string>
+    <string name="diy_sh_e3_step3">Cut the entrance</string>
+    <string name="diy_sh_e3_step4">Waterproof the outside</string>
+
+    <string name="diy_sh_e4_title">Styrofoam Cooler Shelter</string>
+    <string name="diy_sh_e4_desc">Ultra-warm outdoor emergency shelter made from a styrofoam cooler.</string>
+    <string name="diy_sh_e4_step1">Find an old styrofoam cooler</string>
+    <string name="diy_sh_e4_step2">Cut the door</string>
+    <string name="diy_sh_e4_step3">Add straw bedding</string>
+    <string name="diy_sh_e4_step4">Seal the lid &amp; place outside</string>
+
+    <string name="diy_sh_m1_title">Plastic Tub Winter Shelter</string>
+    <string name="diy_sh_m1_desc">Sturdy weatherproof outdoor plastic storage bin shelter.</string>
+    <string name="diy_sh_m1_step1">Gather materials</string>
+    <string name="diy_sh_m1_step2">Measure the base</string>
+    <string name="diy_sh_m1_step3">Cut the entrance</string>
+    <string name="diy_sh_m1_step4">Insulate the walls</string>
+    <string name="diy_sh_m1_step5">Add straw flooring</string>
+    <string name="diy_sh_m1_step6">Secure &amp; place</string>
+
+    <string name="diy_sh_m2_title">Pallet Lean-To Shelter</string>
+    <string name="diy_sh_m2_desc">Sturdy wooden lean-to shelter built against a garden wall using a wooden pallet.</string>
+    <string name="diy_sh_m2_step1">Find a wooden pallet</string>
+    <string name="diy_sh_m2_step2">Sand rough edges</string>
+    <string name="diy_sh_m2_step3">Lean pallet against a wall</string>
+    <string name="diy_sh_m2_step4">Add a side wall</string>
+    <string name="diy_sh_m2_step5">Line with straw</string>
+    <string name="diy_sh_m2_step6">Weatherproof the top</string>
+
+    <string name="diy_sh_m3_title">Multi-Cat Shelter Duplex</string>
+    <string name="diy_sh_m3_desc">Two connected plastic tubs forming a spacious dual-room winter condo.</string>
+    <string name="diy_sh_m3_step1">Gather two matching tubs</string>
+    <string name="diy_sh_m3_step2">Cut connecting doorway</string>
+    <string name="diy_sh_m3_step3">Join the tubs</string>
+    <string name="diy_sh_m3_step4">Cut two entrance doors</string>
+    <string name="diy_sh_m3_step5">Insulate both rooms</string>
+    <string name="diy_sh_m3_step6">Add straw to both sides</string>
+    <string name="diy_sh_m3_step7">Place &amp; weatherproof</string>
+
+    <string name="diy_sh_h1_title">Insulated Wooden Cat House</string>
+    <string name="diy_sh_h1_desc">Heavy-duty timber cat house with sloped roof and double-wall insulation.</string>
+    <string name="diy_sh_h1_step1">Gather wood panels &amp; tools</string>
+    <string name="diy_sh_h1_step2">Cut panels to size</string>
+    <string name="diy_sh_h1_step3">Assemble the frame</string>
+    <string name="diy_sh_h1_step4">Cut the entrance</string>
+    <string name="diy_sh_h1_step5">Add interior insulation</string>
+    <string name="diy_sh_h1_step6">Attach a sloped roof</string>
+    <string name="diy_sh_h1_step7">Waterproof the exterior</string>
+    <string name="diy_sh_h1_step8">Elevate &amp; place</string>
+
+    <string name="diy_sh_h2_title">Elevated Heated-Feel Shelter</string>
+    <string name="diy_sh_h2_desc">Raised outdoor shelter with thermal reflective foil for heat retention.</string>
+    <string name="diy_sh_h2_step1">Gather materials</string>
+    <string name="diy_sh_h2_step2">Build a raised platform</string>
+    <string name="diy_sh_h2_step3">Insulate the floor</string>
+    <string name="diy_sh_h2_step4">Add reflective lining</string>
+    <string name="diy_sh_h2_step5">Build the walls &amp; roof</string>
+    <string name="diy_sh_h2_step6">Cut a small low entrance</string>
+    <string name="diy_sh_h2_step7">Add straw bedding</string>
+    <string name="diy_sh_h2_step8">Final placement</string>
+
+    <string name="diy_sh_h3_title">Colony Shelter Row (Community Build)</string>
+    <string name="diy_sh_h3_desc">Multi-unit colony shelter complex designed for feral/stray cat communities.</string>
+    <string name="diy_sh_h3_step1">Plan the row layout</string>
+    <string name="diy_sh_h3_step2">Gather multiple tubs/boxes</string>
+    <string name="diy_sh_h3_step3">Cut individual entrances</string>
+    <string name="diy_sh_h3_step4">Insulate each unit</string>
+    <string name="diy_sh_h3_step5">Elevate the row</string>
+    <string name="diy_sh_h3_step6">Add straw to every shelter</string>
+    <string name="diy_sh_h3_step7">Space them with privacy gaps</string>
+    <string name="diy_sh_h3_step8">Cover the whole row</string>
+    <string name="diy_sh_h3_step9">Final placement &amp; test</string>
+
+    <string name="diy_gm_e1_title">Sock Wand Toy</string>
+    <string name="diy_gm_e1_desc">Simple interactive wand toy made from an old sock and stick.</string>
+    <string name="diy_gm_e1_step1">Grab an old sock + stick</string>
+    <string name="diy_gm_e1_step2">Stuff the sock (optional)</string>
+    <string name="diy_gm_e1_step3">Tie it to the stick</string>
+
+    <string name="diy_gm_e2_title">Paper Bag Tunnel</string>
+    <string name="diy_gm_e2_desc">Instant crinkly tunnel toy for playful zoomies.</string>
+    <string name="diy_gm_e2_step1">Grab a paper bag</string>
+    <string name="diy_gm_e2_step2">Cut a second opening</string>
+    <string name="diy_gm_e2_step3">Lay flat &amp; watch the zoomies</string>
+
+    <string name="diy_gm_e3_title">Toilet Roll Treat Puzzle</string>
+    <string name="diy_gm_e3_desc">Brain-teaser treat dispenser crafted from cardboard tubes.</string>
+    <string name="diy_gm_e3_step1">Save toilet paper rolls</string>
+    <string name="diy_gm_e3_step2">Fold one end shut</string>
+    <string name="diy_gm_e3_step3">Add treats inside</string>
+    <string name="diy_gm_e3_step4">Fold the other end &amp; place in a box</string>
+
+    <string name="diy_gm_e4_title">Bottle Cap Batting Toy</string>
+    <string name="diy_gm_e4_desc">Lightweight batting toy for pouncing and chasing across floors.</string>
+    <string name="diy_gm_e4_step1">Collect clean bottle caps</string>
+    <string name="diy_gm_e4_step2">Check for sharp edges</string>
+    <string name="diy_gm_e4_step3">Add a little texture</string>
+    <string name="diy_gm_e4_step4">Toss and play</string>
+
+    <string name="diy_gm_m1_title">Cardboard Maze Box</string>
+    <string name="diy_gm_m1_desc">Multi-corridor treat maze built inside a shallow cardboard box.</string>
+    <string name="diy_gm_m1_step1">Gather a big flat box</string>
+    <string name="diy_gm_m1_step2">Sketch a maze path</string>
+    <string name="diy_gm_m1_step3">Cut cardboard strip walls</string>
+    <string name="diy_gm_m1_step4">Glue the walls in place</string>
+    <string name="diy_gm_m1_step5">Add a couple of peekaboo holes</string>
+    <string name="diy_gm_m1_step6">Hide treats &amp; test it</string>
+
+    <string name="diy_gm_m2_title">DIY Feather Teaser Wand</string>
+    <string name="diy_gm_m2_desc">Classic feather teaser toy on a flexible wooden dowel.</string>
+    <string name="diy_gm_m2_step1">Gather a dowel, string, feathers</string>
+    <string name="diy_gm_m2_step2">Tie string to the dowel</string>
+    <string name="diy_gm_m2_step3">Attach feathers to the string</string>
+    <string name="diy_gm_m2_step4">Add a bead or bell (optional)</string>
+    <string name="diy_gm_m2_step5">Test the swing</string>
+
+    <string name="diy_gm_m3_title">Fabric Kicker Toy</string>
+    <string name="diy_gm_m3_desc">Soft, durable fabric pillow filled with catnip and stuffing for bunny-kicking.</string>
+    <string name="diy_gm_m3_step1">Cut two fabric ovals</string>
+    <string name="diy_gm_m3_step2">Pin the edges together</string>
+    <string name="diy_gm_m3_step3">Sew most of the edge</string>
+    <string name="diy_gm_m3_step4">Turn it right-side out</string>
+    <string name="diy_gm_m3_step5">Stuff &amp; add catnip</string>
+    <string name="diy_gm_m3_step6">Sew the gap shut</string>
+
+    <string name="diy_gm_h1_title">Multi-Level Cardboard Cat Tower</string>
+    <string name="diy_gm_h1_desc">Multi-story play structure with tunnels and scratching platforms.</string>
+    <string name="diy_gm_h1_step1">Collect sturdy boxes</string>
+    <string name="diy_gm_h1_step2">Plan the level layout</string>
+    <string name="diy_gm_h1_step3">Cut connecting holes</string>
+    <string name="diy_gm_h1_step4">Reinforce with tape</string>
+    <string name="diy_gm_h1_step5">Add a ramp or steps</string>
+    <string name="diy_gm_h1_step6">Cover in fabric or paper</string>
+    <string name="diy_gm_h1_step7">Add scratch pad sections</string>
+    <string name="diy_gm_h1_step8">Anchor &amp; test-climb</string>
+
+    <string name="diy_gm_h2_title">Treat Puzzle Board</string>
+    <string name="diy_gm_h2_desc">Interactive foraging board with sliding flaps and recessed treat cups.</string>
+    <string name="diy_gm_h2_step1">Gather a wooden or cardboard board</string>
+    <string name="diy_gm_h2_step2">Plan hole spacing</string>
+    <string name="diy_gm_h2_step3">Cut varied holes</string>
+    <string name="diy_gm_h2_step4">Sand all edges smooth</string>
+    <string name="diy_gm_h2_step5">Add small movable flaps</string>
+    <string name="diy_gm_h2_step6">Hide treats at different levels</string>
+    <string name="diy_gm_h2_step7">Test &amp; adjust difficulty</string>
+
+    <string name="diy_gm_h3_title">Sisal Scratch &amp; Play Station</string>
+    <string name="diy_gm_h3_desc">Full scratching post station wrapped with natural sisal rope.</string>
+    <string name="diy_gm_h3_step1">Gather a base board &amp; post</string>
+    <string name="diy_gm_h3_step2">Attach the post upright</string>
+    <string name="diy_gm_h3_step3">Wrap the post in sisal rope</string>
+    <string name="diy_gm_h3_step4">Add a platform on top</string>
+    <string name="diy_gm_h3_step5">Cover the platform in fabric</string>
+    <string name="diy_gm_h3_step6">Attach a hanging toy</string>
+    <string name="diy_gm_h3_step7">Add a side scratch pad</string>
+    <string name="diy_gm_h3_step8">Final placement &amp; playtest</string>
+
+    <string name="diy_bd_e1_title">Sweater Nest Bed</string>
+    <string name="diy_bd_e1_desc">Ultra-cozy circular nest bed upcycled from a warm old sweater.</string>
+    <string name="diy_bd_e1_step1">Grab an old sweater</string>
+    <string name="diy_bd_e1_step2">Tie off the sleeves</string>
+    <string name="diy_bd_e1_step3">Fluff &amp; place</string>
+
+    <string name="diy_bd_e2_title">Towel Roll Donut Bed</string>
+    <string name="diy_bd_e2_desc">Plush ring bed formed quickly from a rolled bath towel.</string>
+    <string name="diy_bd_e2_step1">Grab a large towel</string>
+    <string name="diy_bd_e2_step2">Roll it into a ring</string>
+    <string name="diy_bd_e2_step3">Secure &amp; place</string>
+
+    <string name="diy_bd_e3_title">Cardboard Box Cozy Bed</string>
+    <string name="diy_bd_e3_desc">Classic box bed with a lowered front rim for easy lounging.</string>
+    <string name="diy_bd_e3_step1">Find a low-sided box</string>
+    <string name="diy_bd_e3_step2">Trim one side lower</string>
+    <string name="diy_bd_e3_step3">Line with a soft blanket</string>
+    <string name="diy_bd_e3_step4">Decorate &amp; place</string>
+
+    <string name="diy_bd_e4_title">Pillow Slip Bed</string>
+    <string name="diy_bd_e4_desc">Soft horseshoe-shaped sleeping lounger created from a folded bed pillow.</string>
+    <string name="diy_bd_e4_step1">Grab an old pillow</string>
+    <string name="diy_bd_e4_step2">Fold it into a U-shape</string>
+    <string name="diy_bd_e4_step3">Secure with a wrap or tie</string>
+    <string name="diy_bd_e4_step4">Place in a quiet spot</string>
+
+    <string name="diy_bd_m1_title">Fleece Igloo Bed</string>
+    <string name="diy_bd_m1_desc">Dome-shaped enclosed fleece cave bed for cats who love privacy.</string>
+    <string name="diy_bd_m1_step1">Gather two fleece fabric pieces</string>
+    <string name="diy_bd_m1_step2">Sew a base ring</string>
+    <string name="diy_bd_m1_step3">Add a dome frame</string>
+    <string name="diy_bd_m1_step4">Attach fleece over the dome</string>
+    <string name="diy_bd_m1_step5">Cut an entrance hole</string>
+    <string name="diy_bd_m1_step6">Line the inside &amp; place</string>
+
+    <string name="diy_bd_m2_title">Rice Bag Warm-Feel Bed</string>
+    <string name="diy_bd_m2_desc">Warmable cushion bed with a microwavable rice insert for chilly nights.</string>
+    <string name="diy_bd_m2_step1">Sew a small fabric pouch</string>
+    <string name="diy_bd_m2_step2">Fill with dry rice</string>
+    <string name="diy_bd_m2_step3">Sew the pouch shut</string>
+    <string name="diy_bd_m2_step4">Build the outer bed base</string>
+    <string name="diy_bd_m2_step5">Combine &amp; place</string>
+
+    <string name="diy_bd_m3_title">Hanging Hammock Bed</string>
+    <string name="diy_bd_m3_desc">Elevated fabric hammock for resting off the cold floor.</string>
+    <string name="diy_bd_m3_step1">Cut a sturdy fabric rectangle</string>
+    <string name="diy_bd_m3_step2">Hem all four edges</string>
+    <string name="diy_bd_m3_step3">Add grommets at corners</string>
+    <string name="diy_bd_m3_step4">Attach a frame or hooks</string>
+    <string name="diy_bd_m3_step5">Thread and secure</string>
+    <string name="diy_bd_m3_step6">Test the swing height</string>
+
+    <string name="diy_bd_h1_title">Two-Tier Cat Bed Bunk</string>
+    <string name="diy_bd_h1_desc">Double decker wooden cat bunk bed perfect for two feline friends.</string>
+    <string name="diy_bd_h1_step1">Gather wood panels</string>
+    <string name="diy_bd_h1_step2">Cut all panels to size</string>
+    <string name="diy_bd_h1_step3">Attach the support posts</string>
+    <string name="diy_bd_h1_step4">Mount the lower platform</string>
+    <string name="diy_bd_h1_step5">Mount the top platform</string>
+    <string name="diy_bd_h1_step6">Sand all surfaces</string>
+    <string name="diy_bd_h1_step7">Add cushions to both levels</string>
+    <string name="diy_bd_h1_step8">Final placement &amp; test-nap</string>
+
+    <string name="diy_bd_h2_title">Fully Sewn Plush Bed with Removable Cover</string>
+    <string name="diy_bd_h2_desc">Luxury bolster donut bed with a washable outer cover.</string>
+    <string name="diy_bd_h2_step1">Cut inner cushion fabric</string>
+    <string name="diy_bd_h2_step2">Sew &amp; stuff the inner cushion</string>
+    <string name="diy_bd_h2_step3">Cut the rim pieces</string>
+    <string name="diy_bd_h2_step4">Stuff &amp; sew the rim into a ring</string>
+    <string name="diy_bd_h2_step5">Attach rim to the base cushion</string>
+    <string name="diy_bd_h2_step6">Sew a separate removable cover</string>
+    <string name="diy_bd_h2_step7">Fit the cover over the bed</string>
+    <string name="diy_bd_h2_step8">Final fluff &amp; placement</string>
+
+    <string name="diy_bd_h3_title">Outdoor Weatherproof Cushion Bed</string>
+    <string name="diy_bd_h3_desc">Durable waterproof bed cushion tailored for outdoor porches and shelters.</string>
+    <string name="diy_bd_h3_step1">Cut outdoor-grade fabric</string>
+    <string name="diy_bd_h3_step2">Cut a foam insert</string>
+    <string name="diy_bd_h3_step3">Sandwich the foam between fabric</string>
+    <string name="diy_bd_h3_step4">Sew most of the edge</string>
+    <string name="diy_bd_h3_step5">Seal the final seam</string>
+    <string name="diy_bd_h3_step6">Add a raised rim</string>
+    <string name="diy_bd_h3_step7">Elevate on a small platform</string>
+    <string name="diy_bd_h3_step8">Place under cover &amp; test</string>
+
+    <string name="diy_sh_e1_guide">To build the Shoebox Speed Shelter, start by selecting a clean, sturdy shoebox with a removable lid. Carefully cut a smooth 15cm arch doorway on one of the shorter sides using safety scissors or a craft knife. Line the bottom inside with a folded fleece blanket or soft towel for warmth, then press the lid firmly back on top. Place the finished shelter in a quiet, dry nook where your cat can snooze safely.</string>
+    <string name="diy_sh_e2_guide">To make the No-Sew Blanket Fort, position two sturdy chairs or storage crates about half a meter apart. Drape a thick, cozy fleece blanket over the top to form a hanging canopy roof. Place a soft pillow on the floor underneath and tuck the loose blanket edges neatly under the base to create a warm, dark haven for naps.</string>
+    <string name="diy_sh_e3_guide">For the Bubble Wrap Insulated Box, take a medium cardboard box and line all four interior walls and floor with double-layered bubble wrap, taping it tightly in place. Cut a smooth circular entrance hole on the front panel. Wrap the exterior with a plastic sheet or tarp to block moisture and drafts before placing it outside.</string>
+    <string name="diy_sh_e4_guide">Building the Styrofoam Cooler Shelter requires cutting a 15cm circular entryway near the corner of a thick foam cooler box. Pack the bottom interior with clean dry straw, which provides superior thermal insulation against chilly winds. Snap the foam lid on tightly and anchor the shelter in a quiet outdoor spot.</string>
+    <string name="diy_sh_m1_guide">To assemble the Plastic Tub Winter Shelter, take a heavy-duty storage tote and measure an entryway 15cm above the ground to keep rain out. Cut out the doorway with a utility knife, line the inner walls with foam board insulation, fill the base with fresh straw, and press the lid down firmly.</string>
+    <string name="diy_sh_m2_guide">The Pallet Lean-To Shelter is crafted by thoroughly sanding down rough wooden surfaces on a shipping pallet. Lean the pallet at an angle against a sheltered exterior wall and fix it securely. Fill the covered floor space with straw and cover the top sloped pallet surface with a waterproof tarp.</string>
+    <string name="diy_sh_m3_guide">For the Multi-Cat Shelter Duplex, take two plastic storage tubs and cut a connecting tunnel passageway between them. Join the tubs securely with heavy tape or brackets. Cut separate entry and exit doors on outer walls, insulate both chambers with straw and thermal foil, and cover with a heavy tarp.</string>
+    <string name="diy_sh_h1_guide">Constructing the Insulated Wooden Cat House involves cutting exterior-grade plywood panels for floor, walls, and a sloped roof. Assemble the wooden frame with screws, line the interior with rigid foam insulation board, cut an offset entry door, and seal the outer wood with non-toxic weatherproof varnish.</string>
+    <string name="diy_sh_h2_guide">To build an Elevated Heated-Feel Shelter, construct a raised timber base on cinder blocks to isolate the floor from cold ground moisture. Build insulated double walls with reflective foil interior lining, cut a low doorway, pack the floor with dry straw, and fasten a hinged waterproof roof.</string>
+    <string name="diy_sh_h3_guide">Building a Colony Shelter Row involves organizing three or four heavy plastic totes on an elevated pallet platform. Cut individual privacy entrance holes for each unit, pack every tote with straw insulation, and cover the entire row with a continuous heavy-duty protective weather sheet.</string>
+
+    <string name="diy_gm_e1_guide">To make the Sock Wand Toy, take a clean old sock and stuff it lightly with fabric scraps and organic catnip. Insert a smooth wooden dowel or stick halfway into the opening, then wrap and tie a strong cord around the sock neck to secure it firmly to the wand.</string>
+    <string name="diy_gm_e2_guide">The Paper Bag Tunnel is created by taking a large paper grocery bag, trimming off the bottom folded panel to open it into a tube, and flattening the sides slightly so it rests stably on the floor for your cat to run through and pounce inside.</string>
+    <string name="diy_gm_e3_guide">To craft the Toilet Roll Treat Puzzle, fold one open end of a cardboard toilet paper roll inward to close it up. Fill the inside with a small handful of dry kibble or treats, fold the remaining open end shut, and toss it onto the floor for your cat to nudge and solve.</string>
+    <string name="diy_gm_e4_guide">Making a Bottle Cap Batting Toy is simple: select clean plastic bottle caps, verify all edges are smooth and safe, wrap colorful yarn or fabric ribbon around the cap center for texture, and flick them across smooth flooring for energetic chasing games.</string>
+    <string name="diy_gm_m1_guide">To construct the Cardboard Maze Box, use a shallow wide cardboard box. Draw out a multi-corridor maze grid on paper, cut matching cardboard wall strips, and glue them upright to the base. Cut small paw-sized holes on top, drop treats into the pathways, and watch your cat hunt.</string>
+    <string name="diy_gm_m2_guide">The DIY Feather Teaser Wand is assembled by tying a long cord to the tip of a lightweight wooden rod. Bind several colorful craft feathers to the dangling cord end using non-toxic craft glue and thread wrapping, adding a tiny tinkling bell for extra audio fun.</string>
+    <string name="diy_gm_m3_guide">To sew a Fabric Kicker Toy, cut two matching 20cm fabric rectangles from heavy canvas or denim. Sew three edges tightly together, flip the pouch right-side out, stuff firmly with polyester fiberfill and catnip, and stitch the top opening closed with double thread.</string>
+    <string name="diy_gm_h1_guide">Creating a Multi-Level Cardboard Cat Tower involves stacking two or three heavy-duty cardboard boxes. Cut interior passage hatches between levels, reinforce all corner joints with heavy packing tape, glue corrugated cardboard scratchers to the sides, and test for stability.</string>
+    <string name="diy_gm_h2_guide">To craft the Treat Puzzle Board, drill or cut varied round and square compartments into a smooth wooden board. Attach sliding wooden or cardboard cover panels over select holes using small hinges, hide treats inside, and let your cat slide the doors to find rewards.</string>
+    <string name="diy_gm_h3_guide">Building the Sisal Scratch &amp; Play Station requires mounting a solid 60cm wooden post onto a wide, heavy wooden base plate. Tightly coil natural sisal rope from base to top around the post, gluing it continuously in place, and top the post with a padded perch.</string>
+
+    <string name="diy_bd_e1_guide">To build the Sweater Nest Bed, take an old knit sweater and tie the lower waist hem tightly with string. Stuff the body and sleeves with soft fabric or old towels, curve the sleeves around into a circular bumper ring, and sew the sleeve cuffs together to complete the nest.</string>
+    <string name="diy_bd_e2_guide">The Towel Roll Donut Bed is made by rolling a large bath towel tightly into a long cylinder tube. Bend the tube into a round donut ring, tuck the ends together, and wrap a soft hair tie or fabric band around the joint to hold the donut shape.</string>
+    <string name="diy_bd_e3_guide">To construct a Cardboard Box Cozy Bed, take a low cardboard box and cut down the front panel to create an easy step-in entrance. Place a thick folded fleece blanket or small cushion inside, and position the bed in a sunny, quiet spot.</string>
+    <string name="diy_bd_e4_guide">Creating a Pillow Slip Bed involves folding a soft bed pillow into an arched U-shape lounge pad. Slip a stretchy cotton pillowcase or fabric band over the folded pillow to keep the cradle shape, creating a plush, supportive bolsterr bed for sleeping.</string>
+    <string name="diy_bd_m1_guide">The Fleece Igloo Bed is crafted by cutting fleece wall panels and a round base mat. Insert flexible plastic tubing inside seam channels to form a self-supporting dome structure, stretch fleece over top, cut a round door, and line the floor with soft padding.</string>
+    <string name="diy_bd_m2_guide">To sew a Rice Bag Warm-Feel Bed, stitch a inner pouch from heavy cotton cloth and fill it with dry white rice. Microwave the rice pouch for 60 seconds to create a gentle heat pack, then tuck it underneath a soft fleece cushion in your cat\'s bed.</string>
+    <string name="diy_bd_m3_guide">Building a Hanging Hammock Bed involves cutting a sturdy canvas rectangle and sewing reinforced border seams. Install brass grommets in all four corners, thread strong cord through each grommet, and tie the hammock securely between four chair legs.</string>
+    <string name="diy_bd_h1_guide">The Two-Tier Cat Bed Bunk is built from timber panels. Construct four vertical wooden corner posts, secure a lower sleeping deck and an upper bunk deck with screws, sand all surfaces smooth, and equip both levels with custom washable cushions.</string>
+    <string name="diy_bd_h2_guide">To sew a Luxury Plush Bed with Removable Cover, cut and stuff a central circular bolster ring and floor pad using fluffy fleece. Stitch a separate zippered outer cover so it can be easily removed and washed in the laundry whenever needed.</string>
+    <string name="diy_bd_h3_guide">Creating an Outdoor Weatherproof Cushion Bed requires cutting outdoor waterproof canvas fabric and heavy foam padding. Enclose the foam in the fabric, seal all seams with waterproof adhesive, and place the bed on a raised wooden pallet under cover.</string>
+    <string name="diy_generic_guide">To complete the project, gather all required materials, prepare your work area, follow each step carefully as shown, and assemble the structure. Finish by checking for safety and placing it in a cozy spot for your cat.</string>
+    <string name="diy_overview">The %1$s is a %2$s DIY project (%3$s, %4$s) designed to give your kitty a comfortable space. Lily and Pip created this simple version using everyday items, making it easy to assemble step-by-step without requiring specialized equipment.</string>
+    <string name="diy_weather_tracker_title">Heatwave &amp; Weather Tracker</string>
+    <string name="diy_weather_tracker_desc">Check 7-day temperature alerts (&gt;35°C red, &lt;15°C blue) for stray cat shelters.</string>
+    <string name="diy_fav_desc">Favorite</string>
+    <string name="diy_storyboard_sub">Step-by-step action illustrations with Pip the cat and Lily working together!</string>
+    <string name="diy_step_count">Step %1$d of %2$d</string>
+    <string name="diy_proj_overview">📝 Project Overview</string>
+    <string name="diy_hide_guide">Hide Full Guide ▲</string>
+    <string name="diy_view_more">View More (Full Step-by-Step Guide) ▼</string>
+    <string name="diy_full_guide_title">📖 Full Step-by-Step Guide</string>
+    <string name="my_cat_profile_title">My Cat Profile</string>
+    <string name="my_cat_growth_title">Growth &amp; Weight Tracking</string>
+    <string name="my_cat_back_alt">Back</string>
+    <string name="my_cat_edit_profile">Edit Profile</string>
+    <string name="my_cat_create_profile">Create Cat Profile</string>
+    <string name="my_cat_preview_photo_alt">Preview Photo</string>
+    <string name="my_cat_personality_hint">e.g. Playful, shy around strangers, loves sunbathing</string>
+    <string name="my_cat_adoption_photo_hint">Optional image link when first adopted</string>
+    <string name="my_cat_food_pref_hint">e.g. Loves salmon pâté, allergic to chicken</string>
+    <string name="my_cat_chronic_cond_hint">e.g. Mild asthma, special renal diet</string>
+    <string name="my_cat_main_photo_alt">Main Photo</string>
+    <string name="my_cat_current_photo_label">Current Photo 📸</string>
+    <string name="my_cat_adoption_photo_alt">Adoption Photo</string>
+    <string name="my_cat_adoption_photo_label">When Adopted 🍼</string>
+    <string name="my_cat_age_label">Age:</string>
+    <string name="my_cat_age_value">%1$d years, %2$d months</string>
+    <string name="my_cat_coat_pattern_label">Coat Pattern:</string>
+    <string name="my_cat_personality_title">Personality &amp; Traits 🐱</string>
+    <string name="my_cat_food_pref_title">Food Preferences &amp; Allergies 🍲</string>
+    <string name="my_cat_chronic_cond_title">Chronic Conditions 🩺</string>
+    <string name="my_cat_coat_pattern_title">Coat Pattern &amp; Color</string>
+    <string name="my_cat_update_weight_btn">Update Weight</string>
+    <string name="my_cat_cancel_btn">Cancel</string>
+    <string name="my_cat_weigh_in_history">Weigh-in History</string>
+    <string name="my_cat_edit_desc">Edit</string>
+    <string name="my_cat_delete_desc">Delete</string>
+    <string name="my_cat_show_less">Show Less</string>
+    <string name="my_cat_see_all">See All (%1$d)</string>
+    <string name="my_cat_history_title_hint">e.g. Annual Checkup</string>
+    <string name="my_cat_history_notes_hint">e.g. Normal blood tests, recommended dental cleaning in 6 months</string>
+    <string name="my_cat_history_save_btn">Save Entry</string>
+    <string name="my_cat_history_delete_btn">Delete Entry</string>
+    <string name="leaderboard_title">Community Champions</string>
+    <string name="leaderboard_tab_reporting">Reporting 🐱</string>
+    <string name="leaderboard_tab_rescue">Rescue 🏆</string>
+    <string name="leaderboard_no_reporting">No Reporting Champions yet 🐱</string>
+    <string name="leaderboard_no_rescue">No Rescue Champions yet ⭐</string>
+    <string name="leaderboard_cats_reported">%1$d cats reported</string>
+    <string name="leaderboard_rescue_spirit">%1$d Rescue Spirit</string>
+    <string name="leaderboard_anonymous">Anonymous Guardian</string>
+    <string name="hub_age_years_label">Age (Years)</string>
+    <string name="hub_breed_coat_label">Breed / Coat Color:</string>
+    <string name="hub_add_cat_confirm">Add Cat 🐾</string>
+    <string name="cats_loc_req_msg">Location permission required. Requesting now...</string>
+    <string name="cats_open_settings_msg">Open app settings on device</string>
+    <string name="cats_loc_req_toast">Location permission requested...</string>
+    <string name="cats_feeding_station_marker">📍 Feeding Station</string>
+    <string name="cats_dist_km_approx">~%1$.2f km</string>
+    <string name="cats_feeding_station_caregiver_hint">Your name or anonymous caregiver</string>
+    <string name="cats_choose_marker_title">Choose Map Marker Icon</string>
+    <string name="cats_live_loc_requested">Live Location Requested</string>
+    <string name="cats_anonymous_caregiver">Anonymous Caregiver</string>
+    <string name="cats_add_station_alt">Add Station</string>
+    <string name="cats_log_station_btn">Log Feeding Station</string>
+    <string name="cats_search_stations_near_you">Search Feeding Stations Near You</string>
+    <string name="cats_search_radius">Search Radius: %1$.1f km</string>
+    <string name="cats_distance_km">Distance: %1$.2f km</string>
+    <string name="cats_station_logged_title">Station Logged! 🎉</string>
+    <string name="cats_station_logged_msg">Your neighborhood feeding station has been successfully recorded. It will now appear on the Interactive Stray Radar Map!</string>
+    <string name="cats_rescue_details_title">Cat Rescue Details 🐾</string>
+    <string name="cats_status_helped">Helped 🩷</string>
+    <string name="cats_status_adopted">Adopted 💜</string>
+    <string name="cats_status_needs_help">Needs Help 🚨</string>
+    <string name="cats_no_desc_provided">No description provided.</string>
+    <string name="cats_helped_success_msg">Thank you! You helped this cat 🐾 (+2 Stars ⭐⭐)</string>
+    <string name="cats_adopted_success_msg">Hooray! Cat permanently adopted 💜 (+5 Stars ⭐⭐⭐⭐⭐)</string>
+    <string name="cats_fed_success_msg">Recorded feeding this cat 🥣 (+1 Star ⭐)</string>
+    <string name="stations_browse_tab">🍽️ Browse Stations</string>
+    <string name="stations_report_tab">➕ Report Station</string>
+    <string name="stations_registered_success">Feeding station successfully registered! 🥣</string>
+    <string name="stations_search_radius_title">Search Radius</string>
+    <string name="stations_nearby_title">Nearby Feeding Stations (%1$d)</string>
+    <string name="stations_no_nearby_msg">No feeding stations found within %1$.1f km.</string>
+    <string name="stations_gps_coords">📍 GPS Coordinates: %1$.4f, %2$.4f</string>
+    <string name="stations_real_dist">⚡ Real Distance: %1$.2f km away</string>
+    <string name="stations_refill_toast">Feeding station refilled! (+3 ⭐)</string>
+    <string name="stations_refill_btn">Refill 🥣 (+3 ⭐)</string>
+    <string name="stations_register_title">Register a Feeding Station</string>
+    <string name="stations_register_desc">Add local feeding bowls so nearby caregivers can coordinate food replenishment.</string>
+    <string name="stations_name_label">Feeding Station Name</string>
+    <string name="stations_name_placeholder">e.g. Marina Cat Bowl Station</string>
+    <string name="stations_icon_label">Station Icon / Emoji</string>
+    <string name="stations_notes_label">Description / Notes</string>
+    <string name="stations_notes_placeholder">e.g. Placed under the shaded olive tree, replenished daily at 8am.</string>
+    <string name="stations_gps_attached">Live GPS Location Attached</string>
+    <string name="stations_lat_lng">Lat: %1$.4f, Lng: %2$.4f</string>
+    <string name="stations_register_btn">Register Feeding Station</string>
+    <string name="loc_tunis">Tunis, Tunisia</string>
+    <string name="loc_back_to_home">Back to home</string>
+    <string name="loc_detect_loc">Detect my location</string>
+    <string name="loc_dynamic_map_title">🗺️ Dynamic Map View</string>
+    <string name="loc_close_map">Close map</string>
+    <string name="loc_pin_name">🐾 PIN: %1$s</string>
+    <string name="loc_pin_coords">Coordinates: Lat %1$.4f, Lng %2$.4f</string>
+    <string name="loc_take_me_there">Take me there 🚀</string>
+    <string name="loc_discovered_results">Discovered results sorted by distance:</string>
+    <string name="loc_no_results">No results found. Select a category or input an address above!</string>
+    <string name="loc_rating">★ %1$.1f</string>
+    <string name="loc_phone">Phone</string>
+    <string name="creation_art_default_prompt">A soft watercolor painting of a sleepy ginger kitten cuddling a tiny blue teddy bear, pastel colors</string>
+    <string name="creation_music_default_prompt">A soothing acoustic lullaby with gentle purring and soft wind chimes for kitten sleep</string>
+    <string name="creation_play_pause_desc">Play/pause</string>
+    <string name="creation_music_icon_desc">Music</string>
+    <string name="checklist_title">Daily Care Checklist</string>
+    <string name="checklist_today">Today, %1$s</string>
+    <string name="checklist_fed">Fed Morning &amp; Evening</string>
+    <string name="checklist_watered">Fresh Water Refilled</string>
+    <string name="checklist_played">Playtime &amp; Exercise</string>
+    <string name="checklist_litter">Litter Box Cleaned</string>
+    <string name="checklist_groomed">Groomed &amp; Brushed</string>
+    <string name="checklist_meds">Medication / Supplements</string>
+    <string name="checklist_change_date">Change Date</string>
+    <string name="checklist_progress">%1$d of %2$d tasks completed</string>
+    <string name="checklist_all_done">🎉 All daily care tasks completed! Your kitty is happy and well cared for.</string>
+    <string name="rescue_stories_title">Already Helped Cats 💜</string>
+    <string name="rescue_stories_empty">No helped or adopted cats recorded yet. Be the first hero! 🐾</string>
+    <string name="rescue_stories_adopted">Adopted &amp; Safe Home 💜</string>
+    <string name="rescue_stories_helped">Received Help 🩷</string>
+    <string name="rescue_stories_recently">Recently</string>
+    <string name="rescue_stories_cat_alt">Helped Cat</string>
+    <string name="rescue_stories_stray_cat">Community stray cat</string>
+    <string name="rescue_stories_needs">Needs: %1$s</string>
+    <string name="rescue_stories_needs_default">Care &amp; Food</string>
+    <string name="rescue_stories_rescued_alt">Rescued Cat</string>
+    <string name="rescue_stories_rescued_badge">Rescued! 🎉</string>
+    
+    <string name="cert_saved_success">🏆 Certificate saved to your Gallery!</string>
+    <string name="cert_save_failed">Unable to save certificate to storage.</string>
+    <string name="cert_gen_error">Error generating certificate bitmap</string>
+    <string name="cert_share_text">🐾 I earned my Official TinyPaws Cat Care Mastery Certificate! #TinyPaws</string>
+    <string name="cert_share_chooser">Share Certificate</string>
+    <string name="cert_share_error">Error sharing certificate</string>
+    <string name="cert_title">🏆 Official Certificate</string>
+    <string name="cert_congrats">Congratulations on Completing Your Training! 🎉</string>
+    <string name="cert_bg_alt">Certificate Background</string>
+    <string name="cert_academy_label">TINYPAWS ACADEMY</string>
+    <string name="cert_mastery_label">CERTIFICATE OF MASTERY</string>
+    <string name="cert_presented_to">This is proudly presented to</string>
+    <string name="cert_citation">For demonstrating extraordinary dedication, knowledge, and care in street cat welfare, winter shelter crafting, and feline nutrition across all 5 TinyPaws Quizzes.</string>
+    <string name="cert_date_label">DATE:</string>
+    <string name="cert_verified_label">VERIFIED</string>
+    <string name="cert_seal_label">TinyPaws Seal</string>
+    
+    <string name="cert_download_btn">Download Certificate</string>
+    <string name="cert_share_btn">Share Certificate</string>
+    <string name="cert_graduate_fallback">Academy Graduate</string>
+    <string name="quiz_academy_title">TinyPaws Care Academy 🎓</string>
+    <string name="quiz_review_needed">Review Needed 🐾</string>
+    <string name="quiz_retry_desc">You got some questions incorrect. Let\'s go back and answer them correctly to complete the level and unlock the next one!</string>
+    <string name="quiz_retry_btn">Retry Incorrect Questions (%1$d)</string>
+    
+    
+    
+    
+    <string name="cert_preview_name">The certificate will be issued to: %1$s</string>
+    <string name="cert_claim_btn">Claim My Diploma 🏆</string>
 </resources>

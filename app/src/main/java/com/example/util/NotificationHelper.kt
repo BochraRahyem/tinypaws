@@ -105,6 +105,56 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
+    fun scheduleDailyCareReminders() {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        // Daily Feeding Reminder (8:00 AM)
+        val feedingIntent = Intent(context, ReminderReceiver::class.java).apply {
+            putExtra("reminder_id", 8001)
+            putExtra("reminder_title", "Morning Feeding Time! 🥣 Don't forget to serve fresh food & clean water.")
+        }
+        val feedingPendingIntent = PendingIntent.getBroadcast(
+            context, 8001, feedingIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val feedingCalendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 8)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            if (timeInMillis < System.currentTimeMillis()) {
+                add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            feedingCalendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            feedingPendingIntent
+        )
+
+        // Daily Grooming Reminder (6:00 PM)
+        val groomingIntent = Intent(context, ReminderReceiver::class.java).apply {
+            putExtra("reminder_id", 8002)
+            putExtra("reminder_title", "Evening Grooming & Quality Time! 🐱 Brush fur & check health.")
+        }
+        val groomingPendingIntent = PendingIntent.getBroadcast(
+            context, 8002, groomingIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val groomingCalendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 18)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            if (timeInMillis < System.currentTimeMillis()) {
+                add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            groomingCalendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            groomingPendingIntent
+        )
+    }
+
     fun scheduleNotification(reminderId: Int, title: String, timeMillis: Long) {
         val intent = Intent(context, ReminderReceiver::class.java).apply {
             putExtra("reminder_id", reminderId)
@@ -120,18 +170,85 @@ class NotificationHelper(private val context: Context) {
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        timeMillis,
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        timeMillis,
+                        pendingIntent
+                    )
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    timeMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    timeMillis,
+                    pendingIntent
+                )
+            }
+        } catch (e: SecurityException) {
+            android.util.Log.w("NotificationHelper", "Exact alarm permission missing, falling back to inexact alarm", e)
+            alarmManager.set(
                 AlarmManager.RTC_WAKEUP,
                 timeMillis,
                 pendingIntent
             )
-        } else {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                timeMillis,
-                pendingIntent
-            )
+        }
+    }
+
+    fun scheduleDailyRecurringNotification(reminderId: Int, title: String, hour: Int, minute: Int) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, ReminderReceiver::class.java).apply {
+            putExtra("reminder_id", reminderId)
+            putExtra("reminder_title", title)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            reminderId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, hour)
+            set(java.util.Calendar.MINUTE, minute)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+            if (timeInMillis <= System.currentTimeMillis()) {
+                add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+    }
+
+    fun cancelNotification(reminderId: Int) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, ReminderReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            reminderId,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
         }
     }
 

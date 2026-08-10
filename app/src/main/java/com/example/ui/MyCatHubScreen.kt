@@ -1,34 +1,41 @@
 package com.example.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CloudDownload
-import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.R
 import com.example.ui.theme.*
+
+import androidx.compose.ui.graphics.graphicsLayer
+
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,28 +45,31 @@ fun MyCatHubScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    val profile by viewModel.catProfile.collectAsStateWithLifecycle()
-    val careLogs by viewModel.allCareLogs.collectAsStateWithLifecycle()
-    val weightLogs by viewModel.allWeightLogs.collectAsStateWithLifecycle()
-    val diaryLogs by viewModel.allCheckInLogs.collectAsStateWithLifecycle()
-    val isSyncing by viewModel.isCloudSyncing.collectAsStateWithLifecycle()
-    val backupMessage by viewModel.cloudBackupState.collectAsStateWithLifecycle()
+    val allProfiles by viewModel.allCatProfiles.collectAsState()
+    val activeCatId by viewModel.selectedCatId.collectAsState()
+    val currentCat by viewModel.catProfile.collectAsState()
 
-    var statusSnackBar by remember { mutableStateOf<String?>(null) }
+    var showAddCatDialog by remember { mutableStateOf(false) }
+    var catToDelete by remember { mutableStateOf<com.example.data.CatProfile?>(null) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        stringResource(R.string.hub_title),
-                        fontFamily = FrauncesFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = DeepBurgundy
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.hub_title),
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = DeepBurgundy
+                        )
+                        Text("✨🪐", fontSize = 18.sp)
+                    }
                 },
                 navigationIcon = {
                     IconButton(
@@ -84,261 +94,391 @@ fun MyCatHubScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Introductory decorative banner to unify the "Cat Universe"
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .glassyCard(shape = RoundedCornerShape(26.dp)),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color(0xFFFFC2D1).copy(alpha = 0.35f),
+                                    Color(0xFFF3E5F5).copy(alpha = 0.45f)
+                                )
+                            )
+                        )
+                        .padding(20.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text("🪐🐱", fontSize = 42.sp)
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.step_into_cat_universe),
+                                fontFamily = FrauncesFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = DeepBurgundy
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(R.string.step_into_cat_universe_subtitle),
+                                fontFamily = QuicksandFontFamily,
+                                fontSize = 11.sp,
+                                lineHeight = 15.sp,
+                                color = Ink.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Multi-Cat Switcher Header
+            MultiCatSwitcherCard(
+                catProfiles = allProfiles,
+                activeCatId = activeCatId,
+                onSelectCat = { id -> viewModel.selectCat(id) },
+                onAddNewCat = { showAddCatDialog = true },
+                onDeleteCat = { cat -> catToDelete = cat }
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            // Cat Profile Button
             HubButton(
-                title = stringResource(R.string.hub_cat_profile),
-                subtitle = "Manage cat details, coat color, and age",
-                icon = Icons.Default.Info,
+                title = stringResource(R.string.hub_cat_profile_title),
+                subtitle = stringResource(R.string.hub_cat_profile_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("🐱", fontSize = 24.sp)
+                        Text("🎀", fontSize = 12.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 2.dp, y = 2.dp))
+                    }
+                },
                 tag = "hub_cat_profile_btn",
+                watermark = "💝",
+                animationIndex = 0,
                 onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("my_cat_profile") }
             )
 
+            // Growth & Weight
             HubButton(
-                title = "Daily Care Checklist",
-                subtitle = "Toggle daily feeding, water, playing & meds",
-                icon = Icons.Default.CheckCircle,
-                tag = "hub_daily_checklist_btn",
-                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("daily_checklist") }
-            )
-
-            HubButton(
-                title = "Cat Care Diary Feed",
-                subtitle = "Searchable memories & Coil image photo carousel",
-                icon = Icons.Default.Book,
-                tag = "hub_diary_feed_btn",
-                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("diary_feed") }
-            )
-
-            HubButton(
-                title = "Growth & Weight Tracking",
-                subtitle = "Log historical weights & view trend line curves",
-                icon = Icons.Default.DateRange,
+                title = stringResource(R.string.hub_growth_weight_title),
+                subtitle = stringResource(R.string.hub_growth_weight_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("📈", fontSize = 22.sp)
+                        Text("🐾", fontSize = 12.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 1.dp, y = 1.dp))
+                    }
+                },
                 tag = "hub_weight_tracker_btn",
+                watermark = "⚖️",
+                animationIndex = 1,
                 onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("weight_tracker") }
             )
 
+            // Vet Reminders
             HubButton(
-                title = "Vet & Vaccination Alarms",
-                subtitle = "Schedule push notifications for vet appointments",
-                icon = Icons.Default.Notifications,
+                title = stringResource(R.string.hub_vet_reminders_title),
+                subtitle = stringResource(R.string.hub_vet_reminders_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("🩺", fontSize = 24.sp)
+                        Text("🩹", fontSize = 11.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 2.dp, y = 1.dp))
+                    }
+                },
                 tag = "hub_reminders_btn",
-                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("reminders") }
+                watermark = "🌡️",
+                animationIndex = 2,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("vet_reminders") }
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-            HorizontalDivider(color = Mauve.copy(alpha = 0.3f), thickness = 1.dp)
-            Spacer(modifier = Modifier.height(4.dp))
+            // Daily Care Checklist
+            HubButton(
+                title = stringResource(R.string.hub_daily_care_title),
+                subtitle = stringResource(R.string.hub_daily_care_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("📅", fontSize = 22.sp)
+                        Text("✅", fontSize = 12.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 2.dp, y = 2.dp))
+                    }
+                },
+                tag = "hub_daily_checklist_btn",
+                watermark = "🐟",
+                animationIndex = 3,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("daily_checklist") }
+            )
 
-            // CSV Export Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("export_csv_card"),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.65f)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(18.dp)
+            // Cat Care Diary
+            HubButton(
+                title = stringResource(R.string.hub_cat_care_diary_title),
+                subtitle = stringResource(R.string.hub_cat_care_diary_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("📓", fontSize = 24.sp)
+                        Text("🐈", fontSize = 11.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 2.dp, y = 1.dp))
+                    }
+                },
+                tag = "hub_diary_feed_btn",
+                watermark = "✨",
+                animationIndex = 4,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("diary_feed") }
+            )
+
+            // Care Reminders
+            HubButton(
+                title = stringResource(R.string.hub_care_reminders_title),
+                subtitle = stringResource(R.string.hub_care_reminders_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("⏰", fontSize = 24.sp)
+                        Text("🔔", fontSize = 11.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 2.dp, y = 1.dp))
+                    }
+                },
+                tag = "hub_care_reminders_btn",
+                watermark = "💖",
+                animationIndex = 5,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("care_reminders") }
+            )
+
+            // Data Export & Cloud Sync
+            HubButton(
+                title = stringResource(R.string.hub_data_sync_title),
+                subtitle = stringResource(R.string.hub_data_sync_desc),
+                iconContent = {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("☁️", fontSize = 24.sp)
+                        Text("💾", fontSize = 11.sp, modifier = Modifier.align(Alignment.BottomEnd).offset(x = 2.dp, y = 1.dp))
+                    }
+                },
+                tag = "hub_data_sync_btn",
+                watermark = "📡",
+                animationIndex = 6,
+                onClick = com.example.ui.theme.rememberHapticOnClick { onNavigate("data_sync") }
+            )
+        }
+    }
+
+    if (showAddCatDialog) {
+        AddCatDialog(
+            onDismiss = { showAddCatDialog = false },
+            onAddCat = { name, coat, ageY ->
+                viewModel.addNewCatProfile(
+                    name = name,
+                    ageYears = ageY,
+                    coatColor = coat
+                )
+                showAddCatDialog = false
+            }
+        )
+    }
+
+    catToDelete?.let { cat ->
+        AlertDialog(
+            onDismissRequest = { catToDelete = null },
+            title = {
+                Text(
+                    stringResource(R.string.multi_cat_confirm_delete_title),
+                    fontFamily = FrauncesFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = DeepBurgundy
+                )
+            },
+            text = {
+                Text(
+                    stringResource(R.string.multi_cat_confirm_delete_msg, cat.name),
+                    fontFamily = QuicksandFontFamily
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = com.example.ui.theme.rememberHapticOnClick {
+                        viewModel.deleteCatProfile(cat.id)
+                        catToDelete = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE53935))
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = DeepBurgundy.copy(alpha = 0.12f),
-                            modifier = Modifier.size(44.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.Share, contentDescription = null, tint = DeepBurgundy, modifier = Modifier.size(22.dp))
-                            }
-                        }
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "Export Health Logs to CSV",
-                                fontFamily = QuicksandFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = DeepBurgundy
-                            )
-                            Text(
-                                "Share growth chart, care logs, and diary history directly with your veterinarian.",
-                                fontFamily = QuicksandFontFamily,
-                                fontSize = 12.sp,
-                                color = Ink.copy(alpha = 0.75f)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Button(
-                        onClick = com.example.ui.theme.rememberHapticOnClick {
-                            val file = com.example.util.CsvExportUtil.exportAndShareCsv(
-                                context = context,
-                                profile = profile,
-                                careLogs = careLogs,
-                                weightLogs = weightLogs,
-                                diaryLogs = diaryLogs
-                            )
-                            if (file == null) {
-                                statusSnackBar = "Unable to export CSV file."
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("btn_export_csv"),
-                        colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Icon(Icons.Default.Share, contentDescription = null, tint = Cream, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            "Export & Share CSV",
-                            fontFamily = QuicksandFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            color = Cream
-                        )
-                    }
+                    Text(stringResource(R.string.chat_delete), color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { catToDelete = null }) {
+                    Text(stringResource(R.string.triage_cancel), color = Ink)
                 }
             }
+        )
+    }
+}
 
-            // Cloud Sync & Backup (Firebase Firestore)
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("firebase_cloud_sync_card"),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.65f)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+@Composable
+fun MultiCatSwitcherCard(
+    catProfiles: List<com.example.data.CatProfile>,
+    activeCatId: Int,
+    onSelectCat: (Int) -> Unit,
+    onAddNewCat: () -> Unit,
+    onDeleteCat: (com.example.data.CatProfile) -> Unit
+) {
+    val isDark = LocalIsDarkMode.current
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("multi_cat_switcher_card")
+            .glassyCard(shape = RoundedCornerShape(22.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(18.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = Wine.copy(alpha = 0.12f),
-                            modifier = Modifier.size(44.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Wine, modifier = Modifier.size(22.dp))
-                            }
-                        }
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "Cloud Sync & Backup",
-                                fontFamily = QuicksandFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = DeepBurgundy
-                            )
-                            Text(
-                                "Sync diary entries, care checklist & weight logs securely via Firebase Firestore.",
-                                fontFamily = QuicksandFontFamily,
-                                fontSize = 12.sp,
-                                color = Ink.copy(alpha = 0.75f)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    if (isSyncing) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                color = DeepBurgundy,
-                                strokeWidth = 2.dp
-                            )
-                            Text(
-                                "Syncing with cloud...",
-                                fontFamily = QuicksandFontFamily,
-                                fontSize = 13.sp,
-                                color = DeepBurgundy
-                            )
-                        }
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Button(
-                                onClick = com.example.ui.theme.rememberHapticOnClick {
-                                    viewModel.backupDataToCloud { msg ->
-                                        statusSnackBar = msg
-                                    }
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("btn_cloud_backup"),
-                                colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
-                                shape = RoundedCornerShape(14.dp)
-                            ) {
-                                Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Cream, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Backup", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, color = Cream, fontSize = 13.sp)
-                            }
-
-                            OutlinedButton(
-                                onClick = com.example.ui.theme.rememberHapticOnClick {
-                                    viewModel.restoreDataFromCloud { msg ->
-                                        statusSnackBar = msg
-                                    }
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("btn_cloud_restore"),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = DeepBurgundy),
-                                border = BorderStroke(1.dp, DeepBurgundy),
-                                shape = RoundedCornerShape(14.dp)
-                            ) {
-                                Icon(Icons.Default.CloudDownload, contentDescription = null, tint = DeepBurgundy, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Restore", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, color = DeepBurgundy, fontSize = 13.sp)
-                            }
-                        }
-                    }
-
-                    if (backupMessage != null) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                    Text("🐱", fontSize = 20.sp)
+                    Column {
                         Text(
-                            text = backupMessage ?: "",
-                            fontFamily = QuicksandFontFamily,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
+                            text = stringResource(R.string.multi_cat_switch),
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
                             color = DeepBurgundy
                         )
+                        Text(
+                            text = stringResource(R.string.multi_cat_count, catProfiles.size),
+                            fontFamily = QuicksandFontFamily,
+                            fontSize = 11.sp,
+                            color = DeepBurgundy.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+
+                if (catProfiles.size >= 7) {
+                    Text(
+                        text = stringResource(R.string.multi_cat_limit_reached),
+                        fontFamily = QuicksandFontFamily,
+                        fontSize = 11.sp,
+                        color = DeepBurgundy,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                } else {
+                    Surface(
+                        onClick = com.example.ui.theme.rememberHapticOnClick { onAddNewCat() },
+                        shape = RoundedCornerShape(20.dp),
+                        color = BlushPink.copy(alpha = 0.5f),
+                        modifier = Modifier.testTag("add_cat_btn")
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.Add,
+                                contentDescription = null,
+                                tint = DeepBurgundy,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.multi_cat_add_new),
+                                fontFamily = QuicksandFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = DeepBurgundy
+                            )
+                        }
                     }
                 }
             }
 
-            if (statusSnackBar != null) {
-                Snackbar(
-                    action = {
-                        TextButton(onClick = { statusSnackBar = null }) {
-                            Text("OK", color = Cream)
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                items(catProfiles, key = { it.id }) { cat ->
+                    val isSelected = cat.id == activeCatId
+
+                    Surface(
+                        onClick = com.example.ui.theme.rememberHapticOnClick { onSelectCat(cat.id) },
+                        shape = RoundedCornerShape(18.dp),
+                        color = if (isSelected) {
+                            if (isDark) Color(0xFF6B2D3A) else Color(0xFFFFD6E0)
+                        } else {
+                            if (isDark) Color(0xFF2D1822) else Color.White.copy(alpha = 0.7f)
+                        },
+                        border = BorderStroke(
+                            width = if (isSelected) 2.dp else 1.dp,
+                            color = if (isSelected) Mauve else Color.Gray.copy(alpha = 0.3f)
+                        ),
+                        modifier = Modifier.testTag("cat_pill_${cat.id}")
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = when (cat.coatColor.lowercase()) {
+                                    "orange tabby 🍊", "orange", "orange tabby" -> "🍊"
+                                    "black 🖤", "black" -> "🖤"
+                                    "white 🤍", "white" -> "🤍"
+                                    "calico 🎨", "calico" -> "🎨"
+                                    "caliby", "caliby (calico + tabby) 🌸🐯" -> "🌸"
+                                    "siamese 🐱", "siamese" -> "🐱"
+                                    else -> "😺"
+                                },
+                                fontSize = 18.sp
+                            )
+                            Column {
+                            Text(
+                                text = cat.name.ifBlank { "Cat #${cat.id}" },
+                                fontFamily = QuicksandFontFamily,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                fontSize = 13.sp,
+                                color = if (isSelected) DeepBurgundy else Ink
+                            )
+                                Text(
+                                    text = "${cat.ageYears}y • ${cat.coatColor.take(10)}",
+                                    fontFamily = QuicksandFontFamily,
+                                    fontSize = 10.sp,
+                                    color = Ink.copy(alpha = 0.7f)
+                                )
+                            }
+
+                            if (catProfiles.size > 1 && isSelected) {
+                                IconButton(
+                                    onClick = com.example.ui.theme.rememberHapticOnClick { onDeleteCat(cat) },
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .testTag("delete_cat_btn_${cat.id}")
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = stringResource(R.string.my_cat_delete_desc),
+                                        tint = Color(0xFFD32F2F),
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
                         }
-                    },
-                    containerColor = DeepBurgundy,
-                    contentColor = Cream,
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(statusSnackBar ?: "", fontFamily = QuicksandFontFamily)
+                    }
                 }
             }
         }
@@ -346,52 +486,229 @@ fun MyCatHubScreen(
 }
 
 @Composable
+fun AddCatDialog(
+    onDismiss: () -> Unit,
+    onAddCat: (name: String, coat: String, ageYears: Int) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var selectedCoat by remember { mutableStateOf("Calico") }
+    var ageYearsText by remember { mutableStateOf("1") }
+
+    val coatOptions = listOf(
+        "Calico",
+        "Caliby (Calico + Tabby)",
+        "Orange Tabby",
+        "Tuxedo / Black & White",
+        "Gray / Blue",
+        "White",
+        "Black",
+        "Tabby",
+        "Tortoiseshell",
+        "Siamese",
+        "Persian",
+        "Other / Mixed"
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                stringResource(R.string.multi_cat_new_cat_title),
+                fontFamily = FrauncesFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = DeepBurgundy
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text(stringResource(R.string.multi_cat_new_cat_name)) },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("add_cat_name_input")
+                )
+
+                OutlinedTextField(
+                    value = ageYearsText,
+                    onValueChange = { ageYearsText = it.filter { c -> c.isDigit() } },
+                    label = { Text(stringResource(R.string.hub_age_years_label)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(stringResource(R.string.hub_breed_coat_label), fontFamily = QuicksandFontFamily, fontSize = 12.sp, color = Ink)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(coatOptions) { coat ->
+                        FilterChip(
+                            selected = selectedCoat == coat,
+                            onClick = { selectedCoat = coat },
+                            label = { Text(coat, fontSize = 11.sp) }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (name.isNotBlank()) {
+                        val ageY = ageYearsText.toIntOrNull() ?: 1
+                        onAddCat(name.trim(), selectedCoat, ageY)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = BlushPink),
+                enabled = name.isNotBlank(),
+                modifier = Modifier.testTag("confirm_add_cat_btn")
+            ) {
+                Text(stringResource(R.string.hub_add_cat_confirm), color = DeepBurgundy, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.triage_cancel), color = Ink)
+            }
+        }
+    )
+}
+
+@Composable
 fun HubButton(
     title: String,
     subtitle: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconContent: @Composable () -> Unit,
     tag: String,
+    watermark: String,
+    animationIndex: Int = 0,
     onClick: () -> Unit
 ) {
+    val isDark = LocalIsDarkMode.current
+
+    val animProgress = androidx.compose.runtime.remember { androidx.compose.animation.core.Animatable(0f) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(animationIndex * 50L)
+        animProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = androidx.compose.animation.core.tween(
+                durationMillis = 320,
+                easing = androidx.compose.animation.core.FastOutSlowInEasing
+            )
+        )
+    }
+
+    // Gorgeous soft pink + lavender gradient finish
+    val cardGradient = Brush.linearGradient(
+        colors = if (isDark) {
+            listOf(
+                Color(0xFF3D151D).copy(alpha = 0.9f), // Rich dark pinkish burgundy
+                Color(0xFF23112E).copy(alpha = 0.9f)  // Rich dark lavender/purple
+            )
+        } else {
+            listOf(
+                Color(0xFFFFE5EC).copy(alpha = 0.85f), // Warm pastel pink
+                Color(0xFFF3E5F5).copy(alpha = 0.85f)  // Warm pastel lavender
+            )
+        }
+    )
+
+    // Glowing border with a subtle gradient matching the theme
+    val borderGradient = Brush.linearGradient(
+        colors = if (isDark) {
+            listOf(
+                Color(0xFFFFB3C1).copy(alpha = 0.25f),
+                Color(0xFFD7AEDF).copy(alpha = 0.2f)
+            )
+        } else {
+            listOf(
+                Color(0xFFFFB3C1).copy(alpha = 0.6f),
+                Color(0xFFD7AEDF).copy(alpha = 0.5f)
+            )
+        }
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag(tag),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.5f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = com.example.ui.theme.rememberHapticOnClick { onClick() }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(18.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Surface(
-                shape = RoundedCornerShape(14.dp),
-                color = BlushPink.copy(alpha = 0.35f),
-                modifier = Modifier.size(50.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(icon, contentDescription = null, tint = DeepBurgundy, modifier = Modifier.size(26.dp))
-                }
+            .testTag(tag)
+            .graphicsLayer {
+                alpha = animProgress.value
+                translationY = (1f - animProgress.value) * 20.dp.toPx()
+                scaleX = 0.96f + (0.04f * animProgress.value)
+                scaleY = 0.96f + (0.04f * animProgress.value)
             }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    title,
-                    fontFamily = QuicksandFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    color = DeepBurgundy
-                )
-                Text(
-                    subtitle,
-                    fontFamily = QuicksandFontFamily,
-                    fontSize = 12.sp,
-                    color = Ink.copy(alpha = 0.75f)
-                )
+            .clip(RoundedCornerShape(26.dp))
+            .clickable { onClick() }
+            .border(
+                BorderStroke(1.dp, borderGradient),
+                RoundedCornerShape(26.dp)
+            ),
+        shape = RoundedCornerShape(26.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(cardGradient)
+                .padding(horizontal = 18.dp, vertical = 16.dp)
+        ) {
+            // Elegant watermark element in the background of the card (subtle, low-opacity decoration)
+            Text(
+                text = watermark,
+                fontSize = 44.sp,
+                color = (if (isDark) Color.White else Ink).copy(alpha = if (isDark) 0.05f else 0.08f),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .offset(x = 10.dp, y = 5.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Highly polished icon container
+                Surface(
+                    shape = RoundedCornerShape(18.dp),
+                    color = if (isDark) Color(0xFF5D1E2A).copy(alpha = 0.4f) else Color.White.copy(alpha = 0.65f),
+                    border = BorderStroke(
+                        1.5.dp,
+                        if (isDark) Color(0xFFFFB3C1).copy(alpha = 0.25f) else Color(0xFFFFC2D1)
+                    ),
+                    modifier = Modifier.size(54.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        iconContent()
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp)
+                ) {
+                    Text(
+                        text = title,
+                        fontFamily = QuicksandFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = DeepBurgundy,
+                        lineHeight = 20.sp
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = subtitle,
+                        fontFamily = QuicksandFontFamily,
+                        fontSize = 11.5.sp,
+                        color = Ink.copy(alpha = 0.8f),
+                        lineHeight = 15.sp
+                    )
+                }
             }
         }
     }

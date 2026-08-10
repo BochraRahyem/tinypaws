@@ -50,7 +50,8 @@ fun CreationModuleScreen(
     var activeCreationTab by remember { mutableStateOf("art") } // "art", "music"
 
     // Art generation states
-    var artPrompt by remember { mutableStateOf("A soft watercolor painting of a sleepy ginger kitten cuddling a tiny blue teddy bear, pastel colors") }
+    val defaultArtPrompt = stringResource(R.string.creation_art_default_prompt)
+    var artPrompt by remember { mutableStateOf(defaultArtPrompt) }
     var selectProModel by remember { mutableStateOf(true) } // true: gemini-3-pro-image-preview, false: gemini-3.1-flash-image-preview
     var imageSize by remember { mutableStateOf("2K") } // "1K", "2K", "4K"
 
@@ -58,7 +59,8 @@ fun CreationModuleScreen(
     val generatedBitmap by viewModel.generatedBitmap.collectAsStateWithLifecycle()
 
     // Music generation states
-    var musicPrompt by remember { mutableStateOf("A soothing acoustic lullaby with gentle purring and soft wind chimes for kitten sleep") }
+    val defaultMusicPrompt = stringResource(R.string.creation_music_default_prompt)
+    var musicPrompt by remember { mutableStateOf(defaultMusicPrompt) }
     var useFullTrack by remember { mutableStateOf(false) } // false: lyria-3-clip-preview (30s), true: lyria-3-pro-preview
 
     val isGeneratingMusic by viewModel.isGeneratingMusic.collectAsStateWithLifecycle()
@@ -96,7 +98,7 @@ fun CreationModuleScreen(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back to home",
+                    contentDescription = stringResource(R.string.loc_back_to_home),
                     tint = PastelPurpleDark
                 )
             }
@@ -444,7 +446,7 @@ fun CreationModuleScreen(
                                     ) {
                                         Icon(
                                             imageVector = if (isMusicPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                            contentDescription = "Play/pause",
+                                            contentDescription = stringResource(R.string.creation_play_pause_desc),
                                             tint = White,
                                             modifier = Modifier.size(28.dp)
                                         )
@@ -456,7 +458,7 @@ fun CreationModuleScreen(
                                     }
                                 }
                             } else {
-                                Icon(Icons.Default.MusicNote, contentDescription = "Music", modifier = Modifier.size(48.dp), tint = TextMuted)
+                                Icon(Icons.Default.MusicNote, contentDescription = stringResource(R.string.creation_music_icon_desc), modifier = Modifier.size(48.dp), tint = TextMuted)
                                 Text(stringResource(R.string.creation_no_audio), fontSize = 12.sp, color = TextMuted)
                                 Text(stringResource(R.string.creation_submit_prompt), fontSize = 10.sp, color = TextMuted)
                             }

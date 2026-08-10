@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CatCheckInLogDao {
+    @Query("SELECT * FROM cat_check_in_logs WHERE catId = :catId ORDER BY date DESC")
+    fun getCheckInLogsForCat(catId: Int): Flow<List<CatCheckInLog>>
+
     @Query("SELECT * FROM cat_check_in_logs ORDER BY date DESC")
     fun getAllCheckInLogs(): Flow<List<CatCheckInLog>>
 
@@ -16,4 +19,7 @@ interface CatCheckInLogDao {
 
     @Query("DELETE FROM cat_check_in_logs WHERE id = :id")
     suspend fun deleteCheckInLogById(id: Int)
+
+    @Query("DELETE FROM cat_check_in_logs WHERE catId = :catId")
+    suspend fun deleteLogsForCat(catId: Int)
 }

@@ -18,6 +18,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -223,7 +225,7 @@ fun CatsNearMeScreen(
                 ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
                 if (!hasLocationPermission) {
-                    Toast.makeText(context, "Location permission required. Requesting now...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.cats_loc_req_msg), Toast.LENGTH_SHORT).show()
                     requestPermission()
                 }
             }
@@ -299,7 +301,7 @@ fun CatsNearMeScreen(
                                     }
                                     context.startActivity(intent)
                                 } catch (e: Exception) {
-                                    Toast.makeText(context, "Open app settings on device", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.cats_open_settings_msg), Toast.LENGTH_SHORT).show()
                                 }
                             },
                             shape = CircleShape,
@@ -314,7 +316,7 @@ fun CatsNearMeScreen(
 
                         Button(
                             onClick = com.example.ui.theme.rememberHapticOnClick { 
-                                Toast.makeText(context, "Location permission requested...", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.cats_loc_req_toast), Toast.LENGTH_SHORT).show()
                                 requestPermission()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = pastelPinkDarkColor),
@@ -393,6 +395,8 @@ fun BrowseNearbySection(
 ) {
 
     val allReports by viewModel.activeReports.collectAsStateWithLifecycle()
+    val isReportsLoading by viewModel.isReportsLoading.collectAsStateWithLifecycle()
+    val isStationsLoading by viewModel.isFeedingStationsLoading.collectAsStateWithLifecycle()
     var radiusKm by remember { mutableFloatStateOf(10f) }
     var activeMapMode by remember { mutableStateOf("reports") } // "reports" or "feeding_spots"
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -432,6 +436,16 @@ fun BrowseNearbySection(
     }
 
     var selectedReportForHighlight by remember { mutableStateOf<CatReport?>(null) }
+
+    if (selectedReportForHighlight != null) {
+        CatRescueDetailDialog(
+            report = selectedReportForHighlight!!,
+            userLat = userLat,
+            userLng = userLng,
+            viewModel = viewModel,
+            onDismiss = { selectedReportForHighlight = null }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -592,7 +606,7 @@ fun BrowseNearbySection(
                                 .border(1.5.dp, if (activeMapMode == "reports") burgundyColor.copy(alpha = 0.2f) else blushPinkColor.copy(alpha = 0.4f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            if ((activeMapMode == "reports" && reportsLoading) || (activeMapMode == "feeding_spots" && stationsLoading)) {
+                            if ((activeMapMode == "reports" && isReportsLoading) || (activeMapMode == "feeding_spots" && isStationsLoading)) {
                                 CircularProgressIndicator(
                                     color = if (activeMapMode == "reports") burgundyColor else blushPinkColor,
                                     modifier = Modifier.size(40.dp)
@@ -814,14 +828,14 @@ fun BrowseNearbySection(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "📍 Feeding Station",
+                                        text = stringResource(R.string.cats_feeding_station_marker),
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 12.sp,
                                         color = burgundyColor,
                                         fontFamily = QuicksandFontFamily
                                     )
                                     Text(
-                                        text = "~${"%.2f".format(dist)} km",
+                                        text = stringResource(R.string.cats_dist_km_approx, dist),
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = burgundyColor,
@@ -916,9 +930,10 @@ fun BrowseNearbySection(
                                 .background(creamColor),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (report.photoUrl.startsWith("http") || report.photoUrl.startsWith("content://") || report.photoUrl.startsWith("file://")) {
+                            val photoToShow = report.displayPhotoUrl
+                            if (photoToShow.startsWith("http") || photoToShow.startsWith("content://") || photoToShow.startsWith("file://")) {
                                 AsyncImage(
-                                    model = report.photoUrl,
+                                    model = photoToShow,
                                     contentDescription = stringResource(R.string.cats_img_desc),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
@@ -929,7 +944,7 @@ fun BrowseNearbySection(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .background(
-                                            when (report.photoUrl) {
+                                            when (photoToShow) {
                                                 "cat_orange" -> Color(0xFFFFCC80)
                                                 "cat_black" -> Color(0xFF424242)
                                                 "cat_grey" -> Color(0xFFB0BEC5)
@@ -940,7 +955,7 @@ fun BrowseNearbySection(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = when (report.photoUrl) {
+                                        text = when (photoToShow) {
                                             "cat_orange" -> "🍊🐈"
                                             "cat_black" -> "🐈‍⬛🖤"
                                             "cat_grey" -> "🩶🐈"
@@ -1414,7 +1429,8 @@ fun ReportStrayForm(
                             needs = selectedNeed,
                             latitude = userLat,
                             longitude = userLng,
-                            photoUrl = photoPath
+                            photoUrl = photoPath,
+                            imageUri = customPhotoUri
                         )
                         // Trigger daily activity points for reporting a cat!
                         val ctx = context
@@ -1759,7 +1775,7 @@ fun FeedingStationsForm(
                             onValueChange = { caregiverName = it },
                             placeholder = {
                                 Text(
-                                    "Your name or anonymous caregiver",
+                                    stringResource(R.string.cats_feeding_station_caregiver_hint),
                                     fontSize = 12.sp,
                                     fontFamily = QuicksandFontFamily
                                 )
@@ -1781,7 +1797,7 @@ fun FeedingStationsForm(
                     // Icon / Marker emoji selector
                     Column {
                         Text(
-                            text = "Choose Map Marker Icon",
+                            text = stringResource(R.string.cats_choose_marker_title),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                             color = burgundyColor,
@@ -1832,7 +1848,7 @@ fun FeedingStationsForm(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "Live Location Requested",
+                            text = stringResource(R.string.cats_live_loc_requested),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
                             color = inkColor,
@@ -1878,7 +1894,7 @@ fun FeedingStationsForm(
                             sharedPrefs.edit().putString("saved_feeding_spots", arr.toString()).apply()
                             
                             // Log daily activity
-                            val caregiver = caregiverName.trim().ifEmpty { "Anonymous Caregiver" }
+                            val caregiver = caregiverName.trim().ifEmpty { context.getString(R.string.cats_anonymous_caregiver) }
                             viewModel.logActivity("add_feeding_spot", "Logged new feeding spot: ${name.trim()} by $caregiver")
                             
                             showSuccessDialog = true
@@ -1899,10 +1915,10 @@ fun FeedingStationsForm(
                 ),
                 shape = CircleShape
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Station", modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cats_add_station_alt), modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Log Feeding Station",
+                    text = stringResource(R.string.cats_log_station_btn),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontFamily = QuicksandFontFamily,
                         fontWeight = FontWeight.Bold
@@ -1924,7 +1940,7 @@ fun FeedingStationsForm(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Search Feeding Stations Near You",
+                        text = stringResource(R.string.cats_search_stations_near_you),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             color = burgundyColor,
@@ -1937,7 +1953,7 @@ fun FeedingStationsForm(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Search Radius: ${"%.1f".format(radiusKm)} km",
+                            text = stringResource(R.string.cats_search_radius, radiusKm),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = inkColor,
                                 fontWeight = FontWeight.Bold,
@@ -1999,7 +2015,7 @@ fun FeedingStationsForm(
                                         )
                                     )
                                     Text(
-                                        text = "Distance: ${"%.2f".format(dist)} km",
+                                        text = stringResource(R.string.cats_distance_km, dist),
                                         style = MaterialTheme.typography.bodySmall.copy(
                                             color = inkColor.copy(alpha = 0.6f),
                                             fontFamily = QuicksandFontFamily
@@ -2028,12 +2044,12 @@ fun FeedingStationsForm(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = burgundyColor)
                 ) {
-                    Text("OK", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, color = creamColor)
+                    Text(stringResource(R.string.main_ok), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, color = creamColor)
                 }
             },
             title = {
                 Text(
-                    text = "Station Logged! 🎉",
+                    text = stringResource(R.string.cats_station_logged_title),
                     fontFamily = QuicksandFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = burgundyColor
@@ -2041,7 +2057,7 @@ fun FeedingStationsForm(
             },
             text = {
                 Text(
-                    text = "Your neighborhood feeding station has been successfully recorded. It will now appear on the Interactive Stray Radar Map!",
+                    text = stringResource(R.string.cats_station_logged_msg),
                     fontFamily = QuicksandFontFamily,
                     color = inkColor
                 )
@@ -2049,4 +2065,230 @@ fun FeedingStationsForm(
             containerColor = whiteColor
         )
     }
+}
+
+@Composable
+fun CatRescueDetailDialog(
+    report: CatReport,
+    userLat: Double,
+    userLng: Double,
+    viewModel: TinyPawsViewModel,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val dist = viewModel.getDistanceInKm(userLat, userLng, report.latitude, report.longitude)
+    var showActionSuccess by remember { mutableStateOf<String?>(null) }
+    val scrollState = androidx.compose.foundation.rememberScrollState()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {},
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.testTag("close_detail_dialog")
+            ) {
+                Text(stringResource(R.string.main_close), color = DeepBurgundy, fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
+            }
+        },
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.cats_rescue_details_title),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontFamily = FrauncesFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = DeepBurgundy
+                    )
+                )
+                Surface(
+                    color = when (report.status) {
+                        "helped" -> Color(0xFFFCE4EC) // Pink
+                        "adopted" -> Color(0xFFEDE7F6) // Purple
+                        else -> Color(0xFFFFF3E0)
+                    },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = when (report.status) {
+                            "helped" -> stringResource(R.string.cats_status_helped)
+                            "adopted" -> stringResource(R.string.cats_status_adopted)
+                            else -> stringResource(R.string.cats_status_needs_help)
+                        },
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = when (report.status) {
+                            "helped" -> Color(0xFFC2185B)
+                            "adopted" -> Color(0xFF512DA8)
+                            else -> Color(0xFFE65100)
+                        },
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        fontFamily = QuicksandFontFamily
+                    )
+                }
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Cream),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val photo = report.displayPhotoUrl
+                    if (photo.startsWith("http") || photo.startsWith("content://") || photo.startsWith("file://")) {
+                        AsyncImage(
+                            model = photo,
+                            contentDescription = "Reported Cat Image",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(
+                            text = when (photo) {
+                                "cat_orange" -> "🍊🐈"
+                                "cat_black" -> "🐈‍⬛🖤"
+                                "cat_grey" -> "🩶🐈"
+                                "cat_calico" -> "🐱✨"
+                                else -> "🐱🐾"
+                            },
+                            fontSize = 48.sp
+                        )
+                    }
+                }
+
+                Text(
+                    text = report.description.ifEmpty { stringResource(R.string.cats_no_desc_provided) },
+                    fontSize = 14.sp,
+                    color = Ink,
+                    fontFamily = QuicksandFontFamily
+                )
+
+                HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(stringResource(R.string.cats_near_me_current_needs), fontSize = 11.sp, color = TextMuted, fontFamily = QuicksandFontFamily)
+                        Text(report.needs.ifEmpty { "Food & Shelter" }, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = DeepBurgundy, fontFamily = QuicksandFontFamily)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(stringResource(R.string.cats_near_me_calc_dist), fontSize = 11.sp, color = TextMuted, fontFamily = QuicksandFontFamily)
+                        Text(stringResource(R.string.cats_near_me_dist_away, dist), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Wine, fontFamily = QuicksandFontFamily)
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(stringResource(R.string.cats_near_me_exact_loc), fontSize = 11.sp, color = TextMuted, fontFamily = QuicksandFontFamily)
+                        Text("%.5f, %.5f".format(report.latitude, report.longitude), fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Ink, fontFamily = QuicksandFontFamily)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        val ts = report.createdAt?.seconds ?: 0L
+                        val dateStr = remember(ts) {
+                            if (ts > 0) java.text.SimpleDateFormat("MMM dd, hh:mm a", java.util.Locale.getDefault()).format(java.util.Date(ts * 1000L)) else "Recently"
+                        }
+                        Text(stringResource(R.string.cats_near_me_report_date), fontSize = 11.sp, color = TextMuted, fontFamily = QuicksandFontFamily)
+                        Text(dateStr, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Ink, fontFamily = QuicksandFontFamily)
+                    }
+                }
+
+                showActionSuccess?.let { msg ->
+                    Surface(
+                        color = Color(0xFFE8F5E9),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = msg,
+                            color = Color(0xFF2E7D32),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(10.dp),
+                            textAlign = TextAlign.Center,
+                            fontFamily = QuicksandFontFamily
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // 1. Take me there 🗺️
+                Button(
+                    onClick = {
+                        val gmmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=${report.latitude},${report.longitude}")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                        mapIntent.setPackage("com.google.android.apps.maps")
+                        try {
+                            context.startActivity(mapIntent)
+                        } catch (e: Exception) {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                            context.startActivity(browserIntent)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("take_me_there_button"),
+                    colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.cats_near_me_take_me_there), color = Cream, fontWeight = FontWeight.Bold, fontFamily = QuicksandFontFamily)
+                }
+
+                // 2. I helped this cat 🐾 (+2 ⭐)
+                OutlinedButton(
+                    onClick = {
+                        viewModel.helpCat(report.id)
+                        showActionSuccess = context.getString(R.string.cats_helped_success_msg)
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("i_helped_button"),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = DeepBurgundy)
+                ) {
+                    Text(stringResource(R.string.cats_near_me_helped_cat), fontWeight = FontWeight.Bold, fontFamily = QuicksandFontFamily)
+                }
+
+                // 3. Adopted / Permanently rescued 💜 (+5 ⭐)
+                Button(
+                    onClick = {
+                        viewModel.adoptCat(report.id)
+                        showActionSuccess = context.getString(R.string.cats_adopted_success_msg)
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("adopted_permanently_button"),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A1B9A)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.cats_near_me_rescued_cat), color = Color.White, fontWeight = FontWeight.Bold, fontFamily = QuicksandFontFamily)
+                }
+
+                // 4. Feed cat (+1 ⭐)
+                TextButton(
+                    onClick = {
+                        viewModel.feedCat(report.id)
+                        showActionSuccess = context.getString(R.string.cats_fed_success_msg)
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("feed_cat_button")
+                ) {
+                    Text(stringResource(R.string.cats_near_me_fed_cat), color = DeepBurgundy, fontFamily = QuicksandFontFamily)
+                }
+            }
+        },
+        containerColor = Color.White,
+        shape = RoundedCornerShape(24.dp)
+    )
 }

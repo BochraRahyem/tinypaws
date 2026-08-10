@@ -92,6 +92,46 @@ class WeatherAlertWorker(
                     android.util.Log.d("WeatherAlertWorker", "doWork: Min/MaxTemp ($minTemp/$maxTemp) are within warm limits (>15.0). No cold alert notification triggered.")
                 }
 
+                // Daily Weather-based Cat Care Notification (Once per 24 hours)
+                try {
+                    val prefs = appContext.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+                    val lastDailySentTime = prefs.getLong("last_daily_weather_care_sent_time", 0L)
+                    val now = System.currentTimeMillis()
+                    val isCooldownOver = (now - lastDailySentTime) >= 24 * 60 * 60 * 1000L // 24 hours
+
+                    // Force TranslationManager to load
+                    com.example.ui.TranslationManager.load(appContext)
+                    val savedLang = prefs.getString("user_lang", "en") ?: "en"
+
+                    val titleKey: String
+                    val msgKey: String
+
+                    if (maxTemp > 28.0) {
+                        titleKey = "weather_care_hot_title"
+                        msgKey = "weather_care_hot_msg"
+                    } else if (minTemp < 15.0) {
+                        titleKey = "weather_care_cold_title"
+                        msgKey = "weather_care_cold_msg"
+                    } else {
+                        titleKey = "weather_care_mild_title"
+                        msgKey = "weather_care_mild_msg"
+                    }
+
+                    val title = com.example.ui.TranslationManager.getString(savedLang, "reminder", titleKey)
+                    val message = com.example.ui.TranslationManager.getString(savedLang, "reminder", msgKey)
+
+                    android.util.Log.d("WeatherAlertWorker", "doWork: Localized daily weather care recommendation: title='$title', msg='$message', lang='$savedLang'")
+                    if (isCooldownOver) {
+                        notificationHelper.triggerWeatherAlert(title, message, 3003, bypassCooldownForTesting = true)
+                        prefs.edit().putLong("last_daily_weather_care_sent_time", now).apply()
+                        android.util.Log.d("WeatherAlertWorker", "doWork: Localized daily notification triggered successfully.")
+                    } else {
+                        android.util.Log.d("WeatherAlertWorker", "doWork: Localized daily notification skipped: 24h cooldown active.")
+                    }
+                } catch (ex: Exception) {
+                    android.util.Log.e("WeatherAlertWorker", "doWork: Failed to trigger daily weather notification", ex)
+                }
+
                 android.util.Log.d("WeatherAlertWorker", "doWork: Work execution finished successfully.")
                 Result.success()
             } else {

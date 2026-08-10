@@ -15,27 +15,43 @@ class FirestoreReportRepository(
 ) {
     fun getActiveReports(): Flow<List<CatReport>> = callbackFlow {
         val subscription = firestore.collection("reports")
-            .whereEqualTo("status", "active")
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, _ ->
-                trySend(snapshot?.toObjects(CatReport::class.java) ?: emptyList())
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+                val list = snapshot?.toObjects(CatReport::class.java) ?: emptyList()
+                val activeList = list.filter { !it.rescued && (it.status.isBlank() || it.status == "active" || it.status == "helped") }
+                    .sortedByDescending { it.createdAt?.seconds ?: 0L }
+                trySend(activeList)
             }
         awaitClose { subscription.remove() }
     }
 
     fun getRescueStories(): Flow<List<CatReport>> = callbackFlow {
         val subscription = firestore.collection("reports")
-            .whereEqualTo("rescued", true)
-            .orderBy("rescuedAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, _ ->
-                trySend(snapshot?.toObjects(CatReport::class.java) ?: emptyList())
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+                val list = snapshot?.toObjects(CatReport::class.java) ?: emptyList()
+                val rescueList = list.filter { it.rescued }
+                    .sortedByDescending { it.rescuedAt?.seconds ?: 0L }
+                trySend(rescueList)
             }
         awaitClose { subscription.remove() }
     }
 
     suspend fun createReport(report: CatReport) {
         val uid = auth.currentUser?.uid ?: return
-        val newReport = report.copy(reportedBy = uid)
+        val imgUrl = report.catImageUrl.ifBlank { report.photoUrl }
+        val newReport = report.copy(
+            reportedBy = uid,
+            catImageUrl = imgUrl,
+            photoUrl = imgUrl,
+            status = report.status.ifBlank { "active" }
+        )
         firestore.collection("reports").add(newReport).await()
     }
 

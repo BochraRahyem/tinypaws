@@ -14,13 +14,13 @@ import androidx.compose.runtime.staticCompositionLocalOf
 val LocalIsDarkMode = staticCompositionLocalOf { false }
 
 private val LightColorScheme = lightColorScheme(
-    primary = BaseMauve,
+    primary = BaseDeepBurgundy,
     onPrimary = BaseWhite,
     primaryContainer = PastelLightPink,
     onPrimaryContainer = BaseDeepBurgundy,
     secondary = BaseWine,
     onSecondary = BaseWhite,
-    secondaryContainer = BaseSoftGray,
+    secondaryContainer = BaseBlushPink,
     onSecondaryContainer = BaseDeepBurgundy,
     tertiary = BaseMauve,
     onTertiary = BaseWhite,
@@ -28,29 +28,29 @@ private val LightColorScheme = lightColorScheme(
     onBackground = BaseInk,
     surface = BaseWhite,
     onSurface = BaseInk,
-    surfaceVariant = PastelMint,
+    surfaceVariant = PastelLightPink,
     onSurfaceVariant = BaseInk,
-    outline = PastelLavender.copy(alpha = 0.7f)
+    outline = BaseMauve.copy(alpha = 0.7f)
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = BaseBlushPink,
+    primary = Color(0xFFFF8A9E),
     onPrimary = BaseDarkBgStart,
-    primaryContainer = BaseWine,
-    onPrimaryContainer = BaseBlushPink,
-    secondary = BaseMauve,
+    primaryContainer = Color(0xFF5D1E2A),
+    onPrimaryContainer = Color(0xFFFFE5EC),
+    secondary = Color(0xFFFFB3C1),
     onSecondary = BaseDarkBgStart,
-    secondaryContainer = BaseDeepBurgundy,
-    onSecondaryContainer = BaseMauve,
-    tertiary = BaseBlushPink,
+    secondaryContainer = Color(0xFF3B1A22),
+    onSecondaryContainer = Color(0xFFFFE5EC),
+    tertiary = Color(0xFFE892A2),
     onTertiary = BaseDarkBgStart,
     background = BaseDarkBgStart,
-    onBackground = BaseBlushPink,
-    surface = BaseDarkBgStart,
-    onSurface = BaseBlushPink,
-    surfaceVariant = BaseDarkBgEnd,
-    onSurfaceVariant = BaseMauve,
-    outline = BaseMauve
+    onBackground = Color(0xFFFFE5EC),
+    surface = BaseDarkBgEnd,
+    onSurface = Color(0xFFFFE5EC),
+    surfaceVariant = Color(0xFF3B1A22),
+    onSurfaceVariant = Color(0xFFFFB3C1),
+    outline = Color(0xFFE892A2)
 )
 
 @Composable

@@ -24,7 +24,10 @@ class FirestoreFeedingStationRepository(
 
     suspend fun createFeedingStation(station: FeedingStation) {
         val uid = auth.currentUser?.uid ?: return
-        val newStation = station.copy(createdBy = uid)
+        val newStation = station.copy(
+            createdBy = uid,
+            status = station.status.ifBlank { "active" }
+        )
         firestore.collection("feedingStations").add(newStation).await()
     }
 

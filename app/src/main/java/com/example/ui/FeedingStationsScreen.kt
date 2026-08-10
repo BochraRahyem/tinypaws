@@ -114,13 +114,13 @@ fun FeedingStationsScreen(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             TabButton(
-                text = "🍽️ Browse Stations",
+                text = stringResource(R.string.stations_browse_tab),
                 isActive = activeTab == "browse_stations",
                 onClick = com.example.ui.theme.rememberHapticOnClick { activeTab = "browse_stations" },
                 modifier = Modifier.weight(1f)
             )
             TabButton(
-                text = "➕ Report Station",
+                text = stringResource(R.string.stations_report_tab),
                 isActive = activeTab == "report_station",
                 onClick = com.example.ui.theme.rememberHapticOnClick { activeTab = "report_station" },
                 modifier = Modifier.weight(1f)
@@ -152,7 +152,7 @@ fun FeedingStationsScreen(
                     userLng = userLocation.second,
                     onSuccess = { 
                         activeTab = "browse_stations"
-                        Toast.makeText(context, "Feeding station successfully registered! 🥣", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.stations_registered_success), Toast.LENGTH_SHORT).show()
                     }
                 )
             }
@@ -200,9 +200,9 @@ fun BrowseFeedingStationsSection(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
+                     ) {
                         Text(
-                            text = "Search Radius",
+                            text = stringResource(R.string.stations_search_radius_title),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = burgundyColor
@@ -214,7 +214,7 @@ fun BrowseFeedingStationsSection(
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "${"%.1f".format(radiusKm)} km",
+                                text = stringResource(R.string.radius_km, "%.1f".format(radiusKm)),
                                 color = creamColor,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
@@ -237,7 +237,7 @@ fun BrowseFeedingStationsSection(
 
         item {
             Text(
-                text = "Nearby Feeding Stations (${filteredSpots.size})",
+                text = stringResource(R.string.stations_nearby_title, filteredSpots.size),
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = burgundyColor
@@ -255,7 +255,7 @@ fun BrowseFeedingStationsSection(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No feeding stations found within ${"%.1f".format(radiusKm)} km.",
+                        text = stringResource(R.string.stations_no_nearby_msg, radiusKm),
                         color = inkColor.copy(alpha = 0.6f),
                         fontFamily = QuicksandFontFamily
                     )
@@ -301,19 +301,54 @@ fun BrowseFeedingStationsSection(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "📍 GPS Coordinates: %.4f, %.4f".format(spot.latitude, spot.longitude),
+                                text = stringResource(R.string.stations_gps_coords, spot.latitude, spot.longitude),
                                 fontSize = 11.sp,
                                 color = inkColor.copy(alpha = 0.7f),
                                 fontFamily = QuicksandFontFamily
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "⚡ Real Distance: ${"%.2f".format(dist)} km away",
+                                text = stringResource(R.string.stations_real_dist, dist),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Wine,
                                 fontFamily = QuicksandFontFamily
                             )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                val context = androidx.compose.ui.platform.LocalContext.current
+                                Button(
+                                    onClick = {
+                                        viewModel.fillFeedingStation(spot.id)
+                                        android.widget.Toast.makeText(context, context.getString(R.string.stations_refill_toast), android.widget.Toast.LENGTH_SHORT).show()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = burgundyColor),
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.weight(1f).testTag("refill_station_btn_${spot.id}")
+                                ) {
+                                    Text(stringResource(R.string.stations_refill_btn), fontSize = 11.sp, color = creamColor, fontWeight = FontWeight.Bold, fontFamily = QuicksandFontFamily)
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        val gmmIntentUri = android.net.Uri.parse("https://www.google.com/maps/dir/?api=1&destination=${spot.latitude},${spot.longitude}")
+                                        val mapIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, gmmIntentUri)
+                                        mapIntent.setPackage("com.google.android.apps.maps")
+                                        try {
+                                            context.startActivity(mapIntent)
+                                        } catch (e: Exception) {
+                                            val browserIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, gmmIntentUri)
+                                            context.startActivity(browserIntent)
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.testTag("nav_station_btn_${spot.id}")
+                                ) {
+                                    Text("🗺️", fontSize = 12.sp)
+                                }
+                            }
                         }
                     }
                 }
@@ -365,7 +400,7 @@ fun ReportFeedingStationForm(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "Register a Feeding Station",
+                            text = stringResource(R.string.stations_register_title),
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontFamily = FrauncesFontFamily,
                                 fontWeight = FontWeight.Bold,
@@ -374,7 +409,7 @@ fun ReportFeedingStationForm(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Add local feeding bowls so nearby caregivers can coordinate food replenishment.",
+                            text = stringResource(R.string.stations_register_desc),
                             fontSize = 11.sp,
                             color = inkColor.copy(alpha = 0.8f),
                             fontFamily = QuicksandFontFamily
@@ -396,7 +431,7 @@ fun ReportFeedingStationForm(
                 ) {
                     Column {
                         Text(
-                            text = "Feeding Station Name",
+                            text = stringResource(R.string.stations_name_label),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                             color = burgundyColor
@@ -405,7 +440,7 @@ fun ReportFeedingStationForm(
                         OutlinedTextField(
                             value = stationName,
                             onValueChange = { stationName = it },
-                            placeholder = { Text("e.g. Marina Cat Bowl Station") },
+                            placeholder = { Text(stringResource(R.string.stations_name_placeholder)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("station_name_input"),
@@ -416,7 +451,7 @@ fun ReportFeedingStationForm(
 
                     Column {
                         Text(
-                            text = "Station Icon / Emoji",
+                            text = stringResource(R.string.stations_icon_label),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                             color = burgundyColor
@@ -443,7 +478,7 @@ fun ReportFeedingStationForm(
 
                     Column {
                         Text(
-                            text = "Description / Notes",
+                            text = stringResource(R.string.stations_notes_label),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                             color = burgundyColor
@@ -452,7 +487,7 @@ fun ReportFeedingStationForm(
                         OutlinedTextField(
                             value = stationDesc,
                             onValueChange = { stationDesc = it },
-                            placeholder = { Text("e.g. Placed under the shaded olive tree, replenished daily at 8am.") },
+                            placeholder = { Text(stringResource(R.string.stations_notes_placeholder)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
@@ -485,13 +520,13 @@ fun ReportFeedingStationForm(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "Live GPS Location Attached",
+                            text = stringResource(R.string.stations_gps_attached),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
                             color = inkColor
                         )
                         Text(
-                            text = "Lat: %.4f, Lng: %.4f".format(userLat, userLng),
+                            text = stringResource(R.string.stations_lat_lng, userLat, userLng),
                             fontSize = 10.sp,
                             color = inkColor.copy(alpha = 0.6f)
                         )
@@ -528,7 +563,7 @@ fun ReportFeedingStationForm(
                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Register Feeding Station",
+                    text = stringResource(R.string.stations_register_btn),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }

@@ -1,249 +1,309 @@
 package com.example.data
 
 import android.util.Log
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.coroutines.resume
 
 object FirestoreBackupHelper {
 
     private const val TAG = "FirestoreBackupHelper"
 
     suspend fun backupDataToCloud(
-        profile: CatProfile?,
+        allProfiles: List<CatProfile>,
         careLogs: List<DailyCareLog>,
         weightLogs: List<CatWeightLog>,
-        diaryLogs: List<DiaryEntry>,
-        reminders: List<Reminder>
+        diaryLogs: List<CatCheckInLog>,
+        reminders: List<Reminder>,
+        historyEntries: List<CatHistoryEntry>
     ): Result<String> = withContext(Dispatchers.IO) {
-        suspendCancellableCoroutine { continuation ->
-            try {
-                val db = FirebaseFirestore.getInstance()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                val nowStr = dateFormat.format(Date())
+        try {
+            val db = FirebaseFirestore.getInstance()
+            val auth = FirebaseAuth.getInstance()
+            val user = auth.currentUser ?: return@withContext Result.failure(Exception("User not logged in"))
+            
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            val nowStr = dateFormat.format(Date())
 
-                val profileMap = profile?.let {
+            val data = hashMapOf(
+                "lastBackupDate" to nowStr,
+                "profiles" to allProfiles.map { profile ->
                     mapOf(
-                        "name" to it.name,
-                        "ageYears" to it.ageYears,
-                        "ageMonths" to it.ageMonths,
-                        "coatColor" to it.coatColor
+                        "id" to profile.id,
+                        "name" to profile.name,
+                        "ageYears" to profile.ageYears,
+                        "ageMonths" to profile.ageMonths,
+                        "coatColor" to profile.coatColor,
+                        "photoUrl" to profile.photoUrl,
+                        "personality" to profile.personality,
+                        "adoptionPhotoUrl" to profile.adoptionPhotoUrl,
+                        "foodPreferences" to profile.foodPreferences,
+                        "chronicConditions" to profile.chronicConditions
                     )
-                } ?: emptyMap<String, Any>()
-
-                val careLogsList = careLogs.map {
+                },
+                "dailyCareLogs" to careLogs.map { log ->
                     mapOf(
-                        "dateString" to it.dateString,
-                        "fed" to it.fed,
-                        "watered" to it.watered,
-                        "played" to it.played,
-                        "litterCleaned" to it.litterCleaned,
-                        "groomed" to it.groomed,
-                        "medicationGiven" to it.medicationGiven
+                        "catId" to log.catId,
+                        "dateString" to log.dateString,
+                        "fed" to log.fed,
+                        "watered" to log.watered,
+                        "played" to log.played,
+                        "litterCleaned" to log.litterCleaned,
+                        "groomed" to log.groomed,
+                        "medicationGiven" to log.medicationGiven
+                    )
+                },
+                "weightLogs" to weightLogs.map { log ->
+                    mapOf(
+                        "catId" to log.catId,
+                        "date" to log.date,
+                        "weight" to log.weight
+                    )
+                },
+                "diaryLogs" to diaryLogs.map { log ->
+                    mapOf(
+                        "catId" to log.catId,
+                        "date" to log.date,
+                        "mood" to log.mood,
+                        "healthStatus" to log.healthStatus,
+                        "weight" to (log.weight ?: 0f),
+                        "photos" to log.photos,
+                        "category" to log.category,
+                        "reminderTimeMillis" to (log.reminderTimeMillis ?: 0L)
+                    )
+                },
+                "reminders" to reminders.map { reminder ->
+                    mapOf(
+                        "catId" to reminder.catId,
+                        "catIds" to reminder.catIds,
+                        "title" to reminder.title,
+                        "timeMillis" to reminder.timeMillis,
+                        "type" to reminder.type,
+                        "isRecurring" to reminder.isRecurring,
+                        "isEnabled" to reminder.isEnabled
+                    )
+                },
+                "historyEntries" to historyEntries.map { entry ->
+                    mapOf(
+                        "catId" to entry.catId,
+                        "title" to entry.title,
+                        "date" to entry.date,
+                        "category" to entry.category,
+                        "notes" to entry.notes
                     )
                 }
+            )
 
-                val weightLogsList = weightLogs.map {
-                    mapOf(
-                        "id" to it.id,
-                        "date" to it.date,
-                        "weight" to it.weight
-                    )
-                }
-
-                val diaryLogsList = diaryLogs.map {
-                    mapOf(
-                        "id" to it.id,
-                        "date" to it.date,
-                        "mood" to it.mood,
-                        "notes" to it.notes,
-                        "weight" to (it.weight ?: 0f),
-                        "photos" to it.photos,
-                        "diaryEntryType" to it.diaryEntryType
-                    )
-                }
-
-                val remindersList = reminders.map {
-                    mapOf(
-                        "id" to it.id,
-                        "title" to it.title,
-                        "timeMillis" to it.timeMillis,
-                        "type" to it.type
-                    )
-                }
-
-                val backupPayload = hashMapOf(
-                    "profile" to profileMap,
-                    "dailyCareLogs" to careLogsList,
-                    "weightLogs" to weightLogsList,
-                    "diaryLogs" to diaryLogsList,
-                    "reminders" to remindersList,
-                    "lastBackupDate" to nowStr,
-                    "timestamp" to System.currentTimeMillis()
-                )
-
-                FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener { authTask ->
-                    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: "device_user"
-                    db.collection("users")
-                        .document(uid)
-                        .collection("backups")
-                        .document("latest")
-                        .set(backupPayload, SetOptions.merge())
-                        .addOnSuccessListener {
-                            Log.d(TAG, "Firestore backup successful!")
-                            continuation.resume(Result.success("Backup uploaded to cloud ($nowStr)"))
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e(TAG, "Firestore backup error", e)
-                            continuation.resume(Result.failure(e))
-                        }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Exception during cloud backup", e)
-                continuation.resume(Result.failure(e))
-            }
+            Tasks.await(
+                db.collection("users")
+                    .document(user.uid)
+                    .collection("backups")
+                    .document("latest")
+                    .set(data, SetOptions.merge())
+            )
+            Result.success("Backup uploaded to cloud ($nowStr)")
+        } catch (e: Exception) {
+            Log.e(TAG, "Cloud backup failed", e)
+            Result.failure(e)
         }
     }
 
     suspend fun restoreDataFromCloud(
         catRepository: CatRepository
     ): Result<String> = withContext(Dispatchers.IO) {
-        suspendCancellableCoroutine { continuation ->
-            try {
-                val db = FirebaseFirestore.getInstance()
-                FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener {
-                    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: "device_user"
-                    db.collection("users")
-                        .document(uid)
-                        .collection("backups")
-                        .document("latest")
-                        .get()
-                        .addOnSuccessListener { doc ->
-                            if (doc == null || !doc.exists()) {
-                                continuation.resume(Result.failure(Exception("No cloud backup found for this account.")))
-                                return@addOnSuccessListener
-                            }
+        try {
+            val db = FirebaseFirestore.getInstance()
+            val auth = FirebaseAuth.getInstance()
+            val user = auth.currentUser ?: return@withContext Result.failure(Exception("User not logged in"))
 
-                            try {
-                                val data = doc.data ?: emptyMap<String, Any>()
+            val doc = Tasks.await(
+                db.collection("users")
+                    .document(user.uid)
+                    .collection("backups")
+                    .document("latest")
+                    .get()
+            )
 
-                                // 1. Restore Profile
-                                val profileMap = data["profile"] as? Map<*, *>
-                                if (profileMap != null && profileMap.isNotEmpty()) {
-                                    val name = profileMap["name"] as? String ?: "Whiskers"
-                                    val ageYears = (profileMap["ageYears"] as? Number)?.toInt() ?: 2
-                                    val ageMonths = (profileMap["ageMonths"] as? Number)?.toInt() ?: 0
-                                    val coatColor = profileMap["coatColor"] as? String ?: "Orange Tabby"
-
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        catRepository.saveProfile(
-                                            CatProfile(
-                                                name = name,
-                                                ageYears = ageYears,
-                                                ageMonths = ageMonths,
-                                                coatColor = coatColor
-                                            )
-                                        )
-                                    }
-                                }
-
-                                // 2. Restore Care Logs
-                                val careLogsList = data["dailyCareLogs"] as? List<Map<*, *>> ?: emptyList()
-                                careLogsList.forEach { item ->
-                                    val dateStr = item["dateString"] as? String ?: return@forEach
-                                    val fed = item["fed"] as? Boolean ?: false
-                                    val watered = item["watered"] as? Boolean ?: false
-                                    val played = item["played"] as? Boolean ?: false
-                                    val litterCleaned = item["litterCleaned"] as? Boolean ?: false
-                                    val groomed = item["groomed"] as? Boolean ?: false
-                                    val medicationGiven = item["medicationGiven"] as? Boolean ?: false
-
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        catRepository.saveCareLog(
-                                            DailyCareLog(
-                                                dateString = dateStr,
-                                                fed = fed,
-                                                watered = watered,
-                                                played = played,
-                                                litterCleaned = litterCleaned,
-                                                groomed = groomed,
-                                                medicationGiven = medicationGiven
-                                            )
-                                        )
-                                    }
-                                }
-
-                                // 3. Restore Weight Logs
-                                val weightLogsList = data["weightLogs"] as? List<Map<*, *>> ?: emptyList()
-                                weightLogsList.forEach { item ->
-                                    val date = (item["date"] as? Number)?.toLong() ?: return@forEach
-                                    val weight = (item["weight"] as? Number)?.toFloat() ?: 4.0f
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        catRepository.saveWeightLog(date, weight)
-                                    }
-                                }
-
-                                // 4. Restore Diary / Check-in Logs
-                                val diaryLogsList = data["diaryLogs"] as? List<Map<*, *>> ?: emptyList()
-                                diaryLogsList.forEach { item ->
-                                    val date = (item["date"] as? Number)?.toLong() ?: return@forEach
-                                    val mood = item["mood"] as? String ?: "happy"
-                                    val healthStatus = item["healthStatus"] as? String ?: ""
-                                    val weight = (item["weight"] as? Number)?.toFloat()
-                                    val photos = item["photos"] as? String ?: ""
-                                    val diaryEntryType = item["diaryEntryType"] as? String ?: "general"
-                                    val remTime = (item["reminderTimeMillis"] as? Number)?.toLong()?.takeIf { it > 0 }
-
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        catRepository.saveCheckInLog(
-                                            date = date,
-                                            mood = mood,
-                                            notes = healthStatus,
-                                            weight = weight,
-                                            photos = photos,
-                                            diaryEntryType = diaryEntryType,
-                                            reminderTimeMillis = remTime
-                                        )
-                                    }
-                                }
-
-                                // 5. Restore Reminders
-                                val remindersList = data["reminders"] as? List<Map<*, *>> ?: emptyList()
-                                remindersList.forEach { item ->
-                                    val title = item["title"] as? String ?: return@forEach
-                                    val timeMillis = (item["timeMillis"] as? Number)?.toLong() ?: return@forEach
-                                    val type = item["type"] as? String ?: "general"
-
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        catRepository.saveReminder(title, timeMillis, type)
-                                    }
-                                }
-
-                                val lastBackup = data["lastBackupDate"] as? String ?: "recent"
-                                continuation.resume(Result.success("Successfully restored data from cloud ($lastBackup)!"))
-                            } catch (e: Exception) {
-                                Log.e(TAG, "Error parsing cloud backup data", e)
-                                continuation.resume(Result.failure(e))
-                            }
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e(TAG, "Error fetching cloud backup", e)
-                            continuation.resume(Result.failure(e))
-                        }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Exception during cloud restore", e)
-                continuation.resume(Result.failure(e))
+            if (doc == null || !doc.exists()) {
+                return@withContext Result.failure(Exception("No cloud backup found for this account."))
             }
+
+            val data = doc.data ?: return@withContext Result.failure(Exception("Backup data is empty."))
+
+            // 1. Restore Profiles (max 7)
+            val profilesList = data["profiles"] as? List<Map<*, *>>
+            if (profilesList != null) {
+                profilesList.take(7).forEach { profileMap ->
+                    val cId = (profileMap["id"] as? Number)?.toInt() ?: 1
+                    val name = profileMap["name"] as? String ?: "Cat"
+                    val ageYears = (profileMap["ageYears"] as? Number)?.toInt() ?: 2
+                    val ageMonths = (profileMap["ageMonths"] as? Number)?.toInt() ?: 0
+                    val coatColor = profileMap["coatColor"] as? String ?: "Calico"
+                    val photoUrl = profileMap["photoUrl"] as? String
+                    val personality = profileMap["personality"] as? String ?: ""
+                    val adoptionPhotoUrl = profileMap["adoptionPhotoUrl"] as? String
+                    val foodPreferences = profileMap["foodPreferences"] as? String ?: ""
+                    val chronicConditions = profileMap["chronicConditions"] as? String
+
+                    catRepository.saveProfile(
+                        CatProfile(
+                            id = cId,
+                            name = name,
+                            ageYears = ageYears,
+                            ageMonths = ageMonths,
+                            coatColor = coatColor,
+                            photoUrl = photoUrl,
+                            personality = personality,
+                            adoptionPhotoUrl = adoptionPhotoUrl,
+                            foodPreferences = foodPreferences,
+                            chronicConditions = chronicConditions
+                        )
+                    )
+                }
+            } else {
+                val profileMap = data["profile"] as? Map<*, *>
+                if (profileMap != null && profileMap.isNotEmpty()) {
+                    val name = profileMap["name"] as? String ?: "Whiskers"
+                    val ageYears = (profileMap["ageYears"] as? Number)?.toInt() ?: 2
+                    val ageMonths = (profileMap["ageMonths"] as? Number)?.toInt() ?: 0
+                    val coatColor = profileMap["coatColor"] as? String ?: "Orange Tabby"
+                    val photoUrl = profileMap["photoUrl"] as? String
+                    val personality = profileMap["personality"] as? String ?: ""
+                    val adoptionPhotoUrl = profileMap["adoptionPhotoUrl"] as? String
+                    val foodPreferences = profileMap["foodPreferences"] as? String ?: ""
+                    val chronicConditions = profileMap["chronicConditions"] as? String
+
+                    catRepository.saveProfile(
+                        CatProfile(
+                            id = 1,
+                            name = name,
+                            ageYears = ageYears,
+                            ageMonths = ageMonths,
+                            coatColor = coatColor,
+                            photoUrl = photoUrl,
+                            personality = personality,
+                            adoptionPhotoUrl = adoptionPhotoUrl,
+                            foodPreferences = foodPreferences,
+                            chronicConditions = chronicConditions
+                        )
+                    )
+                }
+            }
+
+            // 2. Restore Care Logs
+            val careLogsList = data["dailyCareLogs"] as? List<Map<*, *>> ?: emptyList()
+            careLogsList.forEach { item ->
+                val catId = (item["catId"] as? Number)?.toInt() ?: 1
+                val dateStr = item["dateString"] as? String ?: return@forEach
+                val fed = item["fed"] as? Boolean ?: false
+                val watered = item["watered"] as? Boolean ?: false
+                val played = item["played"] as? Boolean ?: false
+                val litterCleaned = item["litterCleaned"] as? Boolean ?: false
+                val groomed = item["groomed"] as? Boolean ?: false
+                val medicationGiven = item["medicationGiven"] as? Boolean ?: false
+
+                catRepository.saveCareLog(
+                    DailyCareLog(
+                        catId = catId,
+                        dateString = dateStr,
+                        fed = fed,
+                        watered = watered,
+                        played = played,
+                        litterCleaned = litterCleaned,
+                        groomed = groomed,
+                        medicationGiven = medicationGiven
+                    )
+                )
+            }
+
+            // 3. Restore Weight Logs
+            val weightLogsList = data["weightLogs"] as? List<Map<*, *>> ?: emptyList()
+            weightLogsList.forEach { item ->
+                val catId = (item["catId"] as? Number)?.toInt() ?: 1
+                val date = (item["date"] as? Number)?.toLong() ?: return@forEach
+                val weight = (item["weight"] as? Number)?.toFloat() ?: 4.0f
+                catRepository.saveWeightLog(date, weight, catId = catId)
+            }
+
+            // 4. Restore Diary / Check-in Logs
+            val diaryLogsList = data["diaryLogs"] as? List<Map<*, *>> ?: emptyList()
+            diaryLogsList.forEach { item ->
+                val catId = (item["catId"] as? Number)?.toInt() ?: 1
+                val date = (item["date"] as? Number)?.toLong() ?: return@forEach
+                val mood = item["mood"] as? String ?: "happy"
+                val notes = item["notes"] as? String ?: (item["healthStatus"] as? String ?: "")
+                val weight = (item["weight"] as? Number)?.toFloat()
+                val photos = item["photos"] as? String ?: ""
+                val diaryEntryType = item["category"] as? String ?: (item["diaryEntryType"] as? String ?: "general")
+                val remTime = (item["reminderTimeMillis"] as? Number)?.toLong()?.takeIf { it > 0 }
+
+                catRepository.saveCheckInLog(
+                    catId = catId,
+                    date = date,
+                    mood = mood,
+                    notes = notes,
+                    weight = weight,
+                    photos = photos,
+                    diaryEntryType = diaryEntryType,
+                    reminderTimeMillis = remTime
+                )
+            }
+
+            // 5. Restore Reminders
+            val remindersList = data["reminders"] as? List<Map<*, *>> ?: emptyList()
+            remindersList.forEach { item ->
+                val catId = (item["catId"] as? Number)?.toInt() ?: 1
+                val catIds = item["catIds"] as? String ?: "all"
+                val title = item["title"] as? String ?: return@forEach
+                val timeMillis = (item["timeMillis"] as? Number)?.toLong() ?: return@forEach
+                val type = item["type"] as? String ?: "general"
+                val isRecurring = item["isRecurring"] as? Boolean ?: true
+                val isEnabled = item["isEnabled"] as? Boolean ?: true
+
+                catRepository.saveReminder(
+                    Reminder(
+                        catId = catId,
+                        catIds = catIds,
+                        title = title,
+                        timeMillis = timeMillis,
+                        type = type,
+                        isRecurring = isRecurring,
+                        isEnabled = isEnabled
+                    )
+                )
+            }
+
+            // 6. Restore History Logs
+            val historyList = data["historyEntries"] as? List<Map<*, *>> ?: emptyList()
+            historyList.forEach { item ->
+                val catId = (item["catId"] as? Number)?.toInt() ?: 1
+                val title = item["title"] as? String ?: return@forEach
+                val date = (item["date"] as? Number)?.toLong() ?: return@forEach
+                val category = item["category"] as? String ?: "Other"
+                val notes = item["notes"] as? String ?: ""
+
+                catRepository.saveHistoryEntry(
+                    CatHistoryEntry(
+                        catId = catId,
+                        title = title,
+                        date = date,
+                        category = category,
+                        notes = notes
+                    )
+                )
+            }
+
+            val lastBackup = data["lastBackupDate"] as? String ?: "recent"
+            Result.success("Successfully restored data from cloud ($lastBackup)!")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error restoring cloud backup data", e)
+            Result.failure(e)
         }
     }
 }

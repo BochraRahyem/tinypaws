@@ -8,6 +8,7 @@ import com.example.data.DiaryEntry
 import com.example.data.CatProfile
 import com.example.data.CatWeightLog
 import com.example.data.DailyCareLog
+import com.example.data.CatHistoryEntry
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
@@ -20,7 +21,8 @@ object CsvExportUtil {
         profile: CatProfile?,
         careLogs: List<DailyCareLog>,
         weightLogs: List<CatWeightLog>,
-        diaryLogs: List<DiaryEntry>
+        diaryLogs: List<DiaryEntry>,
+        historyEntries: List<CatHistoryEntry>
     ): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         val sb = StringBuilder()
@@ -30,11 +32,11 @@ object CsvExportUtil {
 
         // 1. Cat Profile
         sb.append("--- CAT PROFILE ---\n")
-        sb.append("Name,Age (Years),Age (Months),Coat Color\n")
+        sb.append("Name,Age (Years),Age (Months),Coat Color,Photo Path\n")
         if (profile != null) {
-            sb.append("\"${escapeCsv(profile.name)}\",${profile.ageYears},${profile.ageMonths},\"${escapeCsv(profile.coatColor)}\"\n")
+            sb.append("\"${escapeCsv(profile.name)}\",${profile.ageYears},${profile.ageMonths},\"${escapeCsv(profile.coatColor)}\",\"${escapeCsv(profile.photoUrl ?: "")}\"\n")
         } else {
-            sb.append("No Profile Configured,,,\n")
+            sb.append("No Profile Configured,,,,\n")
         }
         sb.append("\n")
 
@@ -80,6 +82,19 @@ object CsvExportUtil {
                 sb.append("\"$dateStr\",\"${escapeCsv(log.diaryEntryType)}\",\"${escapeCsv(log.mood)}\",\"${escapeCsv(log.notes)}\"\n")
             }
         }
+        sb.append("\n")
+
+        // 5. Cat History Logs
+        sb.append("--- CAT HISTORY LOGS ---\n")
+        sb.append("Date,Category,Title,Notes\n")
+        if (historyEntries.isEmpty()) {
+            sb.append("No history entries found,,,\n")
+        } else {
+            historyEntries.sortedByDescending { it.date }.forEach { log ->
+                val dateStr = dateFormat.format(Date(log.date))
+                sb.append("\"$dateStr\",\"${escapeCsv(log.category)}\",\"${escapeCsv(log.title)}\",\"${escapeCsv(log.notes)}\"\n")
+            }
+        }
 
         return sb.toString()
     }
@@ -93,10 +108,11 @@ object CsvExportUtil {
         profile: CatProfile?,
         careLogs: List<DailyCareLog>,
         weightLogs: List<CatWeightLog>,
-        diaryLogs: List<DiaryEntry>
+        diaryLogs: List<DiaryEntry>,
+        historyEntries: List<CatHistoryEntry>
     ): File? {
         return try {
-            val content = generateCsvContent(profile, careLogs, weightLogs, diaryLogs)
+            val content = generateCsvContent(profile, careLogs, weightLogs, diaryLogs, historyEntries)
             val fileName = "TinyPaws_Care_Report_${System.currentTimeMillis()}.csv"
             val file = File(context.cacheDir, fileName)
             FileWriter(file).use { writer ->
@@ -112,7 +128,7 @@ object CsvExportUtil {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/csv"
                 putExtra(Intent.EXTRA_SUBJECT, "TinyPaws Care & Health Report for ${profile?.name ?: "Cat"}")
-                putExtra(Intent.EXTRA_TEXT, "Attached is the care, weight tracking, and health logs report generated from TinyPaws.")
+                putExtra(Intent.EXTRA_TEXT, "Attached is the care, weight tracking, history, and health logs report generated from TinyPaws.")
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }

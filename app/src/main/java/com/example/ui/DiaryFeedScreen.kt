@@ -1,5 +1,7 @@
 package com.example.ui
 
+import androidx.compose.ui.res.stringResource
+
 import android.app.DatePickerDialog
 import android.widget.Toast
 import androidx.compose.animation.*
@@ -98,7 +100,7 @@ fun DiaryFeedScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Cat Diary Feed",
+                        stringResource(R.string.diary_feed_title),
                         fontFamily = FrauncesFontFamily,
                         fontWeight = FontWeight.Bold,
                         color = DeepBurgundy
@@ -128,7 +130,7 @@ fun DiaryFeedScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("New Entry", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.diary_new_entry), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = Color.Transparent,
@@ -150,7 +152,7 @@ fun DiaryFeedScreen(
                     .testTag("diary_search_bar"),
                 placeholder = {
                     Text(
-                        "Search by date or keyword (e.g. vet, vaccine, happy)...",
+                        stringResource(R.string.diary_search_placeholder),
                         fontFamily = QuicksandFontFamily,
                         fontSize = 13.sp
                     )
@@ -176,17 +178,17 @@ fun DiaryFeedScreen(
             )
 
             // CATEGORY FILTER CHIPS
+            val filters = listOf(
+                "all" to stringResource(R.string.diary_filter_all),
+                "vet_visit" to stringResource(R.string.diary_filter_vet),
+                "vaccination" to stringResource(R.string.diary_filter_vaccination),
+                "grooming" to stringResource(R.string.diary_filter_grooming),
+                "general" to stringResource(R.string.diary_filter_general)
+            )
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val filters = listOf(
-                    "all" to "All Feed",
-                    "vet_visit" to "🏥 Vet Visits",
-                    "vaccination" to "💉 Vaccines",
-                    "grooming" to "✂️ Grooming",
-                    "general" to "📝 General Notes"
-                )
                 items(filters) { (tag, label) ->
                     val isSelected = selectedCategoryFilter == tag
                     FilterChip(
@@ -374,10 +376,10 @@ fun DiaryEntryCard(
                     }
 
                     val moodText = when (log.mood) {
-                        "happy" -> "😊 Happy"
-                        "playful" -> "🧶 Playful"
-                        "tired" -> "😴 Relaxed"
-                        "unwell" -> "🤒 Unwell"
+                        "happy" -> stringResource(R.string.mood_happy)
+                        "playful" -> stringResource(R.string.mood_playful)
+                        "tired" -> stringResource(R.string.mood_relaxed)
+                        "unwell" -> stringResource(R.string.mood_unwell)
                         else -> log.mood
                     }
                     Text(
@@ -423,7 +425,7 @@ fun DiaryEntryCard(
                     ) {
                         Icon(Icons.Default.Image, contentDescription = null, tint = Wine, modifier = Modifier.size(16.dp))
                         Text(
-                            text = "Saved Photos (${photosList.size})",
+                            text = stringResource(R.string.diary_saved_photos, photosList.size),
                             fontFamily = QuicksandFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
@@ -466,7 +468,7 @@ fun DiaryEntryCard(
                         onClick = com.example.ui.theme.rememberHapticOnClick { previewImageUri = null },
                         colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy, contentColor = Cream)
                     ) {
-                        Text("Close", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.diary_close), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -583,7 +585,7 @@ fun AddDiaryEntryDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Add Cat Diary Entry", fontFamily = FrauncesFontFamily, fontWeight = FontWeight.Bold, color = DeepBurgundy)
+            Text(stringResource(R.string.diary_add_title), fontFamily = FrauncesFontFamily, fontWeight = FontWeight.Bold, color = DeepBurgundy)
         },
         text = {
             Column(
@@ -591,16 +593,16 @@ fun AddDiaryEntryDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Category Picker
-                Text("Category:", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Wine)
+                Text(stringResource(R.string.diary_category_label), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Wine)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     val cats = listOf(
-                        "general" to "📝 General",
-                        "vet_visit" to "🏥 Vet",
-                        "vaccination" to "💉 Vaccine",
-                        "grooming" to "✂️ Groom"
+                        "general" to stringResource(R.string.diary_cat_general),
+                        "vet_visit" to stringResource(R.string.diary_cat_vet),
+                        "vaccination" to stringResource(R.string.diary_cat_vaccination),
+                        "grooming" to stringResource(R.string.diary_cat_grooming)
                     )
                     cats.forEach { (catKey, catLabel) ->
                         val isSel = selectedCategory == catKey
@@ -626,16 +628,16 @@ fun AddDiaryEntryDialog(
                 }
 
                 // Mood selector
-                Text("Cat Mood:", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Wine)
+                Text(stringResource(R.string.diary_mood_label), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Wine)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     val moods = listOf(
-                        "happy" to "😊 Happy",
-                        "playful" to "🧶 Playful",
-                        "tired" to "😴 Relaxed",
-                        "unwell" to "🤒 Unwell"
+                        "happy" to stringResource(R.string.mood_happy),
+                        "playful" to stringResource(R.string.mood_playful),
+                        "tired" to stringResource(R.string.mood_relaxed),
+                        "unwell" to stringResource(R.string.mood_unwell)
                     )
                     moods.forEach { (mKey, mLabel) ->
                         val isSel = selectedMood == mKey
@@ -650,8 +652,8 @@ fun AddDiaryEntryDialog(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Entry Notes & Details", fontFamily = QuicksandFontFamily) },
-                    placeholder = { Text("e.g. Received rabies vaccine booster, ate well.", fontFamily = QuicksandFontFamily) },
+                    label = { Text(stringResource(R.string.diary_notes_label), fontFamily = QuicksandFontFamily) },
+                    placeholder = { Text(stringResource(R.string.diary_notes_placeholder), fontFamily = QuicksandFontFamily) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = DeepBurgundy,
                         unfocusedBorderColor = Mauve
@@ -662,8 +664,8 @@ fun AddDiaryEntryDialog(
                 OutlinedTextField(
                     value = weightInput,
                     onValueChange = { if (it.all { char -> char.isDigit() || char == '.' }) weightInput = it },
-                    label = { Text("Cat Weight (kg)", fontFamily = QuicksandFontFamily) },
-                    placeholder = { Text("e.g. 4.2", fontFamily = QuicksandFontFamily) },
+                    label = { Text(stringResource(R.string.diary_weight_label), fontFamily = QuicksandFontFamily) },
+                    placeholder = { Text(stringResource(R.string.diary_weight_placeholder), fontFamily = QuicksandFontFamily) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = DeepBurgundy,
@@ -673,7 +675,7 @@ fun AddDiaryEntryDialog(
                 )
 
                 // Select Cat Photos
-                Text("Attach Cat Photos:", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Wine)
+                Text(stringResource(R.string.diary_attach_photos), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Wine)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(availablePhotos) { photoTag ->
                         val isSel = photoTag in selectedPhotos
@@ -722,12 +724,12 @@ fun AddDiaryEntryDialog(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy, contentColor = Cream)
             ) {
-                Text("Save Entry", fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.diary_save_btn), fontFamily = QuicksandFontFamily, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = com.example.ui.theme.rememberHapticOnClick { onDismiss() }) {
-                Text("Cancel", fontFamily = QuicksandFontFamily, color = Wine)
+                Text(stringResource(R.string.cancel_btn), fontFamily = QuicksandFontFamily, color = Wine)
             }
         }
     )

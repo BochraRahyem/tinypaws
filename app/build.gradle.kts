@@ -14,7 +14,7 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = "com.aistudio.tinypawsdiary.wfkygx"
+    applicationId = "com.tinypaws.app"
     minSdk = 24
     targetSdk = 34
     versionCode = 3
@@ -113,6 +113,7 @@ dependencies {
   implementation(libs.firebase.auth)
   implementation(libs.firebase.analytics)
   implementation(libs.firebase.messaging)
+  implementation(libs.firebase.storage)
   implementation(libs.play.services.auth)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)

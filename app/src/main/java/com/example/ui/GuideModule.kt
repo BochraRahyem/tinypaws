@@ -1,5 +1,7 @@
 package com.example.ui
 
+import androidx.compose.ui.res.stringResource
+
 import android.graphics.Bitmap
 import com.example.R
 import androidx.compose.ui.graphics.asImageBitmap
@@ -346,7 +348,7 @@ fun DiseasesGuideSection() {
             R.string.disease_rabies_spread,
             R.string.disease_rabies_recog,
             R.string.disease_rabies_prev,
-            "💉 Vaccine"
+            stringResource(R.string.guide_badge_vaccine)
         ),
         DiseaseData(
             R.string.disease_toxo_name,
@@ -354,7 +356,7 @@ fun DiseasesGuideSection() {
             R.string.disease_toxo_spread,
             R.string.disease_toxo_recog,
             R.string.disease_toxo_prev,
-            "🧼 Hygiene"
+            stringResource(R.string.guide_badge_hygiene)
         ),
         DiseaseData(
             R.string.disease_csd_name,
@@ -362,7 +364,7 @@ fun DiseasesGuideSection() {
             R.string.disease_csd_spread,
             R.string.disease_csd_recog,
             R.string.disease_csd_prev,
-            "🦟 Flea Control"
+            stringResource(R.string.guide_badge_flea)
         ),
         DiseaseData(
             R.string.disease_ringworm_name,
@@ -370,7 +372,7 @@ fun DiseasesGuideSection() {
             R.string.disease_ringworm_spread,
             R.string.disease_ringworm_recog,
             R.string.disease_ringworm_prev,
-            "🧴 Quarantine"
+            stringResource(R.string.guide_badge_quarantine)
         ),
         DiseaseData(
             R.string.disease_pasteur_name,
@@ -378,7 +380,7 @@ fun DiseasesGuideSection() {
             R.string.disease_pasteur_spread,
             R.string.disease_pasteur_recog,
             R.string.disease_pasteur_prev,
-            "🩹 Emergency Care"
+            stringResource(R.string.guide_badge_emergency)
         )
     )
 
@@ -536,20 +538,14 @@ fun FavoritesSection(
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = project.title,
+                                text = stringResource(project.titleRes),
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = PastelPurpleDark
                                 )
                             )
                             Text(
-                                text = stringResource(project.category.let { 
-                                    when(it) {
-                                        "shelter" -> R.string.guide_diy_tab_shelter
-                                        "game" -> R.string.guide_diy_tab_game
-                                        else -> R.string.guide_diy_tab_cozy
-                                    }
-                                }),
+                                text = stringResource(project.categoryRes),
                                 style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                             )
                         }
@@ -557,7 +553,7 @@ fun FavoritesSection(
                             onClick = com.example.ui.theme.rememberHapticOnClick {  viewModel.toggleFavoriteDiy(project.id) },
                             modifier = Modifier.testTag("fav_remove_${project.id}")
                         ) {
-                            Icon(Icons.Default.Favorite, contentDescription = "Remove", tint = Color.Red)
+                            Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.guide_fav_remove), tint = Color.Red)
                         }
                     }
                 }
@@ -1175,14 +1171,14 @@ fun NewDiyProjectsSection(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "Heatwave & Weather Tracker",
+                                text = stringResource(R.string.diy_weather_tracker_title),
                                 style = MaterialTheme.typography.titleSmall.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFFB71C1C)
                                 )
                             )
                             Text(
-                                text = "Check 7-day temperature alerts (>35°C red, <15°C blue) for stray cat shelters.",
+                                text = stringResource(R.string.diy_weather_tracker_desc),
                                 style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF5D4037))
                             )
                         }
@@ -1192,7 +1188,7 @@ fun NewDiyProjectsSection(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Open", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(stringResource(R.string.main_open), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                 }
             }
@@ -1245,7 +1241,14 @@ fun NewDiyProjectsSection(
                 }
             }
 
-            val filteredProjects = allProjects.filter { it.category == activeCategory }
+            val filteredProjects = allProjects.filter { project ->
+                when (activeCategory) {
+                    "shelter" -> project.categoryRes == R.string.cat_shelter
+                    "game" -> project.categoryRes == R.string.cat_game
+                    "cozy" -> project.categoryRes == R.string.cat_cozy
+                    else -> true
+                }
+            }
 
             filteredProjects.forEach { project ->
                 val favoriteIds by viewModel.favoriteDiyIds.collectAsState()
@@ -1266,8 +1269,13 @@ fun NewDiyProjectsSection(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
+                                val categoryLabel = when(project.categoryRes) {
+                                    R.string.diy_cat_shelter -> stringResource(R.string.guide_diy_tab_shelter)
+                                    R.string.diy_cat_game -> stringResource(R.string.guide_diy_tab_game)
+                                    else -> stringResource(R.string.guide_diy_tab_cozy)
+                                }
                                 Text(
-                                    text = project.title,
+                                    text = stringResource(project.titleRes),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -1279,15 +1287,14 @@ fun NewDiyProjectsSection(
                                 ) {
                                     Icon(
                                         imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                        contentDescription = "Favorite",
+                                        contentDescription = stringResource(R.string.diy_fav_desc),
                                         tint = if (isFavorite) Color.Red else Wine.copy(alpha = 0.6f),
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            DiyBadge(
-                                text = project.difficulty,
+                              DiyBadge(
+                                text = stringResource(project.difficultyRes),
                                 containerColor = BlushPink.copy(alpha = 0.4f),
                                 contentColor = DeepBurgundy
                             )
@@ -1297,12 +1304,12 @@ fun NewDiyProjectsSection(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            DiyBadge(text = project.cost, containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
-                            DiyBadge(text = project.time, containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
+                            DiyBadge(text = stringResource(project.costRes), containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
+                            DiyBadge(text = stringResource(project.timeRes), containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = project.description,
+                            text = stringResource(project.descriptionRes),
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onBackground)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -1350,7 +1357,7 @@ fun NewDiyProjectsSection(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = project.title,
+                                text = stringResource(project.titleRes),
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -1363,7 +1370,7 @@ fun NewDiyProjectsSection(
                             ) {
                                 Icon(
                                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = "Favorite",
+                                    contentDescription = stringResource(R.string.diy_fav_desc),
                                     tint = if (isFavorite) Color.Red else Wine.copy(alpha = 0.6f),
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -1374,14 +1381,14 @@ fun NewDiyProjectsSection(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            DiyBadge(text = project.difficulty, containerColor = BlushPink.copy(alpha = 0.4f), contentColor = DeepBurgundy)
-                            DiyBadge(text = project.cost, containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
-                            DiyBadge(text = project.time, containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
+                            DiyBadge(text = stringResource(project.difficultyRes), containerColor = BlushPink.copy(alpha = 0.4f), contentColor = DeepBurgundy)
+                            DiyBadge(text = stringResource(project.costRes), containerColor = BlushPink.copy(alpha = 0.3f), contentColor = DeepBurgundy)
+                            DiyBadge(text = stringResource(project.timeRes), containerColor = SoftGray.copy(alpha = 0.5f), contentColor = Ink)
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = project.description,
+                            text = stringResource(project.descriptionRes),
                             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground, lineHeight = 18.sp)
                         )
 
@@ -1395,7 +1402,7 @@ fun NewDiyProjectsSection(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Step-by-step action illustrations with Pip the cat and Lily working together!",
+                            text = stringResource(R.string.diy_storyboard_sub),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -1423,7 +1430,7 @@ fun NewDiyProjectsSection(
                                     if (bitmap != null) {
                                         Image(
                                             bitmap = bitmap.asImageBitmap(),
-                                            contentDescription = step.title,
+                                            contentDescription = stringResource(step.titleRes),
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(180.dp)
@@ -1444,7 +1451,7 @@ fun NewDiyProjectsSection(
                                         }
                                         Image(
                                             painter = painterResource(id = fallbackResId),
-                                            contentDescription = step.title,
+                                            contentDescription = stringResource(step.titleRes),
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(180.dp)
@@ -1455,7 +1462,7 @@ fun NewDiyProjectsSection(
 
                                     Column(modifier = Modifier.padding(14.dp)) {
                                         Text(
-                                            text = "Step ${step.step} of ${steps.size}",
+                                            text = stringResource(R.string.diy_step_count, step.step, steps.size),
                                             style = MaterialTheme.typography.titleSmall.copy(
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -1463,7 +1470,7 @@ fun NewDiyProjectsSection(
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = step.title,
+                                            text = stringResource(step.titleRes),
                                             style = MaterialTheme.typography.bodyMedium.copy(
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 lineHeight = 18.sp
@@ -1485,7 +1492,7 @@ fun NewDiyProjectsSection(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    text = "📝 Project Overview",
+                                    text = stringResource(R.string.diy_proj_overview),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -1493,7 +1500,13 @@ fun NewDiyProjectsSection(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = DiyProjectsData.getSimpleOverviewParagraph(project),
+                                    text = stringResource(
+                                        R.string.diy_overview,
+                                        stringResource(project.titleRes),
+                                        stringResource(project.difficultyRes).lowercase(),
+                                        stringResource(project.costRes),
+                                        stringResource(project.timeRes)
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         lineHeight = 20.sp
@@ -1518,7 +1531,7 @@ fun NewDiyProjectsSection(
                                         horizontalArrangement = Arrangement.Center
                                     ) {
                                         Text(
-                                            text = if (isExpanded) "Hide Full Guide ▲" else "View More (Full Step-by-Step Guide) ▼",
+                                            text = if (isExpanded) stringResource(R.string.diy_hide_guide) else stringResource(R.string.diy_view_more),
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -1533,7 +1546,7 @@ fun NewDiyProjectsSection(
                                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                         Spacer(modifier = Modifier.height(10.dp))
                                         Text(
-                                            text = "📖 Full Step-by-Step Guide",
+                                            text = stringResource(R.string.diy_full_guide_title),
                                             style = MaterialTheme.typography.titleSmall.copy(
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -1541,7 +1554,7 @@ fun NewDiyProjectsSection(
                                         )
                                         Spacer(modifier = Modifier.height(6.dp))
                                         Text(
-                                            text = DiyProjectsData.getFullGuideParagraph(project),
+                                            text = stringResource(project.guideParagraphRes),
                                             style = MaterialTheme.typography.bodyMedium.copy(
                                                 color = MaterialTheme.colorScheme.onSurface,
                                                 lineHeight = 21.sp
@@ -2104,7 +2117,7 @@ fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = "🥗 Ingredients & Materials:",
+                            text = stringResource(R.string.guide_cook_ingredients_title),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
                             color = PastelPurpleDark
@@ -2127,7 +2140,7 @@ fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
 
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "🎬 Interactive Visual Cooking Guide:",
+                            text = stringResource(R.string.guide_cook_visual_guide),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
                             color = PastelPurpleDark
@@ -2138,7 +2151,7 @@ fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
                     } else {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "✨ Tap to open full 10-step visual cooking storyboard",
+                            text = stringResource(R.string.guide_cook_tap_open),
                             fontSize = 10.sp,
                             color = PastelPinkDark,
                             fontWeight = FontWeight.Bold
@@ -2174,7 +2187,7 @@ fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                text = "Preparation Step ${stepIdx + 1} of ${steps.size}",
+                text = stringResource(R.string.guide_cook_prep_step, stepIdx + 1, steps.size),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = PastelPurpleDark,
@@ -2209,7 +2222,7 @@ fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.height(32.dp)
                 ) {
-                    Text("◀ Prev", fontSize = 10.sp, color = White)
+                    Text(stringResource(R.string.main_prev), fontSize = 10.sp, color = White)
                 }
 
                 Text(
@@ -2226,7 +2239,7 @@ fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.height(32.dp)
                 ) {
-                    Text(stringResource(R.string.cook_next), fontSize = 10.sp, color = White)
+                    Text(stringResource(R.string.guide_cook_next), fontSize = 10.sp, color = White)
                 }
             }
         }
@@ -2446,7 +2459,7 @@ fun SideBySideVisualRow(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Image,
-                            contentDescription = "Illustration of Lily & Pip",
+                            contentDescription = stringResource(R.string.guide_lily_pip_alt),
                             tint = PastelPurpleDark.copy(alpha = 0.7f),
                             modifier = Modifier.size(24.dp)
                         )

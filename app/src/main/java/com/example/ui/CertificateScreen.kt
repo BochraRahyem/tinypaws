@@ -54,7 +54,7 @@ fun CertificateScreen(
         SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date())
     }
     
-    val fallbackName = "TinyPaws Cat Champion"
+    val fallbackName = stringResource(R.string.cert_fallback_name)
     val displayName = remember(userName) {
         if (userName.isNotBlank()) userName.trim() else fallbackName
     }
@@ -67,13 +67,13 @@ fun CertificateScreen(
             val bitmap = renderCertificateBitmap(context, displayName, todayDate)
             val success = saveBitmapToGallery(context, bitmap, "TinyPaws_Certificate_${System.currentTimeMillis()}")
             if (success) {
-                Toast.makeText(context, "🏆 Certificate saved to your Gallery!", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.cert_saved_success), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, "Unable to save certificate to storage.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.cert_save_failed), Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             android.util.Log.e("CertificateScreen", "Error rendering certificate", e)
-            Toast.makeText(context, "Error generating certificate bitmap", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.cert_gen_error), Toast.LENGTH_SHORT).show()
         } finally {
             isSaving = false
         }
@@ -87,23 +87,23 @@ fun CertificateScreen(
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "image/png"
                     putExtra(Intent.EXTRA_STREAM, uri)
-                    putExtra(Intent.EXTRA_TEXT, "🐾 I earned my Official TinyPaws Cat Care Mastery Certificate! #TinyPaws")
+                    putExtra(Intent.EXTRA_TEXT, context.getString(R.string.cert_share_text))
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                context.startActivity(Intent.createChooser(shareIntent, "Share Certificate"))
+                context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.cert_share_chooser)))
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Error sharing certificate", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.cert_share_error), Toast.LENGTH_SHORT).show()
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("🏆 Official Certificate", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.cert_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = rememberHapticOnClick { onClose() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.main_prev))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -124,7 +124,7 @@ fun CertificateScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Congratulations on Completing Your Training! 🎉",
+                text = stringResource(R.string.cert_congrats),
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = DeepBurgundy
@@ -145,7 +145,7 @@ fun CertificateScreen(
                     // Background Image
                     Image(
                         painter = painterResource(id = R.drawable.certificate_bg),
-                        contentDescription = "Certificate Background",
+                        contentDescription = stringResource(R.string.cert_bg_alt),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
@@ -161,7 +161,7 @@ fun CertificateScreen(
                         // Header Title
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "TINYPAWS ACADEMY",
+                                text = stringResource(R.string.cert_academy_label),
                                 fontFamily = QuicksandFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
@@ -170,7 +170,7 @@ fun CertificateScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "CERTIFICATE OF MASTERY",
+                                text = stringResource(R.string.cert_mastery_label),
                                 fontFamily = FrauncesFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
@@ -179,7 +179,7 @@ fun CertificateScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "This is proudly presented to",
+                                text = stringResource(R.string.cert_presented_to),
                                 fontFamily = QuicksandFontFamily,
                                 fontSize = 11.sp,
                                 color = TextMuted
@@ -218,7 +218,7 @@ fun CertificateScreen(
 
                         // Citation text
                         Text(
-                            text = "For demonstrating extraordinary dedication, knowledge, and care in street cat welfare, winter shelter crafting, and feline nutrition across all 5 TinyPaws Quizzes.",
+                            text = stringResource(R.string.cert_citation),
                             fontFamily = QuicksandFontFamily,
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
@@ -235,7 +235,7 @@ fun CertificateScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "DATE:",
+                                    text = stringResource(R.string.cert_date_label),
                                     fontFamily = QuicksandFontFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 9.sp,
@@ -271,14 +271,14 @@ fun CertificateScreen(
                                 }
                                 Column {
                                     Text(
-                                        text = "VERIFIED",
+                                        text = stringResource(R.string.cert_verified_label),
                                         fontFamily = QuicksandFontFamily,
                                         fontWeight = FontWeight.ExtraBold,
                                         fontSize = 9.sp,
                                         color = DeepBurgundy
                                     )
                                     Text(
-                                        text = "TinyPaws Seal",
+                                        text = stringResource(R.string.cert_seal_label),
                                         fontFamily = QuicksandFontFamily,
                                         fontSize = 8.sp,
                                         color = TextMuted
@@ -313,11 +313,11 @@ fun CertificateScreen(
                         strokeWidth = 2.dp
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("Generating Image...", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.cert_generating), fontWeight = FontWeight.Bold)
                 } else {
                     Icon(Icons.Default.Download, contentDescription = null)
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text("Download Certificate", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(stringResource(R.string.cert_download), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
 
@@ -332,7 +332,7 @@ fun CertificateScreen(
             ) {
                 Icon(Icons.Default.Share, contentDescription = null)
                 Spacer(modifier = Modifier.width(10.dp))
-                Text("Share Certificate", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.cert_share), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -437,9 +437,9 @@ private fun renderCertificateBitmap(context: Context, name: String, dateStr: Str
     val centerX = width / 2f
 
     // Drawing text lines
-    canvas.drawText("TINYPAWS ACADEMY", centerX, 160f, academyPaint)
-    canvas.drawText("CERTIFICATE OF MASTERY", centerX, 235f, titlePaint)
-    canvas.drawText("This is proudly presented to", centerX, 310f, subtitlePaint)
+    canvas.drawText(context.getString(R.string.cert_academy), centerX, 160f, academyPaint)
+    canvas.drawText(context.getString(R.string.cert_mastery), centerX, 235f, titlePaint)
+    canvas.drawText(context.getString(R.string.cert_presented), centerX, 310f, subtitlePaint)
 
     // User Name
     canvas.drawText(name.uppercase(), centerX, 410f, namePaint)
@@ -452,11 +452,11 @@ private fun renderCertificateBitmap(context: Context, name: String, dateStr: Str
     canvas.drawLine(centerX - 250f, 435f, centerX + 250f, 435f, linePaint)
 
     // Citation
-    canvas.drawText("For demonstrating extraordinary dedication, knowledge, and care in street cat welfare,", centerX, 510f, bodyPaint)
-    canvas.drawText("winter shelter crafting, and feline nutrition across all TinyPaws Quizzes.", centerX, 550f, bodyPaint)
+    canvas.drawText(context.getString(R.string.cert_dedication), centerX, 510f, bodyPaint)
+    canvas.drawText(context.getString(R.string.cert_winter), centerX, 550f, bodyPaint)
 
     // Date
-    canvas.drawText("DATE:", 100f, 760f, dateLabelPaint)
+    canvas.drawText(context.getString(R.string.cert_date), 100f, 760f, dateLabelPaint)
     canvas.drawText(dateStr, 100f, 795f, dateValPaint)
 
     // Gold Seal Circle on bottom right
@@ -474,8 +474,8 @@ private fun renderCertificateBitmap(context: Context, name: String, dateStr: Str
         typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
         textAlign = Paint.Align.CENTER
     }
-    canvas.drawText("SEAL OF", width - 160f, 765f, sealTextPaint)
-    canvas.drawText("HONOR", width - 160f, 792f, sealTextPaint)
+    canvas.drawText(context.getString(R.string.cert_seal), width - 160f, 765f, sealTextPaint)
+    canvas.drawText(context.getString(R.string.cert_honor), width - 160f, 792f, sealTextPaint)
 
     return bitmap
 }

@@ -17,24 +17,9 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val FrauncesFont = GoogleFont("Fraunces")
-val QuicksandFont = GoogleFont("Quicksand")
-
-val FrauncesFontFamily = FontFamily(
-    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Normal),
-    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Medium),
-    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.SemiBold),
-    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Bold),
-    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Normal, style = FontStyle.Italic),
-    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Bold, style = FontStyle.Italic)
-)
-
-val QuicksandFontFamily = FontFamily(
-    Font(googleFont = QuicksandFont, fontProvider = provider, weight = FontWeight.Normal),
-    Font(googleFont = QuicksandFont, fontProvider = provider, weight = FontWeight.Medium),
-    Font(googleFont = QuicksandFont, fontProvider = provider, weight = FontWeight.SemiBold),
-    Font(googleFont = QuicksandFont, fontProvider = provider, weight = FontWeight.Bold)
-)
+// Fall back to standard high-quality system font families to completely bypass GMS dynamic font downloading and avoid SecurityExceptions
+val FrauncesFontFamily = FontFamily.Serif
+val QuicksandFontFamily = FontFamily.SansSerif
 
 // Centralized Material 3 Typography definitions
 val Typography = Typography(

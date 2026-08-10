@@ -17,8 +17,36 @@ class TinyPawsMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         
-        remoteMessage.notification?.let {
-            sendNotification(it.title ?: "TinyPaws Reminder", it.body ?: "It's time for some cat care!")
+        val title = remoteMessage.notification?.title ?: remoteMessage.data["title"] ?: "TinyPaws Alert"
+        val body = remoteMessage.notification?.body ?: remoteMessage.data["body"] ?: "New rescue notification received"
+        
+        logFcmNotification(title, body, remoteMessage.data.toString())
+        
+        sendNotification(title, body)
+    }
+
+    private fun logFcmNotification(title: String, body: String, dataString: String) {
+        try {
+            val prefs = getSharedPreferences("tinypaws_fcm_logs", Context.MODE_PRIVATE)
+            val existingJson = prefs.getString("fcm_logs_json", "[]") ?: "[]"
+            val array = org.json.JSONArray(existingJson)
+            
+            val newEntry = org.json.JSONObject().apply {
+                put("title", title)
+                put("body", body)
+                put("data", dataString)
+                put("timestamp", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()))
+            }
+            
+            val newArray = org.json.JSONArray()
+            newArray.put(newEntry)
+            for (i in 0 until minOf(4, array.length())) {
+                newArray.put(array.get(i))
+            }
+            
+            prefs.edit().putString("fcm_logs_json", newArray.toString()).apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

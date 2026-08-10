@@ -48,32 +48,74 @@ object LocationHelper {
             return
         }
 
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        
-        // Request fresh high accuracy location using newer Play Services API
-        val cts = CancellationTokenSource()
-        fusedLocationClient.getCurrentLocation(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            cts.token
-        ).addOnSuccessListener { freshLoc: Location? ->
-            if (freshLoc != null) {
-                onLocationReceived(freshLoc)
-            } else {
-                // Fallback to last known location if GPS getCurrentLocation returns null
-                fusedLocationClient.lastLocation.addOnSuccessListener { lastLoc: Location? ->
-                    onLocationReceived(lastLoc)
-                }.addOnFailureListener {
-                    onLocationReceived(null)
+        try {
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+            
+            // Request fresh high accuracy location using newer Play Services API
+            val cts = CancellationTokenSource()
+            fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                cts.token
+            ).addOnSuccessListener { freshLoc: Location? ->
+                if (freshLoc != null) {
+                    onLocationReceived(freshLoc)
+                } else {
+                    // Fallback to last known location if GPS getCurrentLocation returns null
+                    try {
+                        fusedLocationClient.lastLocation.addOnSuccessListener { lastLoc: Location? ->
+                            if (lastLoc != null) {
+                                onLocationReceived(lastLoc)
+                            } else {
+                                onLocationReceived(getSystemLocation(context))
+                            }
+                        }.addOnFailureListener {
+                            onLocationReceived(getSystemLocation(context))
+                        }
+                    } catch (ex: Exception) {
+                        onLocationReceived(getSystemLocation(context))
+                    }
+                }
+            }.addOnFailureListener {
+                // Fallback to last known location
+                try {
+                    fusedLocationClient.lastLocation.addOnSuccessListener { lastLoc: Location? ->
+                        if (lastLoc != null) {
+                            onLocationReceived(lastLoc)
+                        } else {
+                            onLocationReceived(getSystemLocation(context))
+                        }
+                    }.addOnFailureListener {
+                        onLocationReceived(getSystemLocation(context))
+                    }
+                } catch (ex: Exception) {
+                    onLocationReceived(getSystemLocation(context))
                 }
             }
-        }.addOnFailureListener {
-            // Fallback to last known location
-            fusedLocationClient.lastLocation.addOnSuccessListener { lastLoc: Location? ->
-                onLocationReceived(lastLoc)
-            }.addOnFailureListener {
-                onLocationReceived(null)
-            }
+        } catch (e: Exception) {
+            android.util.Log.e("LocationHelper", "GMS FusedLocationProvider failed, falling back to System LocationManager", e)
+            onLocationReceived(getSystemLocation(context))
         }
+    }
+
+    private fun getSystemLocation(context: Context): Location? {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? android.location.LocationManager
+            ?: return null
+        try {
+            val providers = locationManager.getProviders(true)
+            var bestLocation: Location? = null
+            for (provider in providers) {
+                val loc = locationManager.getLastKnownLocation(provider) ?: continue
+                if (bestLocation == null || loc.accuracy < bestLocation.accuracy) {
+                    bestLocation = loc
+                }
+            }
+            return bestLocation
+        } catch (e: SecurityException) {
+            android.util.Log.e("LocationHelper", "SecurityException getting system location", e)
+        } catch (e: Exception) {
+            android.util.Log.e("LocationHelper", "Exception getting system location", e)
+        }
+        return null
     }
 }
 

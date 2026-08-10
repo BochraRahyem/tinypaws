@@ -1,5 +1,9 @@
 package com.example.ui
 
+import androidx.compose.ui.res.stringResource
+
+import com.example.R
+
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
@@ -51,7 +55,8 @@ fun DailyCareChecklistSection(
     }
     val displayDateStr = remember(selectedDateMillis) {
         val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        if (dateStr == todayStr) "Today, " + SimpleDateFormat("MMM d", Locale.getDefault()).format(Date(selectedDateMillis))
+        val dateFormatted = SimpleDateFormat("MMM d", Locale.getDefault()).format(Date(selectedDateMillis))
+        if (dateStr == todayStr) context.getString(R.string.checklist_today, dateFormatted)
         else SimpleDateFormat("EEEE, MMM d, yyyy", Locale.getDefault()).format(Date(selectedDateMillis))
     }
 
@@ -61,12 +66,12 @@ fun DailyCareChecklistSection(
     val currentLog = careLogState ?: DailyCareLog(dateString = dateStr)
 
     val tasks = listOf(
-        TaskItem("fed", "Fed Morning & Evening", "🍲", currentLog.fed),
-        TaskItem("watered", "Fresh Water Refilled", "💧", currentLog.watered),
-        TaskItem("played", "Playtime & Exercise", "🧶", currentLog.played),
-        TaskItem("litterCleaned", "Litter Box Cleaned", "🧹", currentLog.litterCleaned),
-        TaskItem("groomed", "Groomed & Brushed", "🪮", currentLog.groomed),
-        TaskItem("medicationGiven", "Medication / Supplements", "💊", currentLog.medicationGiven)
+        TaskItem("fed", stringResource(R.string.checklist_fed), "🍲", currentLog.fed),
+        TaskItem("watered", stringResource(R.string.checklist_watered), "💧", currentLog.watered),
+        TaskItem("played", stringResource(R.string.checklist_played), "🧶", currentLog.played),
+        TaskItem("litterCleaned", stringResource(R.string.checklist_litter), "🧹", currentLog.litterCleaned),
+        TaskItem("groomed", stringResource(R.string.checklist_groomed), "🪮", currentLog.groomed),
+        TaskItem("medicationGiven", stringResource(R.string.checklist_meds), "💊", currentLog.medicationGiven)
     )
 
     val completedCount = tasks.count { it.isCompleted }
@@ -92,7 +97,7 @@ fun DailyCareChecklistSection(
             ) {
                 Column {
                     Text(
-                        text = "Daily Care Checklist",
+                        text = stringResource(R.string.checklist_title),
                         fontFamily = FrauncesFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
@@ -106,7 +111,6 @@ fun DailyCareChecklistSection(
                     )
                 }
 
-                // Date Picker Button
                 IconButton(
                     onClick = com.example.ui.theme.rememberHapticOnClick {
                         val cal = Calendar.getInstance()
@@ -125,7 +129,7 @@ fun DailyCareChecklistSection(
                     },
                     modifier = Modifier.testTag("checklist_date_picker_btn")
                 ) {
-                    Icon(Icons.Default.DateRange, contentDescription = "Change Date", tint = DeepBurgundy)
+                    Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.checklist_change_date), tint = DeepBurgundy)
                 }
             }
 
@@ -137,7 +141,7 @@ fun DailyCareChecklistSection(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$completedCount of $totalCount tasks completed",
+                        text = stringResource(R.string.checklist_progress, completedCount, totalCount),
                         fontFamily = QuicksandFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,
@@ -176,7 +180,7 @@ fun DailyCareChecklistSection(
                     ) {
                         Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF2E7D32))
                         Text(
-                            text = "🎉 All daily care tasks completed! Your kitty is happy and well cared for.",
+                            text = stringResource(R.string.checklist_all_done),
                             fontFamily = QuicksandFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
