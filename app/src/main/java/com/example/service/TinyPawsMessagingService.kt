@@ -54,14 +54,15 @@ class TinyPawsMessagingService : FirebaseMessagingService() {
         val intent = Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
+        val notifId = (System.currentTimeMillis() % 100000).toInt()
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this, notifId, intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val channelId = "cat_care_reminders"
+        val channelId = com.example.util.NotificationHelper.CHANNEL_DUPLICATE_REPORT
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Use foreground for now
+            .setSmallIcon(R.drawable.ic_paw_notification)
             .setContentTitle(title)
             .setContentText(messageBody)
             .setAutoCancel(true)
@@ -73,17 +74,18 @@ class TinyPawsMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Cat Care Reminders",
+                "TinyPaws Community Cat Reports 🐱",
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, notificationBuilder.build())
+        notificationManager.notify(notifId, notificationBuilder.build())
     }
 
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        // You could send this token to your server if you had one
+        // Token refreshed
     }
 }

@@ -7,9 +7,8 @@ echo "Using source image: $SRC"
 
 # 1. Create a clean PNG drawable version for high-res adaptive foreground
 convert "$SRC" -resize 512x512 app/src/main/res/drawable/custom_app_icon.png
-convert "$SRC" -resize 512x512 app/src/main/res/drawable/custom_app_icon.jpg
 
-# Also create round mask version if needed
+# Also create round mask version
 convert "$SRC" -resize 512x512 \
   \( +clone -threshold -1 -negate -fill white -draw "circle 256,256 256,0" \) \
   -alpha off -compose copy_opacity -composite \
@@ -38,16 +37,10 @@ for DENSITY in "${!DENSITIES[@]}"; do
     
     echo "Generating $DENSITY icons ($SIZEx$SIZE)..."
     
-    # Square webp & png
-    convert "$SRC" -resize "${SIZE}x${SIZE}" "$DIR/ic_launcher.webp"
+    # Square png
     convert "$SRC" -resize "${SIZE}x${SIZE}" "$DIR/ic_launcher.png"
     
-    # Round webp & png
-    convert "$SRC" -resize "${SIZE}x${SIZE}" \
-      \( +clone -threshold -1 -negate -fill white -draw "circle $RADIUS,$RADIUS $RADIUS,0" \) \
-      -alpha off -compose copy_opacity -composite \
-      "$DIR/ic_launcher_round.webp"
-      
+    # Round png
     convert "$SRC" -resize "${SIZE}x${SIZE}" \
       \( +clone -threshold -1 -negate -fill white -draw "circle $RADIUS,$RADIUS $RADIUS,0" \) \
       -alpha off -compose copy_opacity -composite \

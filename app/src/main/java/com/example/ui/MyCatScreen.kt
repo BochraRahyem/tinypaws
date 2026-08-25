@@ -1,5 +1,6 @@
 package com.example.ui
 
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -101,6 +102,32 @@ fun MyCatScreen(
         }
     }
 
+    fun launchCamera() {
+        try {
+            val file = java.io.File(context.filesDir, "cat_profile_${System.currentTimeMillis()}.jpg")
+            tempPhotoFile = file
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+            tempPhotoUri = uri
+            cameraLauncher.launch(uri)
+        } catch (e: Exception) {
+            android.util.Log.e("MyCatScreen", "Failed to launch camera", e)
+        }
+    }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            launchCamera()
+        } else {
+            Toast.makeText(context, "Camera permission is needed to capture a cat photo.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     // History Log states
     val historyEntries by viewModel.allHistoryEntries.collectAsStateWithLifecycle()
     val sortedHistoryEntries = remember(historyEntries) { historyEntries.sortedByDescending { it.date } }
@@ -186,14 +213,13 @@ fun MyCatScreen(
                     textAlign = TextAlign.Start
                 )
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .glassyCard(shape = RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                PixelCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    emblemType = "paw"
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Profile Photo Selector
@@ -251,18 +277,10 @@ fun MyCatScreen(
 
                                 Button(
                                     onClick = com.example.ui.theme.rememberHapticOnClick {
-                                        try {
-                                            val file = java.io.File(context.filesDir, "cat_profile_${System.currentTimeMillis()}.jpg")
-                                            tempPhotoFile = file
-                                            val uri = androidx.core.content.FileProvider.getUriForFile(
-                                                context,
-                                                "${context.packageName}.fileprovider",
-                                                file
-                                            )
-                                            tempPhotoUri = uri
-                                            cameraLauncher.launch(uri)
-                                        } catch (e: Exception) {
-                                            android.util.Log.e("MyCatScreen", "Failed to launch camera", e)
+                                        if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                            launchCamera()
+                                        } else {
+                                            cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
                                         }
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = Mauve.copy(alpha = 0.3f)),
@@ -559,8 +577,7 @@ fun MyCatScreen(
                 }
             } else {
                 // Profile Display Mode
-                val profile = catProfileState!!
-
+                catProfileState?.let { profile ->
                 // Display photos row (Main + Adoption photo)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -635,14 +652,13 @@ fun MyCatScreen(
                     textAlign = TextAlign.Center
                 )
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .glassyCard(shape = RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                PixelCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    emblemType = "paw"
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Row(
@@ -824,14 +840,13 @@ fun MyCatScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .glassyCard(shape = RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                PixelCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    emblemType = "book"
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Row(
@@ -990,6 +1005,7 @@ fun MyCatScreen(
                         }
                     }
                 }
+                }
             }
         }
         if (mode == "weight") {
@@ -1046,14 +1062,13 @@ fun MyCatScreen(
                 var editingWeightLogId by remember { mutableStateOf<Int?>(null) }
                 var showAllWeights by remember { mutableStateOf(false) }
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .glassyCard(shape = RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                PixelCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    emblemType = "star"
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(

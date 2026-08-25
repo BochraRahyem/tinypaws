@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -142,10 +143,10 @@ fun CatsNearMeScreen(
     var locationTriggered by remember { mutableStateOf(false) }
 
     com.example.util.LocationPermissionGate(
-        onPermissionGranted = { lat, lon ->
+        onPermissionGranted = { lat, lon, isFallback ->
             viewModel.updateUserLocation(lat, lon)
-            permissionStatusMessage = context.getString(R.string.cats_loc_granted)
-            showPermissionAlert = false
+            permissionStatusMessage = context.getString(if (isFallback) R.string.cats_loc_denied else R.string.cats_loc_granted)
+            showPermissionAlert = isFallback
         },
         onPermissionDenied = {
             permissionStatusMessage = context.getString(R.string.cats_loc_denied)
@@ -172,6 +173,7 @@ fun CatsNearMeScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -437,9 +439,9 @@ fun BrowseNearbySection(
 
     var selectedReportForHighlight by remember { mutableStateOf<CatReport?>(null) }
 
-    if (selectedReportForHighlight != null) {
+    selectedReportForHighlight?.let { report ->
         CatRescueDetailDialog(
-            report = selectedReportForHighlight!!,
+            report = report,
             userLat = userLat,
             userLng = userLng,
             viewModel = viewModel,
@@ -454,14 +456,14 @@ fun BrowseNearbySection(
     ) {
         // Radius Selector Card
         item {
-            Card(
+            PixelCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .glassyCard(shape = RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    .padding(vertical = 4.dp),
+                backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                emblemType = "paw"
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -537,14 +539,13 @@ fun BrowseNearbySection(
 
         // Beautiful Interactive Radar Map View
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .glassyCard(shape = RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            PixelCard(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                emblemType = "paw"
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -877,7 +878,14 @@ fun BrowseNearbySection(
                         modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("🏡🐱💤", fontSize = 48.sp)
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 12.dp)
+                                .size(60.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            com.example.ui.PixelCatSleeping(pixelSize = 3.2.dp)
+                        }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = stringResource(R.string.all_cats_accounted),
@@ -1068,14 +1076,18 @@ fun ReportStrayForm(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val reportsLoading by viewModel.isReportsLoading.collectAsStateWithLifecycle()
 
-    var description by remember { mutableStateOf("") }
-    var reporterName by remember { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var reporterName by rememberSaveable { mutableStateOf("") }
     val defaultNeed = stringResource(R.string.cats_food_water)
-    var selectedNeed by remember { mutableStateOf(defaultNeed) }
-    var selectedPhotoTemplate by remember { mutableStateOf("cat_orange") }
-    var customPhotoUri by remember { mutableStateOf<Uri?>(null) }
-    var showSuccessDialog by remember { mutableStateOf(false) }
+    var selectedNeed by rememberSaveable { mutableStateOf(defaultNeed) }
+    var selectedPhotoTemplate by rememberSaveable { mutableStateOf("cat_orange") }
+    var customPhotoUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var showSuccessDialog by rememberSaveable { mutableStateOf(false) }
+    var reportId by rememberSaveable { mutableStateOf(java.util.UUID.randomUUID().toString()) }
+    var syncStatus by rememberSaveable { mutableStateOf("") }
+    var localSubmitting by rememberSaveable { mutableStateOf(false) }
 
     // Resolve @Composable colors safely in parent composable scope
     val burgundyColor = DeepBurgundy
@@ -1420,46 +1432,84 @@ fun ReportStrayForm(
 
         // Submit Button
         item {
-            Button(
-                onClick = com.example.ui.theme.rememberHapticOnClick { 
-                    if (description.trim().isNotEmpty()) {
-                        val photoPath = customPhotoUri?.toString() ?: selectedPhotoTemplate
-                        viewModel.createReport(
-                            description = description,
-                            needs = selectedNeed,
-                            latitude = userLat,
-                            longitude = userLng,
-                            photoUrl = photoPath,
-                            imageUri = customPhotoUri
+            var submissionError by rememberSaveable { mutableStateOf<String?>(null) }
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                        if (description.trim().isNotEmpty() && !reportsLoading && !localSubmitting) {
+                            localSubmitting = true
+                            submissionError = null
+                            val photoPath = customPhotoUri?.toString() ?: selectedPhotoTemplate
+                            viewModel.createReport(
+                                description = description,
+                                needs = selectedNeed,
+                                latitude = userLat,
+                                longitude = userLng,
+                                reporterName = reporterName,
+                                photoUrl = photoPath,
+                                imageUri = customPhotoUri,
+                                reportId = reportId
+                            ) { success, msg ->
+                                localSubmitting = false
+                                if (success) {
+                                    syncStatus = msg ?: ""
+                                    showSuccessDialog = true
+                                } else {
+                                    submissionError = msg ?: "Failed to submit report. Please try again."
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.dp)
+                        .testTag("submit_stray_report_btn"),
+                    enabled = description.trim().isNotEmpty() && !reportsLoading && !localSubmitting,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = burgundyColor,
+                        contentColor = creamColor,
+                        disabledContainerColor = mauveColor.copy(alpha = 0.5f)
+                    ),
+                    shape = CircleShape
+                ) {
+                    if (reportsLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = creamColor,
+                            strokeWidth = 2.dp
                         )
-                        // Trigger daily activity points for reporting a cat!
-                        val ctx = context
-                        val strRes = ctx.getString(R.string.cats_reported_needing, selectedNeed)
-                        viewModel.logActivity("rescue_cat", strRes)
-                        showSuccessDialog = true
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Submitting to Firestore...",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontFamily = QuicksandFontFamily,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    } else {
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cats_add_icon), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.submit_sighting),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontFamily = QuicksandFontFamily,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-                    .testTag("submit_stray_report_btn"),
-                enabled = description.trim().isNotEmpty(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = burgundyColor,
-                    contentColor = creamColor,
-                    disabledContainerColor = mauveColor.copy(alpha = 0.5f)
-                ),
-                shape = CircleShape
-            ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cats_add_icon), modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.submit_sighting),
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                }
+
+                submissionError?.let { err ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = err,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp,
                         fontFamily = QuicksandFontFamily,
-                        fontWeight = FontWeight.Bold
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
-                )
+                }
             }
         }
     }
@@ -1472,6 +1522,9 @@ fun ReportStrayForm(
                 description = ""
                 reporterName = ""
                 customPhotoUri = null
+                reportId = java.util.UUID.randomUUID().toString()
+                syncStatus = ""
+                localSubmitting = false
                 viewModel.updateCatsNearMeTab("browse")
             },
             confirmButton = {
@@ -1481,6 +1534,9 @@ fun ReportStrayForm(
                         description = ""
                         reporterName = ""
                         customPhotoUri = null
+                        reportId = java.util.UUID.randomUUID().toString()
+                        syncStatus = ""
+                        localSubmitting = false
                         viewModel.updateCatsNearMeTab("browse")
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = burgundyColor)
@@ -1497,11 +1553,22 @@ fun ReportStrayForm(
                 )
             },
             text = {
-                Text(
-                    text = stringResource(R.string.report_registered_desc),
-                    fontFamily = QuicksandFontFamily,
-                    color = inkColor
-                )
+                Column {
+                    Text(
+                        text = stringResource(R.string.report_registered_desc),
+                        fontFamily = QuicksandFontFamily,
+                        color = inkColor
+                    )
+                    if (syncStatus.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Status: $syncStatus",
+                            fontFamily = QuicksandFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = burgundyColor
+                        )
+                    }
+                }
             },
             shape = RoundedCornerShape(20.dp),
             containerColor = creamColor

@@ -50,6 +50,7 @@
     <string name="chat_clear">Clear chat</string>
     <string name="chat_back">Back</string>
     <string name="chat_thinking">Thinking &amp; licking paws... 🐾</string>
+    <string name="daily_cat_fact_title">Daily Cat Fact</string>
 
     <!-- Coat colors / Cat types -->
     <string name="coat_orange">Orange Tabby 🍊</string>

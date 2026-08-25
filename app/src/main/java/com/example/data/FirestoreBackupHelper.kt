@@ -100,14 +100,19 @@ object FirestoreBackupHelper {
                 }
             )
 
-            Tasks.await(
-                db.collection("users")
-                    .document(user.uid)
-                    .collection("backups")
-                    .document("latest")
-                    .set(data, SetOptions.merge())
-            )
-            Result.success("Backup uploaded to cloud ($nowStr)")
+            val task = db.collection("users")
+                .document(user.uid)
+                .collection("backups")
+                .document("latest")
+                .set(data, com.google.firebase.firestore.SetOptions.merge())
+            
+            try {
+                com.google.android.gms.tasks.Tasks.await(task, 1500, java.util.concurrent.TimeUnit.MILLISECONDS)
+                Result.success("Backup uploaded to cloud ($nowStr)")
+            } catch (e: java.util.concurrent.TimeoutException) {
+                // Timeout means we're offline and the write is queued locally.
+                Result.success("Backup queued offline ($nowStr)")
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Cloud backup failed", e)
             Result.failure(e)

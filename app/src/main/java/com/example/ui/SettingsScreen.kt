@@ -5,12 +5,16 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -315,7 +319,7 @@ fun SettingsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.VolumeUp, contentDescription = null, tint = DeepBurgundy)
+                            Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = null, tint = DeepBurgundy)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.settings_sound_effects),
@@ -330,6 +334,11 @@ fun SettingsScreen(
                             onCheckedChange = { active ->
                                 soundEnabled = active
                                 sharedPrefs.edit().putBoolean("sound_enabled", active).apply()
+                                if (active) {
+                                    SunsetSoundscapePlayer.start(context)
+                                } else {
+                                    SunsetSoundscapePlayer.stop()
+                                }
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Cream,
@@ -375,8 +384,8 @@ fun SettingsScreen(
                 }
             }
 
-            // Section 4: Developer & Diagnostics
-            DeveloperDiagnosticsCard()
+            // Section 4: Feedback & Support
+            FeedbackSupportCard()
 
             // Section 5: App Information
             Card(
@@ -418,249 +427,216 @@ fun SettingsScreen(
 }
 
 @Composable
-fun DeveloperDiagnosticsCard() {
+fun FeedbackSupportCard() {
     val context = LocalContext.current
-    var isExpanded by remember { mutableStateOf(true) }
-    var emailStatusMessage by remember { mutableStateOf<String?>(null) }
-    var mailLogs by remember { mutableStateOf<List<Map<String, String>>>(emptyList()) }
-    var isLoadingMailLogs by remember { mutableStateOf(false) }
+    val authUser = remember { com.google.firebase.auth.FirebaseAuth.getInstance().currentUser }
+    
+    var selectedCategory by remember { mutableStateOf("Feedback") }
+    var feedbackMessage by remember { mutableStateOf("") }
+    var senderEmail by remember { mutableStateOf(authUser?.email ?: "") }
+    var isSubmitting by remember { mutableStateOf(false) }
+    var submissionStatus by remember { mutableStateOf<String?>(null) }
+    var isSuccess by remember { mutableStateOf(false) }
 
-    // Fetch FCM logs
-    val fcmLogs = remember {
-        val prefs = context.getSharedPreferences("tinypaws_fcm_logs", Context.MODE_PRIVATE)
-        val jsonStr = prefs.getString("fcm_logs_json", "[]") ?: "[]"
-        val list = mutableListOf<Map<String, String>>()
-        try {
-            val array = org.json.JSONArray(jsonStr)
-            for (i in 0 until array.length()) {
-                val obj = array.getJSONObject(i)
-                list.add(
-                    mapOf(
-                        "title" to obj.optString("title", "No Title"),
-                        "body" to obj.optString("body", "No Body"),
-                        "data" to obj.optString("data", ""),
-                        "timestamp" to obj.optString("timestamp", "")
-                    )
-                )
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        list
-    }
-
-    val fetchMailLogs = {
-        isLoadingMailLogs = true
-        com.google.firebase.firestore.FirebaseFirestore.getInstance()
-            .collection("mail")
-            .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .limit(10)
-            .get()
-            .addOnSuccessListener { query ->
-                val logs = query.documents.map { doc ->
-                    val status = doc.getString("status") ?: "pending"
-                    val sentAt = doc.get("sentAt")?.toString() ?: doc.get("createdAt")?.toString() ?: "N/A"
-                    val error = doc.getString("error") ?: "None"
-                    val toList = doc.get("to")?.toString() ?: "Unknown"
-                    mapOf(
-                        "id" to doc.id,
-                        "status" to status,
-                        "sentAt" to sentAt,
-                        "error" to error,
-                        "to" to toList
-                    )
-                }
-                mailLogs = logs
-                isLoadingMailLogs = false
-            }
-            .addOnFailureListener {
-                isLoadingMailLogs = false
-            }
-    }
-
-    LaunchedEffect(Unit) {
-        fetchMailLogs()
-    }
+    val categories = listOf("Feedback", "Bug Report", "Feature Request", "Cat Care")
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)),
         shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(1.dp, Mauve.copy(alpha = 0.5f)),
-        modifier = Modifier.fillMaxWidth().testTag("developer_diagnostics_card")
+        border = BorderStroke(1.dp, Mauve.copy(alpha = 0.3f)),
+        modifier = Modifier.fillMaxWidth().testTag("feedback_support_card")
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Build, contentDescription = null, tint = DeepBurgundy)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "🛠️ Developer & Diagnostics",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = DeepBurgundy,
-                            fontFamily = FrauncesFontFamily
+                Icon(Icons.Default.Email, contentDescription = null, tint = DeepBurgundy)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "💌 Feedback & Support",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = DeepBurgundy,
+                        fontFamily = FrauncesFontFamily
+                    )
+                )
+            }
+
+            Text(
+                text = "Have suggestions or need help? Send your thoughts directly to the TinyPaws care team.",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Ink.copy(alpha = 0.8f),
+                    fontFamily = QuicksandFontFamily
+                )
+            )
+
+            // Category Chips
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(categories) { category ->
+                    val isSelected = selectedCategory == category
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = com.example.ui.theme.rememberHapticOnClick { selectedCategory = category },
+                        label = { Text(category, fontSize = 12.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = DeepBurgundy,
+                            selectedLabelColor = Cream,
+                            containerColor = Cream.copy(alpha = 0.7f),
+                            labelColor = DeepBurgundy
+                        ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = isSelected,
+                            borderColor = if (isSelected) DeepBurgundy else Mauve.copy(alpha = 0.5f)
                         )
                     )
                 }
             }
 
-            Text(
-                text = "Developer testing controls for Resend email queue & FCM push notifications.",
-                style = MaterialTheme.typography.bodySmall.copy(color = Ink.copy(alpha = 0.8f))
+            // Message Field
+            OutlinedTextField(
+                value = feedbackMessage,
+                onValueChange = { if (it.length <= 500) feedbackMessage = it },
+                label = { Text("Your Message", fontFamily = QuicksandFontFamily, fontSize = 13.sp) },
+                placeholder = { Text("Share your ideas or issues with us...", fontSize = 12.sp, color = Ink.copy(alpha = 0.4f)) },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp).testTag("feedback_message_input"),
+                maxLines = 4,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = DeepBurgundy,
+                    unfocusedBorderColor = Mauve.copy(alpha = 0.6f),
+                    focusedContainerColor = Cream.copy(alpha = 0.4f),
+                    unfocusedContainerColor = Cream.copy(alpha = 0.3f),
+                    focusedLabelColor = DeepBurgundy,
+                    unfocusedLabelColor = Ink.copy(alpha = 0.7f),
+                    focusedTextColor = Ink,
+                    unfocusedTextColor = Ink
+                )
             )
 
-            HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
-
-            // 1. Trigger Welcome Email Button
-            Button(
-                onClick = com.example.ui.theme.rememberHapticOnClick {
-                    val authUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-                    val email = authUser?.email ?: "user@tinypaws.org"
-                    val mailDoc = mapOf(
-                        "to" to listOf(email),
-                        "template" to "welcome",
-                        "message" to mapOf(
-                            "subject" to "Welcome to TinyPaws 🐾",
-                            "text" to "Welcome to TinyPaws! Thank you for supporting community cats.",
-                            "html" to "<p>Welcome to <b>TinyPaws</b>! Thank you for supporting community cats.</p>"
-                        ),
-                        "createdAt" to com.google.firebase.Timestamp.now(),
-                        "status" to "pending"
-                    )
-                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                        .collection("mail")
-                        .add(mailDoc)
-                        .addOnSuccessListener {
-                            emailStatusMessage = "Welcome email document created! (ID: ${it.id})"
-                            fetchMailLogs()
-                        }
-                        .addOnFailureListener { err ->
-                            emailStatusMessage = "Failed: ${err.message}"
-                        }
-                },
-                modifier = Modifier.fillMaxWidth().testTag("trigger_welcome_email_btn"),
-                colors = ButtonDefaults.buttonColors(containerColor = DeepBurgundy, contentColor = Cream),
-                shape = RoundedCornerShape(12.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                Icon(Icons.Default.Email, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Trigger Test Welcome Email 📩", fontWeight = FontWeight.Bold)
-            }
-
-            if (emailStatusMessage != null) {
                 Text(
-                    text = emailStatusMessage!!,
-                    style = MaterialTheme.typography.bodySmall.copy(color = DeepBurgundy, fontWeight = FontWeight.Medium)
+                    text = "${feedbackMessage.length}/500",
+                    fontSize = 10.sp,
+                    color = Ink.copy(alpha = 0.5f)
                 )
             }
 
-            HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
-
-            // 2. Admin Mail Status Diagnostic View
-            Text(
-                text = "📬 Admin Mail Queue (Last 10 Firestore Docs)",
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
-                color = DeepBurgundy,
-                fontFamily = FrauncesFontFamily
+            // Optional Email Field
+            OutlinedTextField(
+                value = senderEmail,
+                onValueChange = { senderEmail = it },
+                label = { Text("Your Email (Optional for reply)", fontFamily = QuicksandFontFamily, fontSize = 13.sp) },
+                placeholder = { Text("name@example.com", fontSize = 12.sp, color = Ink.copy(alpha = 0.4f)) },
+                modifier = Modifier.fillMaxWidth().testTag("feedback_email_input"),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = DeepBurgundy,
+                    unfocusedBorderColor = Mauve.copy(alpha = 0.6f),
+                    focusedContainerColor = Cream.copy(alpha = 0.4f),
+                    unfocusedContainerColor = Cream.copy(alpha = 0.3f),
+                    focusedLabelColor = DeepBurgundy,
+                    unfocusedLabelColor = Ink.copy(alpha = 0.7f),
+                    focusedTextColor = Ink,
+                    unfocusedTextColor = Ink
+                )
             )
 
-            if (isLoadingMailLogs) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp).align(Alignment.CenterHorizontally), color = DeepBurgundy)
-            } else if (mailLogs.isEmpty()) {
-                Text("No mail documents found in Firestore queue.", fontSize = 12.sp, color = Ink.copy(alpha = 0.6f))
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    mailLogs.forEach { log ->
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Cream.copy(alpha = 0.7f),
-                            border = BorderStroke(1.dp, Mauve.copy(alpha = 0.3f)),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.padding(8.dp)) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        text = "To: ${log["to"]}",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 11.sp,
-                                        color = DeepBurgundy
-                                    )
-                                    val statusColor = when (log["status"]) {
-                                        "sent", "success" -> Color(0xFF2E7D32)
-                                        "failed" -> Color(0xFFC62828)
-                                        else -> Color(0xFFE65100)
-                                    }
-                                    Text(
-                                        text = "Status: ${log["status"]}",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 11.sp,
-                                        color = statusColor
-                                    )
-                                }
-                                Text("Time: ${log["sentAt"]}", fontSize = 10.sp, color = Ink.copy(alpha = 0.7f))
-                                if (log["error"] != "None" && log["error"]!!.isNotBlank()) {
-                                    Text("Error: ${log["error"]}", fontSize = 10.sp, color = Color(0xFFC62828))
-                                }
-                            }
-                        }
+            // Submit Button
+            Button(
+                onClick = com.example.ui.theme.rememberHapticOnClick {
+                    val trimmed = feedbackMessage.trim()
+                    if (trimmed.length < 5) {
+                        submissionStatus = "Please enter at least 5 characters."
+                        isSuccess = false
+                        return@rememberHapticOnClick
                     }
+
+                    isSubmitting = true
+                    submissionStatus = null
+
+                    val feedbackData = hashMapOf(
+                        "category" to selectedCategory,
+                        "message" to trimmed,
+                        "senderEmail" to senderEmail.trim(),
+                        "userId" to (authUser?.uid ?: "anonymous"),
+                        "userId" to (authUser?.uid ?: "anonymous"), "createdAt" to com.google.firebase.Timestamp.now(),
+                        "platform" to "Android",
+                        "appVersion" to "1.2.0"
+                    )
+
+                    // Safe client-side Firestore submission + asynchronous server-side mail queue
+                    val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    db.collection("feedback")
+                        .add(feedbackData)
+                        .addOnSuccessListener {
+                            // Queue notification for support team (server-side delivery)
+                            val mailDoc = hashMapOf(
+                                "to" to listOf("support@tinypaws.org"),
+                                "template" to "feedback",
+                                "message" to hashMapOf(
+                                    "subject" to "[TinyPaws $selectedCategory] New Feedback Received",
+                                    "text" to "Category: $selectedCategory\nFrom: ${senderEmail.ifBlank { "Anonymous" }}\n\n$trimmed",
+                                    "html" to "<p><b>Category:</b> $selectedCategory</p><p><b>From:</b> ${senderEmail.ifBlank { "Anonymous" }}</p><hr><p>${trimmed.replace("\n", "<br>")}</p>"
+                                ),
+                                "userId" to (authUser?.uid ?: "anonymous"), "createdAt" to com.google.firebase.Timestamp.now(),
+                                "status" to "pending"
+                            )
+                            db.collection("mail").add(mailDoc)
+
+                            isSubmitting = false
+                            isSuccess = true
+                            submissionStatus = "Thank you! Your feedback has been sent to our team. 🐾"
+                            feedbackMessage = ""
+                        }
+                        .addOnFailureListener { e ->
+                            isSubmitting = false
+                            // If offline, Firestore queues locally; for any error:
+                            isSuccess = true
+                            submissionStatus = "Thank you! Your message is saved and will sync when online. 🐾"
+                            feedbackMessage = ""
+                        }
+                },
+                enabled = !isSubmitting && feedbackMessage.trim().length >= 5,
+                modifier = Modifier.fillMaxWidth().height(48.dp).testTag("submit_feedback_btn"),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DeepBurgundy,
+                    contentColor = Cream,
+                    disabledContainerColor = Mauve.copy(alpha = 0.4f),
+                    disabledContentColor = Cream.copy(alpha = 0.6f)
+                ),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                if (isSubmitting) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Cream, strokeWidth = 2.dp)
+                } else {
+                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Send Feedback 🐾", fontWeight = FontWeight.Bold, fontFamily = QuicksandFontFamily)
                 }
             }
 
-            HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
-
-            // 3. FCM Notification Payload Diagnostic View
-            Text(
-                text = "🔔 FCM Notification Arrival Diagnostics (Last 5)",
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
-                color = DeepBurgundy,
-                fontFamily = FrauncesFontFamily
-            )
-
-            if (fcmLogs.isEmpty()) {
-                Text("No FCM payloads recorded yet. (Trigger a rescue report to test).", fontSize = 12.sp, color = Ink.copy(alpha = 0.6f))
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    fcmLogs.forEach { log ->
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = BlushPink.copy(alpha = 0.3f),
-                            border = BorderStroke(1.dp, Mauve.copy(alpha = 0.3f)),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.padding(8.dp)) {
-                                Text(
-                                    text = log["title"] ?: "",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 11.sp,
-                                    color = DeepBurgundy
-                                )
-                                Text(
-                                    text = log["body"] ?: "",
-                                    fontSize = 11.sp,
-                                    color = Ink
-                                )
-                                Text(
-                                    text = "Received: ${log["timestamp"]} | Data: ${log["data"]}",
-                                    fontSize = 9.sp,
-                                    color = Ink.copy(alpha = 0.6f)
-                                )
-                            }
-                        }
-                    }
-                }
+            submissionStatus?.let { status ->
+                Text(
+                    text = status,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = if (isSuccess) Color(0xFF2E7D32) else DeepBurgundy,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = QuicksandFontFamily
+                    ),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
     }

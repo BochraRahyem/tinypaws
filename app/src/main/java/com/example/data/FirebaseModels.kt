@@ -83,6 +83,12 @@ data class FeedingStation(
     @ServerTimestamp val lastUpdated: Timestamp? = null
 )
 
+data class GlobalStats(
+    val downloads: Long = 0L,
+    val catsHelped: Long = 0L,
+    @ServerTimestamp val updatedAt: Timestamp? = null
+)
+
 data class GlobalStatistics(
     val totalUsers: Int = 0,
     val totalRegisteredUsers: Int = 0,

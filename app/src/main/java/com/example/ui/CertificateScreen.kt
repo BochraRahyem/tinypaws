@@ -18,7 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -103,7 +103,7 @@ fun CertificateScreen(
                 title = { Text(stringResource(R.string.cert_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = rememberHapticOnClick { onClose() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.main_prev))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.main_prev))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

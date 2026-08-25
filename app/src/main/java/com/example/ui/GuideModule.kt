@@ -56,40 +56,41 @@ import com.example.ui.theme.*
 // Helper Character Card Component
 @Composable
 fun StorybookCharacterBanner() {
-
-    Card(
+    com.example.ui.PixelCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .glassyCard(shape = RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .padding(vertical = 8.dp),
+        backgroundColor = BlushPink.copy(alpha = 0.2f),
+        emblemType = "heart"
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text = "👧🐈",
-                fontSize = 44.sp,
-                textAlign = TextAlign.Center
-            )
+            Box(
+                modifier = Modifier
+                    .size(60.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                com.example.ui.PixelCatAnimated(pixelSize = 3.5.dp)
+            }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(R.string.guide_banner_title),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontFamily = FrauncesFontFamily
                     )
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.guide_banner_desc),
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onBackground,
-                        lineHeight = 15.sp
+                        lineHeight = 16.sp,
+                        fontFamily = QuicksandFontFamily
                     )
                 )
             }
@@ -285,16 +286,26 @@ fun GuideMenuCard(
     tag: String,
     onClick: () -> Unit
 ) {
-    Card(
+    val emblem = remember(title) {
+        when {
+            title.contains("Diseases") || title.contains("Enfermedades") -> "paw"
+            title.contains("Adoption") || title.contains("Adopción") -> "heart"
+            title.contains("DIY") || title.contains("Proyectos") -> "star"
+            title.contains("Cook") || title.contains("Cocinar") -> "food"
+            title.contains("Stray") || title.contains("Callejero") -> "paw"
+            else -> "paw"
+        }
+    }
+    PixelCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { onClick() })
-            .testTag(tag)
-            .glassyCard(shape = RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .testTag(tag),
+        backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+        emblemType = emblem
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -1194,16 +1205,18 @@ fun NewDiyProjectsSection(
             }
             
             // Actual, High-Quality Concept Image for the DIY category
-            Card(
-                modifier = Modifier.fillMaxWidth().glassyCard(shape = RoundedCornerShape(16.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            PixelCard(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                emblemType = "paw"
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.img_diy_concept_fixed),
                     contentDescription = stringResource(R.string.guide_diy_header_alt),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp),
+                        .height(140.dp)
+                        .clip(RoundedCornerShape(12.dp)),
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )
             }
@@ -1254,11 +1267,12 @@ fun NewDiyProjectsSection(
                 val favoriteIds by viewModel.favoriteDiyIds.collectAsState()
                 val isFavorite = favoriteIds.contains(project.id)
 
-                Card(
-                    modifier = Modifier.fillMaxWidth().glassyCard(shape = RoundedCornerShape(20.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                PixelCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    emblemType = "star"
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -1343,11 +1357,12 @@ fun NewDiyProjectsSection(
                     Text(stringResource(R.string.diy_back_to_list), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                 }
 
-                Card(
-                    modifier = Modifier.fillMaxWidth().glassyCard(shape = RoundedCornerShape(24.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                PixelCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    emblemType = "star"
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         val favoriteIds by viewModel.favoriteDiyIds.collectAsState()
                         val isFavorite = favoriteIds.contains(project.id)
 
@@ -1418,14 +1433,14 @@ fun NewDiyProjectsSection(
                                 viewModel.generateStepImage(actionId, richPrompt)
                             }
 
-                            Card(
+                            PixelCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                                    .glassyCard(shape = RoundedCornerShape(20.dp)),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                    .padding(vertical = 8.dp),
+                                backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                emblemType = "star"
                             ) {
-                                Column {
+                                Column(modifier = Modifier.fillMaxWidth()) {
                                     val bitmap = stepImageCache[actionId]
                                     if (bitmap != null) {
                                         Image(
@@ -1434,7 +1449,7 @@ fun NewDiyProjectsSection(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(180.dp)
-                                                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                                                .clip(RoundedCornerShape(12.dp)),
                                             contentScale = ContentScale.Crop
                                         )
                                     } else {
@@ -1455,7 +1470,7 @@ fun NewDiyProjectsSection(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(180.dp)
-                                                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                                                .clip(RoundedCornerShape(12.dp)),
                                             contentScale = ContentScale.Crop
                                         )
                                     }
@@ -1484,13 +1499,12 @@ fun NewDiyProjectsSection(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Overview Paragraph without visuals & View More Full Guide
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .glassyCard(shape = RoundedCornerShape(20.dp)),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        PixelCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                            emblemType = "book"
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
                                 Text(
                                     text = stringResource(R.string.diy_proj_overview),
                                     style = MaterialTheme.typography.titleMedium.copy(

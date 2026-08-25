@@ -131,26 +131,30 @@ fun WeatherAppScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        ensureNotifPermission()
-    }
-
     // Helper to send weather notification to phone
     fun sendWeatherPhoneNotification(maxT: Double, minT: Double, cityName: String, bypassCooldown: Boolean = true) {
         if (!isWarningEnabled) return
         ensureNotifPermission()
-        if (maxT > 35.0) {
-            val title = "🔥 Extreme Heatwave Alert in $cityName"
-            val msg = "Max temperature reaches ${formatTempDual(maxT)} this week! Please provide shade and fresh cold water for outdoor cats."
-            notificationHelper.triggerWeatherAlert(title, msg, bypassCooldownForTesting = bypassCooldown)
-            Toast.makeText(context, "Notification sent to phone: Heatwave Alert", Toast.LENGTH_SHORT).show()
-        } else if (minT <= 15.0 || maxT <= 15.0) {
-            val lowest = minOf(maxT, minT)
-            val title = "❄️ Cold Weather Alert in $cityName"
-            val msg = "Temperatures drop to ${formatTempDual(lowest)}! Keep cat shelters elevated and insulated with fresh dry straw."
-            notificationHelper.triggerWeatherAlert(title, msg, bypassCooldownForTesting = bypassCooldown)
-            Toast.makeText(context, "Notification sent to phone: Cold Weather Alert", Toast.LENGTH_SHORT).show()
-        }
+        val currentLang = viewModel.currentLanguage.value
+        val category = com.example.util.WeatherNotificationResolver.determineCategory(
+            currentTemp = (maxT + minT) / 2.0,
+            maxTemp = maxT,
+            minTemp = minT,
+            weatherCode = 0,
+            windSpeed = 0.0,
+            tempChangeDelta = maxT - minT
+        )
+        val notifData = com.example.util.WeatherNotificationResolver.getRotatingNotification(
+            context = context,
+            category = category,
+            cityName = cityName,
+            currentTemp = (maxT + minT) / 2.0,
+            maxTemp = maxT,
+            minTemp = minT,
+            languageCode = currentLang
+        )
+        notificationHelper.triggerWeatherAlert(notifData.title, notifData.message, bypassCooldownForTesting = bypassCooldown)
+        Toast.makeText(context, notifData.title, Toast.LENGTH_SHORT).show()
     }
 
     // Direct active connection check function
@@ -277,9 +281,6 @@ fun WeatherAppScreen(
                         forecastList = resultList
                         isCachedData = false
                         isLoading = false
-                        val maxInWeek = resultList.maxOfOrNull { it.maxTempC } ?: 25.0
-                        val minInWeek = resultList.minOfOrNull { it.minTempC } ?: 18.0
-                        sendWeatherPhoneNotification(maxInWeek, minInWeek, selectedCity.name)
                     }
                 } else {
                     withContext(Dispatchers.Main) {
@@ -289,9 +290,6 @@ fun WeatherAppScreen(
                             isCachedData = false
                         }
                         isLoading = false
-                        val maxInWeek = forecastList.maxOfOrNull { it.maxTempC } ?: 25.0
-                        val minInWeek = forecastList.minOfOrNull { it.minTempC } ?: 18.0
-                        sendWeatherPhoneNotification(maxInWeek, minInWeek, selectedCity.name)
                     }
                 }
             } catch (e: Exception) {
@@ -302,9 +300,6 @@ fun WeatherAppScreen(
                         isCachedData = false
                     }
                     isLoading = false
-                    val maxInWeek = forecastList.maxOfOrNull { it.maxTempC } ?: 25.0
-                    val minInWeek = forecastList.minOfOrNull { it.minTempC } ?: 18.0
-                    sendWeatherPhoneNotification(maxInWeek, minInWeek, selectedCity.name)
                 }
             }
         }
@@ -856,17 +851,14 @@ fun WeatherAppScreen(
 
                     // Item 7: Outdoor Cat Safety Care Card
                     item {
-                        Card(
+                        PixelCard(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
-                            )
+                            backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+                            emblemType = "paw"
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("🐾", fontSize = 24.sp)
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         text = stringResource(R.string.weather_safety_tips_title),
                                         style = MaterialTheme.typography.titleMedium.copy(
@@ -941,11 +933,20 @@ fun DailyForecastCard(forecast: DailyWeatherForecast) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1.5f)
             ) {
-                Text(
-                    text = forecast.conditionEmoji,
-                    fontSize = 32.sp
+                val weatherStateKey = remember(forecast.conditionText) {
+                    when {
+                        forecast.conditionText.contains("heat", ignoreCase = true) || forecast.conditionText.contains("sunny", ignoreCase = true) || forecast.conditionText.contains("clear", ignoreCase = true) -> "sunny"
+                        forecast.conditionText.contains("cloudy", ignoreCase = true) || forecast.conditionText.contains("overcast", ignoreCase = true) -> "cloudy"
+                        forecast.conditionText.contains("rain", ignoreCase = true) -> "rainy"
+                        forecast.conditionText.contains("cold", ignoreCase = true) || forecast.conditionText.contains("snow", ignoreCase = true) -> "cold"
+                        else -> "sunny"
+                    }
+                }
+                PixelWeatherIcon(
+                    weatherState = weatherStateKey,
+                    pixelSize = 2.4.dp,
+                    modifier = Modifier.padding(end = 8.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = forecast.conditionText,
                     style = MaterialTheme.typography.bodyMedium.copy(

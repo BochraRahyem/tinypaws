@@ -55,7 +55,7 @@ fun LocationModuleScreen(
     var locationTriggered by remember { mutableStateOf(false) }
 
     com.example.util.LocationPermissionGate(
-        onPermissionGranted = { lat, lon ->
+        onPermissionGranted = { lat, lon, _ ->
             viewModel.updateUserLocation(lat, lon)
             viewModel.updateLocationQuery("${"%.4f".format(lat)}, ${"%.4f".format(lon)}")
             viewModel.searchPlaces(searchCategory, "$lat,$lon")
@@ -87,6 +87,7 @@ fun LocationModuleScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

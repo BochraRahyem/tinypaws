@@ -446,6 +446,89 @@ object GeminiClient {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
         return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
     }
+
+    suspend fun fetchDailyCatFact(languageCode: String = "en"): String = withContext(Dispatchers.IO) {
+        val fallbackFacts = when (languageCode) {
+            "ar" -> listOf(
+                "تقضي القطط حوالي 70% من حياتها في النوم و15% في تنظيف فرائها! 🐾",
+                "تمتلك القطط 5 أصابع في أقدامها الأمامية و4 فقط في الخلفية! 🐾",
+                "تستطيع القطط تدوير آذانها 180 درجة لتحديد أدق الأصوات! 🐾",
+                "شوارب القطط تساعدها في قياس المسافات ومعرفة ما إذا كان بإمكانها المرور في مكان ضيق! 🐾",
+                "حاسة الشم لدى القطط أقوى بنحو 14 مرة من حاسة الشم لدى الإنسان! 🐾"
+            )
+            "fr" -> listOf(
+                "Les chats passent environ 70% de leur vie à dormir et 15% à faire leur toilette ! 🐾",
+                "Les chats ont 5 doigts sur leurs pattes avant, mais seulement 4 sur leurs pattes arrière ! 🐾",
+                "Les chats peuvent pivoter leurs oreilles à 180 degrés ! 🐾",
+                "Les moustaches d'un chat sont aussi larges que son corps pour l'aider à naviguer ! 🐾",
+                "Le ronronnement d'un chat vibre à une fréquence qui favorise l'apaisement et la sérénité ! 🐾"
+            )
+            "es" -> listOf(
+                "¡Los gatos pasan aproximadamente el 70% de sus vidas durmiendo y el 15% acicalándose! 🐾",
+                "¡Los gatos tienen 5 dedos en sus patas delanteras, pero solo 4 en las traseras! 🐾",
+                "¡Los gatos pueden girar sus orejas 180 grados para escuchar todo con gran precisión! 🐾",
+                "¡Los bigotes de un gato tienen casi el mismo ancho que su cuerpo para ayudarle a medir espacios! 🐾",
+                "¡El ronroneo de un gato transmite calma y reduce los niveles de estrés! 🐾"
+            )
+            else -> listOf(
+                "Cats spend about 70% of their lives sleeping and 15% grooming! 🐾",
+                "Cats have five toes on their front paws, but only four on their back paws! 🐾",
+                "Cats can rotate their ears 180 degrees to pinpoint sounds with incredible accuracy! 🐾",
+                "A cat's whiskers are generally about as wide as their body to help them navigate! 🐾",
+                "A cat's purr vibrates at a frequency that promotes calm and wellness! 🐾"
+            )
+        }
+
+        val defaultFallback = fallbackFacts.random()
+        val apiKey = BuildConfig.GEMINI_API_KEY
+        if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
+            return@withContext defaultFallback
+        }
+
+        val promptText = when (languageCode) {
+            "ar" -> "قدم حقيقة رائعة وممتعة وموجزة عن القطط في جملة أو جملتين باللغة العربية. اجعلها دافئة ومثيرة للاهتمام."
+            "fr" -> "Fournissez un fait fascinant, chaleureux et court sur les chats (1 à 2 phrases) en français."
+            "es" -> "Proporciona un dato fascinante, cálido y breve sobre los gatos (1 a 2 oraciones) en español."
+            else -> "Provide a fascinating, delightful, and warm 1-2 sentence daily cat fact in English. Keep it cozy and interesting."
+        }
+
+        val requestBodyJson = JSONObject().apply {
+            put("contents", JSONArray().apply {
+                put(JSONObject().apply {
+                    put("parts", JSONArray().apply {
+                        put(JSONObject().apply { put("text", promptText) })
+                    })
+                })
+            })
+        }
+        val request = Request.Builder()
+            .url("${BASE_URL}gemini-3.5-flash:generateContent?key=$apiKey")
+            .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
+            .build()
+        try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    return@withContext defaultFallback
+                }
+                val bodyString = response.body?.string() ?: ""
+                val jsonResponse = JSONObject(bodyString)
+                val candidates = jsonResponse.optJSONArray("candidates")
+                val textResponse = candidates?.optJSONObject(0)
+                    ?.optJSONObject("content")
+                    ?.optJSONArray("parts")
+                    ?.optJSONObject(0)
+                    ?.optString("text")
+                if (!textResponse.isNullOrBlank()) {
+                    textResponse.trim()
+                } else {
+                    defaultFallback
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching daily cat fact", e)
+            defaultFallback
+        }
+    }
 }
 
 data class NearbyPlace(

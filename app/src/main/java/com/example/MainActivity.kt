@@ -31,6 +31,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
@@ -39,6 +40,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -82,6 +84,7 @@ import com.example.ui.MyCatScreen
 import com.example.ui.MyCatHubScreen
 import com.example.ui.ReminderScreen
 import com.example.ui.CertificateScreen
+import com.example.ui.PixelCard
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -122,19 +125,6 @@ class MainActivity : AppCompatActivity() {
 
         // Schedule periodic background weather alerts using WorkManager
         com.example.worker.WeatherAlertWorker.schedulePeriodicWeatherCheck(applicationContext)
-
-        // Request POST_NOTIFICATIONS permission on Android 13+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
-            }
-        }
-
-        // Request location permissions on startup, just like notification permission
-        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED &&
-            androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), 102)
-        }
 
         // Load existing onboarded name and language
         val savedName = sharedPrefs.getString("user_name", "") ?: ""
@@ -214,10 +204,8 @@ class MainActivity : AppCompatActivity() {
                                 AppCompatDelegate.setApplicationLocales(appLocale)
                             },
                             onLogout = {
-                                sharedPrefs.edit().putString("user_name", "").apply()
                                 viewModel.signOut()
                                 viewModel.resetTriage()
-                                viewModel.resetGameProgress()
                             },
                             modifier = Modifier
                                 .fillMaxSize()
@@ -655,21 +643,23 @@ fun OnboardingStartupScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(if (com.example.ui.theme.LocalIsDarkMode.current) com.example.ui.theme.OmbreGradientBrushDark else com.example.ui.theme.OmbreGradientBrushLight)
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .padding(24.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
+        PixelCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .glassyCard(shape = RoundedCornerShape(28.dp)),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                .padding(vertical = 16.dp),
+            backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+            emblemType = "paw"
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(8.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -977,9 +967,9 @@ fun TinyPawsDashboard(
                                 )
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            if (resendVerificationMessage != null) {
+                            resendVerificationMessage?.let { msg ->
                                 Text(
-                                    text = resendVerificationMessage!!,
+                                    text = msg,
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         color = Color(0xFF2E7D32),
                                         fontFamily = QuicksandFontFamily,
@@ -1293,18 +1283,16 @@ fun TipOfTheDayCard() {
     val facts = androidx.compose.ui.res.stringArrayResource(id = R.array.cat_facts)
     val fact = remember { facts.random() }
 
-    Card(
+    com.example.ui.PixelCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        colors = CardDefaults.cardColors(containerColor = BlushPink.copy(alpha = 0.3f)),
-        shape = RoundedCornerShape(20.dp)
+        backgroundColor = BlushPink.copy(alpha = 0.25f),
+        emblemType = "paw"
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.tip_of_day_title), fontFamily = FrauncesFontFamily, fontWeight = FontWeight.Bold, color = DeepBurgundy)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(fact, fontFamily = QuicksandFontFamily, color = Ink)
-        }
+        Text(stringResource(R.string.tip_of_day_title), fontFamily = FrauncesFontFamily, fontWeight = FontWeight.Bold, color = DeepBurgundy)
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(fact, fontFamily = QuicksandFontFamily, color = Ink, fontSize = 14.sp, lineHeight = 20.sp)
     }
 }
 @Composable
@@ -1315,17 +1303,14 @@ fun SurpriseMeSection(
     val context = androidx.compose.ui.platform.LocalContext.current
     val sharedPrefs = remember { context.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE) }
 
-    Card(
+    com.example.ui.PixelCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .glassyCard(shape = RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .padding(horizontal = 16.dp),
+        emblemType = "star"
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -1348,8 +1333,8 @@ fun SurpriseMeSection(
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
-            Button(
-                onClick = com.example.ui.theme.rememberHapticOnClick { 
+            com.example.ui.TactileButton(
+                onClick = { 
                     val result = viewModel.selectRandomSurprise(sharedPrefs)
                     val tab = result.first
                     val projectId = result.second
@@ -1360,14 +1345,10 @@ fun SurpriseMeSection(
                 modifier = Modifier
                     .size(48.dp)
                     .testTag("surprise_me_btn"),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = DeepBurgundy,
-                    contentColor = Cream
-                ),
-                shape = CircleShape,
-                contentPadding = PaddingValues(0.dp)
+                containerColor = DeepBurgundy,
+                contentColor = Cream
             ) {
-                Icon(Icons.Default.Star, contentDescription = "Surprise Me")
+                Icon(Icons.Default.Star, contentDescription = "Surprise Me", modifier = Modifier.size(18.dp))
             }
         }
     }
@@ -1378,17 +1359,14 @@ fun CatsNearMeDashboardSection(
     viewModel: TinyPawsViewModel,
     onNavigate: (String) -> Unit
 ) {
-    Card(
+    com.example.ui.PixelCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .glassyCard(shape = RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .padding(horizontal = 16.dp),
+        emblemType = "paw"
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.main_cats_near_me_title),
@@ -1411,9 +1389,9 @@ fun CatsNearMeDashboardSection(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Button 1: Report Sighting (Oval)
-                Button(
-                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                // Button 1: Report Sighting
+                com.example.ui.TactileButton(
+                    onClick = { 
                         viewModel.updateCatsNearMeTab("report")
                         onNavigate("cats_near_me")
                     },
@@ -1421,11 +1399,8 @@ fun CatsNearMeDashboardSection(
                         .weight(1f)
                         .height(48.dp)
                         .testTag("home_report_stray_btn"),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DeepBurgundy,
-                        contentColor = Cream
-                    ),
-                    shape = CircleShape
+                    containerColor = DeepBurgundy,
+                    contentColor = Cream
                 ) {
                     Text(
                         text = stringResource(R.string.main_report_stray),
@@ -1438,22 +1413,18 @@ fun CatsNearMeDashboardSection(
                     )
                 }
 
-                // Button 2: Browse Nearby (Oval, Outlined/Blush Theme)
-                Button(
-                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                // Button 2: Browse Nearby
+                com.example.ui.TactileButton(
+                    onClick = { 
                         viewModel.updateCatsNearMeTab("browse")
                         onNavigate("cats_near_me")
                     },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
-                        .border(1.5.dp, DeepBurgundy, CircleShape)
                         .testTag("home_browse_strays_btn"),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Cream.copy(alpha = 0.6f),
-                        contentColor = DeepBurgundy
-                    ),
-                    shape = CircleShape
+                    containerColor = PastelLightPink,
+                    contentColor = DeepBurgundy
                 ) {
                     Text(
                         text = stringResource(R.string.main_browse_nearby),
@@ -1483,10 +1454,10 @@ fun HeroHeader(
             .fillMaxWidth()
             .height(290.dp)
     ) {
-        // Story-driven generated illustration (Lily and her cat Pip)
+        // Cozy personal story illustration featuring the user with their beloved calico torbie cat on lap
         Image(
-            painter = painterResource(id = R.drawable.img_hero_girl_cat_header_1786284269769),
-            contentDescription = "Beautiful cozy illustration of a girl with her cat",
+            painter = painterResource(id = R.drawable.img_hero_person_with_lap_cat_1786905991525),
+            contentDescription = "Warm cozy personal illustration of sitting comfortably with cat on lap",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
@@ -1547,36 +1518,59 @@ fun HeroHeader(
         }
 
         // Bottom Content: Greeting & Streak (overlaid directly on the image with perfect contrast)
-        Column(
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Text(
-                text = stringResource(R.string.home_greeting, userName),
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.White,
-                    fontFamily = FrauncesFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    shadow = androidx.compose.ui.graphics.Shadow(
-                        color = Color.Black.copy(alpha = 0.6f),
-                        blurRadius = 8f
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.home_greeting, userName),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        color = Color.White,
+                        fontFamily = FrauncesFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        shadow = androidx.compose.ui.graphics.Shadow(
+                            color = Color.Black.copy(alpha = 0.6f),
+                            blurRadius = 8f
+                        )
                     )
                 )
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.home_streak, streakCount),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    color = Color.White,
-                    fontFamily = QuicksandFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    shadow = androidx.compose.ui.graphics.Shadow(
-                        color = Color.Black.copy(alpha = 0.6f),
-                        blurRadius = 8f
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    com.example.ui.PixelCanvas(
+                        pixelGrid = com.example.ui.PixelCatModels.Star,
+                        colorMap = com.example.ui.PixelColorMap,
+                        pixelSize = 1.2.dp,
+                        modifier = Modifier.padding(end = 6.dp)
                     )
-                )
-            )
+                    Text(
+                        text = stringResource(R.string.home_streak, streakCount),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = Color.White,
+                            fontFamily = QuicksandFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            shadow = androidx.compose.ui.graphics.Shadow(
+                                color = Color.Black.copy(alpha = 0.6f),
+                                blurRadius = 8f
+                            )
+                        )
+                    )
+                }
+            }
+
+            // Super cute animated orange cat sitting and blinking next to the greeting card!
+            Box(
+                modifier = Modifier
+                    .padding(end = 4.dp, bottom = 4.dp)
+                    .size(54.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                com.example.ui.PixelCatAnimated(pixelSize = 3.2.dp)
+            }
         }
     }
 }
@@ -1714,7 +1708,7 @@ fun MyKittysCornerGrid(
             }
             
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Go",
                 tint = DeepBurgundy,
                 modifier = Modifier.size(24.dp)
@@ -1773,6 +1767,14 @@ fun NavigationCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val pixelModelGrid = when {
+        title.contains("Guide", ignoreCase = true) || title.contains("Care", ignoreCase = true) -> com.example.ui.PixelCatModels.Book
+        title.contains("Play", ignoreCase = true) || title.contains("Quiz", ignoreCase = true) || title.contains("Game", ignoreCase = true) -> com.example.ui.PixelCatModels.Trophy
+        title.contains("Find", ignoreCase = true) || title.contains("Vet", ignoreCase = true) || title.contains("Map", ignoreCase = true) -> com.example.ui.PixelCatModels.MapMarker
+        title.contains("Cook", ignoreCase = true) || title.contains("Recipe", ignoreCase = true) -> com.example.ui.PixelCatModels.FoodBowl
+        else -> null
+    }
+
     Card(
         modifier = modifier
             .height(130.dp)
@@ -1780,29 +1782,45 @@ fun NavigationCard(
             .clickable(onClick = com.example.ui.theme.rememberHapticOnClick { onClick() }),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Background pixel decoration
+            if (pixelModelGrid != null) {
+                com.example.ui.PixelCanvas(
+                    pixelGrid = pixelModelGrid,
+                    colorMap = com.example.ui.PixelColorMap,
+                    pixelSize = 1.8.dp,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 10.dp, end = 10.dp)
+                        .scale(0.85f)
                 )
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                ),
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.padding(end = 24.dp) // Leave room for the emblem
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -2809,10 +2827,33 @@ fun TinyPawsHelperScreen(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(cozyBackgroundBrush)
+        modifier = modifier.fillMaxSize()
     ) {
+        // Atmospheric Cozy Room Background Wallpaper
+        Image(
+            painter = painterResource(id = R.drawable.img_chat_cozy_room_bg_1786906005537),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            alpha = 0.28f
+        )
+
+        // Soft pastel gradient overlay ensuring 100% text readability & warmth
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Cream.copy(alpha = 0.85f),
+                            PastelLightPink.copy(alpha = 0.70f),
+                            PastelLavender.copy(alpha = 0.75f),
+                            Cream.copy(alpha = 0.90f)
+                        )
+                    )
+                )
+        )
+
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -2825,8 +2866,8 @@ fun TinyPawsHelperScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .statusBarsPadding(),
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = com.example.ui.theme.rememberHapticOnClick { onBack() }) {
@@ -2857,16 +2898,28 @@ fun TinyPawsHelperScreen(
                     .padding(horizontal = 20.dp)
             ) {
                 if (messages.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = stringResource(R.string.chat_placeholder),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = Ink.copy(alpha = 0.6f),
-                                fontWeight = FontWeight.Medium,
-                                fontFamily = QuicksandFontFamily
-                            ),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
+                    Box(modifier = Modifier.fillMaxWidth().padding(top = 80.dp), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            com.example.ui.PixelCanvas(
+                                pixelGrid = com.example.ui.PixelCatModels.AIHead,
+                                colorMap = com.example.ui.PixelColorMap,
+                                pixelSize = 3.8.dp,
+                                modifier = Modifier.padding(bottom = 20.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.chat_placeholder),
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = Ink.copy(alpha = 0.7f),
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = QuicksandFontFamily
+                                ),
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
                     }
                 }
 
@@ -2986,8 +3039,8 @@ fun TinyPawsHelperScreen(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     val context = androidx.compose.ui.platform.LocalContext.current
-                    IconButton(
-                        onClick = com.example.ui.theme.rememberHapticOnClick { 
+                    com.example.ui.TactileButton(
+                        onClick = { 
                             if (inputText.isNotBlank()) {
                                 val textToSend = inputText
                                 inputText = ""
@@ -2996,14 +3049,16 @@ fun TinyPawsHelperScreen(
                         },
                         modifier = Modifier
                             .size(48.dp)
-                            .background(DeepBurgundy, CircleShape)
                             .testTag("chat_send_button"),
+                        containerColor = DeepBurgundy,
+                        contentColor = Cream,
                         enabled = inputText.isNotBlank() && !isLoading
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = stringResource(R.string.chat_send),
-                            tint = if (inputText.isNotBlank() && !isLoading) Cream else Cream.copy(alpha = 0.5f)
+                            tint = if (inputText.isNotBlank() && !isLoading) Cream else Cream.copy(alpha = 0.5f),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }

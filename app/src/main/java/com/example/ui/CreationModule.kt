@@ -89,6 +89,7 @@ fun CreationModuleScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -400,7 +401,7 @@ fun CreationModuleScreen(
                                                     mediaPlayer?.pause()
                                                     isMusicPlaying = false
                                                     @Suppress("DEPRECATION")
-                                                    try { audioManager.abandonAudioFocus { } } catch (_: Exception) {}
+                                                    try { audioManager.abandonAudioFocus { } } catch (e: Exception) { android.util.Log.e("CreationModule", "Failed to abandon audio focus", e) }
                                                 } else {
                                                     @Suppress("DEPRECATION")
                                                     try {
@@ -414,7 +415,7 @@ fun CreationModuleScreen(
                                                             android.media.AudioManager.STREAM_MUSIC,
                                                             android.media.AudioManager.AUDIOFOCUS_GAIN
                                                         )
-                                                    } catch (_: Exception) {}
+                                                    } catch (e: Exception) { android.util.Log.e("CreationModule", "Failed to abandon audio focus", e) }
                                                     if (mediaPlayer == null) {
                                                         mediaPlayer = MediaPlayer().apply {
                                                             try {
@@ -426,7 +427,7 @@ fun CreationModuleScreen(
                                                                 setOnCompletionListener {
                                                                     isMusicPlaying = false
                                                                     @Suppress("DEPRECATION")
-                                                                    try { audioManager.abandonAudioFocus { } } catch (_: Exception) {}
+                                                                    try { audioManager.abandonAudioFocus { } } catch (e: Exception) { android.util.Log.e("CreationModule", "Failed to abandon audio focus", e) }
                                                                 }
                                                             } catch (e: Exception) {
                                                                 android.util.Log.e("CreationModule", "Failed to prepare MediaPlayer via FD", e)

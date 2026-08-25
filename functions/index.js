@@ -301,13 +301,16 @@ exports.onStationReachCreated = functions.firestore
 
 // ---------------------------------------------------------------
 // 6. User Action created -> calculate rewardAmount + increment user's totalStars & rescueStars
+// Strictly Idempotent: Uses a transaction and idempotency record to guarantee exactly-once increment
 // ---------------------------------------------------------------
 exports.onUserActionCreated = functions.firestore
   .document("users/{userId}/actions/{actionId}")
   .onCreate(async (snap, context) => {
+    const { userId, actionId } = context.params;
     const action = snap.data();
+    if (!action) return null;
+
     let rewardAmount = action.rewardAmount || action.starsEarned || 0;
-    
     if (action.actionType === "feed_cat") {
       rewardAmount = 2;
     } else if (action.actionType === "vet_visit" || action.actionType === "vet") {
@@ -317,18 +320,59 @@ exports.onUserActionCreated = functions.firestore
     } else if (action.actionType === "adopt_cat" || action.actionType === "rescue") {
       rewardAmount = 10;
     }
-    
-    await snap.ref.set({ rewardAmount: rewardAmount }, { merge: true });
-    
-    if (rewardAmount > 0) {
-      await db.collection("users").doc(context.params.userId).set(
-        { 
-          totalStars: admin.firestore.FieldValue.increment(rewardAmount),
-          rescueStars: admin.firestore.FieldValue.increment(rewardAmount)
-        },
-        { merge: true }
-      );
+
+    const helpingActionTypes = [
+      "feed_cat", "rescue_cat", "rescue", "adopt_cat", "adopt", 
+      "vet_visit", "vet", "fill_station", "fill_feeding_station", 
+      "donate_supplies", "build_shelter"
+    ];
+    const isHelpingAction = helpingActionTypes.includes(action.actionType);
+
+    const idempotencyRef = db.collection("internal_processed_actions").doc(`${userId}_${actionId}`);
+    const statsRef = db.collection("stats").doc("global");
+    const userRef = db.collection("users").doc(userId);
+    const actionRef = snap.ref;
+
+    try {
+      await db.runTransaction(async (transaction) => {
+        const idempotencyDoc = await transaction.get(idempotencyRef);
+        if (idempotencyDoc.exists) {
+          console.log(`Action ${actionId} for user ${userId} has already been processed. Skipping duplicate execution.`);
+          return;
+        }
+
+        // 1. Atomically record that this actionId has been processed
+        transaction.set(idempotencyRef, {
+          userId: userId,
+          actionId: actionId,
+          actionType: action.actionType || "unknown",
+          processedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 2. Mark reward on the action document
+        transaction.set(actionRef, { rewardAmount: rewardAmount, processed: true }, { merge: true });
+
+        // 3. Increment user stars if applicable
+        if (rewardAmount > 0) {
+          transaction.set(userRef, {
+            totalStars: admin.firestore.FieldValue.increment(rewardAmount),
+            rescueStars: admin.firestore.FieldValue.increment(rewardAmount)
+          }, { merge: true });
+        }
+
+        // 4. Increment stats/global.catsHelped atomically by exactly 1
+        if (isHelpingAction) {
+          transaction.set(statsRef, {
+            catsHelped: admin.firestore.FieldValue.increment(1),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+      });
+    } catch (err) {
+      console.error(`Transaction failed during onUserActionCreated for action ${actionId}:`, err);
+      throw err;
     }
+
     return null;
   });
 
@@ -703,7 +747,7 @@ exports.onMailCreated = functions.runWith({ secrets: ["RESEND_API_KEY"] })
     }
 
     const resend = new Resend(resendApiKey);
-    const fromAddress = process.env.RESEND_FROM_EMAIL || "TinyPaws Team <welcome@tinypaws.org>";
+    const fromAddress = process.env.RESEND_FROM_EMAIL || "TinyPaws Team <support@tinypaws.tn>";
 
     let subject, html;
 
@@ -752,4 +796,41 @@ exports.onMailCreated = functions.runWith({ secrets: ["RESEND_API_KEY"] })
     }
     return null;
   });
+
+// ---------------------------------------------------------------
+// Public HTTPS Endpoint for Website Download Counter
+// ---------------------------------------------------------------
+exports.recordDownload = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  try {
+    const statsRef = db.collection("stats").doc("global");
+    await statsRef.set(
+      {
+        downloads: admin.firestore.FieldValue.increment(1),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    const updatedDoc = await statsRef.get();
+    const data = updatedDoc.data() || {};
+    res.status(200).json({
+      success: true,
+      downloads: data.downloads || 0,
+      catsHelped: data.catsHelped || 0,
+    });
+  } catch (error) {
+    console.error("Error recording download:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 

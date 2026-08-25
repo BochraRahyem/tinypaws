@@ -57,28 +57,50 @@ class FirebaseRepository {
 
     // Storage
     suspend fun uploadImageToStorage(uri: android.net.Uri, folder: String = "cat_photos"): String {
-        return try {
-            val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().reference
-            val imageRef = storageRef.child("$folder/${java.util.UUID.randomUUID()}.jpg")
-            imageRef.putFile(uri).await()
-            imageRef.downloadUrl.await().toString()
+        val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("$folder/${java.util.UUID.randomUUID()}.jpg")
+        imageRef.putFile(uri).await()
+        return imageRef.downloadUrl.await().toString()
+    }
+
+    suspend fun deleteImageFromStorage(imageUrl: String) {
+        try {
+            if (imageUrl.startsWith("http")) {
+                val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+                storageRef.delete().await()
+                android.util.Log.d("FirebaseRepo", "Successfully deleted uploaded image from Storage: $imageUrl")
+            }
         } catch (e: Exception) {
-            android.util.Log.e("FirebaseRepo", "Error uploading image to storage", e)
-            uri.toString()
+            android.util.Log.e("FirebaseRepo", "Error deleting image from Storage: $imageUrl", e)
         }
     }
 
     // Reports
-    suspend fun createReport(report: CatReport) {
-        val uid = auth.currentUser?.uid ?: return
+    suspend fun createReport(report: CatReport, reportId: String = "") {
+        val currentUser = auth.currentUser
+        val uid = currentUser?.uid ?: ""
+        val rawName = report.reporterName.trim()
+        val reporterName = when {
+            rawName.isNotEmpty() -> rawName
+            currentUser != null -> currentUser.displayName ?: currentUser.email?.substringBefore("@") ?: "Community Member"
+            else -> "Guest Reporter"
+        }
         val imgUrl = report.catImageUrl.ifBlank { report.photoUrl }
         val newReport = report.copy(
             reportedBy = uid,
+            reporterName = reporterName,
             catImageUrl = imgUrl,
             photoUrl = imgUrl,
             status = report.status.ifBlank { "active" }
         )
-        firestore.collection("reports").add(newReport).await()
+        android.util.Log.d("FirebaseRepo", "Writing report to collection 'reports' with ID: $reportId for reporter: $reporterName (UID: $uid)")
+        if (reportId.isNotBlank()) {
+            firestore.collection("reports").document(reportId).set(newReport).await()
+            android.util.Log.d("FirebaseRepo", "Report successfully written to Firestore with ID: $reportId")
+        } else {
+            val docRef = firestore.collection("reports").add(newReport).await()
+            android.util.Log.d("FirebaseRepo", "Report successfully written to Firestore with generated ID: ${docRef.id}")
+        }
     }
 
     fun getActiveReports(): Flow<List<CatReport>> = callbackFlow {
@@ -134,7 +156,7 @@ class FirebaseRepository {
             )
         ).await()
 
-        // Record rescue action with 10 stars
+        // Record rescue action with 10 stars (triggers server-side stats/global update)
         recordUserAction(
             UserAction(
                 actionType = "adopt_cat",
@@ -168,7 +190,7 @@ class FirebaseRepository {
             )
         ).await()
 
-        // 3. Record user action
+        // 3. Record user action (triggers server-side stats/global update)
         val stars = if (actionType == "vet_visit") 3 else 2
         val desc = if (actionType == "vet_visit") "Took cat to veterinarian" else "Helped stray cat"
         recordUserAction(
@@ -204,7 +226,7 @@ class FirebaseRepository {
             )
         ).await()
 
-        // 3. Record user action with 10 stars
+        // 3. Record user action with 10 stars (triggers server-side stats/global update)
         recordUserAction(
             UserAction(
                 actionType = "adopt_cat",
@@ -250,7 +272,7 @@ class FirebaseRepository {
             )
         ).await()
 
-        // 3. Record user action with 5 stars
+        // 3. Record user action with 5 stars (triggers server-side stats/global update)
         recordUserAction(
             UserAction(
                 actionType = "fill_station",
@@ -341,7 +363,70 @@ class FirebaseRepository {
         ).await()
     }
 
-    // Global Statistics
+    // Global Statistics (stats/global) for Website and App
+    suspend fun incrementCatsHelped(count: Long = 1L) {
+        try {
+            val statsRef = firestore.collection("stats").document("global")
+            statsRef.set(
+                mapOf(
+                    "catsHelped" to FieldValue.increment(count),
+                    "updatedAt" to FieldValue.serverTimestamp()
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            ).await()
+            android.util.Log.d("FirebaseRepo", "Incremented stats/global catsHelped by $count")
+        } catch (e: Exception) {
+            android.util.Log.e("FirebaseRepo", "Error incrementing stats/global catsHelped", e)
+        }
+    }
+
+    suspend fun incrementDownloads(count: Long = 1L) {
+        try {
+            val statsRef = firestore.collection("stats").document("global")
+            statsRef.set(
+                mapOf(
+                    "downloads" to FieldValue.increment(count),
+                    "updatedAt" to FieldValue.serverTimestamp()
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            ).await()
+            android.util.Log.d("FirebaseRepo", "Incremented stats/global downloads by $count")
+        } catch (e: Exception) {
+            android.util.Log.e("FirebaseRepo", "Error incrementing stats/global downloads", e)
+        }
+    }
+
+    suspend fun initializeGlobalStatsIfMissing() {
+        try {
+            val statsRef = firestore.collection("stats").document("global")
+            val snapshot = statsRef.get().await()
+            if (!snapshot.exists()) {
+                statsRef.set(
+                    mapOf(
+                        "downloads" to 0L,
+                        "catsHelped" to 0L,
+                        "updatedAt" to FieldValue.serverTimestamp()
+                    )
+                ).await()
+                android.util.Log.d("FirebaseRepo", "Initialized stats/global with 0 downloads and 0 catsHelped")
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("FirebaseRepo", "Error initializing stats/global", e)
+        }
+    }
+
+    fun getGlobalStats(): Flow<GlobalStats?> = callbackFlow {
+        val subscription = firestore.collection("stats").document("global")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+                trySend(snapshot?.toObject(GlobalStats::class.java))
+            }
+        awaitClose { subscription.remove() }
+    }
+
     fun getGlobalStatistics(): Flow<GlobalStatistics?> = callbackFlow {
         val subscription = firestore.collection("statistics").document("global")
             .addSnapshotListener { snapshot, error ->

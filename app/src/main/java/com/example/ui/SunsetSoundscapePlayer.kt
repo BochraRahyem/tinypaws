@@ -79,22 +79,31 @@ object SunsetSoundscapePlayer {
 
     fun start(context: android.content.Context) {
         val appContext = context.applicationContext
+        val prefs = appContext.getSharedPreferences("tinypaws_prefs", android.content.Context.MODE_PRIVATE)
+        val soundEnabled = prefs.getBoolean("sound_enabled", true)
+        if (!soundEnabled) {
+            stop()
+            return
+        }
+
         synchronized(lock) {
-            if (isPlaying) return
-            isPlaying = true
-            
-            // Wait for previous thread to finish if it's still active
+            if (isPlaying && playerThread?.isAlive == true) return
+
+            // Stop any existing thread gracefully
+            isPlaying = false
             playerThread?.let {
-                if (it.isAlive) {
-                    try {
-                        it.join(1000)
-                    } catch (e: InterruptedException) {
-                        // ignore
-                    }
+                try {
+                    it.interrupt()
+                    it.join(300)
+                } catch (e: Exception) {
+                    // ignore
                 }
             }
+
+            isPlaying = true
             
             playerThread = thread(start = true, name = "SunsetSoundscapeThread") {
+                var localTrack: AudioTrack? = null
                 try {
                     requestFocus(appContext)
 
@@ -104,7 +113,9 @@ object SunsetSoundscapePlayer {
                         AudioFormat.ENCODING_PCM_16BIT
                     )
                     
-                    audioTrack = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (!isPlaying) return@thread
+
+                    val createdTrack = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         val builder = AudioTrack.Builder()
                         
                         builder.setAudioAttributes(
@@ -153,7 +164,20 @@ object SunsetSoundscapePlayer {
                         )
                     }
 
-                    audioTrack?.play()
+                    localTrack = createdTrack
+                    synchronized(lock) {
+                        if (!isPlaying) {
+                            try {
+                                localTrack.release()
+                            } catch (e: Exception) {
+                                // ignore
+                            }
+                            return@thread
+                        }
+                        audioTrack = localTrack
+                    }
+
+                    localTrack.play()
 
                     // Dreamy Sunset chord progression (Cmaj9 -> Am9 -> Fmaj7 -> G6/9)
                     val chords = listOf(
@@ -169,11 +193,11 @@ object SunsetSoundscapePlayer {
                     val bufferSize = 2048
                     val buffer = ShortArray(bufferSize)
 
-                    while (isPlaying) {
+                    while (isPlaying && !Thread.currentThread().isInterrupted) {
                         val frequencies = chords[chordIndex]
                         var sampleIdx = 0
                         
-                        while (sampleIdx < totalSamples && isPlaying) {
+                        while (sampleIdx < totalSamples && isPlaying && !Thread.currentThread().isInterrupted) {
                             val numToWrite = minOf(bufferSize, totalSamples - sampleIdx)
                             
                             for (i in 0 until numToWrite) {
@@ -201,15 +225,28 @@ object SunsetSoundscapePlayer {
                                 buffer[i] = sample.toShort()
                             }
                             
-                            audioTrack?.write(buffer, 0, numToWrite)
+                            if (isPlaying && localTrack.playState == AudioTrack.PLAYSTATE_PLAYING) {
+                                localTrack.write(buffer, 0, numToWrite)
+                            }
                             sampleIdx += numToWrite
                         }
                         chordIndex = (chordIndex + 1) % chords.size
                     }
                 } catch (e: Exception) {
-                    Log.e("SunsetSoundscape", "Error in synthesizer thread", e)
+                    Log.e("SunsetSoundscape", "Error in synthesizer thread: ${e.message}")
                 } finally {
-                    cleanup(appContext)
+                    synchronized(lock) {
+                        if (audioTrack === localTrack) {
+                            audioTrack = null
+                        }
+                    }
+                    try {
+                        localTrack?.stop()
+                        localTrack?.release()
+                    } catch (e: Exception) {
+                        // ignore
+                    }
+                    abandonFocus(appContext)
                 }
             }
         }
@@ -218,17 +255,21 @@ object SunsetSoundscapePlayer {
     fun stop() {
         synchronized(lock) {
             isPlaying = false
+            val trackToStop = audioTrack
+            audioTrack = null
+            try {
+                trackToStop?.pause()
+                trackToStop?.flush()
+                trackToStop?.stop()
+                trackToStop?.release()
+            } catch (e: Exception) {
+                // ignore
+            }
+            try {
+                playerThread?.interrupt()
+            } catch (e: Exception) {
+                // ignore
+            }
         }
-    }
-
-    private fun cleanup(context: android.content.Context) {
-        try {
-            audioTrack?.stop()
-            audioTrack?.release()
-        } catch (e: Exception) {
-            // ignore
-        }
-        audioTrack = null
-        abandonFocus(context)
     }
 }

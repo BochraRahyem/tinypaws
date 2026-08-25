@@ -31,11 +31,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,51 +101,44 @@ fun MyCatHubScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Introductory decorative banner to unify the "Cat Universe"
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .glassyCard(shape = RoundedCornerShape(26.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            PixelCard(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = BlushPink.copy(alpha = 0.25f),
+                emblemType = "star"
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFFFFC2D1).copy(alpha = 0.35f),
-                                    Color(0xFFF3E5F5).copy(alpha = 0.45f)
-                                )
-                            )
-                        )
-                        .padding(20.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    Box(
+                        modifier = Modifier.size(54.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("🪐🐱", fontSize = 42.sp)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.step_into_cat_universe),
-                                fontFamily = FrauncesFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = DeepBurgundy
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(R.string.step_into_cat_universe_subtitle),
-                                fontFamily = QuicksandFontFamily,
-                                fontSize = 11.sp,
-                                lineHeight = 15.sp,
-                                color = Ink.copy(alpha = 0.8f)
-                            )
-                        }
+                        PixelCatAnimated(pixelSize = 3.2.dp)
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.step_into_cat_universe),
+                            fontFamily = FrauncesFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = DeepBurgundy
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.step_into_cat_universe_subtitle),
+                            fontFamily = QuicksandFontFamily,
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp,
+                            color = Ink.copy(alpha = 0.8f)
+                        )
                     }
                 }
             }
+
+            // Daily Cat Fact Card with Gemini API & Refresh button
+            DailyCatFactCard(viewModel = viewModel)
 
             // Multi-Cat Switcher Header
             MultiCatSwitcherCard(
@@ -330,17 +326,15 @@ fun MultiCatSwitcherCard(
 ) {
     val isDark = LocalIsDarkMode.current
 
-    Card(
+    PixelCard(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("multi_cat_switcher_card")
-            .glassyCard(shape = RoundedCornerShape(22.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .testTag("multi_cat_switcher_card"),
+        backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+        emblemType = "paw"
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
@@ -352,7 +346,12 @@ fun MultiCatSwitcherCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("🐱", fontSize = 20.sp)
+                    Box(
+                        modifier = Modifier.size(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        PixelCatSleeping(pixelSize = 1.8.dp)
+                    }
                     Column {
                         Text(
                             text = stringResource(R.string.multi_cat_switch),
@@ -710,6 +709,92 @@ fun HubButton(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DailyCatFactCard(viewModel: TinyPawsViewModel) {
+    val currentLang by viewModel.currentLanguage.collectAsState()
+    var catFact by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val loadFact = {
+        isLoading = true
+        coroutineScope.launch {
+            val fact = viewModel.fetchDailyCatFact(currentLang)
+            catFact = fact
+            isLoading = false
+        }
+    }
+
+    androidx.compose.runtime.LaunchedEffect(currentLang) {
+        loadFact()
+    }
+
+    PixelCard(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = PastelLightPink.copy(alpha = 0.25f),
+        emblemType = "paw"
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.size(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        PixelCatSleeping(pixelSize = 1.8.dp)
+                    }
+                    Text(
+                        text = stringResource(R.string.daily_cat_fact_title),
+                        fontFamily = FrauncesFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = DeepBurgundy
+                    )
+                }
+                IconButton(
+                    onClick = rememberHapticOnClick { loadFact() },
+                    enabled = !isLoading,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .testTag("refresh_cat_fact_btn")
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = DeepBurgundy,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh fact",
+                            tint = DeepBurgundy,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+            Text(
+                text = catFact,
+                fontFamily = QuicksandFontFamily,
+                fontSize = 13.sp,
+                lineHeight = 18.sp,
+                color = Ink.copy(alpha = 0.85f)
+            )
         }
     }
 }

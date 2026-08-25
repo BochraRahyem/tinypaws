@@ -70,67 +70,48 @@ class WeatherAlertWorker(
                     if (minT < minTemp) minTemp = minT
                 }
 
-                android.util.Log.d("WeatherAlertWorker", "doWork: Successfully parsed forecast data. MaxTemp: $maxTemp, MinTemp: $minTemp")
+                val currentWeather = json.optJSONObject("current_weather")
+                val currentTemp = currentWeather?.optDouble("temperature", if (maxTemp > -900 && minTemp < 900) (maxTemp + minTemp) / 2.0 else 22.0) ?: 22.0
+                val weatherCode = currentWeather?.optInt("weathercode", 0) ?: 0
+                val windSpeed = currentWeather?.optDouble("windspeed", 0.0) ?: 0.0
+                val tempDelta = if (maxTemp > -900 && minTemp < 900) (maxTemp - minTemp) else 0.0
+
+                android.util.Log.d("WeatherAlertWorker", "doWork: Successfully parsed forecast data. MaxTemp: $maxTemp, MinTemp: $minTemp, CurrentTemp: $currentTemp, Code: $weatherCode, Wind: $windSpeed")
+                val prefs = appContext.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+                val isWeatherAlertsEnabled = prefs.getBoolean("extreme_weather_notifications", true)
+                if (!isWeatherAlertsEnabled) {
+                    android.util.Log.d("WeatherAlertWorker", "doWork: Weather alerts disabled by user in settings. Skipping notifications.")
+                    return@withContext Result.success()
+                }
+
+                val savedLang = prefs.getString("user_lang", "en") ?: "en"
                 val notificationHelper = NotificationHelper(appContext)
 
-                if (maxTemp > 35.0) {
-                    val title = "🔥 Heatwave Alert (>35°C) in $cityName"
-                    val message = "Background weather check: Temperatures reach ${maxTemp.toInt()}°C! Provide shade & fresh water for outdoor cats."
-                    android.util.Log.d("WeatherAlertWorker", "doWork: High temperature detected ($maxTemp > 35.0). Triggering Heatwave Notification alert.")
-                    notificationHelper.triggerWeatherAlert(title, message, 3001)
-                } else {
-                    android.util.Log.d("WeatherAlertWorker", "doWork: MaxTemp ($maxTemp) is within safe limits (<=35.0). No heatwave notification triggered.")
-                }
+                val category = com.example.util.WeatherNotificationResolver.determineCategory(
+                    currentTemp = currentTemp,
+                    maxTemp = maxTemp,
+                    minTemp = minTemp,
+                    weatherCode = weatherCode,
+                    windSpeed = windSpeed,
+                    tempChangeDelta = tempDelta
+                )
 
-                if (minTemp <= 15.0 || maxTemp <= 15.0) {
-                    val lowest = minOf(maxTemp, minTemp)
-                    val title = "❄️ Cold Weather Alert (≤15°C) in $cityName"
-                    val message = "Background weather check: Temperatures drop to ${lowest.toInt()}°C! Keep cat shelters dry & insulated."
-                    android.util.Log.d("WeatherAlertWorker", "doWork: Low temperature detected ($lowest <= 15.0). Triggering Cold Weather Notification alert.")
-                    notificationHelper.triggerWeatherAlert(title, message, 3002)
-                } else {
-                    android.util.Log.d("WeatherAlertWorker", "doWork: Min/MaxTemp ($minTemp/$maxTemp) are within warm limits (>15.0). No cold alert notification triggered.")
-                }
+                val notificationData = com.example.util.WeatherNotificationResolver.getRotatingNotification(
+                    context = appContext,
+                    category = category,
+                    cityName = cityName,
+                    currentTemp = currentTemp,
+                    maxTemp = maxTemp,
+                    minTemp = minTemp,
+                    languageCode = savedLang
+                )
 
-                // Daily Weather-based Cat Care Notification (Once per 24 hours)
-                try {
-                    val prefs = appContext.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
-                    val lastDailySentTime = prefs.getLong("last_daily_weather_care_sent_time", 0L)
-                    val now = System.currentTimeMillis()
-                    val isCooldownOver = (now - lastDailySentTime) >= 24 * 60 * 60 * 1000L // 24 hours
-
-                    // Force TranslationManager to load
-                    com.example.ui.TranslationManager.load(appContext)
-                    val savedLang = prefs.getString("user_lang", "en") ?: "en"
-
-                    val titleKey: String
-                    val msgKey: String
-
-                    if (maxTemp > 28.0) {
-                        titleKey = "weather_care_hot_title"
-                        msgKey = "weather_care_hot_msg"
-                    } else if (minTemp < 15.0) {
-                        titleKey = "weather_care_cold_title"
-                        msgKey = "weather_care_cold_msg"
-                    } else {
-                        titleKey = "weather_care_mild_title"
-                        msgKey = "weather_care_mild_msg"
-                    }
-
-                    val title = com.example.ui.TranslationManager.getString(savedLang, "reminder", titleKey)
-                    val message = com.example.ui.TranslationManager.getString(savedLang, "reminder", msgKey)
-
-                    android.util.Log.d("WeatherAlertWorker", "doWork: Localized daily weather care recommendation: title='$title', msg='$message', lang='$savedLang'")
-                    if (isCooldownOver) {
-                        notificationHelper.triggerWeatherAlert(title, message, 3003, bypassCooldownForTesting = true)
-                        prefs.edit().putLong("last_daily_weather_care_sent_time", now).apply()
-                        android.util.Log.d("WeatherAlertWorker", "doWork: Localized daily notification triggered successfully.")
-                    } else {
-                        android.util.Log.d("WeatherAlertWorker", "doWork: Localized daily notification skipped: 24h cooldown active.")
-                    }
-                } catch (ex: Exception) {
-                    android.util.Log.e("WeatherAlertWorker", "doWork: Failed to trigger daily weather notification", ex)
-                }
+                android.util.Log.d("WeatherAlertWorker", "doWork: Triggering rotating weather notification: category=$category, title='${notificationData.title}'")
+                notificationHelper.triggerWeatherAlert(
+                    title = notificationData.title,
+                    message = notificationData.message,
+                    notificationId = 3001
+                )
 
                 android.util.Log.d("WeatherAlertWorker", "doWork: Work execution finished successfully.")
                 Result.success()
@@ -193,14 +174,11 @@ class WeatherAlertWorker(
 
             android.util.Log.d("WeatherAlertWorker", "schedulePeriodicWeatherCheck: Enqueuing unique periodic work '$WORK_NAME' with UPDATE policy.")
             try {
-                val operation = WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                     WORK_NAME,
                     ExistingPeriodicWorkPolicy.UPDATE,
                     periodicWork
                 )
-                operation.state.observeForever { state ->
-                    android.util.Log.d("WeatherAlertWorker", "schedulePeriodicWeatherCheck: Operation state changed to $state")
-                }
                 android.util.Log.i("WeatherAlertWorker", "schedulePeriodicWeatherCheck: Successfully requested periodic weather check job scheduling.")
             } catch (e: Exception) {
                 android.util.Log.e("WeatherAlertWorker", "schedulePeriodicWeatherCheck: Failed to schedule periodic check job due to exception", e)
@@ -232,10 +210,7 @@ class WeatherAlertWorker(
 
             android.util.Log.d("WeatherAlertWorker", "triggerImmediateBackgroundCheck: Enqueuing one-time WorkRequest ID: ${oneTimeWork.id}")
             try {
-                val operation = WorkManager.getInstance(context).enqueue(oneTimeWork)
-                operation.state.observeForever { state ->
-                    android.util.Log.d("WeatherAlertWorker", "triggerImmediateBackgroundCheck: Operation state changed to $state")
-                }
+                WorkManager.getInstance(context).enqueue(oneTimeWork)
                 android.util.Log.i("WeatherAlertWorker", "triggerImmediateBackgroundCheck: Successfully enqueued one-time weather check job.")
             } catch (e: Exception) {
                 android.util.Log.e("WeatherAlertWorker", "triggerImmediateBackgroundCheck: Failed to enqueue one-time work due to exception", e)

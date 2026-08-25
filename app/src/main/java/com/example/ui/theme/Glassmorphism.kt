@@ -28,9 +28,9 @@ fun Modifier.glassyCard(
     elevation: Dp = 6.dp
 ): Modifier {
     val isDark = LocalIsDarkMode.current
-    val bgColor = if (isDark) Color.White.copy(alpha = 0.06f) else Color(0xFFFFDCE4).copy(alpha = 0.45f)
-    val borderColor = if (isDark) Color.White.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.4f)
-    val shadowColor = if (isDark) Color.Black.copy(alpha = 0.3f) else Color(0xFF8A3B4C).copy(alpha = 0.15f)
+    val bgColor = if (isDark) Color(0xFF2C131A).copy(alpha = 0.85f) else Color(0xFFFFF5F7).copy(alpha = 0.95f)
+    val borderColor = if (isDark) Color(0xFFFFB3C1).copy(alpha = 0.15f) else Color(0xFFFFC2D1).copy(alpha = 0.6f)
+    val shadowColor = if (isDark) Color.Black.copy(alpha = 0.4f) else Color(0xFF8B3A4A).copy(alpha = 0.1f)
 
     return this
         .shadow(
@@ -41,7 +41,7 @@ fun Modifier.glassyCard(
             spotColor = shadowColor
         )
         .background(color = bgColor, shape = shape)
-        .border(BorderStroke(1.dp, borderColor), shape = shape)
+        .border(BorderStroke(1.2.dp, borderColor), shape = shape)
         .clip(shape)
 }
 

@@ -67,14 +67,13 @@ fun AuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .glassyCard(shape = RoundedCornerShape(28.dp)),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        PixelCard(
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+            emblemType = "paw"
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val titleText = when {

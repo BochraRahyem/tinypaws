@@ -308,9 +308,16 @@ fun DiaryFeedScreen(
                             "vaccination" -> "💉 Vaccination Booster Reminder"
                             else -> "🐾 Cat Care Reminder"
                         }
-                        val reminderId = (System.currentTimeMillis() % 10000).toInt()
-                        viewModel.saveReminder(title, date, category)
-                        notificationHelper.scheduleNotification(reminderId, title, date)
+                        val newReminder = com.example.data.Reminder(
+                            title = title,
+                            timeMillis = date,
+                            type = category,
+                            catId = viewModel.selectedCatId.value,
+                            isEnabled = true
+                        )
+                        viewModel.saveReminder(newReminder) { assignedId ->
+                            notificationHelper.scheduleNotification(assignedId.toInt(), title, date)
+                        }
                         Toast.makeText(context, "Local notification scheduled!", Toast.LENGTH_LONG).show()
                     }
                     showAddDialog = false

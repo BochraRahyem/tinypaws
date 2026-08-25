@@ -97,25 +97,31 @@ fun TinyPawsIntroSequence(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Glassmorphic welcome card
-            Card(
+            // Pixel welcome card
+            PixelCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .glassyCard(shape = RoundedCornerShape(28.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    .padding(horizontal = 8.dp),
+                backgroundColor = Color(0xFF3D151D).copy(alpha = 0.5f),
+                emblemType = "star"
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = screens[currentScreenIndex].emoji,
-                        fontSize = 80.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Box(
+                        modifier = Modifier
+                            .height(110.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        when (currentScreenIndex) {
+                            0 -> PixelCatAnimated(pixelSize = 4.5.dp)
+                            1 -> PixelCatSleeping(pixelSize = 4.5.dp)
+                            2 -> PixelMapMarker(pixelSize = 4.5.dp)
+                            else -> PixelWeatherIcon(weatherState = "sunny", pixelSize = 4.5.dp)
+                        }
+                    }
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = screens[currentScreenIndex].title,

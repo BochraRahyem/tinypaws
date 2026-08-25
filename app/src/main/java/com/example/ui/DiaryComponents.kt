@@ -71,15 +71,22 @@ fun DiaryEntryCard(log: DiaryEntry) {
     val dateStr = remember(log.date) {
         SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(log.date))
     }
-    Card(
+    val emblem = remember(log.mood, log.diaryEntryType) {
+        when {
+            log.diaryEntryType.lowercase().contains("feed") || log.mood.lowercase() == "feeding" -> "food"
+            log.diaryEntryType.lowercase().contains("weight") -> "star"
+            else -> "paw"
+        }
+    }
+    PixelCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .glassyCard(shape = RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+        emblemType = emblem
     ) {
         Row(
-            modifier = Modifier.padding(18.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(

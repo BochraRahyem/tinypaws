@@ -1,0 +1,48 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Soft Pixel Art Paw Print -->
+    <!-- Toe 1 -->
+    <path
+        android:fillColor="#FFC468"
+        android:pathData="M5,5h3v4h-3z" />
+    <path
+        android:fillColor="#FFF0D0"
+        android:pathData="M6,6h1v2h-1z" />
+    <!-- Toe 2 -->
+    <path
+        android:fillColor="#FF8552"
+        android:pathData="M9,2h3v4h-3z" />
+    <path
+        android:fillColor="#FFF0D0"
+        android:pathData="M10,3h1v2h-1z" />
+    <!-- Toe 3 -->
+    <path
+        android:fillColor="#FF8552"
+        android:pathData="M13,2h3v4h-3z" />
+    <path
+        android:fillColor="#FFF0D0"
+        android:pathData="M14,3h1v2h-1z" />
+    <!-- Toe 4 -->
+    <path
+        android:fillColor="#FFC468"
+        android:pathData="M17,5h3v4h-3z" />
+    <path
+        android:fillColor="#FFF0D0"
+        android:pathData="M18,6h1v2h-1z" />
+    <!-- Main Pad -->
+    <path
+        android:fillColor="#E67347"
+        android:pathData="M8,10h9v7h-9z" />
+    <path
+        android:fillColor="#FF9F70"
+        android:pathData="M7,12h11v4h-11z" />
+    <path
+        android:fillColor="#FFF0E6"
+        android:pathData="M10,12h4v3h-4z" />
+    <path
+        android:fillColor="#9C3B24"
+        android:pathData="M9,17h7v2h-7z" />
+</vector>

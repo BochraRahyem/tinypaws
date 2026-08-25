@@ -62,7 +62,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "tinypaws_database"
                 )
                 .addMigrations(MIGRATION_10_11)
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6, 7, 8, 9)
                 .build()
                 INSTANCE = instance
                 instance

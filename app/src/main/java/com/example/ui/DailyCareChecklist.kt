@@ -79,14 +79,13 @@ fun DailyCareChecklistSection(
     val progressFraction = if (totalCount > 0) completedCount.toFloat() / totalCount.toFloat() else 0f
     val percentInt = (progressFraction * 100).toInt()
 
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .glassyCard(shape = RoundedCornerShape(24.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    PixelCard(
+        modifier = modifier.fillMaxWidth(),
+        backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+        emblemType = "paw"
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Header

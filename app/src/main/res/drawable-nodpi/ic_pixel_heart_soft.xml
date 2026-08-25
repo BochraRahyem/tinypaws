@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Soft Pixel Heart -->
+    <path
+        android:fillColor="#E55B70"
+        android:pathData="M4,7h6v3h-6z M14,7h6v3h-6z M2,10h20v4h-20z M4,14h16v3h-16z M7,17h10v3h-10z M10,20h4v2h-4z" />
+    <path
+        android:fillColor="#FFA8B8"
+        android:pathData="M5,8h4v2h-4z M15,8h4v2h-4z M4,11h3v2h-3z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6,9h2v1h-2z" />
+</vector>

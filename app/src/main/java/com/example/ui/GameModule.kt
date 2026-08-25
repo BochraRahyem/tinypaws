@@ -136,6 +136,7 @@ fun GameModuleScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -492,9 +493,11 @@ fun GameModuleScreen(
                                             }
                                         }
                                     }
+                                }
 
-                                    AnimatedVisibility(
-                                        visible = isAnswered && isSelected,
+                                val isAnswered = selectedOptionIdx != null
+                                AnimatedVisibility(
+                                    visible = isAnswered,
                                     enter = fadeIn(),
                                     exit = fadeOut()
                                 ) {
@@ -560,31 +563,41 @@ fun GameModuleScreen(
                     }
                 }
             }
-            }
-            } else {
+        } else {
                 // Completed State Screen
-                Card(
+                com.example.ui.PixelCard(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = White),
-                    border = BorderStroke(2.dp, GreenSuccess)
+                    backgroundColor = White,
+                    emblemType = "trophy"
                 ) {
                     Column(
-                        modifier = Modifier.padding(24.dp),
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // Decorative cute sleeping/happy pixel cat celebration!
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 12.dp)
+                                .size(64.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            com.example.ui.PixelCatAnimated(pixelSize = 3.6.dp)
+                        }
+
                         Text(
                             text = stringResource(R.string.quiz_complete_title),
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
-                            color = PastelPurpleDark
+                            color = PastelPurpleDark,
+                            fontFamily = FrauncesFontFamily
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = stringResource(R.string.quiz_score_msg, savedScore, levelQuestions.size),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = TextDark
+                                color = TextDark,
+                                fontFamily = QuicksandFontFamily
                             )
                         )
 
@@ -593,7 +606,8 @@ fun GameModuleScreen(
                             text = if (savedScore >= 8) stringResource(R.string.quiz_guru_msg) else stringResource(R.string.quiz_effort_msg),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.SemiBold,
-                                color = PastelPinkDark
+                                color = PastelPinkDark,
+                                fontFamily = QuicksandFontFamily
                             )
                         )
 
@@ -601,8 +615,8 @@ fun GameModuleScreen(
 
                         // Advance to next level or show all complete banner
                         if (currentLevelIndex < 4) {
-                            Button(
-                                onClick = com.example.ui.theme.rememberHapticOnClick { 
+                            com.example.ui.TactileButton(
+                                onClick = { 
                                     isJumping = true
                                     targetIslandIndex = currentLevelIndex + 1
                                     coroutineScope.launch {
@@ -626,14 +640,15 @@ fun GameModuleScreen(
                                     .fillMaxWidth()
                                     .height(48.dp)
                                     .testTag("travel_next_island"),
-                                colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
-                                shape = RoundedCornerShape(12.dp),
+                                containerColor = PastelPurpleDark,
+                                contentColor = White,
                                 enabled = !isJumping
                             ) {
                                 Text(
                                     text = if (isJumping) stringResource(R.string.quiz_jumping_msg) else stringResource(R.string.quiz_advance_btn, currentLevelIndex + 2),
                                     fontWeight = FontWeight.Bold,
-                                    color = White
+                                    color = White,
+                                    fontFamily = QuicksandFontFamily
                                 )
                             }
                         } else {

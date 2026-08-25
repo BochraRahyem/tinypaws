@@ -121,7 +121,7 @@ object LocationHelper {
 
 @Composable
 fun LocationPermissionGate(
-    onPermissionGranted: (latitude: Double, longitude: Double) -> Unit,
+    onPermissionGranted: (latitude: Double, longitude: Double, isFallback: Boolean) -> Unit,
     onPermissionDenied: () -> Unit,
     content: @Composable (requestPermission: () -> Unit) -> Unit
 ) {
@@ -138,11 +138,11 @@ fun LocationPermissionGate(
             LocationHelper.getHighAccuracyLocation(context) { location ->
                 android.util.Log.d("LocationPermission", "Location helper returned: $location")
                 if (location != null) {
-                    onPermissionGranted(location.latitude, location.longitude)
+                    onPermissionGranted(location.latitude, location.longitude, false)
                 } else {
                     // Safe default fallback when permission is granted but GPS is temporarily unavailable
                     android.util.Log.d("LocationPermission", "GPS returned null, using fallback location Tunis")
-                    onPermissionGranted(36.8065, 10.1815)
+                    onPermissionGranted(36.8065, 10.1815, true)
                 }
             }
         } else {
@@ -166,11 +166,11 @@ fun LocationPermissionGate(
             LocationHelper.getHighAccuracyLocation(context) { location ->
                 android.util.Log.d("LocationPermission", "Location helper returned: $location")
                 if (location != null) {
-                    onPermissionGranted(location.latitude, location.longitude)
+                    onPermissionGranted(location.latitude, location.longitude, false)
                 } else {
                     // Safe default fallback when permission is granted but GPS is temporarily unavailable
                     android.util.Log.d("LocationPermission", "GPS returned null, using fallback location Tunis")
-                    onPermissionGranted(36.8065, 10.1815)
+                    onPermissionGranted(36.8065, 10.1815, true)
                 }
             }
         } else {

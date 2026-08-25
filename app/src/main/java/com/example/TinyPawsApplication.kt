@@ -20,6 +20,6 @@ class TinyPawsApplication : Application() {
         FirebaseFirestore.getInstance().firestoreSettings = settings
 
         TranslationManager.load(this)
-        com.example.util.NotificationHelper(this).scheduleDailyCareReminders()
+        com.example.util.NotificationHelper(this).cancelOrphanedDailyReminders()
     }
 }
