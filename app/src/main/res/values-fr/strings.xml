@@ -1940,6 +1940,8 @@
     <string name="settings_title">Paramètres de protection</string>
     <string name="settings_weather_alerts">Alertes météo</string>
     <string name="settings_weather_alerts_desc">M\'alerter les jours de météo extrême</string>
+    <string name="settings_nearby_alerts">Alertes chats à proximité</string>
+    <string name="settings_nearby_alerts_desc">M\'alerter lorsqu\'un chat errant est signalé près de ma position</string>
     <string name="stray_feeding_stations_count">Stations de nourrissage près de chez vous (%1$d)</string>
     <string name="weather_cooldown_active">Alertes météo limitées à 1 toutes les 4 heures.</string>
     <string name="cached_weather_indicator">Météo en cache hors ligne (Dernière mise à jour : %1$s)</string>

@@ -530,23 +530,6 @@ class FirebaseRepository {
         batch.commit().await()
     }
 
-    // Global Statistics (stats/global) for Website and App
-    suspend fun incrementCatsHelped(count: Long = 1L) {
-        try {
-            val statsRef = firestore.collection("stats").document("global")
-            statsRef.set(
-                mapOf(
-                    "catsHelped" to FieldValue.increment(count),
-                    "updatedAt" to FieldValue.serverTimestamp()
-                ),
-                com.google.firebase.firestore.SetOptions.merge()
-            ).await()
-            android.util.Log.d("FirebaseRepo", "Incremented stats/global catsHelped by $count")
-        } catch (e: Exception) {
-            android.util.Log.e("FirebaseRepo", "Error incrementing stats/global catsHelped", e)
-        }
-    }
-
     suspend fun incrementDownloads(count: Long = 1L) {
         try {
             val statsRef = firestore.collection("stats").document("global")

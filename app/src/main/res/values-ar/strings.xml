@@ -2143,6 +2143,8 @@
     <string name="settings_title">إعدادات المربي</string>
     <string name="settings_weather_alerts">تنبيهات الطقس</string>
     <string name="settings_weather_alerts_desc">تنبيهي في أيام الطقس القاسي</string>
+    <string name="settings_nearby_alerts">تنبيهات القطط القريبة</string>
+    <string name="settings_nearby_alerts_desc">تنبيهي عند الإبلاغ عن قطط شاردة بالقرب من موقعي</string>
     <string name="stray_feeding_stations_count">محطات التغذية القريبة منك (%1$d)</string>
     <string name="weather_cooldown_active">تنبيهات الطقس محدودة بتنبيه واحد كل 4 ساعات لمنع التكرار.</string>
     <string name="cached_weather_indicator">توقعات الطقس المخزنة مؤقتًا (آخر تحديث: %1$s)</string>

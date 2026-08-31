@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.BuildConfig
 import com.example.R
 import com.example.ui.theme.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +51,7 @@ fun SettingsScreen(
     var userName by remember { mutableStateOf(sharedPrefs.getString("user_name", "Cat Guardian") ?: "Cat Guardian") }
     var soundEnabled by remember { mutableStateOf(sharedPrefs.getBoolean("sound_enabled", true)) }
     var dailyReminder by remember { mutableStateOf(sharedPrefs.getBoolean("daily_reminder", true)) }
+    var nearbyAlertsEnabled by remember { mutableStateOf(sharedPrefs.getBoolean("nearby_report_alerts", true)) }
 
     Scaffold(
         topBar = {
@@ -310,6 +312,45 @@ fun SettingsScreen(
                         )
                     }
 
+                    // Nearby Community Reports Toggle
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.LocationOn, contentDescription = null, tint = DeepBurgundy)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.settings_nearby_alerts),
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        fontWeight = FontWeight.Medium,
+                                        color = Ink
+                                    )
+                                )
+                            }
+                            Text(
+                                text = stringResource(R.string.settings_nearby_alerts_desc),
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = Ink.copy(alpha = 0.7f)
+                                ),
+                                modifier = Modifier.padding(start = 32.dp, top = 2.dp)
+                            )
+                        }
+                        Switch(
+                            checked = nearbyAlertsEnabled,
+                            onCheckedChange = { enabled ->
+                                nearbyAlertsEnabled = enabled
+                                sharedPrefs.edit().putBoolean("nearby_report_alerts", enabled).apply()
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Cream,
+                                checkedTrackColor = Wine
+                            )
+                        )
+                    }
+
                     HorizontalDivider(color = Mauve.copy(alpha = 0.3f))
 
                     // Sound Effects Toggle
@@ -408,7 +449,7 @@ fun SettingsScreen(
                         )
                     )
                     Text(
-                        text = stringResource(R.string.settings_app_version, "1.2.0"),
+                        text = stringResource(R.string.settings_app_version, BuildConfig.VERSION_NAME),
                         style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                     )
                     Text(
@@ -573,7 +614,7 @@ fun FeedbackSupportCard() {
                         "userId" to (authUser?.uid ?: "anonymous"),
                         "createdAt" to com.google.firebase.Timestamp.now(),
                         "platform" to "Android",
-                        "appVersion" to "1.2.0"
+                        "appVersion" to BuildConfig.VERSION_NAME
                     )
 
                     // Safe client-side Firestore submission + asynchronous server-side mail queue

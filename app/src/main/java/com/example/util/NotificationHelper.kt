@@ -242,70 +242,6 @@ class NotificationHelper(private val context: Context) {
         return false
     }
 
-    fun triggerExtremeWeatherNotification(areaName: String, bypassCooldownForTesting: Boolean = false): Boolean {
-        val channelId = CHANNEL_EXTREME_WEATHER
-        val notifId = 1002
-
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        // 1. Check undismissed active notification
-        if (!bypassCooldownForTesting && isNotificationActive(manager, notifId)) {
-            android.util.Log.d("NotificationHelper", "Weather alert skipped: Active undismissed alert present")
-            return false
-        }
-
-        // 2. Check 4-hour cooldown
-        if (!bypassCooldownForTesting && !canSendWeatherAlert()) {
-            android.util.Log.d("NotificationHelper", "Weather alert suppressed: 4-hour cooldown active")
-            return false
-        }
-
-        createNotificationChannels()
-        
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            999,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        
-        val alerts = listOf(
-            "It is so hot! Please put some cold water for cats outside or build a shelter for them for the heat.",
-            "It is so hot out today! Put some cold water for cats outside or build a shelter for them to beat the extreme heat.",
-            "High Temperature Alert: It is so hot. Put some cold water for cats outside or build a shelter for them for the heat."
-        )
-        val alertMsg = alerts.random()
-        
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_paw_notification)
-            .setContentTitle("⚠️ Extreme Weather Alert")
-            .setContentText("$areaName: $alertMsg")
-            .setStyle(NotificationCompat.BigTextStyle().bigText("Extreme Weather Alert at $areaName:\n\n$alertMsg\n\nPlease check on nearby street kitties and ensure their feeding spots are secure."))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setSound(getSoundUri())
-            .setVibrate(VIBRATION_PATTERN)
-            .setDefaults(NotificationCompat.DEFAULT_LIGHTS)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            
-        android.util.Log.d("NotificationHelper", "ExtremeWeather build check: channelId = $channelId")
-        val builtNotification = builder.build()
-        android.util.Log.d("NotificationHelper", "ExtremeWeather build successful. Posting via NotificationManager with ID $notifId...")
-        try {
-            manager.notify(notifId, builtNotification)
-            android.util.Log.d("NotificationHelper", "ExtremeWeather notify call completed successfully for ID $notifId")
-        } catch (e: Exception) {
-            android.util.Log.e("NotificationHelper", "ExtremeWeather notify call threw exception!", e)
-        }
-        
-        // Save timestamp
-        prefs.edit().putLong(KEY_LAST_WEATHER_ALERT, System.currentTimeMillis()).apply()
-        return true
-    }
-
     fun triggerWeatherAlert(
         title: String,
         message: String,
@@ -450,45 +386,5 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
-    fun triggerFeedingStationNotification(
-        stationName: String,
-        message: String,
-        notificationId: Int = (System.currentTimeMillis() % 100000).toInt()
-    ): Boolean {
-        val channelId = CHANNEL_FEEDING_STATIONS
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        createNotificationChannels()
-
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            notificationId,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_paw_notification)
-            .setContentTitle("🥣 Feeding Station Update: $stationName")
-            .setContentText(message)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setSound(getSoundUri())
-            .setVibrate(VIBRATION_PATTERN)
-            .setDefaults(NotificationCompat.DEFAULT_LIGHTS)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-
-        return try {
-            manager.notify(notificationId, builder.build())
-            true
-        } catch (e: Exception) {
-            android.util.Log.e("NotificationHelper", "Error notifying feeding station", e)
-            false
-        }
-    }
 }
 

@@ -1901,6 +1901,8 @@
     <string name="reminders_title">Reminders</string>
     <string name="settings_weather_alerts">Weather Alerts</string>
     <string name="settings_weather_alerts_desc">Notify me on extreme weather days</string>
+    <string name="settings_nearby_alerts">Nearby Cat Alerts</string>
+    <string name="settings_nearby_alerts_desc">Alert me to stray cats reported near my location</string>
     <string name="map_mode_reports">Reports</string>
     <string name="map_mode_feeding_spots">Feeding Spots</string>
     <string name="cook_disclaimer_text">Always consult a veterinarian before introducing new homemade foods to your cat\'s regular diet. These recipes are intended as supplemental treats or emergency food options, never a full-time nutritional replacement.</string>

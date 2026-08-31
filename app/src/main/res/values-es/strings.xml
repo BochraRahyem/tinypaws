@@ -1947,6 +1947,8 @@
     <string name="settings_title">Ajustes del cuidador</string>
     <string name="settings_weather_alerts">Alertas meteorológicas</string>
     <string name="settings_weather_alerts_desc">Notificarme en días de clima extremo</string>
+    <string name="settings_nearby_alerts">Alertas de gatos cercanos</string>
+    <string name="settings_nearby_alerts_desc">Alertarme cuando se reporten gatos callejeros cerca de mi ubicación</string>
     <string name="stray_feeding_stations_count">Estaciones de alimentación cerca de ti (%1$d)</string>
     <string name="weather_cooldown_active">Alertas climáticas limitadas a máx 1 cada 4 horas.</string>
     <string name="cached_weather_indicator">Pronóstico en caché sin conexión (Última actualización: %1$s)</string>
