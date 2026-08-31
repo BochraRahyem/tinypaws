@@ -41,8 +41,8 @@ object GeminiClient {
     ): List<NearbyPlace> = withContext(Dispatchers.IO) {
         val apiKey = BuildConfig.GEMINI_API_KEY
         if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
-            Log.w(TAG, "No Gemini API Key provided. Returning fallback results.")
-            return@withContext getFallbackPlaces(queryType)
+            Log.w(TAG, "No Gemini API Key provided. Returning no results.")
+            return@withContext emptyList()
         }
 
         val promptText = """
@@ -75,11 +75,14 @@ object GeminiClient {
             })
             put("generationConfig", JSONObject().apply {
                 put("responseMimeType", "application/json")
+                put("maxOutputTokens", 1024)
             })
         }
 
         val request = Request.Builder()
-            .url("${BASE_URL}gemini-3.1-flash-lite:generateContent?key=$apiKey")
+            .url("${BASE_URL}gemini-3.1-flash-lite:generateContent")
+            // Key sent via header instead of URL query so it never lands in logs.
+            .header("x-goog-api-key", apiKey)
             .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
             .build()
 
@@ -87,11 +90,13 @@ object GeminiClient {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
                     Log.e(TAG, "API call failed with code: ${response.code}")
-                    return@withContext getFallbackPlaces(queryType)
+                    return@withContext emptyList()
                 }
 
                 val bodyString = response.body?.string() ?: ""
-                Log.d(TAG, "Search places raw response: $bodyString")
+                if (com.example.BuildConfig.DEBUG) {
+                    Log.d(TAG, "Search places raw response: $bodyString")
+                }
 
                 val jsonResponse = JSONObject(bodyString)
                 val candidates = jsonResponse.optJSONArray("candidates")
@@ -103,9 +108,11 @@ object GeminiClient {
 
                 parsePlacesFromJson(textResponse, queryType)
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error executing nearby search API", e)
-            getFallbackPlaces(queryType)
+            emptyList()
         }
     }
 
@@ -148,7 +155,8 @@ object GeminiClient {
         }
 
         val request = Request.Builder()
-            .url("${BASE_URL}gemini-3.1-flash-lite:streamGenerateContent?alt=sse&key=$apiKey")
+            .url("${BASE_URL}gemini-3.1-flash-lite:streamGenerateContent?alt=sse")
+            .header("x-goog-api-key", apiKey)
             .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
             .build()
 
@@ -172,7 +180,7 @@ object GeminiClient {
                                 ?.optJSONArray("parts")
                                 ?.optJSONObject(0)
                                 ?.optString("text") ?: ""
-                            
+
                             if (textChunk.isNotEmpty()) {
                                 onChunkReceived(textChunk)
                             }
@@ -182,6 +190,8 @@ object GeminiClient {
                     }
                 }
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error in chatStream", e)
             onChunkReceived("Error: ${e.localizedMessage}")
@@ -194,8 +204,8 @@ object GeminiClient {
             val startIdx = jsonText.indexOf("[")
             val endIdx = jsonText.lastIndexOf("]")
             if (startIdx == -1 || endIdx == -1) {
-                Log.w(TAG, "Could not find JSON array bounds. Using fallback.")
-                return getFallbackPlaces(queryType)
+                Log.w(TAG, "Could not find JSON array bounds. Returning no results.")
+                return emptyList()
             }
             val cleanedJson = jsonText.substring(startIdx, endIdx + 1)
             val jsonArray = JSONArray(cleanedJson)
@@ -209,16 +219,19 @@ object GeminiClient {
                         address = obj.optString("address", "Unknown Address"),
                         latitude = obj.optDouble("latitude", 0.0),
                         longitude = obj.optDouble("longitude", 0.0),
-                        rating = obj.optDouble("rating", 4.5),
+                        rating = obj.optDouble("rating", 0.0),
                         contact = obj.optString("contact", "No contact info"),
-                        description = obj.optString("description", "A caring spot for animals.")
+                        description = obj.optString("description", "")
                     )
                 )
             }
             return places
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to parse JSON string: $jsonText", e)
-            return getFallbackPlaces(queryType)
+            if (com.example.BuildConfig.DEBUG) {
+                Log.e(TAG, "Failed to parse places JSON", e)
+            }
+            // Never fabricate businesses when parsing fails - return an honest empty result.
+            return emptyList()
         }
     }
 
@@ -262,7 +275,8 @@ object GeminiClient {
         }
 
         val request = Request.Builder()
-            .url("$BASE_URL$modelName:generateContent?key=$apiKey")
+            .url("$BASE_URL$modelName:generateContent")
+            .header("x-goog-api-key", apiKey)
             .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
             .build()
 
@@ -298,6 +312,8 @@ object GeminiClient {
                 }
                 null
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error executing image generation API", e)
             null
@@ -338,7 +354,8 @@ object GeminiClient {
         }
 
         val request = Request.Builder()
-            .url("$BASE_URL$modelName:generateContent?key=$apiKey")
+            .url("$BASE_URL$modelName:generateContent")
+            .header("x-goog-api-key", apiKey)
             .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
             .build()
 
@@ -375,71 +392,18 @@ object GeminiClient {
                 }
                 null
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error executing music generation API", e)
             null
         }
     }
 
-    private fun getFallbackPlaces(queryType: String): List<NearbyPlace> {
-        return when (queryType.lowercase()) {
-            "vets", "nearby vets" -> listOf(
-                NearbyPlace(
-                    "Clinique Vétérinaire Dr. Ben Youssef 🩺",
-                    "Avenue Hédi Nouira, Ennasr 2, Tunis, Tunisia",
-                    36.8324, 10.1583,
-                    4.9, "+216 71 800 123",
-                    "A soft, comforting clinic in Tunis specializing in feline medicine."
-                ),
-                NearbyPlace(
-                    "Cabinet Vétérinaire Lafayette 🏥",
-                    "Rue d'Iran, Lafayette, Tunis, Tunisia",
-                    36.8123, 10.1801,
-                    4.8, "+216 71 333 456",
-                    "24/7 feline emergency care and pediatric wellness."
-                ),
-                NearbyPlace(
-                    "Cabinet Vétérinaire Dr. Mehiri",
-                    "Rue Lac Victoria, Les Berges du Lac 1, Tunis, Tunisia",
-                    36.8385, 10.2285,
-                    4.7, "+216 71 456 789",
-                    "Spacious, modern clinic with a dedicated cat-only waiting room."
-                )
-            )
-            "shops", "nearby shops" -> listOf(
-                NearbyPlace(
-                    "The Happy Meow Supply Tunis 🛒",
-                    "Avenue de l'Hédi Chaker, Tunis, Tunisia",
-                    36.8165, 10.1750,
-                    4.9, "+216 22 234 567",
-                    "Organic kibble, fancy scratching trees, and designer interactive toys."
-                ),
-                NearbyPlace(
-                    "Tunisia Cat Care Boutique",
-                    "Rue Lac Windermere, Les Berges du Lac, Tunis, Tunisia",
-                    36.8378, 10.2312,
-                    4.6, "+216 25 876 543",
-                    "Unique clothing, handmade cat shelters, and calming diffusers."
-                )
-            )
-            else -> listOf(
-                NearbyPlace(
-                    "PAT Tunis - Protection Animaux Tunisie 🏡",
-                    "La Soukra, Tunis, Tunisia",
-                    36.8615, 10.2255,
-                    4.9, "+216 98 765 432",
-                    "A non-profit rescue center finding happy families for stray cats in Tunis."
-                ),
-                NearbyPlace(
-                    "Sidi Bou Said Stray Rescue Center",
-                    "Sidi Bou Said, Tunis, Tunisia",
-                    36.8703, 10.3414,
-                    4.8, "+216 55 345 678",
-                    "A shelter with a lovely cat cafe and open-room socialization zones."
-                )
-            )
-        }
-    }
+    // NOTE: No fabricated place fallback exists anymore. If the API fails or
+    // returns unparseable data we return an empty list so the UI can show an
+    // honest "no verified results" state instead of invented businesses.
+    private fun getFallbackPlaces(@Suppress("UNUSED_PARAMETER") queryType: String): List<NearbyPlace> = emptyList()
 
     fun bitmapToBase64(bitmap: Bitmap): String {
         val outputStream = java.io.ByteArrayOutputStream()
@@ -500,9 +464,13 @@ object GeminiClient {
                     })
                 })
             })
+            put("generationConfig", JSONObject().apply {
+                put("maxOutputTokens", 120)
+            })
         }
         val request = Request.Builder()
-            .url("${BASE_URL}gemini-3.5-flash:generateContent?key=$apiKey")
+            .url("${BASE_URL}gemini-3.5-flash:generateContent")
+            .header("x-goog-api-key", apiKey)
             .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
             .build()
         try {
@@ -524,6 +492,8 @@ object GeminiClient {
                     defaultFallback
                 }
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching daily cat fact", e)
             defaultFallback

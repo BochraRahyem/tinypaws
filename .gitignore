@@ -8,6 +8,7 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/
 .DS_Store
 /build
 /captures
@@ -16,3 +17,36 @@
 local.properties
 .env
 debug.keystore
+
+my-upload-key.jks
+release-signing-local.txt
+
+# Build outputs
+app/build/
+/build/
+*.apk
+*.aab
+*.log
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Node / Functions
+functions/node_modules/
+
+# Test / scratch / source images
+new-logo.png.jpg
+app/new-logo.png.jpg
+*.tmp
+fix_*.sh
+update_*.sh
+count_*.py
+apply_*.py
+tip_of_day.kt
+build*.log
+stray_report_*.kt
+
+# OS
+Thumbs.db

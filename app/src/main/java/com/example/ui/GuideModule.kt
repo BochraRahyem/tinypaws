@@ -1,7 +1,5 @@
 package com.example.ui
 
-import androidx.compose.ui.res.stringResource
-
 import android.graphics.Bitmap
 import com.example.R
 import androidx.compose.ui.graphics.asImageBitmap
@@ -1771,14 +1769,16 @@ data class CuratedRecipeData(
 )
 
 fun generateLocalRecipe(selected: Set<String>): CuratedRecipeData {
-    val hasFish = selected.any { it.contains("Fish") }
-    val hasChicken = selected.any { it.contains("Chicken") }
-    val hasPumpkin = selected.any { it.contains("Pumpkin") }
-    val hasCarrot = selected.any { it.contains("Carrot") }
-    val hasEgg = selected.any { it.contains("Egg") }
-    val hasPotato = selected.any { it.contains("Potato") }
-    val hasRice = selected.any { it.contains("Rice") }
-    val hasBroccoli = selected.any { it.contains("Broccoli") }
+    // Selection contains stable language-independent KEYS ("fish", "chicken", …)
+    // so recipe matching works identically in en/es/fr/ar.
+    val hasFish = selected.any { it.equals("fish", ignoreCase = true) }
+    val hasChicken = selected.any { it.equals("chicken", ignoreCase = true) }
+    val hasPumpkin = selected.any { it.equals("pumpkin", ignoreCase = true) }
+    val hasCarrot = selected.any { it.equals("carrot", ignoreCase = true) }
+    val hasEgg = selected.any { it.equals("egg", ignoreCase = true) }
+    val hasPotato = selected.any { it.equals("potato", ignoreCase = true) }
+    val hasRice = selected.any { it.equals("rice", ignoreCase = true) }
+    val hasBroccoli = selected.any { it.equals("broccoli", ignoreCase = true) }
 
     return when {
         hasFish && hasCarrot -> CuratedRecipeData(
@@ -1854,14 +1854,14 @@ fun generateLocalRecipe(selected: Set<String>): CuratedRecipeData {
 fun IngredientPickerSubSection(viewModel: TinyPawsViewModel) {
 
     val ingredients = listOf(
-        stringResource(R.string.mat_fish) to stringResource(R.string.cat_protein),
-        stringResource(R.string.mat_chicken) to stringResource(R.string.cat_protein),
-        stringResource(R.string.mat_pumpkin) to stringResource(R.string.cat_fiber),
-        stringResource(R.string.mat_carrot) to stringResource(R.string.cat_vitamins),
-        stringResource(R.string.mat_potato) to stringResource(R.string.cat_carbs),
-        stringResource(R.string.mat_egg) to stringResource(R.string.cat_fats),
-        stringResource(R.string.mat_rice) to stringResource(R.string.cat_digestive),
-        stringResource(R.string.mat_broccoli) to stringResource(R.string.cat_vitamins)
+        Triple("fish", stringResource(R.string.mat_fish), stringResource(R.string.cat_protein)),
+        Triple("chicken", stringResource(R.string.mat_chicken), stringResource(R.string.cat_protein)),
+        Triple("pumpkin", stringResource(R.string.mat_pumpkin), stringResource(R.string.cat_fiber)),
+        Triple("carrot", stringResource(R.string.mat_carrot), stringResource(R.string.cat_vitamins)),
+        Triple("potato", stringResource(R.string.mat_potato), stringResource(R.string.cat_carbs)),
+        Triple("egg", stringResource(R.string.mat_egg), stringResource(R.string.cat_fats)),
+        Triple("rice", stringResource(R.string.mat_rice), stringResource(R.string.cat_digestive)),
+        Triple("broccoli", stringResource(R.string.mat_broccoli), stringResource(R.string.cat_vitamins))
     )
 
     var selectedIngredients by remember { mutableStateOf(setOf<String>()) }
@@ -1893,16 +1893,16 @@ fun IngredientPickerSubSection(viewModel: TinyPawsViewModel) {
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        rowItems.forEach { (name, category) ->
-                            val isSelected = selectedIngredients.contains(name)
+                        rowItems.forEach { (key, name, category) ->
+                            val isSelected = selectedIngredients.contains(key)
                             Card(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickable {
                                         selectedIngredients = if (isSelected) {
-                                            selectedIngredients - name
+                                            selectedIngredients - key
                                         } else {
-                                            selectedIngredients + name
+                                            selectedIngredients + key
                                         }
                                     },
                                 shape = RoundedCornerShape(12.dp),

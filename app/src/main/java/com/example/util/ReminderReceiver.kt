@@ -37,14 +37,22 @@ class ReminderReceiver : BroadcastReceiver() {
                     return@launch
                 }
 
-                // Verify cat profile exists if linked to specific cat
+                // Verify at least one of the reminder's linked cats still exists.
+                // A reminder tied only to deleted cats must stop firing.
                 if (reminder.catIds.isNotBlank() && reminder.catIds != "all") {
-                    val count = db.catProfileDao().getCatCount()
-                    if (count == 0) {
-                        android.util.Log.d("ReminderReceiver", "No cats exist for reminder $reminderId. Canceling alarm.")
+                    val linkedIds = reminder.catIds.split(",").mapNotNull { it.trim().toIntOrNull() }
+                    val existingIds = db.catProfileDao().getAllCatProfilesSync().map { it.id }.toSet()
+                    val anyLinkedCatExists = linkedIds.any { it in existingIds }
+                    if (!anyLinkedCatExists) {
+                        android.util.Log.d("ReminderReceiver", "All cats linked to reminder ${reminder.id} were deleted. Canceling and disabling it.")
                         NotificationHelper(context).cancelNotification(reminderId)
+                        db.reminderDao().updateReminder(reminder.copy(isEnabled = false))
                         return@launch
                     }
+                } else if (db.catProfileDao().getCatCount() == 0) {
+                    android.util.Log.d("ReminderReceiver", "No cats exist for reminder ${reminder.id}. Canceling alarm.")
+                    NotificationHelper(context).cancelNotification(reminderId)
+                    return@launch
                 }
 
                 val title = intent.getStringExtra("reminder_title") ?: reminder.title

@@ -2651,4 +2651,7 @@
     <string name="quiz_retry_btn">Réessayer le quiz 🔄</string>
     <string name="cert_preview_name">Le certificat sera délivré à : %1$s</string>
     <string name="cert_claim_btn">Réclamer mon diplôme 🏆</string>
+
+    <string name="nearby_report_alert_title">Un chat a besoin d\'aide près de vous 🐾</string>
+    <string name="nearby_report_alert_body">%1$s — à %2$s km. Peux-tu aider ?</string>
 </resources>

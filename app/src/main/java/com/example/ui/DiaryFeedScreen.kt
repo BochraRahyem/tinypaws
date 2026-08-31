@@ -1,7 +1,5 @@
 package com.example.ui
 
-import androidx.compose.ui.res.stringResource
-
 import android.app.DatePickerDialog
 import android.widget.Toast
 import androidx.compose.animation.*

@@ -60,6 +60,8 @@ class TinyPawsMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Channel is created centrally by NotificationHelper (with sound/vibration).
+        // Creating it again here with different settings would be ignored by the OS.
         val channelId = com.example.util.NotificationHelper.CHANNEL_DUPLICATE_REPORT
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_paw_notification)
@@ -70,22 +72,39 @@ class TinyPawsMessagingService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "TinyPaws Community Cat Reports 🐱",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-
         notificationManager.notify(notifId, notificationBuilder.build())
     }
 
     @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        // Token refreshed
+        // Persist the rotated token so proximity notifications keep working.
+        // - Signed-in: write straight to the user's Firestore profile.
+        // - No session yet: stage it locally; the ViewModel pushes it on next sign-in.
+        try {
+            val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+            val current = auth.currentUser
+            if (current != null) {
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users").document(current.uid)
+                    .set(mapOf("fcmToken" to token), com.google.firebase.firestore.SetOptions.merge())
+                    .addOnFailureListener { e ->
+                        android.util.Log.e("TinyPawsMessaging", "Failed to persist refreshed FCM token", e)
+                        stagePendingToken(token)
+                    }
+            } else {
+                stagePendingToken(token)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("TinyPawsMessaging", "Error handling new FCM token", e)
+            stagePendingToken(token)
+        }
+    }
+
+    private fun stagePendingToken(token: String) {
+        runCatching {
+            getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+                .edit().putString("pending_fcm_token", token).apply()
+        }
     }
 }

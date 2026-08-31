@@ -1475,11 +1475,15 @@ fun MyCatScreen(
                 }
             },
             confirmButton = {
-                Button(
+                    Button(
                     onClick = {
                         if (dialogTitle.isNotBlank()) {
                             val entry = com.example.data.CatHistoryEntry(
                                 id = editingHistoryEntry?.id ?: 0,
+                                // Keep the entry on its original cat when editing;
+                                // new entries belong to the currently selected cat.
+                                catId = editingHistoryEntry?.catId?.takeIf { it > 0 }
+                                    ?: viewModel.selectedCatId.value,
                                 title = dialogTitle,
                                 date = dialogDateMillis,
                                 category = dialogCategory,

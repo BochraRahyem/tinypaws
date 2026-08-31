@@ -28,4 +28,7 @@ interface CatProfileDao {
 
     @Query("SELECT COUNT(*) FROM cat_profile")
     suspend fun getCatCount(): Int
+
+    @Query("SELECT * FROM cat_profile ORDER BY id ASC")
+    suspend fun getAllCatProfilesSync(): List<CatProfile>
 }

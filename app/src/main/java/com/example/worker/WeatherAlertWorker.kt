@@ -31,10 +31,13 @@ class WeatherAlertWorker(
                 return@withContext Result.retry()
             }
 
-            // 2. Validation Check: Confirm location services are active
+            // 2. Validation Check: Confirm location services are active.
+            // Skip this cycle instead of endless retries: the periodic job will
+            // simply run again at the next 2h tick, so retrying only burns
+            // battery and pushes real executions further out via backoff.
             if (!isLocationServiceActive(appContext)) {
-                android.util.Log.w("WeatherAlertWorker", "doWork: Location services disabled on device, requesting retry")
-                return@withContext Result.retry()
+                android.util.Log.w("WeatherAlertWorker", "doWork: Location services disabled on device, skipping this cycle")
+                return@withContext Result.success()
             }
 
             // Validate coordinates range
@@ -47,11 +50,12 @@ class WeatherAlertWorker(
             val urlString = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&daily=temperature_2m_max,temperature_2m_min,weathercode&current_weather=true&timezone=auto"
             val url = URL(urlString)
             val conn = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "GET"
-            conn.connectTimeout = 8000
-            conn.readTimeout = 8000
+            try {
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 8000
+                conn.readTimeout = 8000
 
-            if (conn.responseCode == 200) {
+                if (conn.responseCode == 200) {
                 val stream = conn.inputStream
                 val jsonText = stream.bufferedReader().use { it.readText() }
                 val json = JSONObject(jsonText)
@@ -106,6 +110,15 @@ class WeatherAlertWorker(
                     languageCode = savedLang
                 )
 
+                // Only push a notification when there is a genuine weather
+                // condition that needs the user's attention. Mild/"comfortable"
+                // weather is not an alert event, so we must not send a generic
+                // "lovely day" message on every background cycle.
+                if (category == com.example.util.WeatherNotificationResolver.WeatherConditionCategory.COMFORTABLE) {
+                    android.util.Log.d("WeatherAlertWorker", "doWork: Weather is comfortable/mild; no alert condition to notify. Skipping notification.")
+                    return@withContext Result.success()
+                }
+
                 android.util.Log.d("WeatherAlertWorker", "doWork: Triggering rotating weather notification: category=$category, title='${notificationData.title}'")
                 notificationHelper.triggerWeatherAlert(
                     title = notificationData.title,
@@ -118,6 +131,9 @@ class WeatherAlertWorker(
             } else {
                 android.util.Log.w("WeatherAlertWorker", "doWork: API returned HTTP ${conn.responseCode}, scheduling retry")
                 Result.retry()
+            }
+            } finally {
+                conn.disconnect()
             }
         } catch (e: Exception) {
             android.util.Log.e("WeatherAlertWorker", "doWork: WorkManager task execution failed due to exception: ${e.message}", e)

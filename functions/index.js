@@ -1,3 +1,13 @@
+// ===============================================================
+// ⚠️ NOT DEPLOYED — FREE-TIER ARCHITECTURE
+// Cloud Functions require the paid Blaze plan. TinyPaws runs fully on the
+// free Spark plan: all aggregation/reward/counter logic now lives in the
+// client (guarded by monotonic field-whitelist Firestore rules) and welcome
+// emails go through the free Cloudflare Worker + Resend path.
+// This file is preserved for a future migration if a paid backend is ever
+// adopted. Do NOT deploy it without reviewing pricing implications.
+// ===============================================================
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const geofire = require("geofire-common");
@@ -85,11 +95,16 @@ exports.onReportCreated = functions.firestore
 
     // Increment reporter's reportedCatsCount and catBadges
     if (report.reportedBy) {
-      await db.collection("users").doc(report.reportedBy).set(
-        {
-          reportedCatsCount: admin.firestore.FieldValue.increment(1),
-          catBadges: admin.firestore.FieldValue.increment(1)
-        },
+      const userUpdate = {
+        reportedCatsCount: admin.firestore.FieldValue.increment(1),
+        catBadges: admin.firestore.FieldValue.increment(1)
+      };
+      await db.collection("users").doc(report.reportedBy).set(userUpdate, { merge: true });
+      // Mirror the public, non-identifying counters for the leaderboard
+      // (/users is owner-private; /publicProfiles is the public projection).
+      await db.collection("publicProfiles").doc(report.reportedBy).set(
+        { reportedCatsCount: admin.firestore.FieldValue.increment(1),
+          catBadges: admin.firestore.FieldValue.increment(1) },
         { merge: true }
       );
     }
@@ -358,6 +373,12 @@ exports.onUserActionCreated = functions.firestore
             totalStars: admin.firestore.FieldValue.increment(rewardAmount),
             rescueStars: admin.firestore.FieldValue.increment(rewardAmount)
           }, { merge: true });
+          // Mirror public counters for the leaderboard (server-side only,
+          // so clients can never forge them).
+          transaction.set(db.collection("publicProfiles").doc(userId), {
+            totalStars: admin.firestore.FieldValue.increment(rewardAmount),
+            rescueStars: admin.firestore.FieldValue.increment(rewardAmount)
+          }, { merge: true });
         }
 
         // 4. Increment stats/global.catsHelped atomically by exactly 1
@@ -377,24 +398,11 @@ exports.onUserActionCreated = functions.firestore
   });
 
 // ---------------------------------------------------------------
-// 6b. Adoption completed -> update rescue statistics
+// 6b. Adoption stats are handled exclusively by onReportUpdated above.
+// The former onAdoptionCompleted function was removed because it
+// double-incremented totalAdoptedCats/totalCatsRescued for the same
+// single status transition.
 // ---------------------------------------------------------------
-exports.onAdoptionCompleted = functions.firestore
-  .document("reports/{reportId}")
-  .onUpdate(async (change) => {
-    const before = change.before.data();
-    const after = change.after.data();
-    if (before.status !== "adopted" && after.status === "adopted") {
-      await db.collection("statistics").doc("global").set(
-        {
-          totalAdoptedCats: admin.firestore.FieldValue.increment(1),
-          totalCatsRescued: admin.firestore.FieldValue.increment(1)
-        },
-        { merge: true }
-      );
-    }
-    return null;
-  });
 
 // ---------------------------------------------------------------
 // 7. New user registered -> bump registered users stat & trigger welcome email once
@@ -406,22 +414,42 @@ exports.onUserCreated = functions.firestore
     const userId = context.params.userId;
 
     await db.collection("statistics").doc("global").set(
-      { 
+      {
         totalUsers: admin.firestore.FieldValue.increment(1),
         totalRegisteredUsers: admin.firestore.FieldValue.increment(1)
       },
       { merge: true }
     );
 
-    if (userData.email && userData.welcomeEmailSent !== true) {
-      const userLang = userData.preferredLanguage || "en";
-      await db.collection("mail").add({
-        to: [userData.email.trim()],
-        userId: userId,
-        template: "welcome",
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
-      });
-      await snap.ref.update({ welcomeEmailSent: true });
+    const email = typeof userData.email === "string" ? userData.email.trim() : "";
+    // Skip placeholder guest emails - they are not real inboxes and would
+    // only produce Resend validation failures.
+    const isPlaceholderGuest = email.endsWith("@tinypaws.app");
+
+    if (email && !isPlaceholderGuest && userData.welcomeEmailSent !== true) {
+      // Idempotent welcome email: re-read the flag inside a transaction so a
+      // retried trigger or a race with any client-side write can never send twice.
+      const userRef = snap.ref;
+      try {
+        await db.runTransaction(async (transaction) => {
+          const fresh = await transaction.get(userRef);
+          if (!fresh.exists) return;
+          if ((fresh.data() || {}).welcomeEmailSent === true) return;
+
+          const userLang = (fresh.data() || {}).preferredLanguage || "en";
+          const mailRef = db.collection("mail").doc();
+          transaction.set(mailRef, {
+            to: [email],
+            userId: userId,
+            template: "welcome",
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+          transaction.set(userRef, { welcomeEmailSent: true }, { merge: true });
+        });
+      } catch (err) {
+        console.error(`Welcome-email transaction failed for ${userId}:`, err);
+        throw err; // let Cloud Functions retry; the transaction guard keeps it exactly-once
+      }
     }
     return null;
   });
@@ -735,6 +763,18 @@ exports.onMailCreated = functions.runWith({ secrets: ["RESEND_API_KEY"] })
       return null;
     }
 
+    // Retry-safety: mark the doc as "sending" and skip if another invocation
+    // already claimed it recently (guards against duplicate Resend sends when
+    // Cloud Functions retries the trigger after a transient failure).
+    if (mailData.status === "sending") {
+      const claimedAt = mailData.updatedAt || mailData.createdAt;
+      const ageMs = claimedAt ? Date.now() - claimedAt.toMillis() : 0;
+      if (ageMs < 10 * 60 * 1000) {
+        console.log(`Mail ${mailId} is already being sent by another invocation. Skipping.`);
+        return null;
+      }
+    }
+
     const resendApiKey = process.env.RESEND_API_KEY;
     if (!resendApiKey) {
       console.error("RESEND_API_KEY is not configured in Firebase Secrets!");
@@ -773,6 +813,13 @@ exports.onMailCreated = functions.runWith({ secrets: ["RESEND_API_KEY"] })
     }
 
     try {
+      // Claim the document before hitting Resend so retries/concurrent
+      // triggers cannot double-send.
+      await snap.ref.update({
+        status: "sending",
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
       const response = await resend.emails.send({
         from: fromAddress,
         to: mailData.to,
@@ -795,6 +842,43 @@ exports.onMailCreated = functions.runWith({ secrets: ["RESEND_API_KEY"] })
       });
     }
     return null;
+  });
+
+// ---------------------------------------------------------------
+// ONE-TIME legacy PII cleanup: removes the reporterName field from
+// every existing report (new writes are already blocked by rules and
+// by the app). Admin-only: "invoker: private" means only project
+// owners can call it. Invoke after deploying with:
+//   gcloud functions call sanitizeLegacyReports --region=<region> --data '{}'
+// (or run it once from the Cloud Console).
+// ---------------------------------------------------------------
+exports.sanitizeLegacyReports = functions.runWith({ invoker: "private" })
+  .https.onRequest(async (req, res) => {
+    try {
+      const reports = db.collection("reports");
+      let cleaned = 0;
+      let batch = db.batch();
+      let count = 0;
+      const snapshot = await reports.select("reporterName").get();
+      snapshot.forEach((doc) => {
+        if (doc.data().reporterName !== undefined) {
+          batch.update(doc.ref, { reporterName: admin.firestore.FieldValue.delete() });
+          cleaned++;
+          count++;
+          if (count === 400) {
+            batch.commit();
+            batch = db.batch();
+            count = 0;
+          }
+        }
+      });
+      if (count > 0) await batch.commit();
+      console.log(`sanitizeLegacyReports: removed reporterName from ${cleaned} documents`);
+      res.status(200).json({ success: true, cleaned });
+    } catch (error) {
+      console.error("sanitizeLegacyReports failed:", error);
+      res.status(500).json({ success: false, error: error.message });
+    }
   });
 
 // ---------------------------------------------------------------

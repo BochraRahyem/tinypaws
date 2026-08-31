@@ -1,7 +1,5 @@
 package com.example.ui
 
-import androidx.compose.ui.res.stringResource
-
 import com.example.R
 
 import androidx.compose.foundation.BorderStroke

@@ -43,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.example.data.*
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.tasks.await
 
 // Chat Message Model
 data class ChatMessage(
@@ -196,30 +197,70 @@ class TinyPawsViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Firestore Actions
+    /** Last failed user action, surfaced to the UI as a truthful failure message. */
+    private val _actionError = MutableStateFlow<String?>(null)
+    val actionError = _actionError.asStateFlow()
+    fun clearActionError() { _actionError.value = null }
+
+    private suspend fun reportActionFailure(what: String, e: Exception) {
+        android.util.Log.e("TinyPawsVM", "$what failed", e)
+        _actionError.value = when {
+            e is IllegalStateException && e.message == "Not signed in" ->
+                "You need to be signed in to do that."
+            e.message?.contains("PERMISSION_DENIED", ignoreCase = true) == true ->
+                "Permission denied by server. Please try signing in again."
+            else -> "$what failed. Please check your connection and try again."
+        }
+    }
+
     fun helpCat(reportId: String, actionType: String = "helped") {
         viewModelScope.launch {
-            firebaseRepository.helpCat(reportId, actionType)
+            try {
+                firebaseRepository.helpCat(reportId, actionType)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Marking cat as helped", e)
+            }
         }
     }
 
     fun adoptCat(reportId: String) {
         viewModelScope.launch {
-            firebaseRepository.adoptCat(reportId)
+            try {
+                firebaseRepository.adoptCat(reportId)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Adoption update", e)
+            }
         }
     }
 
     fun feedCat(reportId: String) {
         viewModelScope.launch {
-            firebaseRepository.feedCat(reportId)
+            try {
+                firebaseRepository.feedCat(reportId)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Feeding log", e)
+            }
         }
     }
 
     fun fillFeedingStation(stationId: String) {
         viewModelScope.launch {
-            firebaseRepository.fillFeedingStation(stationId)
+            try {
+                firebaseRepository.fillFeedingStation(stationId)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Feeding station update", e)
+            }
         }
     }
-    fun createReport(
+fun createReport(
         description: String,
         latitude: Double,
         longitude: Double,
@@ -268,7 +309,7 @@ class TinyPawsViewModel(
                 var finalPhotoUrl = photoUrl
                 if (imageUri != null) {
                     try {
-                        finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "cat_photos")
+                        finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "cat_photos", getApplication())
                         newlyUploadedUrl = finalPhotoUrl
                         android.util.Log.d("TinyPawsVM", "Image uploaded successfully: $finalPhotoUrl")
                     } catch (e: Exception) {
@@ -345,30 +386,52 @@ class TinyPawsViewModel(
             var finalPhotoUrl = photoUrl
             if (imageUri != null) {
                 try {
-                    finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "feeding_stations")
+                    finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "feeding_stations", getApplication())
                 } catch (e: Exception) {
                     android.util.Log.e("TinyPawsVM", "Error uploading station photo", e)
                 }
             }
-            stationRepository.createFeedingStation(
-                FeedingStation(
-                    latitude = latitude,
-                    longitude = longitude,
-                    description = description,
-                    photoUrl = finalPhotoUrl,
-                    status = "active"
+            try {
+                stationRepository.createFeedingStation(
+                    FeedingStation(
+                        latitude = latitude,
+                        longitude = longitude,
+                        description = description,
+                        photoUrl = finalPhotoUrl,
+                        status = "active"
+                    )
                 )
-            )
-            onComplete?.invoke()
+                onComplete?.invoke()
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Creating feeding station", e)
+            }
         }
     }
 
     fun reachCat(reportId: String) {
-        viewModelScope.launch { reportRepository.reachCat(reportId) }
+        viewModelScope.launch {
+            try {
+                reportRepository.reachCat(reportId)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Recording your reach", e)
+            }
+        }
     }
 
     fun reachFeedingStation(stationId: String, foodAvailable: Boolean) {
-        viewModelScope.launch { stationRepository.reachFeedingStation(stationId, foodAvailable) }
+        viewModelScope.launch {
+            try {
+                stationRepository.reachFeedingStation(stationId, foodAvailable)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Feeding station update", e)
+            }
+        }
     }
 
     fun markAsRescued(
@@ -381,12 +444,29 @@ class TinyPawsViewModel(
             var finalPhotoUrl = photoUrl
             if (imageUri != null) {
                 try {
-                    finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "rescue_photos")
+                    finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "rescue_photos", getApplication())
                 } catch (e: Exception) {
                     android.util.Log.e("TinyPawsVM", "Error uploading rescue photo", e)
                 }
             }
-            reportRepository.markAsRescued(reportId, finalPhotoUrl, desc)
+            try {
+                reportRepository.markAsRescued(reportId, finalPhotoUrl, desc)
+                // Reward parity with the other rescue paths: record the 10-star action.
+                firebaseRepository.recordUserAction(
+                    com.example.data.UserAction(
+                        actionType = "adopt_cat",
+                        starsEarned = 10,
+                        rewardAmount = 10,
+                        description = "Adopted/rescued cat permanently",
+                        relatedCatId = reportId,
+                        catId = reportId
+                    )
+                )
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reportActionFailure("Marking cat as rescued", e)
+            }
         }
     }
 
@@ -412,6 +492,7 @@ class TinyPawsViewModel(
                                 } catch (e: Exception) {
                                     android.util.Log.e("TinyPawsVM", "Error creating guest profile", e)
                                 }
+                                flushPendingFcmToken()
                             }
                         }
                     } else {
@@ -422,6 +503,33 @@ class TinyPawsViewModel(
         } catch (e: Exception) {
             android.util.Log.w("TinyPawsVM", "Firebase auth exception: ${e.message}")
             onResult(true, null)
+        }
+    }
+
+    /**
+     * Pushes the device FCM token to the signed-in user's profile.
+     * Uses any token staged by TinyPawsMessagingService while signed out,
+     * otherwise asks FirebaseMessaging for the current token (best effort;
+     * silently skipped on devices without Google Play services).
+     */
+    private fun flushPendingFcmToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val prefs = getApplication<Application>().getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+                val staged = prefs.getString("pending_fcm_token", null)
+                if (!staged.isNullOrBlank()) {
+                    firebaseRepository.updateUserMetadata(fcmToken = staged)
+                    prefs.edit().remove("pending_fcm_token").apply()
+                    return@launch
+                }
+                val task = com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+                val token = task.await()
+                if (!token.isNullOrBlank()) {
+                    firebaseRepository.updateUserMetadata(fcmToken = token)
+                }
+            } catch (e: Exception) {
+                android.util.Log.w("TinyPawsVM", "FCM token sync skipped: ${e.message}")
+            }
         }
     }
 
@@ -487,13 +595,14 @@ class TinyPawsViewModel(
                     // Automatically restore data from cloud on sign in
                     viewModelScope.launch(Dispatchers.IO) {
                         com.example.data.AppDatabase.getDatabase(getApplication()).clearAllTables()
-                        
+
                         restoreDataFromCloud(context) { resultMsg ->
                             android.util.Log.d("TinyPawsVM", "Auto-restore after sign-in: $resultMsg")
                             viewModelScope.launch(Dispatchers.Main) {
                                 onResult(true, null)
                             }
                         }
+                        flushPendingFcmToken()
                     }
                 } else {
                     val mappedError = mapAuthError(task.exception, context)
@@ -502,58 +611,10 @@ class TinyPawsViewModel(
             }
     }
 
-    fun triggerWelcomeEmail(email: String) {
-        val trimmedEmail = email.trim()
-        if (trimmedEmail.isBlank()) return
-        val user = auth.currentUser ?: return
-        val uid = user.uid
-        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-        try {
-            db.collection("users").document(uid).get().addOnSuccessListener { doc ->
-                val alreadySent = doc.getBoolean("welcomeEmailSent") == true
-                if (!alreadySent) {
-                    db.collection("users").document(uid).update("welcomeEmailSent", true)
-                    
-                    viewModelScope.launch(Dispatchers.IO) {
-                        try {
-                            val tokenResult = com.google.android.gms.tasks.Tasks.await(user.getIdToken(true))
-                            val token = tokenResult.token
-                            if (token != null) {
-                                // IMPORTANT: Replace this URL with your Cloudflare Worker URL
-                                val workerUrl = "https://tinypaws-email.bochra0rhayem.workers.dev"
-                                val url = java.net.URL(workerUrl)
-                                val connection = url.openConnection() as java.net.HttpURLConnection
-                                connection.requestMethod = "POST"
-                                connection.setRequestProperty("Content-Type", "application/json; utf-8")
-                                connection.setRequestProperty("Accept", "application/json")
-                                connection.setRequestProperty("Authorization", "Bearer $token")
-                                connection.doOutput = true
-                                
-                                val lang = currentLanguage.value
-                                val jsonInputString = "{\"to\": \"$trimmedEmail\", \"template\": \"welcome\", \"lang\": \"$lang\"}"
-                                
-                                connection.outputStream.use { os ->
-                                    val input = jsonInputString.toByteArray(Charsets.UTF_8)
-                                    os.write(input, 0, input.size)
-                                }
-                                
-                                val responseCode = connection.responseCode
-                                android.util.Log.d("TinyPawsVM", "Welcome email API response: $responseCode")
-                                if (responseCode != 200) {
-                                    db.collection("users").document(uid).update("welcomeEmailSent", false)
-                                }
-                            }
-                        } catch (e: Exception) {
-                            android.util.Log.e("TinyPawsVM", "Error calling welcome email API", e)
-                            db.collection("users").document(uid).update("welcomeEmailSent", false)
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("TinyPawsVM", "Error triggering welcome email doc", e)
-        }
-    }
+    // NOTE: The welcome email is sent by exactly ONE authoritative path:
+    // createUserProfile -> Firestore onUserCreated trigger -> mail collection
+    // -> onMailCreated -> Resend. The app must NOT call the Cloudflare email
+    // worker directly anymore (it caused duplicate welcome emails).
 
     private val _resendCooldownSeconds = MutableStateFlow(0)
     val resendCooldownSeconds: StateFlow<Int> = _resendCooldownSeconds.asStateFlow()
@@ -641,7 +702,6 @@ class TinyPawsViewModel(
                     val updatedUser = auth.currentUser ?: currentUser
                     _user.value = updatedUser
                     updateOnboardedName(nameToSave)
-                    triggerWelcomeEmail(trimmedEmail)
 
                     viewModelScope.launch {
                         val profile = UserProfile(
@@ -656,6 +716,8 @@ class TinyPawsViewModel(
                         } catch (e: Exception) {
                             android.util.Log.e("TinyPawsVM", "Error creating profile on link", e)
                         }
+                        sendWelcomeEmail(trimmedEmail)
+                        flushPendingFcmToken()
                     }
 
                     updatedUser.sendEmailVerification().addOnCompleteListener { emailTask ->
@@ -688,7 +750,6 @@ class TinyPawsViewModel(
                     val firebaseUser = auth.currentUser
                     _user.value = firebaseUser
                     updateOnboardedName(nameToSave)
-                    triggerWelcomeEmail(trimmedEmail)
 
                     if (firebaseUser != null) {
                         viewModelScope.launch {
@@ -704,6 +765,8 @@ class TinyPawsViewModel(
                             } catch (e: Exception) {
                                 android.util.Log.e("TinyPawsVM", "Error creating user profile", e)
                             }
+                            sendWelcomeEmail(trimmedEmail)
+                            flushPendingFcmToken()
                         }
 
                         firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
@@ -726,19 +789,47 @@ class TinyPawsViewModel(
     }
 
     fun sendPasswordResetEmail(email: String, context: Context, onResult: (Boolean, String) -> Unit) {
-        auth.sendPasswordResetEmail(email.trim())
+        val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
+            .setUrl("https://tinypaws-diary.web.app/reset-password")
+            .setHandleCodeInApp(true)
+            .setAndroidPackageName("com.tinypaws.app", true, null)
+            .build()
+        auth.sendPasswordResetEmail(email.trim(), actionSettings)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     onResult(true, context.getString(com.example.R.string.auth_reset_sent_msg))
                 } else {
                     val ex = task.exception
-                    if (ex is com.google.firebase.FirebaseNetworkException) {
-                        onResult(false, context.getString(com.example.R.string.auth_err_network_error))
+                    val msg = if (ex is com.google.firebase.FirebaseNetworkException) {
+                        context.getString(com.example.R.string.auth_err_network_error)
                     } else if (ex?.message?.contains("invalid email", ignoreCase = true) == true) {
-                        onResult(false, context.getString(com.example.R.string.auth_err_invalid_email))
+                        context.getString(com.example.R.string.auth_err_invalid_email)
                     } else {
-                        onResult(true, context.getString(com.example.R.string.auth_reset_sent_msg))
+                        mapAuthError(ex, context)
                     }
+                    onResult(false, msg)
+                }
+            }
+    }
+
+    fun verifyPasswordResetCode(oobCode: String, onResult: (String?, String?) -> Unit) {
+        auth.verifyPasswordResetCode(oobCode)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(task.result, null)
+                } else {
+                    onResult(null, mapAuthError(task.exception, getApplication()))
+                }
+            }
+    }
+
+    fun confirmPasswordReset(oobCode: String, newPassword: String, onResult: (Boolean, String?) -> Unit) {
+        auth.confirmPasswordReset(oobCode, newPassword)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, getApplication<Application>().getString(com.example.R.string.auth_reset_success_msg))
+                } else {
+                    onResult(false, mapAuthError(task.exception, getApplication()))
                 }
             }
     }
@@ -918,13 +1009,17 @@ class TinyPawsViewModel(
             val db = com.example.data.AppDatabase.getDatabase(getApplication())
             val reminders = db.reminderDao().getAllRemindersSync()
             val notifHelper = com.example.util.NotificationHelper(getApplication())
-            reminders.filter { it.catId == catIdToDelete || it.catIds.contains("$catIdToDelete") }.forEach {
+            reminders.filter {
+                it.catId == catIdToDelete ||
+                    it.catIds.split(",").mapNotNull { t -> t.trim().toIntOrNull() }.contains(catIdToDelete)
+            }.forEach {
                 notifHelper.cancelNotification(it.id)
             }
             catRepository.deleteCatProfile(catIdToDelete)
-            val remainingProfiles = catRepository.allCatProfiles
-            val firstProfile = remainingProfiles.map { list -> list.firstOrNull { it.id != catIdToDelete } }.stateIn(viewModelScope).value
-            val nextCatId = firstProfile?.id ?: 1
+            val remainingProfiles = catRepository.allCatProfiles.first()
+            val nextCatId = remainingProfiles
+                .filter { it.id != catIdToDelete }
+                .minOfOrNull { it.id } ?: 1
             selectCat(nextCatId)
         }
     }
@@ -1110,7 +1205,9 @@ class TinyPawsViewModel(
     // Filtered Reminders State for active cat
     val allReminders: StateFlow<List<com.example.data.Reminder>> = combine(catRepository.allReminders, selectedCatId) { list, activeCatId ->
         list.filter { r ->
-            r.catId == activeCatId || r.catIds.split(",").contains(activeCatId.toString()) || r.catIds == "all"
+            r.catId == activeCatId ||
+                r.catIds.split(",").map { it.trim() }.contains(activeCatId.toString()) ||
+                r.catIds == "all"
         }
     }.stateIn(
         scope = viewModelScope,
@@ -1473,7 +1570,24 @@ class TinyPawsViewModel(
 
     suspend fun fetchDailyCatFact(languageCode: String? = null): String {
         val lang = languageCode ?: _currentLanguage.value
-        return GeminiClient.fetchDailyCatFact(lang)
+        // Cache one fact per language per day so re-opening the Hub (or switching
+        // languages back and forth) does not fire a paid API call every time.
+        val prefs = getApplication<Application>().getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+        val day = System.currentTimeMillis() / 86400000L
+        val cacheKey = "daily_cat_fact_${lang}_$day"
+        prefs.getString(cacheKey, null)?.let { return it }
+
+        val fact = GeminiClient.fetchDailyCatFact(lang)
+        if (fact.isNotBlank()) {
+            prefs.edit().putString(cacheKey, fact).apply()
+            // Prune yesterday's cached facts to keep the prefs file tiny.
+            val editor = prefs.edit()
+            for (k in prefs.all.keys) {
+                if (k.startsWith("daily_cat_fact_") && k != cacheKey) editor.remove(k)
+            }
+            editor.apply()
+        }
+        return fact
     }
 
     // 4. AI Studio Generation States
@@ -1487,13 +1601,18 @@ class TinyPawsViewModel(
     private val _stepImageCache = MutableStateFlow<Map<String, Bitmap>>(emptyMap())
     val stepImageCache = _stepImageCache.asStateFlow()
 
+    /** Step images whose generation recently failed - prevents retry storms on recomposition. */
+    private val failedStepImageIds = java.util.Collections.synchronizedSet(mutableSetOf<String>())
+
     fun generateStepImage(stepId: String, prompt: String) {
         if (_stepImageCache.value.containsKey(stepId)) return
+        if (!failedStepImageIds.add(stepId)) return // already failed recently; no auto-retry
 
         viewModelScope.launch {
             try {
                 val bitmap = GeminiClient.generateImage(prompt, isProModel = false, imageSize = "1K")
                 if (bitmap != null) {
+                    failedStepImageIds.remove(stepId)
                     val updatedCache = _stepImageCache.value.toMutableMap()
                     updatedCache[stepId] = bitmap
                     _stepImageCache.value = updatedCache
@@ -1553,9 +1672,93 @@ class TinyPawsViewModel(
     private val _isChatLoading = MutableStateFlow(false)
     val isChatLoading = _isChatLoading.asStateFlow()
 
+    companion object {
+        /** Max chat turns (user+model pairs count individually) re-sent to the model. */
+        private const val MAX_CHAT_HISTORY_MESSAGES = 12
+        private const val MAX_CHAT_INPUT_CHARS = 2000
+
+        /**
+         * Free-tier welcome-email path: our own Cloudflare Worker (free plan)
+         * verifies the caller's Firebase ID token and sends via Resend's free
+         * tier. This is the ONLY email path - Cloud Functions are not deployed
+         * (they require the paid Blaze plan).
+         */
+        private const val WELCOME_EMAIL_WORKER_URL =
+            "https://tinypaws-email.bochra0rhayem.workers.dev"
+    }
+
+    /**
+     * Sends the welcome email exactly once per account via the Cloudflare worker.
+     * Claims the flag BEFORE sending so retries never double-send; releases it if
+     * the worker reports failure so a later attempt can retry.
+     */
+    private fun sendWelcomeEmail(email: String?) {
+        val trimmedEmail = email?.trim() ?: return
+        if (trimmedEmail.isBlank() || trimmedEmail.endsWith("@tinypaws.app")) return
+        val user = auth.currentUser ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            var connection: java.net.HttpURLConnection? = null
+            try {
+                val userDoc = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users").document(user.uid)
+                userDoc.set(
+                    mapOf("welcomeEmailSent" to true),
+                    com.google.firebase.firestore.SetOptions.merge()
+                ).await()
+
+                val token = user.getIdToken(true).await().token
+                if (token == null) {
+                    userDoc.set(mapOf("welcomeEmailSent" to false), com.google.firebase.firestore.SetOptions.merge()).await()
+                    return@launch
+                }
+
+                connection = java.net.URL(WELCOME_EMAIL_WORKER_URL)
+                    .openConnection() as java.net.HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.connectTimeout = 15000
+                connection.readTimeout = 15000
+                connection.setRequestProperty("Content-Type", "application/json; utf-8")
+                connection.setRequestProperty("Authorization", "Bearer $token")
+                connection.doOutput = true
+                connection.outputStream.use { os ->
+                    val body = org.json.JSONObject().apply {
+                        put("to", trimmedEmail)
+                        put("lang", _currentLanguage.value)
+                        put("template", "welcome")
+                    }.toString()
+                    os.write(body.toByteArray(Charsets.UTF_8))
+                }
+                val code = connection.responseCode
+                android.util.Log.d("TinyPawsVM", "Welcome email response: $code")
+                if (code != 200) {
+                    userDoc.set(mapOf("welcomeEmailSent" to false), com.google.firebase.firestore.SetOptions.merge()).await()
+                }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                android.util.Log.e("TinyPawsVM", "Welcome email failed", e)
+                runCatching {
+                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                        .collection("users").document(user.uid)
+                        .set(mapOf("welcomeEmailSent" to false), com.google.firebase.firestore.SetOptions.merge())
+                }
+            } finally {
+                connection?.disconnect()
+            }
+        }
+    }
+
+
     fun sendChatMessage(text: String) {
         if (text.isBlank() || _isChatLoading.value) return
-        
+
+        if (text.length > MAX_CHAT_INPUT_CHARS) {
+            _chatMessages.value = _chatMessages.value +
+                ChatMessage("user", text.take(MAX_CHAT_INPUT_CHARS) + "…") +
+                ChatMessage("model", "Sorry, that message is too long for me! Please split it into a shorter message 🐾")
+            return
+        }
+
         val userMessage = ChatMessage("user", text)
         _chatMessages.value = _chatMessages.value + userMessage
         
@@ -1583,7 +1786,12 @@ class TinyPawsViewModel(
             - Stay on topic: stray animal care and TinyPaws.
         """.trimIndent()
         
-        val history = _chatMessages.value.filter { !it.isPending }.map { it.role to it.text }
+        // Bound the conversation sent to the model: keep only the most recent
+        // turns so cost stays linear-bounded and we never blow the context window.
+        val history = _chatMessages.value
+            .filter { !it.isPending && it.text.isNotBlank() }
+            .takeLast(MAX_CHAT_HISTORY_MESSAGES)
+            .map { it.role to it.text }
 
         _isChatLoading.value = true
         viewModelScope.launch {

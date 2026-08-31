@@ -14,7 +14,11 @@ class FirestoreReportRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) {
     fun getActiveReports(): Flow<List<CatReport>> = callbackFlow {
+        // Newest 150 only: bounds billable reads and memory instead of streaming
+        // the entire collection on every change.
         val subscription = firestore.collection("reports")
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .limit(150)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(emptyList())
@@ -22,22 +26,24 @@ class FirestoreReportRepository(
                 }
                 val list = snapshot?.toObjects(CatReport::class.java) ?: emptyList()
                 val activeList = list.filter { !it.rescued && (it.status.isBlank() || it.status == "active" || it.status == "helped") }
-                    .sortedByDescending { it.createdAt?.seconds ?: 0L }
                 trySend(activeList)
             }
         awaitClose { subscription.remove() }
     }
 
     fun getRescueStories(): Flow<List<CatReport>> = callbackFlow {
+        // Ordered by createdAt (rescuedAt is absent on legacy documents, and
+        // Firestore excludes documents missing the sort field).
         val subscription = firestore.collection("reports")
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .limit(100)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(emptyList())
                     return@addSnapshotListener
                 }
                 val list = snapshot?.toObjects(CatReport::class.java) ?: emptyList()
-                val rescueList = list.filter { it.rescued }
-                    .sortedByDescending { it.rescuedAt?.seconds ?: 0L }
+                val rescueList = list.filter { it.rescued || it.status == "rescued" }
                 trySend(rescueList)
             }
         awaitClose { subscription.remove() }
@@ -46,32 +52,29 @@ class FirestoreReportRepository(
     suspend fun createReport(report: CatReport, reportId: String = "") {
         val currentUser = auth.currentUser
         val uid = currentUser?.uid ?: ""
-        val rawName = report.reporterName.trim()
-        val reporterName = when {
-            rawName.isNotEmpty() -> rawName
-            currentUser != null -> currentUser.displayName ?: currentUser.email?.substringBefore("@") ?: "Community Member"
-            else -> "Guest Reporter"
-        }
         val imgUrl = report.catImageUrl.ifBlank { report.photoUrl }
+        // Privacy: the reporter's display name is intentionally NOT persisted.
+        // Only the opaque UID (needed for "my reports" and notifications) is stored.
         val newReport = report.copy(
             reportedBy = uid,
-            reporterName = reporterName,
+            reporterName = "",
             catImageUrl = imgUrl,
             photoUrl = imgUrl,
             status = report.status.ifBlank { "active" }
         )
-        android.util.Log.d("FirestoreReportRepo", "Writing report to collection 'reports' with ID: $reportId for reporter: $reporterName (UID: $uid)")
+        android.util.Log.d("FirestoreReportRepo", "Writing report to collection 'reports' (reporter known: ${uid.isNotBlank()})")
         if (reportId.isNotBlank()) {
             firestore.collection("reports").document(reportId).set(newReport).await()
-            android.util.Log.d("FirestoreReportRepo", "Report successfully written to Firestore with ID: $reportId")
+            android.util.Log.d("FirestoreReportRepo", "Report successfully written to Firestore")
         } else {
-            val docRef = firestore.collection("reports").add(newReport).await()
-            android.util.Log.d("FirestoreReportRepo", "Report successfully written to Firestore with generated ID: ${docRef.id}")
+            firestore.collection("reports").add(newReport).await()
+            android.util.Log.d("FirestoreReportRepo", "Report successfully written to Firestore with generated ID")
         }
     }
 
     suspend fun markAsRescued(reportId: String, photoUrl: String, description: String) {
-        val uid = auth.currentUser?.uid ?: return
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Not signed in")
         firestore.collection("reports").document(reportId).update(
             mapOf(
                 "rescued" to true,
@@ -82,12 +85,35 @@ class FirestoreReportRepository(
                 "rescuedAt" to FieldValue.serverTimestamp()
             )
         ).await()
+        // Free-tier replacement for onReportUpdated rescue stats.
+        try {
+            firestore.collection("statistics").document("global").set(
+                mapOf(
+                    "totalCatsHelped" to FieldValue.increment(1),
+                    "totalCatsRescued" to FieldValue.increment(1)
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            ).await()
+        } catch (e: Exception) {
+            android.util.Log.w("FirestoreReportRepo", "Stats update skipped: ${e.message}")
+        }
     }
 
     suspend fun reachCat(reportId: String) {
-        val uid = auth.currentUser?.uid ?: return
-        val reachDoc = firestore.collection("reports").document(reportId)
-            .collection("reaches").document(uid)
-        reachDoc.set(mapOf("createdAt" to FieldValue.serverTimestamp())).await()
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Not signed in")
+
+        // Atomic: the reach record AND the public reachedCount move together.
+        val batch = firestore.batch()
+        batch.set(
+            firestore.collection("reports").document(reportId)
+                .collection("reaches").document(uid),
+            mapOf("createdAt" to FieldValue.serverTimestamp())
+        )
+        batch.update(
+            firestore.collection("reports").document(reportId),
+            mapOf("reachedCount" to FieldValue.increment(1))
+        )
+        batch.commit().await()
     }
 }

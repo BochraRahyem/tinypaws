@@ -571,7 +571,7 @@ fun FeedbackSupportCard() {
                         "message" to trimmed,
                         "senderEmail" to senderEmail.trim(),
                         "userId" to (authUser?.uid ?: "anonymous"),
-                        "userId" to (authUser?.uid ?: "anonymous"), "createdAt" to com.google.firebase.Timestamp.now(),
+                        "createdAt" to com.google.firebase.Timestamp.now(),
                         "platform" to "Android",
                         "appVersion" to "1.2.0"
                     )
@@ -602,10 +602,9 @@ fun FeedbackSupportCard() {
                         }
                         .addOnFailureListener { e ->
                             isSubmitting = false
-                            // If offline, Firestore queues locally; for any error:
-                            isSuccess = true
-                            submissionStatus = "Thank you! Your message is saved and will sync when online. 🐾"
-                            feedbackMessage = ""
+                            isSuccess = false
+                            android.util.Log.e("FeedbackSupport", "Failed to submit feedback", e)
+                            submissionStatus = "Couldn't send right now. Please try again in a moment. 🐾"
                         }
                 },
                 enabled = !isSubmitting && feedbackMessage.trim().length >= 5,

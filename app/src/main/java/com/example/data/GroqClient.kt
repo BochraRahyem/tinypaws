@@ -57,6 +57,7 @@ object GroqClient {
             put("model", "llama-3.3-70b-versatile")
             put("messages", messages)
             put("stream", true)
+            put("max_tokens", 700)
         }
 
         val request = Request.Builder()
@@ -69,8 +70,7 @@ object GroqClient {
         try {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    val errorBody = response.body?.string() ?: ""
-                    Log.e(TAG, "Groq API call failed: ${response.code} $errorBody")
+                    Log.e(TAG, "Groq API call failed: ${response.code}")
                     onChunkReceived("Error: ${response.code} ${response.message}")
                     return@withContext
                 }
@@ -81,13 +81,13 @@ object GroqClient {
                     if (line.startsWith("data: ")) {
                         val data = line.substring(6).trim()
                         if (data == "[DONE]") break
-                        
+
                         try {
                             val jsonChunk = JSONObject(data)
                             val choices = jsonChunk.optJSONArray("choices")
                             val delta = choices?.optJSONObject(0)?.optJSONObject("delta")
                             val content = delta?.optString("content") ?: ""
-                            
+
                             if (content.isNotEmpty()) {
                                 onChunkReceived(content)
                             }
@@ -97,6 +97,8 @@ object GroqClient {
                     }
                 }
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error in Groq chatStream", e)
             onChunkReceived("Error: ${e.localizedMessage}")

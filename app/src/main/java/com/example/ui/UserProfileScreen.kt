@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import androidx.compose.ui.res.stringResource
 import com.example.R
 import com.example.data.CatReport
 import com.example.data.UserProfile
@@ -49,8 +48,9 @@ fun UserProfileScreen(
     val rescueStories by viewModel.rescueStories.collectAsStateWithLifecycle()
 
     val myUid = user?.uid ?: ""
-    val myReports = activeReports.filter { it.reportedBy == myUid }
-    val myRescues = rescueStories.filter { it.rescuedBy == myUid }
+    // Guests (empty uid) must not match anonymous reports with reportedBy == "".
+    val myReports = if (myUid.isBlank()) emptyList() else activeReports.filter { it.reportedBy == myUid }
+    val myRescues = if (myUid.isBlank()) emptyList() else rescueStories.filter { it.rescuedBy == myUid }
 
     Scaffold(
         topBar = {
@@ -152,8 +152,8 @@ fun UserProfileScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = if (isVerified) androidx.compose.ui.res.stringResource(com.example.R.string.auth_email_verified_status)
-                                               else androidx.compose.ui.res.stringResource(com.example.R.string.auth_email_unverified_status),
+                                        text = if (isVerified) stringResource(com.example.R.string.auth_email_verified_status)
+                                               else stringResource(com.example.R.string.auth_email_unverified_status),
                                         style = MaterialTheme.typography.bodyMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             color = if (isVerified) Color(0xFF2E7D32) else Color(0xFFD84315),
@@ -176,7 +176,7 @@ fun UserProfileScreen(
                                                 shape = RoundedCornerShape(8.dp)
                                             ) {
                                                 Text(
-                                                    text = androidx.compose.ui.res.stringResource(com.example.R.string.auth_check_verification),
+                                                    text = stringResource(com.example.R.string.auth_check_verification),
                                                     fontSize = 11.sp,
                                                     color = DeepBurgundy,
                                                     fontFamily = QuicksandFontFamily,
@@ -195,9 +195,9 @@ fun UserProfileScreen(
                                             ) {
                                                 Text(
                                                     text = if (resendCooldownSeconds > 0)
-                                                        androidx.compose.ui.res.stringResource(com.example.R.string.auth_resend_cooldown, resendCooldownSeconds)
+                                                        stringResource(com.example.R.string.auth_resend_cooldown, resendCooldownSeconds)
                                                     else
-                                                        androidx.compose.ui.res.stringResource(com.example.R.string.auth_resend_verification),
+                                                        stringResource(com.example.R.string.auth_resend_verification),
                                                     fontSize = 11.sp,
                                                     color = Cream,
                                                     fontFamily = QuicksandFontFamily,

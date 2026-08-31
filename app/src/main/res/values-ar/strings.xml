@@ -2854,4 +2854,7 @@
     <string name="quiz_retry_btn">إعادة الاختبار 🔄</string>
     <string name="cert_preview_name">سيتم إصدار الشهادة باسم: %1$s</string>
     <string name="cert_claim_btn">استلام شهادتي 🏆</string>
+
+    <string name="nearby_report_alert_title">قطة تحتجكم قريبة 💾</string>
+    <string name="nearby_report_alert_body">%1$s — %2$s كم! هل يمكنك مساعدتها?</string>
 </resources>

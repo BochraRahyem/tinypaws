@@ -1,27 +1,68 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
       return request.auth != null && request.auth.uid == userId;
     }
 
-    // Users collection: users can read profiles, but edit ONLY their own profile
+    // Fields that are safe to expose on a public leaderboard profile.
+    function publicProfileFields() {
+      return ['displayName', 'reportedCatsCount', 'rescueStars', 'catBadges', 'totalStars', 'preferredLanguage'];
+    }
+
+    // Counter fields the OWNER may increase on their own profile (free-tier
+    // replacement for Cloud Function reward processing). Strictly monotonic:
+    // values may never decrease, preventing reset/forgery of lower scores.
+    function rewardKeys() {
+      return ['reportedCatsCount', 'rescueStars', 'catBadges', 'totalStars'];
+    }
+
+    function rewardsNotDecreased() {
+      return (!('reportedCatsCount' in request.resource.data) ||
+                request.resource.data.reportedCatsCount >= resource.data.reportedCatsCount) &&
+             (!('rescueStars' in request.resource.data) ||
+                request.resource.data.rescueStars >= resource.data.rescueStars) &&
+             (!('catBadges' in request.resource.data) ||
+                request.resource.data.catBadges >= resource.data.catBadges) &&
+             (!('totalStars' in request.resource.data) ||
+                request.resource.data.totalStars >= resource.data.totalStars);
+    }
+
+    // Aggregate statistic fields clients may increment (free-tier replacement
+    // for server-side stat processing). Nothing else on these docs is writable,
+    // and no client can delete or reset them.
+    function statisticsFields() {
+      return ['totalUsers', 'totalRegisteredUsers', 'totalCatsReported',
+              'totalCatsHelped', 'totalCatsRescued', 'totalAdoptedCats',
+              'totalFeedingStations', 'totalFeedingStationsReached'];
+    }
+
+    // Users collection: PRIVATE. Only the owner can read or write their document.
+    // Email, home coordinates, geohash and FCM token must never be readable by others.
     match /users/{userId} {
-      allow read: if isAuthenticated();
+      allow read: if isOwner(userId);
       allow create: if isOwner(userId) &&
-                    (!request.resource.data.keys().hasAny(['reportedCatsCount', 'catBadges', 'rescueStars']) ||
+                    (!request.resource.data.keys().hasAny(['reportedCatsCount', 'catBadges', 'rescueStars', 'totalStars']) ||
                      (request.resource.data.get('reportedCatsCount', 0) == 0 &&
                       request.resource.data.get('catBadges', 0) == 0 &&
-                      request.resource.data.get('rescueStars', 0) == 0));
-      allow update: if isOwner(userId) &&
-                    !request.resource.data.diff(resource.data).affectedKeys().hasAny(['reportedCatsCount', 'catBadges', 'rescueStars']);
+                      request.resource.data.get('rescueStars', 0) == 0 &&
+                      request.resource.data.get('totalStars', 0) == 0));
+      // Two legal shapes:
+      //  a) normal metadata/profile updates that never touch reward counters
+      //  b) reward-counter-only updates, which must be monotonic (never decrease)
+      allow update: if isOwner(userId) && (
+                      !request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['reportedCatsCount', 'catBadges', 'rescueStars', 'totalStars']) ||
+                      (request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(rewardKeys()) && rewardsNotDecreased())
+                    );
       allow delete: if isOwner(userId);
-      
+
       // Diary subcollection: only owner can read/write
       match /diary/{entryId} {
         allow read, write: if isOwner(userId);
@@ -31,7 +72,7 @@ service cloud.firestore {
       match /backups/{document=**} {
         allow read, write: if isOwner(userId);
       }
-      
+
       // Pets subcollection: only owner can read/write
       match /pets/{petId} {
         allow read, write: if isOwner(userId);
@@ -45,15 +86,31 @@ service cloud.firestore {
       }
     }
 
-    // Reports collection: allow guests and authenticated users to create reports
+    // Public leaderboard profiles: minimal, non-identifying fields only.
+    // Owner maintains it (creation + monotonic counter increases); Cloud
+    // Functions mirror server-side too when/if a paid backend ever exists.
+    match /publicProfiles/{userId} {
+      allow read: if true;
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasOnly(publicProfileFields());
+      allow update: if isOwner(userId)
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(publicProfileFields())
+                    && rewardsNotDecreased();
+      allow delete: if false;
+    }
+
+    // Reports collection: the stray-cat map is public data (location of the CAT,
+    // not the reporter). New writes may NOT contain the reporter's display name;
+    // `reportedBy` keeps only an opaque UID required for ownership/notification.
     match /reports/{reportId} {
       allow read: if true;
-      allow create: if (request.auth != null && request.resource.data.reportedBy == request.auth.uid)
-                   || (request.auth == null && request.resource.data.reportedBy == "");
-      allow update: if isAuthenticated() &&
-                    !request.resource.data.diff(resource.data).affectedKeys().hasAny(['reporterName', 'reportedBy', 'latitude', 'longitude', 'createdAt']);
+      allow create: if ((request.auth != null && request.resource.data.reportedBy == request.auth.uid)
+                    || (request.auth == null && request.resource.data.reportedBy == ""))
+                   && !request.resource.data.keys().hasAny(['reporterName']);
+      allow update: if isAuthenticated()
+                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['reporterName', 'reportedBy', 'latitude', 'longitude', 'createdAt']);
       allow delete: if false;
-      
+
       // Reaches subcollection: only owner of the reach can create/update
       match /reaches/{userId} {
         allow read: if isAuthenticated();
@@ -68,7 +125,7 @@ service cloud.firestore {
       allow create: if isAuthenticated()
                    && request.resource.data.createdBy == request.auth.uid;
       allow update: if isAuthenticated();
-      
+
       // Reaches subcollection: only owner of the reach can create/update
       match /reaches/{userId} {
         allow read: if isAuthenticated();
@@ -79,40 +136,57 @@ service cloud.firestore {
 
     // Stats collection: Public aggregate statistics for Website & TinyPaws App
     match /stats/{docId} {
-      // Public read for the website and app without requiring authentication
       allow read: if true;
-      
-      // Allow initializing the global document ONLY at 0 if it doesn't exist yet
+
       allow create: if docId == 'global'
                     && request.resource.data.downloads == 0
                     && request.resource.data.catsHelped == 0;
-      
-      // Strict atomic update rule:
-      // ONLY the public website download button may update stats/global by incrementing downloads by exactly +1.
-      // Direct client modification of catsHelped is strictly FORBIDDEN for all clients.
-      // (catsHelped is incremented server-side by Cloud Functions exclusively upon verified actions).
+
+      // ONLY +1 downloads increments; catsHelped is server-side exclusive.
       allow update: if docId == 'global'
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloads', 'updatedAt'])
                     && request.resource.data.downloads == resource.data.downloads + 1
                     && request.resource.data.catsHelped == resource.data.catsHelped;
-      
+
       allow delete: if false;
     }
 
-    // Statistics collection: strictly read-only for clients (updated via Cloud Functions)
+    // Statistics collection: public aggregate counts for the website Live Impact
+    // section (precomputed document statistics/global). Reads are public
+    // because the doc contains only counts (no PII) — the website shows live
+    // numbers without requiring sign-in. Writes stay restricted to
+    // authenticated field-whitelisted increments (free-tier aggregation).
     match /statistics/{docId} {
-      allow read: if isAuthenticated();
-      allow write: if false;
+      allow read: if true;
+      allow create: if isAuthenticated()
+                    && docId == 'global'
+                    && request.resource.data.keys().hasOnly(statisticsFields());
+      allow update: if isAuthenticated()
+                    && docId == 'global'
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(statisticsFields());
+      allow delete: if false;
     }
 
     // Internal idempotency records: strictly server-only (Cloud Functions)
     match /internal_processed_actions/{docId} {
       allow read, write: if false;
     }
-    
-    // Feedback collection: allow authenticated and anonymous users to submit feedback
+
+    // Feedback collection: anonymous community feedback for the website.
+    // Public can create one doc per submission with validated fields only;
+    // no one can read, update or delete via client (admin SDK only).
+    // Limits prevent abuse while keeping the write open for visitors.
     match /feedback/{feedbackId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().hasOnly(['category', 'message', 'senderEmail', 'userId', 'createdAt', 'platform', 'appVersion'])
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() >= 5
+                    && request.resource.data.message.size() <= 500
+                    && request.resource.data.category is string
+                    && request.resource.data.category.size() >= 1
+                    && request.resource.data.category.size() <= 50
+                    && request.resource.data.userId is string
+                    && request.resource.data.userId.size() >= 1
+                    && request.resource.data.userId.size() <= 128;
       allow read, update, delete: if false;
     }
 
@@ -123,4 +197,3 @@ service cloud.firestore {
     }
   }
 }
-

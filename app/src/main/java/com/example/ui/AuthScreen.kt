@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -243,9 +242,15 @@ fun AuthScreen(
                                 return@Button
                             }
                             isLoading = true
-                            viewModel.sendPasswordResetEmail(trimmedEmail, context) { _, msg ->
+                            viewModel.sendPasswordResetEmail(trimmedEmail, context) { success, msg ->
                                 isLoading = false
-                                infoMsg = msg
+                                if (success) {
+                                    errorMsg = null
+                                    infoMsg = msg
+                                } else {
+                                    infoMsg = null
+                                    errorMsg = msg
+                                }
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(56.dp).testTag("auth_send_reset_btn"),

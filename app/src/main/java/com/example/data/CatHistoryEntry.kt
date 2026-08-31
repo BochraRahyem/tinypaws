@@ -2,8 +2,8 @@ package com.example.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
-@Entity(tableName = "cat_history_entries")
+import androidx.room.Index
+@Entity(tableName = "cat_history_entries", indices = [Index("catId")])
 data class CatHistoryEntry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val catId: Int = 1,

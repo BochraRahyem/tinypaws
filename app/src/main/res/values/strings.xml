@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">TinyPaws Diary</string>
     <string name="attribution_label_logic">TinyPaws Logic</string>
@@ -15,33 +15,33 @@
     <string name="onboarding_intro_desc_3">Locate stray cat reports, add local feeding stations, receive extreme weather shelter alerts, and coordinate with nearby caregivers.</string>
     <string name="onboarding_intro_title_4">Care Guides, Quizzes &amp; AI Helper</string>
     <string name="onboarding_intro_desc_4">Learn winter survival tips, build DIY cat shelters, take educational quizzes to earn certificates, and ask the TinyPaws AI Helper for rescue advice 24/7.</string>
-    <string name="home_greeting">Hello, %1$s 🐱</string>
-    <string name="home_streak">🔥 %1$d day streak</string>
-    <string name="nav_weather_title">🔥 Heatwave &amp; Weather Tracker</string>
-    <string name="nav_weather_subtitle">7-day temperature warnings (&gt;35°C red, &lt;15°C blue) for cat safety.</string>
-    <string name="step_into_cat_universe">Step Into Your Cat\'s Universe 🐱🎀</string>
+    <string name="home_greeting">Hello, %1$s ðŸ±</string>
+    <string name="home_streak">ðŸ”¥ %1$d day streak</string>
+    <string name="nav_weather_title">ðŸ”¥ Heatwave &amp; Weather Tracker</string>
+    <string name="nav_weather_subtitle">7-day temperature warnings (&gt;35Â°C red, &lt;15Â°C blue) for cat safety.</string>
+    <string name="step_into_cat_universe">Step Into Your Cat\'s Universe ðŸ±ðŸŽ€</string>
     <string name="step_into_cat_universe_subtitle">Manage profile, growth charts, care checklist diaries, weight tracker, and veterinary care reminders in one dashboard.</string>
-    <string name="hi_user">Hi, %1$s! 👋</string>
+    <string name="hi_user">Hi, %1$s! ðŸ‘‹</string>
     <string name="logout_content_description">Logout</string>
     <string name="dashboard_tagline">Caring for our community cat friends, one paw at a time.</string>
     <string name="select_diary_room">CHOOSE YOUR DIARY ROOM</string>
-    <string name="nav_guide_title">I Need a Guide 📖</string>
+    <string name="nav_guide_title">I Need a Guide ðŸ“–</string>
     <string name="nav_guide_subtitle">Adoption guides, disease prevention, and triage protocols.</string>
-    <string name="nav_play_title">I Want to Play 🎮</string>
+    <string name="nav_play_title">I Want to Play ðŸŽ®</string>
     <string name="nav_play_subtitle">5 levels of care and health quizzes with immediate feedback.</string>
-    <string name="nav_find_title">Where Can I Find? 📍</string>
+    <string name="nav_find_title">Where Can I Find? ðŸ“</string>
     <string name="nav_find_subtitle">Dynamic maps of vet clinics, shops, and shelters.</string>
-    <string name="nav_cook_title">What Should I Cook? 🍳</string>
+    <string name="nav_cook_title">What Should I Cook? ðŸ³</string>
     <string name="nav_cook_subtitle">Select ingredients for healthy meals or explore recipes.</string>
-    <string name="nav_chat_title">TinyPaws Helper 🐾</string>
+    <string name="nav_chat_title">TinyPaws Helper ðŸ¾</string>
     <string name="nav_chat_subtitle">Ask any question about community cat care.</string>
-    <string name="nav_reminders_title">Reminders ⏰</string>
+    <string name="nav_reminders_title">Reminders â°</string>
     <string name="nav_reminders_subtitle">Keep track of vet visits, feeding time, and more.</string>
     <string name="menu_language">Language</string>
-    <string name="lang_en">English 🇬🇧</string>
-    <string name="lang_ar">Arabic 🇸🇦</string>
-    <string name="lang_fr">French 🇫🇷</string>
-    <string name="lang_es">Spanish 🇪🇸</string>
+    <string name="lang_en">English ðŸ‡¬ðŸ‡§</string>
+    <string name="lang_ar">Arabic ðŸ‡¸ðŸ‡¦</string>
+    <string name="lang_fr">French ðŸ‡«ðŸ‡·</string>
+    <string name="lang_es">Spanish ðŸ‡ªðŸ‡¸</string>
     <string name="main_extreme_weather">Notify me on extreme weather</string>
     <string name="main_extreme_weather_desc">Receive extreme temperature alerts for your marked areas</string>
     <string name="chat_title">tinypaws helper</string>
@@ -49,27 +49,27 @@
     <string name="chat_input_placeholder">type a question...</string>
     <string name="chat_clear">Clear chat</string>
     <string name="chat_back">Back</string>
-    <string name="chat_thinking">Thinking &amp; licking paws... 🐾</string>
+    <string name="chat_thinking">Thinking &amp; licking paws... ðŸ¾</string>
     <string name="daily_cat_fact_title">Daily Cat Fact</string>
 
     <!-- Coat colors / Cat types -->
-    <string name="coat_orange">Orange Tabby 🍊</string>
-    <string name="coat_gray">Gray / Blue 🩶</string>
-    <string name="coat_white">White 🤍</string>
-    <string name="coat_black">Black 🖤</string>
-    <string name="coat_orange_white">Orange &amp; White 🍊🤍</string>
-    <string name="coat_black_white">Tuxedo / Black &amp; White 🖤🤍</string>
-    <string name="coat_tabby">Tabby 🐯</string>
-    <string name="coat_caliby">Caliby (Calico + Tabby) 🌸🐯</string>
-    <string name="coat_calico">Calico 🎨</string>
-    <string name="coat_tortoiseshell">Tortoiseshell (Tortie) 🐢</string>
-    <string name="coat_siamese">Siamese 🐱</string>
-    <string name="coat_persian">Persian 👑</string>
-    <string name="coat_maine_coon">Maine Coon 🦁</string>
-    <string name="coat_ragdoll">Ragdoll 🧸</string>
-    <string name="coat_bengal">Bengal 🐆</string>
-    <string name="coat_mixed">Mixed / Domestic Shorthair 🐾</string>
-    <string name="coat_other">Other / Unknown ❓</string>
+    <string name="coat_orange">Orange Tabby ðŸŠ</string>
+    <string name="coat_gray">Gray / Blue ðŸ©¶</string>
+    <string name="coat_white">White ðŸ¤</string>
+    <string name="coat_black">Black ðŸ–¤</string>
+    <string name="coat_orange_white">Orange &amp; White ðŸŠðŸ¤</string>
+    <string name="coat_black_white">Tuxedo / Black &amp; White ðŸ–¤ðŸ¤</string>
+    <string name="coat_tabby">Tabby ðŸ¯</string>
+    <string name="coat_caliby">Caliby (Calico + Tabby) ðŸŒ¸ðŸ¯</string>
+    <string name="coat_calico">Calico ðŸŽ¨</string>
+    <string name="coat_tortoiseshell">Tortoiseshell (Tortie) ðŸ¢</string>
+    <string name="coat_siamese">Siamese ðŸ±</string>
+    <string name="coat_persian">Persian ðŸ‘‘</string>
+    <string name="coat_maine_coon">Maine Coon ðŸ¦</string>
+    <string name="coat_ragdoll">Ragdoll ðŸ§¸</string>
+    <string name="coat_bengal">Bengal ðŸ†</string>
+    <string name="coat_mixed">Mixed / Domestic Shorthair ðŸ¾</string>
+    <string name="coat_other">Other / Unknown â“</string>
 
     <!-- Rescue Profile -->
     <string name="rescue_profile_title">My Rescue Profile</string>
@@ -77,30 +77,30 @@
     <string name="profile_anonymous_angel">Anonymous Rescue Angel</string>
     <string name="profile_stat_reported">Reported</string>
     <string name="profile_stat_rescued">Rescued</string>
-    <string name="profile_stat_stars">Stars ⭐</string>
-    <string name="profile_champions_impact_title">Community Champions &amp; Impact 🏆</string>
-    <string name="profile_reporting_champion">Reporting Champion 🐱</string>
-    <string name="profile_cat_badges_earned">Cat badges earned: %1$d 🐱</string>
-    <string name="profile_rescue_champion">Rescue Champion ⭐</string>
-    <string name="profile_rescue_stars_count">Rescue Spirit stars: %1$d ⭐</string>
-    <string name="profile_impact_summary">Impact Summary 🐾</string>
+    <string name="profile_stat_stars">Stars â­</string>
+    <string name="profile_champions_impact_title">Community Champions &amp; Impact ðŸ†</string>
+    <string name="profile_reporting_champion">Reporting Champion ðŸ±</string>
+    <string name="profile_cat_badges_earned">Cat badges earned: %1$d ðŸ±</string>
+    <string name="profile_rescue_champion">Rescue Champion â­</string>
+    <string name="profile_rescue_stars_count">Rescue Spirit stars: %1$d â­</string>
+    <string name="profile_impact_summary">Impact Summary ðŸ¾</string>
     <string name="profile_cats_discovered">Cats discovered: %1$d</string>
     <string name="profile_cats_helped">Cats helped: %1$d</string>
     <string name="profile_cats_rescued">Cats rescued: %1$d</string>
     <string name="profile_active_reports_title">My Active Cat Reports</string>
-    <string name="profile_no_reports_empty">You haven\'t reported any stray cats yet. Use the \'Cats Near Me\' map to report a stray in need! 🐾</string>
+    <string name="profile_no_reports_empty">You haven\'t reported any stray cats yet. Use the \'Cats Near Me\' map to report a stray in need! ðŸ¾</string>
     <string name="profile_stray_report_default">Stray Cat Report</string>
     <string name="profile_needs_prefix">Needs: %1$s</string>
     <string name="profile_people_reached_out">%1$d people reached out</string>
-    <string name="profile_hall_of_fame_title">My Rescue Hall of Fame 🏆</string>
-    <string name="profile_no_rescues_empty">No rescued cats yet. Every rescue starts with reaching out! ❤️</string>
+    <string name="profile_hall_of_fame_title">My Rescue Hall of Fame ðŸ†</string>
+    <string name="profile_no_rescues_empty">No rescued cats yet. Every rescue starts with reaching out! â¤ï¸</string>
     <string name="profile_rescued_cat_default">Rescued Cat</string>
-    <string name="profile_status_safe_rescued">Status: Safe &amp; Rescued 🎉</string>
+    <string name="profile_status_safe_rescued">Status: Safe &amp; Rescued ðŸŽ‰</string>
 
     <!-- Community Care Tracker Card Home Screen -->
-    <string name="community_care_tracker_title">Community Care Tracker 💖</string>
+    <string name="community_care_tracker_title">Community Care Tracker ðŸ’–</string>
     <string name="community_care_tracker_subtitle">Log feeding, shelters &amp; rescues to earn badges &amp; level up!</string>
-    <string name="drawer_community_tracker">Community Care Tracker 💖</string>
+    <string name="drawer_community_tracker">Community Care Tracker ðŸ’–</string>
     <string name="tracker_header">Community Care Tracker</string>
     <string name="tracker_rank_label">YOUR COMMUNITY RANK</string>
     <string name="tracker_points_needed">%1$d points needed to reach %2$s</string>
@@ -113,42 +113,42 @@
     <string name="tracker_show_less">Show Less</string>
     <string name="tracker_view_all">View All (%1$d)</string>
     <string name="tracker_reset_data">Reset Tracker Data</string>
-    <string name="tracker_activity_feed">🐟 Feed Cat</string>
-    <string name="tracker_activity_water">💧 Water</string>
-    <string name="tracker_activity_shelter">🏡 Shelter</string>
-    <string name="tracker_activity_medical">🩺 Medical</string>
-    <string name="tracker_activity_socialize">🧸 Socialize</string>
-    <string name="tracker_activity_donate">🎁 Donate</string>
+    <string name="tracker_activity_feed">ðŸŸ Feed Cat</string>
+    <string name="tracker_activity_water">ðŸ’§ Water</string>
+    <string name="tracker_activity_shelter">ðŸ¡ Shelter</string>
+    <string name="tracker_activity_medical">ðŸ©º Medical</string>
+    <string name="tracker_activity_socialize">ðŸ§¸ Socialize</string>
+    <string name="tracker_activity_donate">ðŸŽ Donate</string>
     <string name="triage_header">Did You Find a Cat?</string>
     <string name="triage_start_desc">Found a stray, lost, or vulnerable kitten? Our interactive triage guide helps you make calm, supportive choices in the critical first moments.</string>
-    <string name="triage_start_btn">Start Interactive Triage 🐾</string>
+    <string name="triage_start_btn">Start Interactive Triage ðŸ¾</string>
     <string name="triage_step_injury_title">Check for Immediate Injuries</string>
     <string name="triage_step_injury_desc">Gently observe the cat. Is it bleeding, limping, struggling to breathe, or showing signs of pain?</string>
-    <string name="triage_injury_yes">Yes, injured 🚨</string>
-    <string name="triage_injury_no">No injuries 😊</string>
+    <string name="triage_injury_yes">Yes, injured ðŸš¨</string>
+    <string name="triage_injury_no">No injuries ðŸ˜Š</string>
     <string name="triage_cancel">Cancel Guide</string>
     <string name="triage_step_age_title">Estimate the Kitty\'s Age</string>
     <string name="triage_step_age_desc">Age dictates nutritional, thermal, and social needs. Which of these descriptions matches best?</string>
-    <string name="triage_age_baby">🍼 Tiny Kitten (0-4 weeks)</string>
+    <string name="triage_age_baby">ðŸ¼ Tiny Kitten (0-4 weeks)</string>
     <string name="triage_age_baby_desc">Eyes closed, crawls slowly, cries. Very fragile; cannot regulate heat or eat solids.</string>
-    <string name="triage_age_young">🐾 Young Kitten (4-12 weeks)</string>
+    <string name="triage_age_young">ðŸ¾ Young Kitten (4-12 weeks)</string>
     <string name="triage_age_young_desc">Playful, runs fast, has all teeth. Active, curious, ready for socialization.</string>
-    <string name="triage_age_adult">🐈 Adult Cat (1+ year)</string>
+    <string name="triage_age_adult">ðŸˆ Adult Cat (1+ year)</string>
     <string name="triage_age_adult_desc">Full grown size. Calm, wary, or very friendly. May be a lost pet.</string>
-    <string name="footer_mission_label">📢 SPEAK FOR THE VOICELESS</string>
-    <string name="footer_mission_title">Our Sacred Mission 🐾</string>
+    <string name="footer_mission_label">ðŸ“¢ SPEAK FOR THE VOICELESS</string>
+    <string name="footer_mission_title">Our Sacred Mission ðŸ¾</string>
     <string name="footer_label">SPEAK FOR THE VOICELESS</string>
-    <string name="footer_mission_text">TinyPaws Diary was born from a simple promise: to speak on behalf of every homeless kitten and backyard stray who cannot speak for themselves. Every day, thousands of quiet souls navigate the cold streets alone. We believe that no paw is too small to care for, and no kitten is too insignificant to protect.\n\nBy uniting compassionate caregivers with interactive guides, nutrition helpers, and neighborhood support tools, we actively transform streets into safe, warm sanctuaries. Thank you for stepping forward, lending your voice, and helping us co-author a story of safety and boundless love for our feline companions. ❤️</string>
-    <string name="footer_app_name">🐾 TinyPaws Diary 🐾</string>
+    <string name="footer_mission_text">TinyPaws Diary was born from a simple promise: to speak on behalf of every homeless kitten and backyard stray who cannot speak for themselves. Every day, thousands of quiet souls navigate the cold streets alone. We believe that no paw is too small to care for, and no kitten is too insignificant to protect.\n\nBy uniting compassionate caregivers with interactive guides, nutrition helpers, and neighborhood support tools, we actively transform streets into safe, warm sanctuaries. Thank you for stepping forward, lending your voice, and helping us co-author a story of safety and boundless love for our feline companions. â¤ï¸</string>
+    <string name="footer_app_name">ðŸ¾ TinyPaws Diary ðŸ¾</string>
     <string name="footer_thank_you">Every small act of kindness ripples outwards to make our streets safer, warmer, and friendlier for cats. Thank you for being their caregiver!</string>
-    <string name="footer_mission_desc">TinyPaws Diary was born from a simple promise: to speak on behalf of every homeless kitten and backyard stray who cannot speak for themselves. Every day, thousands of quiet souls navigate the cold streets alone. We believe that no paw is too small to care for, and no kitten is too insignificant to protect.\n\nBy uniting compassionate caregivers with interactive guides, nutrition helpers, and neighborhood support tools, we actively transform streets into safe, warm sanctuaries. Thank you for stepping forward, lending your voice, and helping us co-author a story of safety and boundless love for our feline companions. ❤️</string>
-    <string name="footer_tagline">🐾 TinyPaws Diary 🐾</string>
+    <string name="footer_mission_desc">TinyPaws Diary was born from a simple promise: to speak on behalf of every homeless kitten and backyard stray who cannot speak for themselves. Every day, thousands of quiet souls navigate the cold streets alone. We believe that no paw is too small to care for, and no kitten is too insignificant to protect.\n\nBy uniting compassionate caregivers with interactive guides, nutrition helpers, and neighborhood support tools, we actively transform streets into safe, warm sanctuaries. Thank you for stepping forward, lending your voice, and helping us co-author a story of safety and boundless love for our feline companions. â¤ï¸</string>
+    <string name="footer_tagline">ðŸ¾ TinyPaws Diary ðŸ¾</string>
     <string name="footer_sub_tagline">Every small act of kindness ripples outwards to make our streets safer, warmer, and friendlier for cats. Thank you for being their caregiver!</string>
     <string name="guide_title">Lily &amp; Pip\'s Guides</string>
     <string name="guide_welcome">Welcome to the Guide Room! Select any module below to start your helpful caregiving journey with Lily and Pip.</string>
     <string name="guide_banner_title">Lily &amp; Pip\'s Storyroom</string>
     <string name="guide_banner_desc">Follow Lily and her playful ginger kitten Pip as they discover how to keep our backyard companions safe, cozy, and vibrant!</string>
-    <string name="guide_back_menu">← Back to Guide Menu</string>
+    <string name="guide_back_menu">â† Back to Guide Menu</string>
     <string name="reminder_title_label">Reminder Title</string>
     <string name="cancel_action">Cancel</string>
     <string name="ok_action">OK</string>
@@ -156,15 +156,15 @@
     <string name="activity_desc_rescued">Adopted/rescued cat permanently</string>
     <string name="activity_desc_fed">Fed individual stray cat</string>
     <string name="activity_desc_station">Filled feeding station</string>
-    <string name="guide_diseases_title">Diseases 🦠</string>
+    <string name="guide_diseases_title">Diseases ðŸ¦ </string>
     <string name="guide_diseases_subtitle">Learn about 5 critical feline diseases, symptoms, and life-saving prevention steps.</string>
-    <string name="guide_adoption_title">Adoption 🏡</string>
+    <string name="guide_adoption_title">Adoption ðŸ¡</string>
     <string name="guide_adoption_subtitle">A step-by-step 6-stage timeline guide to adopt stray cats with safety and love.</string>
-    <string name="guide_diy_title">DIY Projects 🛠️</string>
+    <string name="guide_diy_title">DIY Projects ðŸ› ï¸</string>
     <string name="guide_diy_subtitle">Insulated Shelters, Active Games, and Cozy Beds. 10 visual step-by-step story stages per project!</string>
-    <string name="guide_cook_title">What to Cook? 🍳</string>
+    <string name="guide_cook_title">What to Cook? ðŸ³</string>
     <string name="guide_cook_subtitle">Select fresh ingredients to generate custom recipes, or explore our curated Homemade Recipe Library.</string>
-    <string name="guide_stray_title">Found a Stray? 🐾</string>
+    <string name="guide_stray_title">Found a Stray? ðŸ¾</string>
     <string name="guide_stray_subtitle">Essential triage protocols, safe engagement, and critical toxic food warnings.</string>
     <string name="guide_diseases_header">5 Critical Feline Diseases</string>
     <string name="guide_diseases_desc">Explore the transmission vectors, symptom recognition, and preventative care guidelines with our visual details.</string>
@@ -172,19 +172,19 @@
     <string name="guide_adoption_desc">Adopting an outdoor stray cat is a heartwarming, progressive process. Each stage contains visual indices and key milestones to guide you.</string>
     <string name="guide_diy_header">Fun Handcrafted DIY Projects</string>
     <string name="guide_diy_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts.</string>
-    <string name="guide_diy_tab_shelter">Shelter 🏡</string>
-    <string name="guide_diy_tab_game">Game 🧶</string>
-    <string name="guide_diy_tab_cozy">Cozy 🛋️</string>
-    <string name="guide_diy_start_story">Start Storyboard 🎬</string>
-    <string name="guide_diy_back_list">← Back to DIY Projects List</string>
-    <string name="guide_diy_requirements">📋 Requirements &amp; Materials</string>
-    <string name="guide_diy_storyboard">🎬 Step-by-Step Storyboard Guide</string>
+    <string name="guide_diy_tab_shelter">Shelter ðŸ¡</string>
+    <string name="guide_diy_tab_game">Game ðŸ§¶</string>
+    <string name="guide_diy_tab_cozy">Cozy ðŸ›‹ï¸</string>
+    <string name="guide_diy_start_story">Start Storyboard ðŸŽ¬</string>
+    <string name="guide_diy_back_list">â† Back to DIY Projects List</string>
+    <string name="guide_diy_requirements">ðŸ“‹ Requirements &amp; Materials</string>
+    <string name="guide_diy_storyboard">ðŸŽ¬ Step-by-Step Storyboard Guide</string>
     <string name="guide_diy_milestone">Storyboard Step %1$d of 10</string>
     <string name="guide_diy_generating">Generating Milestone %1$d...</string>
-    <string name="disease_spreads">🔗 How it Spreads:</string>
-    <string name="disease_recognition">🔍 Recognition:</string>
-    <string name="disease_prevention">🛡️ Prevention &amp; Care:</string>
-    <string name="hi_caregiver">Hi, %1$s! 👋</string>
+    <string name="disease_spreads">ðŸ”— How it Spreads:</string>
+    <string name="disease_recognition">ðŸ” Recognition:</string>
+    <string name="disease_prevention">ðŸ›¡ï¸ Prevention &amp; Care:</string>
+    <string name="hi_caregiver">Hi, %1$s! ðŸ‘‹</string>
     <string name="disease_prevention_guide">Disease Prevention Guide</string>
     <string name="adoption_journey_timeline">Adoption Journey Timeline</string>
     <string name="diy_craft_center">DIY Craft Center</string>
@@ -194,23 +194,23 @@
     <string name="growth_quiz_game">Growth Quiz Game</string>
     <string name="data_loading_error">Data loading error</string>
     <string name="question_count">Question %1$d of %2$d</string>
-    <string name="correct_answer">✨ Correct Answer!</string>
-    <string name="incorrect_answer">❌ Incorrect Answer</string>
-    <string name="next_question">Next Question ➡️</string>
-    <string name="finish_level">Finish Level 🏁</string>
-    <string name="level_complete">🎉 Level Complete! 🎉</string>
+    <string name="correct_answer">âœ¨ Correct Answer!</string>
+    <string name="incorrect_answer">âŒ Incorrect Answer</string>
+    <string name="next_question">Next Question âž¡ï¸</string>
+    <string name="finish_level">Finish Level ðŸ</string>
+    <string name="level_complete">ðŸŽ‰ Level Complete! ðŸŽ‰</string>
     <string name="score_text">You scored %1$d out of %2$d correct!</string>
-    <string name="guru_badge">🎖️ Certified Cat Guru!</string>
-    <string name="effort_badge">❤️ Wonderful effort! Replay anytime to practice.</string>
-    <string name="growing_text">Pip is growing... ✨</string>
-    <string name="advance_to_level">Advance to Level %1$d 🚀</string>
-    <string name="expert_badge">🏆 You completed all 5 levels! You are now an official TinyPaws Expert Caretaker! 👑</string>
+    <string name="guru_badge">ðŸŽ–ï¸ Certified Cat Guru!</string>
+    <string name="effort_badge">â¤ï¸ Wonderful effort! Replay anytime to practice.</string>
+    <string name="growing_text">Pip is growing... âœ¨</string>
+    <string name="advance_to_level">Advance to Level %1$d ðŸš€</string>
+    <string name="expert_badge">ðŸ† You completed all 5 levels! You are now an official TinyPaws Expert Caretaker! ðŸ‘‘</string>
     <string name="reset_replay">Reset &amp; Replay From Level 1</string>
     <string name="growth_journey_title">Lily &amp; Pip\'s 5-Island Growth Journey</string>
     <string name="tap_island_hint">Tap any island to reveal its growth storyboard</string>
     <string name="island_label">Island %1$d: %2$s</string>
-    <string name="plan_emergency_title">🚨 Emergency Response Recommended</string>
-    <string name="plan_care_guide_title">📋 Recommended Care Guide</string>
+    <string name="plan_emergency_title">ðŸš¨ Emergency Response Recommended</string>
+    <string name="plan_care_guide_title">ðŸ“‹ Recommended Care Guide</string>
     <string name="plan_emergency_intro">Keep them calm, warm, and transport them safely:</string>
     <string name="plan_emergency_step1_title">1. Place in a warm box</string>
     <string name="plan_emergency_step1_desc">Gently place the cat in a cardboard carrier lined with a soft blanket. Keep the box in a dark, quiet room.</string>
@@ -253,13 +253,13 @@
     <string name="plan_default_step3_desc">They can check for microchips and lost reports.</string>
     <string name="triage_step_counter">STEP %1$d OF 2</string>
     <string name="triage_plan_header">YOUR TRIAGE PLAN</string>
-    <string name="triage_completed_btn">Interactive Guide Completed! ✓</string>
-    <string name="back_btn">← Back</string>
+    <string name="triage_completed_btn">Interactive Guide Completed! âœ“</string>
+    <string name="back_btn">â† Back</string>
     <string name="reset_btn">Reset</string>
-    <string name="rank_kitten">Kitten Caretaker 🍼</string>
-    <string name="rank_feline">Feline Friend 🐾</string>
-    <string name="rank_champion">Cat Champion 🌟</string>
-    <string name="rank_hero">TinyPaws Hero 👑</string>
+    <string name="rank_kitten">Kitten Caretaker ðŸ¼</string>
+    <string name="rank_feline">Feline Friend ðŸ¾</string>
+    <string name="rank_champion">Cat Champion ðŸŒŸ</string>
+    <string name="rank_hero">TinyPaws Hero ðŸ‘‘</string>
     <string name="rank_max">Max Tier Achieved!</string>
     <string name="badge_first_steps_name">First Steps</string>
     <string name="badge_first_steps_desc">Logged your first community care activity!</string>
@@ -288,69 +288,69 @@
     <string name="guide_screen_stray">Stray Triage Protocol</string>
     <string name="diseases_title">5 Critical Feline Diseases</string>
     <string name="diseases_desc">Explore the transmission vectors, symptom recognition, and preventative care guidelines with our visual details (represented with specific supportive icons).</string>
-    <string name="disease_rabies_name">Rabies 🦠</string>
+    <string name="disease_rabies_name">Rabies ðŸ¦ </string>
     <string name="disease_rabies_sub">A fatal viral disease affecting the central nervous system.</string>
     <string name="disease_rabies_spread">Spreads primarily through deep saliva transfers, such as a bite or heavy scratch from an infected carrier animal (like unvaccinated strays).</string>
     <string name="disease_rabies_recog">Extreme behavior shifts (sudden aggression or fear), excessive salivation, jaw paralysis, and coordination failure.</string>
     <string name="disease_rabies_prev">Mandatory annual vaccination is 100% preventive. If scratched/bitten, wash immediately with soap under running water and seek human post-exposure vaccines.</string>
-    <string name="disease_toxo_name">Toxoplasmosis 🔬</string>
+    <string name="disease_toxo_name">Toxoplasmosis ðŸ”¬</string>
     <string name="disease_toxo_sub">A systemic infection caused by a microscopic protozoan parasite.</string>
     <string name="disease_toxo_spread">Cats contract it by hunting infected rodents or eating raw meat. Humans contract it via contact with infected feline feces (litter boxes).</string>
     <string name="disease_toxo_recog">Often completely silent. Symptomatic cats exhibit lethargy, high fever, breathing struggles, or eye inflammation.</string>
     <string name="disease_toxo_prev">Keep cats indoors to prevent hunting; feed cooked food. Pregnant women must avoid cleaning litter boxes entirely or wear gloves and scoop daily.</string>
-    <string name="disease_csd_name">Cat Scratch Disease 🐾</string>
+    <string name="disease_csd_name">Cat Scratch Disease ðŸ¾</string>
     <string name="disease_csd_sub">A bacterial infection caused by Bartonella henselae.</string>
     <string name="disease_csd_spread">Transmitted among cats by fleas. Spreads to humans via a scratch or bite contaminated with flea dirt carried on claws.</string>
     <string name="disease_csd_recog">Cats show no outward symptoms. In humans, a tiny red papule appears at scratch site, followed by painful swelling of lymph nodes.</string>
     <string name="disease_csd_prev">Use strict vet-approved monthly flea preventatives. Avoid rough play. Wash scratches immediately with antibacterial soap.</string>
-    <string name="disease_ringworm_name">Ringworm 🍄</string>
+    <string name="disease_ringworm_name">Ringworm ðŸ„</string>
     <string name="disease_ringworm_sub">A highly contagious skin and claw fungal infection (not a worm!).</string>
     <string name="disease_ringworm_spread">Spreads via direct skin contact with infected animals, or touching contaminated blankets, brushes, or soil with fungal spores.</string>
     <string name="disease_ringworm_recog">Circular patches of hair loss (alopecia), red scaly skin, dandruff, and fragile fur. Highly itchy.</string>
     <string name="disease_ringworm_prev">Quarantine infected pets immediately. Apply topical anti-fungal treatments. Wash bedding weekly in hot bleach water.</string>
-    <string name="disease_pasteur_name">Pasteurellosis 🦷</string>
+    <string name="disease_pasteur_name">Pasteurellosis ðŸ¦·</string>
     <string name="disease_pasteur_sub">A rapid bacterial infection found naturally in feline saliva.</string>
     <string name="disease_pasteur_spread">Spreads immediately via deep punctures from cat bites, where oral bacteria are forced deep into muscle tissues.</string>
     <string name="disease_pasteur_recog">Extreme throbbing pain, severe swelling, heat, and redness at the bite site within just 2 to 12 hours.</string>
     <string name="disease_pasteur_prev">Every cat bite is a medical emergency! Seek immediate human medical care for preventative antibiotics.</string>
     <string name="adoption_title">6-Stage Adoption Journey Timeline</string>
     <string name="adoption_desc">Adopting an outdoor stray cat is a heartwarming, progressive process. Each stage contains visual indices and key milestones to guide you.</string>
-    <string name="adopt_stage_1_name">Stage 1: Observation &amp; Trap 🔍</string>
+    <string name="adopt_stage_1_name">Stage 1: Observation &amp; Trap ðŸ”</string>
     <string name="adopt_stage_1_sum">Observe the stray cat\'s body language and level of socialization.</string>
     <string-array name="adopt_stage_1_bullets">
         <item>Observe from a distance to see if they are feral or simply friendly lost pets.</item>
         <item>Provide meals at consistent times daily to build localized feeding habits.</item>
         <item>Never force physical touch; let Lily\'s friendly knuckle greeting allow them to sniff you first.</item>
     </string-array>
-    <string name="adopt_stage_2_name">Stage 2: First Veterinary Checkup 🩺</string>
+    <string name="adopt_stage_2_name">Stage 2: First Veterinary Checkup ðŸ©º</string>
     <string name="adopt_stage_2_sum">Seek formal vet confirmation on health status before any home introduction.</string>
     <string-array name="adopt_stage_2_bullets">
         <item>Scan for microchips in case they are lost companions belonging to someone else.</item>
         <item>Test for critical viruses such as FIV (Feline Immunodeficiency Virus) and FeLV (Feline Leukemia).</item>
         <item>Administer standard flea, tick, and deworming treatments.</item>
     </string-array>
-    <string name="adopt_stage_3_name">Stage 3: Room Quarantine 🚪</string>
+    <string name="adopt_stage_3_name">Stage 3: Room Quarantine ðŸšª</string>
     <string name="adopt_stage_3_sum">Establish a dedicated, secure isolation space to prevent contamination or panic.</string>
     <string-array name="adopt_stage_3_bullets">
         <item>Prepare a quiet room (like a bathroom) with a warm bed, clean non-clumping litter, food, and water.</item>
         <item>Allow them to decompress in this tiny sanctuary room for at least 7 to 10 days.</item>
         <item>Visit them regularly to speak softly and feed high-value treats to create positive bonding associations.</item>
     </string-array>
-    <string name="adopt_stage_4_name">Stage 4: Scent Swapping 🧶</string>
+    <string name="adopt_stage_4_name">Stage 4: Scent Swapping ðŸ§¶</string>
     <string name="adopt_stage_4_sum">Introduce scents safely under the closed door without visual tension.</string>
     <string-array name="adopt_stage_4_bullets">
         <item>Rub a clean towel on the new cat and place it near your resident cat\'s feeding zone.</item>
         <item>Swap toys, scratching posts, and bedding between the rooms.</item>
         <item>Feed both cats on opposite sides of the closed isolation door to link their scents with food joy.</item>
     </string-array>
-    <string name="adopt_stage_5_name">Stage 5: Visual Meetings &amp; Bonding 🤝</string>
+    <string name="adopt_stage_5_name">Stage 5: Visual Meetings &amp; Bonding ðŸ¤</string>
     <string name="adopt_stage_5_sum">Allow gradual, monitored visual sessions with a protective barrier.</string>
     <string-array name="adopt_stage_5_bullets">
         <item>Crack the door open slightly with a secure door stopper or mesh screen.</item>
         <item>Conduct short, 5-minute visual sessions while praising both cats with treats.</item>
         <item>If hissed at or flattened ears occur, calmly retreat a step back and try again tomorrow.</item>
     </string-array>
-    <string name="adopt_stage_6_name">Stage 6: Lifetime Care &amp; Spaying 💖</string>
+    <string name="adopt_stage_6_name">Stage 6: Lifetime Care &amp; Spaying ðŸ’–</string>
     <string name="adopt_stage_6_sum">Commit to a lifetime of veterinary wellness, quality food, and unconditional love.</string>
     <string-array name="adopt_stage_6_bullets">
         <item>Schedule a spay or neuter surgery to stabilize hormones and prevent stray population growth.</item>
@@ -359,16 +359,16 @@
     </string-array>
     <string name="diy_title">Fun Handcrafted DIY Projects</string>
     <string name="diy_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts. Organized from easiest to hardest, lowest to highest cost, and quickest to most time-consuming.</string>
-    <string name="diy_tab_shelter">Shelter 🏡</string>
-    <string name="diy_tab_game">Game 🧶</string>
-    <string name="diy_tab_cozy">Cozy 🛋️</string>
+    <string name="diy_tab_shelter">Shelter ðŸ¡</string>
+    <string name="diy_tab_game">Game ðŸ§¶</string>
+    <string name="diy_tab_cozy">Cozy ðŸ›‹ï¸</string>
     <string name="diy_cost_label">Cost: %s</string>
     <string name="diy_time_label">Time: %s</string>
-    <string name="diy_start_storyboard">Start Storyboard 🎬</string>
-    <string name="diy_back_to_list">← Back to DIY Projects List</string>
-    <string name="diy_requirements">📋 Requirements &amp; Materials</string>
-    <string name="diy_storyboard_guide">🎬 Step-by-Step Storyboard Guide</string>
-    <string name="diy_visual_guide">🎬 Visual Step-by-Step Guide</string>
+    <string name="diy_start_storyboard">Start Storyboard ðŸŽ¬</string>
+    <string name="diy_back_to_list">â† Back to DIY Projects List</string>
+    <string name="diy_requirements">ðŸ“‹ Requirements &amp; Materials</string>
+    <string name="diy_storyboard_guide">ðŸŽ¬ Step-by-Step Storyboard Guide</string>
+    <string name="diy_visual_guide">ðŸŽ¬ Visual Step-by-Step Guide</string>
     <string name="diy_milestone_desc">We\'ve highlighted 3 key visual milestones for your project. Follow these to ensure a perfect build!</string>
     <string name="diy_generating_milestone">Generating Milestone %d...</string>
     <string name="diy_milestone_1">Milestone 1: The Foundation</string>
@@ -410,66 +410,66 @@
     <string name="guide_stray_tab_care">Ongoing Care</string>
     <string name="stray_critical_title">CRITICAL: What NOT to feed a Cat!</string>
     <string name="stray_critical_desc">A cat\'s liver and blood cells cannot process human foods. Avoid these highly toxic items entirely (represented as visual danger slots):</string>
-    <string name="stray_toxic_1_name">Onion &amp; Garlic 🧄</string>
+    <string name="stray_toxic_1_name">Onion &amp; Garlic ðŸ§„</string>
     <string name="stray_toxic_1_desc">Destroys feline red blood cells, causing fatal hemolytic anemia.</string>
-    <string name="stray_toxic_2_name">Chocolate &amp; Caffeine 🍫</string>
+    <string name="stray_toxic_2_name">Chocolate &amp; Caffeine ðŸ«</string>
     <string name="stray_toxic_2_desc">Contains stimulants that trigger fatal muscle tremors, heart attacks, and seizures.</string>
-    <string name="stray_toxic_3_name">Grapes &amp; Raisins 🍇</string>
+    <string name="stray_toxic_3_name">Grapes &amp; Raisins ðŸ‡</string>
     <string name="stray_toxic_3_desc">Causes acute, sudden kidney failure in both cats and dogs.</string>
-    <string name="stray_toxic_4_name">Cows Milk (Lactose) 🥛</string>
+    <string name="stray_toxic_4_name">Cows Milk (Lactose) ðŸ¥›</string>
     <string name="stray_toxic_4_desc">Causes intense intestinal pain, bloating, and severe diarrhea because adult cats lack lactase.</string>
-    <string name="stray_toxic_5_name">Raw Dough 🍞</string>
+    <string name="stray_toxic_5_name">Raw Dough ðŸž</string>
     <string name="stray_toxic_5_desc">Swells inside the stomach, releasing toxic ethanol that causes alcohol poisoning.</string>
-    <string name="stray_toxic_6_name">Alcohol 🍺</string>
+    <string name="stray_toxic_6_name">Alcohol ðŸº</string>
     <string name="stray_toxic_6_desc">A single tablespoon causes fatal brain failure and respiratory depression.</string>
     <string name="stray_protocol_title">Safe Engagement Protocol</string>
-    <string name="stray_protocol_step_1_name">Assess Body Language 😾</string>
+    <string name="stray_protocol_step_1_name">Assess Body Language ðŸ˜¾</string>
     <string name="stray_protocol_step_1_desc">Never grab a hissing, growling, or shaking cat. Allow them space.</string>
-    <string name="stray_protocol_step_2_name">Knuckle Greeting 👧</string>
+    <string name="stray_protocol_step_2_name">Knuckle Greeting ðŸ‘§</string>
     <string name="stray_protocol_step_2_desc">Sit low, avoid eye contact, and stretch your hand out slowly to let them smell you.</string>
-    <string name="stray_protocol_step_3_name">Food Trap 🍲</string>
+    <string name="stray_protocol_step_3_name">Food Trap ðŸ²</string>
     <string name="stray_protocol_step_3_desc">Place fragrant wet food inside a secure humane carrier to lead them to safety.</string>
-    <string name="stray_protocol_step_4_name">Scan for Microchip 🏥</string>
+    <string name="stray_protocol_step_4_name">Scan for Microchip ðŸ¥</string>
     <string name="stray_protocol_step_4_desc">Friendly strays might be lost pets. Take them to any vet clinic to scan their chip free.</string>
-    <string name="stray_protocol_step_5_name">TNR for Ferals ✂️</string>
+    <string name="stray_protocol_step_5_name">TNR for Ferals âœ‚ï¸</string>
     <string name="stray_protocol_step_5_desc">If the cat is fearful and unsocialized, respect their home range and schedule spay/neuter surgery via TNR.</string>
-    <string name="quiz_welcome">Hi, %1$s! 👋</string>
+    <string name="quiz_welcome">Hi, %1$s! ðŸ‘‹</string>
     <string name="quiz_welcome_default">Caregiver</string>
     <string name="quiz_title">Growth Quiz Game</string>
     <string name="quiz_reset_btn">Reset Game</string>
     <string name="quiz_error_loading">Data loading error</string>
     <string name="quiz_error_details">Quiz questions for level %1$d are currently unavailable or invalid.</string>
     <string name="quiz_question_progress">Question %1$d of %2$d</string>
-    <string name="quiz_correct_title">✨ Correct Answer!</string>
-    <string name="quiz_wrong_title">❌ Incorrect Answer</string>
-    <string name="quiz_next_btn">Next Question ➡️</string>
-    <string name="quiz_finish_btn">Finish Level 🏁</string>
-    <string name="quiz_complete_title">🎉 Level Complete! 🎉</string>
+    <string name="quiz_correct_title">âœ¨ Correct Answer!</string>
+    <string name="quiz_wrong_title">âŒ Incorrect Answer</string>
+    <string name="quiz_next_btn">Next Question âž¡ï¸</string>
+    <string name="quiz_finish_btn">Finish Level ðŸ</string>
+    <string name="quiz_complete_title">ðŸŽ‰ Level Complete! ðŸŽ‰</string>
     <string name="quiz_score_msg">You scored %1$d out of %2$d correct!</string>
-    <string name="quiz_guru_msg">🎖️ Certified Cat Guru!</string>
-    <string name="quiz_effort_msg">❤️ Wonderful effort! Replay anytime to practice.</string>
-    <string name="quiz_advance_btn">Advance to Level %1$d 🚀</string>
-    <string name="quiz_jumping_msg">Pip is growing... ✨</string>
-    <string name="quiz_all_complete">🏆 You completed all 5 levels! You are now an official TinyPaws Expert Caretaker! 👑</string>
+    <string name="quiz_guru_msg">ðŸŽ–ï¸ Certified Cat Guru!</string>
+    <string name="quiz_effort_msg">â¤ï¸ Wonderful effort! Replay anytime to practice.</string>
+    <string name="quiz_advance_btn">Advance to Level %1$d ðŸš€</string>
+    <string name="quiz_jumping_msg">Pip is growing... âœ¨</string>
+    <string name="quiz_all_complete">ðŸ† You completed all 5 levels! You are now an official TinyPaws Expert Caretaker! ðŸ‘‘</string>
     <string name="quiz_reset_replay">Reset &amp; Replay From Level 1</string>
-    <string name="quiz_q1_text">Cats are basically professional nappers. How many hours a day do they sleep? 😴</string>
+    <string name="quiz_q1_text">Cats are basically professional nappers. How many hours a day do they sleep? ðŸ˜´</string>
     <string-array name="quiz_q1_options">
         <item>4-6 hrs</item>
         <item>8-10 hrs</item>
         <item>12-16 hrs</item>
         <item>basically never</item>
     </string-array>
-    <string name="quiz_q1_correct">Yep! 12-16 hrs a day. Cats really said \'sleep is the main character\' 🛌✨</string>
-    <string name="quiz_q1_wrong">Nope, but respect the guess 😅 Cats sleep 12-16 hrs a day. Absolute nap champions.</string>
-    <string name="quiz_q2_text">Can cats eat chocolate? 🍫</string>
+    <string name="quiz_q1_correct">Yep! 12-16 hrs a day. Cats really said \'sleep is the main character\' ðŸ›Œâœ¨</string>
+    <string name="quiz_q1_wrong">Nope, but respect the guess ðŸ˜… Cats sleep 12-16 hrs a day. Absolute nap champions.</string>
+    <string name="quiz_q2_text">Can cats eat chocolate? ðŸ«</string>
     <string-array name="quiz_q2_options">
         <item>Yes, treat them!</item>
         <item>NO. Never. It\'s toxic.</item>
         <item>Only dark chocolate</item>
         <item>Only on birthdays</item>
     </string-array>
-    <string name="quiz_q2_correct">Correct 🚫🍫 Chocolate is toxic to cats. Keep it far, far away.</string>
-    <string name="quiz_q2_wrong">Big no 🚫 Chocolate is toxic to cats, no exceptions, not even \'just a little.\'</string>
+    <string name="quiz_q2_correct">Correct ðŸš«ðŸ« Chocolate is toxic to cats. Keep it far, far away.</string>
+    <string name="quiz_q2_wrong">Big no ðŸš« Chocolate is toxic to cats, no exceptions, not even \'just a little.\'</string>
     <string name="quiz_q3_text">What\'s a group of cats called? (this one\'s just fun trivia lol)</string>
     <string-array name="quiz_q3_options">
         <item>A squad</item>
@@ -477,26 +477,26 @@
         <item>A pounce</item>
         <item>A meow-b</item>
     </string-array>
-    <string name="quiz_q3_correct">Yesss, a \'clowder\' 🐱🐱🐱 use it to sound smart at parties.</string>
-    <string name="quiz_q3_wrong">Close energy but it\'s actually a \'clowder\' 🐱 iconic word tbh.</string>
+    <string name="quiz_q3_correct">Yesss, a \'clowder\' ðŸ±ðŸ±ðŸ± use it to sound smart at parties.</string>
+    <string name="quiz_q3_wrong">Close energy but it\'s actually a \'clowder\' ðŸ± iconic word tbh.</string>
     <string name="quiz_q4_text">Should you give a stray cat water, or just food?</string>
     <string-array name="quiz_q4_options">
         <item>Just food</item>
-        <item>Water AND food 💧🍽️</item>
+        <item>Water AND food ðŸ’§ðŸ½ï¸</item>
         <item>Just water</item>
         <item>Neither, cats find their own</item>
     </string-array>
-    <string name="quiz_q4_correct">Correct! Water is honestly just as important — a lot of cats walk around lowkey dehydrated 💧</string>
-    <string name="quiz_q4_wrong">Nope — water matters just as much as food. Don\'t skip it 💧</string>
-    <string name="quiz_q5_text">Is milk actually good for cats, despite what cartoons say? 🥛</string>
+    <string name="quiz_q4_correct">Correct! Water is honestly just as important â€” a lot of cats walk around lowkey dehydrated ðŸ’§</string>
+    <string name="quiz_q4_wrong">Nope â€” water matters just as much as food. Don\'t skip it ðŸ’§</string>
+    <string name="quiz_q5_text">Is milk actually good for cats, despite what cartoons say? ðŸ¥›</string>
     <string-array name="quiz_q5_options">
         <item>Yes, it\'s basically cat juice</item>
         <item>No, most cats are lactose intolerant</item>
         <item>Only chocolate milk</item>
         <item>Only warm milk</item>
     </string-array>
-    <string name="quiz_q5_correct">Correct — cartoons lied to us 😭 Most cats can\'t actually digest milk well.</string>
-    <string name="quiz_q5_wrong">Plot twist: most cats are lactose intolerant. Cartoons scammed us all 🥛😭</string>
+    <string name="quiz_q5_correct">Correct â€” cartoons lied to us ðŸ˜­ Most cats can\'t actually digest milk well.</string>
+    <string name="quiz_q5_wrong">Plot twist: most cats are lactose intolerant. Cartoons scammed us all ðŸ¥›ðŸ˜­</string>
     <string name="quiz_level_0">Sunny Meadow</string>
     <string name="quiz_level_1">Whisker Woods</string>
     <string name="quiz_level_2">Paw Print Path</string>
@@ -505,10 +505,10 @@
     <string name="chat_send">Send</string>
     <string name="chat_delete">Delete</string>
     <string name="toggle">Toggle</string>
-    <string name="diy_cat_shelter">Shelter 🏡</string>
-    <string name="diy_cat_game">Game 🧶</string>
-    <string name="diy_cat_cozy">Cozy 🛋️</string>
-    <string name="diy_cat_all_blueprint">📋 View Full Blueprint at a Glance</string>
+    <string name="diy_cat_shelter">Shelter ðŸ¡</string>
+    <string name="diy_cat_game">Game ðŸ§¶</string>
+    <string name="diy_cat_cozy">Cozy ðŸ›‹ï¸</string>
+    <string name="diy_cat_all_blueprint">ðŸ“‹ View Full Blueprint at a Glance</string>
     <string name="diy_blueprint_step">STEP %1$d</string>
     <string name="diy_section_title">Fun Handcrafted DIY Projects</string>
     <string name="diy_section_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts. Organized from easiest to hardest, lowest to highest cost, and quickest to most time-consuming.</string>
@@ -518,16 +518,16 @@
     <string name="diy_difficulty_hard">Hard</string>
     <string name="diy_difficulty_hardest">Hardest</string>
     <string name="creation_title">Magic Creation Studio</string>
-    <string name="creation_art_studio">Kitten Art Studio 🎨</string>
-    <string name="creation_music_studio">Lullaby Music 🎵</string>
-    <string name="creation_generate_btn">Generate My Creation ✨</string>
+    <string name="creation_art_studio">Kitten Art Studio ðŸŽ¨</string>
+    <string name="creation_music_studio">Lullaby Music ðŸŽµ</string>
+    <string name="creation_generate_btn">Generate My Creation âœ¨</string>
     <string name="creation_art_desc">Describe the cat art you want to see! Be creative.</string>
     <string name="creation_music_desc">What kind of soothing melody should we generate for the kittens?</string>
     <string name="creation_art_placeholder">A cute ginger cat wearing a space suit in a galaxy of yarn...</string>
     <string name="creation_music_placeholder">Soft piano melody with purring sounds and gentle rain...</string>
     <string name="creation_is_pro">High Detail (Pro Model)</string>
     <string name="creation_is_full_track">Full Length Track (Lyria)</string>
-    <string name="creation_download_btn">Download Artwork 📥</string>
+    <string name="creation_download_btn">Download Artwork ðŸ“¥</string>
     <string name="creation_generating">AI is crafting your magic...</string>
     <string name="creation_model_label">2. Select Model</string>
     <string name="creation_model_pro_title">Ultra HD 3-Pro</string>
@@ -548,19 +548,19 @@
     <string name="creation_no_audio">No audio file composed yet.</string>
     <string name="creation_submit_prompt">Submit a prompt above to start composing.</string>
     <string name="location_screen_title">Nearby Location Finder</string>
-    <string name="location_live_search">📍 Live Location Search</string>
+    <string name="location_live_search">ðŸ“ Live Location Search</string>
     <string name="location_search_desc">Accessing nearby clinics, pet supplies, and shelters. Results are automatically sorted from nearest to farthest based on your coordinates.</string>
     <string name="location_input_label">Your Location / Address / Coordinates</string>
     <string name="location_input_placeholder">e.g. New York, NY or GPS coordinates</string>
-    <string name="location_vets_btn">Nearby Vets 🩺</string>
-    <string name="location_shops_btn">Nearby Shops 🛒</string>
-    <string name="location_shelters_btn">Nearby Shelters 🏡</string>
-    <string name="location_map_view">🗺️ Dynamic Map View</string>
-    <string name="location_take_me_there">Take me there 🚀</string>
+    <string name="location_vets_btn">Nearby Vets ðŸ©º</string>
+    <string name="location_shops_btn">Nearby Shops ðŸ›’</string>
+    <string name="location_shelters_btn">Nearby Shelters ðŸ¡</string>
+    <string name="location_map_view">ðŸ—ºï¸ Dynamic Map View</string>
+    <string name="location_take_me_there">Take me there ðŸš€</string>
     <string name="location_results_header">Discovered results sorted by distance:</string>
     <string name="location_no_results">No results found. Select a category or input an address above!</string>
-    <string name="location_distance_km">⚡ ~%1$.1f km away</string>
-    <string name="location_pin">🐾 PIN: %1$s</string>
+    <string name="location_distance_km">âš¡ ~%1$.1f km away</string>
+    <string name="location_pin">ðŸ¾ PIN: %1$s</string>
     <string name="location_coords">Coordinates: Lat %1$.4f, Lng %2$.4f</string>
     <string name="location_back_home">Back to home</string>
     <string name="location_close_map">Close map</string>
@@ -623,15 +623,15 @@
     <string name="quiz_q6_opt1">Running at full speed</string>
     <string name="quiz_q6_opt2">Staring into your eyes</string>
     <string name="quiz_q6_opt3">Loud clapping noises</string>
-    <string name="quiz_q6_correct">Correct! Moving slowly and staying low makes you look way less like a predator 🤫</string>
-    <string name="quiz_q6_wrong">Wrong — loud or fast moves will just scare them away. Slow and low is the way 🤫</string>
+    <string name="quiz_q6_correct">Correct! Moving slowly and staying low makes you look way less like a predator ðŸ¤«</string>
+    <string name="quiz_q6_wrong">Wrong â€” loud or fast moves will just scare them away. Slow and low is the way ðŸ¤«</string>
     <string name="quiz_q7_text">If a cat\'s ears are pinned flat against its head, it feels:</string>
     <string name="quiz_q7_opt0">Tail</string>
     <string name="quiz_q7_opt1">Whiskers</string>
     <string name="quiz_q7_opt2">Eyelashes</string>
     <string name="quiz_q7_opt3">Claws</string>
-    <string name="quiz_q7_correct">Correct! Pinned ears mean \'back off, I\'m not happy\' 😾</string>
-    <string name="quiz_q7_wrong">Nope — that\'s a classic anger or fear sign. Give them some space! 😾</string>
+    <string name="quiz_q7_correct">Correct! Pinned ears mean \'back off, I\'m not happy\' ðŸ˜¾</string>
+    <string name="quiz_q7_wrong">Nope â€” that\'s a classic anger or fear sign. Give them some space! ðŸ˜¾</string>
     <string name="quiz_q8_text">placeholder</string>
     <string name="quiz_q8_opt0">Angry and aggressive</string>
     <string name="quiz_q8_opt1">Terrified</string>
@@ -738,10 +738,10 @@
     <string name="quiz_q22_correct">e</string>
     <string name="quiz_q22_wrong">f</string>
     <string name="quiz_q23_text">placeholder</string>
-    <string name="quiz_q23_opt0">95.0°F - 97.5°F</string>
-    <string name="quiz_q23_opt1">100.5°F - 102.5°F</string>
-    <string name="quiz_q23_opt2">105.0°F - 108.0°F</string>
-    <string name="quiz_q23_opt3">98.6°F exactly</string>
+    <string name="quiz_q23_opt0">95.0Â°F - 97.5Â°F</string>
+    <string name="quiz_q23_opt1">100.5Â°F - 102.5Â°F</string>
+    <string name="quiz_q23_opt2">105.0Â°F - 108.0Â°F</string>
+    <string name="quiz_q23_opt3">98.6Â°F exactly</string>
     <string name="quiz_q23_correct">e</string>
     <string name="quiz_q23_wrong">f</string>
     <string name="quiz_q24_text">placeholder</string>
@@ -1373,7 +1373,7 @@
     <string name="island_status_current">Current Level</string>
     <string name="island_status_completed">Completed</string>
     <string name="island_status_locked">Locked</string>
-    <string name="storyboard_narrative_header">📖 Storyboard Scene Narrative:</string>
+    <string name="storyboard_narrative_header">ðŸ“– Storyboard Scene Narrative:</string>
     <string name="guide_cook_header">Storytelling: How to Cook for a Cat</string>
     <string name="guide_cook_intro_title">Introduction: The Kitty Chef\'s Philosophy</string>
     <string name="guide_cook_intro_desc">Cooking for a cat is an act of love. Pip and Lily share their favorite safe, nutritious recipes that make every meal a celebration of health and happiness.</string>
@@ -1384,17 +1384,17 @@
     <string name="guide_cook_library_tab">Recipe Library</string>
     <string name="guide_cook_picker_title">Kitten Kitchen Picker</string>
     <string name="guide_cook_picker_desc">Select the fresh ingredients you have at home to see what custom healthy meal Lily can cook for Pip!</string>
-    <string name="mat_fish">🐟 White Fish</string>
+    <string name="mat_fish">ðŸŸ White Fish</string>
     <string name="location_icon_desc">Location Icon</string>
     <string name="guide_diy_header_alt">Fun Handcrafted DIY Projects for Cats</string>
     <string name="guide_diy_header_desc">Improve your kitty\'s physical environment and help community cats stay safe with these storybook crafts. Organized from easiest to hardest, lowest to highest cost, and quickest to most time-consuming.</string>
-    <string name="guide_diy_blueprint_title">📋 View Full Blueprint at a Glance</string>
-    <string name="recipe_1_title">Steamed Salmon &amp; Carrot Puree 🐟🥕</string>
+    <string name="guide_diy_blueprint_title">ðŸ“‹ View Full Blueprint at a Glance</string>
+    <string name="recipe_1_title">Steamed Salmon &amp; Carrot Puree ðŸŸðŸ¥•</string>
     <string name="recipe_1_desc">A vitamin-rich, omega-3 rich healthy dinner that is highly palatable even for picky eaters.</string>
     <string-array name="recipe_1_materials">
-        <item>🐟 Salmon (100g)</item>
-        <item>🥕 Carrot slice</item>
-        <item>🍵 Warm Water</item>
+        <item>ðŸŸ Salmon (100g)</item>
+        <item>ðŸ¥• Carrot slice</item>
+        <item>ðŸµ Warm Water</item>
     </string-array>
     <string-array name="recipe_1_steps">
         <item>Wash and prepare 100g of fresh boneless salmon filet.</item>
@@ -1420,12 +1420,12 @@
         <item>Lily stirs the salmon and carrot puree in a small dish while Pip rubs her ankle.</item>
         <item>Lily sets the final dish on the floor and Pip immediately begins eating the delicious mash.</item>
     </string-array>
-    <string name="recipe_2_title">Soothing Chicken &amp; Pumpkin Stew 🍗🎃</string>
+    <string name="recipe_2_title">Soothing Chicken &amp; Pumpkin Stew ðŸ—ðŸŽƒ</string>
     <string name="recipe_2_desc">The ultimate digestive-friendly comforting stew. Perfect for kitties with slightly sensitive tummies.</string>
     <string-array name="recipe_2_materials">
-        <item>🍗 Chicken (100g)</item>
-        <item>🎃 Pumpkin (1 tbsp)</item>
-        <item>🥣 Chicken Broth</item>
+        <item>ðŸ— Chicken (100g)</item>
+        <item>ðŸŽƒ Pumpkin (1 tbsp)</item>
+        <item>ðŸ¥£ Chicken Broth</item>
     </string-array>
     <string-array name="recipe_2_steps">
         <item>Acquire 100g of lean skinless chicken breast filet.</item>
@@ -1451,12 +1451,12 @@
         <item>Lily spoons fresh, unsalted chicken broth into the bowl, while Pip\'s tail wags with excitement.</item>
         <item>Lily places the soothing lukewarm stew on the floor, and Pip eagerly eats the entire meal.</item>
     </string-array>
-    <string name="recipe_3_title">Lily\'s Comforting Chicken-Rice Porridge 🍗🌾</string>
+    <string name="recipe_3_title">Lily\'s Comforting Chicken-Rice Porridge ðŸ—ðŸŒ¾</string>
     <string name="recipe_3_desc">A soft, easily digestible porridge designed to hydrate and nourish weak or recovering cats.</string>
     <string-array name="recipe_3_materials">
-        <item>🍗 Chicken Breast</item>
-        <item>🌾 Rice (1 tbsp)</item>
-        <item>🥕 Carrot slice</item>
+        <item>ðŸ— Chicken Breast</item>
+        <item>ðŸŒ¾ Rice (1 tbsp)</item>
+        <item>ðŸ¥• Carrot slice</item>
     </string-array>
     <string-array name="recipe_3_steps">
         <item>Measure 1 tablespoon of organic plain white rice.</item>
@@ -1482,25 +1482,25 @@
         <item>Lily stirs the mixture with a wooden spoon to create a soft, even paste, while Pip circles her feet.</item>
         <item>Lily serves the lukewarm chicken rice porridge, and Pip enjoys the starchy, hydrating meal.</item>
     </string-array>
-    <string name="mat_salmon">🐟 Salmon (100g)</string>
-    <string name="mat_carrot">🥕 Carrot slice</string>
-    <string name="mat_water">🍵 Warm Water</string>
-    <string name="mat_chicken">🍗 Chicken (100g)</string>
-    <string name="mat_pumpkin">🎃 Pumpkin (1 tbsp)</string>
-    <string name="mat_broth">🥣 Chicken Broth</string>
-    <string name="mat_rice">🌾 Rice (1 tbsp)</string>
-    <string name="mat_egg">🥚 Egg Yolk</string>
-    <string name="mat_potato">🍠 Sweet Potato (50g)</string>
-    <string name="mat_tuna">🐟 Tuna in water</string>
-    <string name="mat_broccoli">🥦 Broccoli floret</string>
+    <string name="mat_salmon">ðŸŸ Salmon (100g)</string>
+    <string name="mat_carrot">ðŸ¥• Carrot slice</string>
+    <string name="mat_water">ðŸµ Warm Water</string>
+    <string name="mat_chicken">ðŸ— Chicken (100g)</string>
+    <string name="mat_pumpkin">ðŸŽƒ Pumpkin (1 tbsp)</string>
+    <string name="mat_broth">ðŸ¥£ Chicken Broth</string>
+    <string name="mat_rice">ðŸŒ¾ Rice (1 tbsp)</string>
+    <string name="mat_egg">ðŸ¥š Egg Yolk</string>
+    <string name="mat_potato">ðŸ  Sweet Potato (50g)</string>
+    <string name="mat_tuna">ðŸŸ Tuna in water</string>
+    <string name="mat_broccoli">ðŸ¥¦ Broccoli floret</string>
     <string name="time_12m">12 mins</string>
     <string name="time_25m">25 mins</string>
-    <string name="recipe_4_title">Yolk &amp; Sweet Potato Fluffy Soufflé 🥚🍠</string>
+    <string name="recipe_4_title">Yolk &amp; Sweet Potato Fluffy SoufflÃ© ðŸ¥šðŸ </string>
     <string name="recipe_4_desc">A rich, nutrient-dense treat filled with premium fats, vitamins, and healthy carbohydrates.</string>
     <string-array name="recipe_4_materials">
-        <item>🥚 Egg Yolk</item>
-        <item>🍠 Sweet Potato (50g)</item>
-        <item>💧 Warm Water</item>
+        <item>ðŸ¥š Egg Yolk</item>
+        <item>ðŸ  Sweet Potato (50g)</item>
+        <item>ðŸ’§ Warm Water</item>
     </string-array>
     <string-array name="recipe_4_steps">
         <item>Acquire one fresh organic egg and 50g of sweet potato.</item>
@@ -1526,12 +1526,12 @@
         <item>Lily whisks in a splash of warm water to make the souffle extra light and fluffy, while Pip\'s tail wags.</item>
         <item>Lily places the fluffy yolk souffle on the floor, and Pip happily laps up the rich, creamy treat.</item>
     </string-array>
-    <string name="recipe_5_title">Quick Gourmet Fish Pâté 🐟</string>
+    <string name="recipe_5_title">Quick Gourmet Fish PÃ¢tÃ© ðŸŸ</string>
     <string name="recipe_5_desc">A simple, highly aromatic seafood feast packed with high-quality amino acids.</string>
     <string-array name="recipe_5_materials">
-        <item>🐟 Fish Filet (100g)</item>
-        <item>💧 Plain Water</item>
-        <item>🍵 Safe Tuna Water</item>
+        <item>ðŸŸ Fish Filet (100g)</item>
+        <item>ðŸ’§ Plain Water</item>
+        <item>ðŸµ Safe Tuna Water</item>
     </string-array>
     <string-array name="recipe_5_steps">
         <item>Select 100g of fresh, boneless fish filet.</item>
@@ -1542,7 +1542,7 @@
         <item>Flake the fish thoroughly with a fork, checking for bones.</item>
         <item>Transfer the flaked fish to a clean mixing bowl.</item>
         <item>Stir in 1 tablespoon of warm water or unsalted tuna water.</item>
-        <item>Mash with a spoon until a smooth, wet pâté is formed.</item>
+        <item>Mash with a spoon until a smooth, wet pÃ¢tÃ© is formed.</item>
         <item>Serve this delicious, aromatic fresh fish meal to your kitten.</item>
     </string-array>
     <string-array name="recipe_5_alt">
@@ -1557,12 +1557,12 @@
         <item>Lily mashes the mixture into a perfectly smooth wet pate, while Pip licks his chops.</item>
         <item>Lily serves the quick gourmet fish pate, and Pip enthusiastically devours the aromatic meal.</item>
     </string-array>
-    <string name="recipe_6_title">Essential Shredded Chicken Bowl 🍗</string>
+    <string name="recipe_6_title">Essential Shredded Chicken Bowl ðŸ—</string>
     <string name="recipe_6_desc">A classic, high-protein staple that is completely safe and mirrors their natural obligate carnivore diet.</string>
     <string-array name="recipe_6_materials">
-        <item>🍗 Chicken Breast (100g)</item>
-        <item>💧 Plain Water</item>
-        <item>🥣 Plain Broth</item>
+        <item>ðŸ— Chicken Breast (100g)</item>
+        <item>ðŸ’§ Plain Water</item>
+        <item>ðŸ¥£ Plain Broth</item>
     </string-array>
     <string-array name="recipe_6_steps">
         <item>Select 100g of fresh, unseasoned chicken breast filet.</item>
@@ -1588,12 +1588,12 @@
         <item>Lily drizzles a tiny spoonful of plain chicken water over the shredded bowl, while Pip\'s tail wags.</item>
         <item>Lily puts the shredded chicken bowl on the floor, and Pip happily enjoys his favorite high-protein meal.</item>
     </string-array>
-    <string name="recipe_7_title">Pip\'s Harvest Vegetable Medley 🥦🎃🍠</string>
+    <string name="recipe_7_title">Pip\'s Harvest Vegetable Medley ðŸ¥¦ðŸŽƒðŸ </string>
     <string name="recipe_7_desc">A fiber-rich veggie base that can be mixed into commercial cat food to aid digestion and hairball control.</string>
     <string-array name="recipe_7_materials">
-        <item>🥦 Broccoli bits</item>
-        <item>🎃 Pumpkin cubes</item>
-        <item>🍠 Sweet Potato</item>
+        <item>ðŸ¥¦ Broccoli bits</item>
+        <item>ðŸŽƒ Pumpkin cubes</item>
+        <item>ðŸ  Sweet Potato</item>
     </string-array>
     <string-array name="recipe_7_steps">
         <item>Gather fresh broccoli florets, pumpkin pieces, and sweet potato.</item>
@@ -1619,12 +1619,12 @@
         <item>Lily stirs a spoonful of the veggie paste into Pip\'s dinner bowl, while Pip rubs against her ankles.</item>
         <item>Lily places the vegetable-boosted meal on the floor, and Pip happily eats the fiber-rich feast.</item>
     </string-array>
-    <string name="recipe_8_title">Turkey &amp; Peas Power Bowl 🦃🟢</string>
+    <string name="recipe_8_title">Turkey &amp; Peas Power Bowl ðŸ¦ƒðŸŸ¢</string>
     <string name="recipe_8_desc">A low-fat, high-protein bowl featuring lean turkey and fiber-rich peas, perfect for weight management and overall health.</string>
     <string-array name="recipe_8_materials">
-        <item>🦃 Ground Turkey (100g)</item>
-        <item>🟢 Green Peas (1 tablespoon)</item>
-        <item>🚰 Water for boiling</item>
+        <item>ðŸ¦ƒ Ground Turkey (100g)</item>
+        <item>ðŸŸ¢ Green Peas (1 tablespoon)</item>
+        <item>ðŸš° Water for boiling</item>
     </string-array>
     <string-array name="recipe_8_steps">
         <item>Prepare 100g of fresh, unseasoned ground turkey.</item>
@@ -1650,12 +1650,12 @@
         <item>Illustration of the meal cooling in a bowl.</item>
         <item>Illustration of a cat enjoying the Turkey &amp; Peas Power Bowl.</item>
     </string-array>
-    <string name="recipe_9_title">Lean Beef &amp; Zucchini Bites 🥩🥒</string>
+    <string name="recipe_9_title">Lean Beef &amp; Zucchini Bites ðŸ¥©ðŸ¥’</string>
     <string name="recipe_9_desc">Nutrient-dense beef paired with hydrating zucchini for a hearty, iron-rich feast.</string>
     <string-array name="recipe_9_materials">
-        <item>🥩 Lean Ground Beef (100g)</item>
-        <item>🥒 Zucchini (1 small slice, diced)</item>
-        <item>🍲 Water for boiling</item>
+        <item>ðŸ¥© Lean Ground Beef (100g)</item>
+        <item>ðŸ¥’ Zucchini (1 small slice, diced)</item>
+        <item>ðŸ² Water for boiling</item>
     </string-array>
     <string-array name="recipe_9_steps">
         <item>Take 100g of lean ground beef (90% lean or more).</item>
@@ -1681,12 +1681,12 @@
         <item>Illustration of storing leftovers in a container.</item>
         <item>Illustration of a cat munching on the beef and zucchini bites.</item>
     </string-array>
-    <string name="recipe_10_title">Chicken &amp; Apple Snack 🍗🍎</string>
+    <string name="recipe_10_title">Chicken &amp; Apple Snack ðŸ—ðŸŽ</string>
     <string name="recipe_10_desc">A sweet and savory treat combining classic chicken with vitamin-rich apples (no seeds!).</string>
     <string-array name="recipe_10_materials">
-        <item>🍗 Boneless Chicken Breast (100g)</item>
-        <item>🍎 Apple (1 small slice, peeled and cored)</item>
-        <item>💦 Water for poaching</item>
+        <item>ðŸ— Boneless Chicken Breast (100g)</item>
+        <item>ðŸŽ Apple (1 small slice, peeled and cored)</item>
+        <item>ðŸ’¦ Water for poaching</item>
     </string-array>
     <string-array name="recipe_10_steps">
         <item>Prepare 100g of raw, boneless, skinless chicken breast.</item>
@@ -1868,19 +1868,19 @@
     <string name="diy_c9_desc">A rustic, vintage wooden crate padded with plush flannel pillows.</string>
     <string name="diy_c10_title">Luxury Velvet Donut Nest</string>
     <string name="diy_c10_desc">A premium, plush velvet bed with raised edges for the ultimate royal slumber.</string>
-    <string name="nav_cats_near_me_title">Cats Near Me 🐾</string>
+    <string name="nav_cats_near_me_title">Cats Near Me ðŸ¾</string>
     <string name="community_cooperative">COMMUNITY COOPERATIVE</string>
-    <string name="browse_nearby">🔍 Browse Nearby</string>
-    <string name="report_stray">📢 Report Stray</string>
+    <string name="browse_nearby">ðŸ” Browse Nearby</string>
+    <string name="report_stray">ðŸ“¢ Report Stray</string>
     <string name="simulated_mode">Simulated Community Mode Active</string>
-    <string name="location_denied_desc">Location access denied — no problem! You can manually tap anywhere on the map to drop a pin for cat sightings, or open Settings to grant permission.</string>
-    <string name="radius_filter">🎯 Search Radius Filter</string>
+    <string name="location_denied_desc">Location access denied â€” no problem! You can manually tap anywhere on the map to drop a pin for cat sightings, or open Settings to grant permission.</string>
+    <string name="radius_filter">ðŸŽ¯ Search Radius Filter</string>
     <string name="radius_km">%1$s km</string>
     <string name="radius_desc">Slide to adjust the search distance from your current location.</string>
-    <string name="interactive_radar">📡 Interactive Stray Radar Map</string>
+    <string name="interactive_radar">ðŸ“¡ Interactive Stray Radar Map</string>
     <string name="selected_on_radar">Selected on Radar: %1$s Cat Sighting</string>
     <string name="dist_away">~%1$s km away</string>
-    <string name="stray_reports_count">📊 Stray reports within radius (%1$d):</string>
+    <string name="stray_reports_count">ðŸ“Š Stray reports within radius (%1$d):</string>
     <string name="all_cats_accounted">All cats are accounted for!</string>
     <string name="no_stray_reports">No stray cat reports were found in a %1$s km radius. Try extending your search slider to search further out, or report a cat you spotted!</string>
     <string name="reported_by">Reported by: %1$s</string>
@@ -1890,13 +1890,13 @@
     <string name="your_name_optional">Your Name (Optional)</string>
     <string name="needs_most_label">What does the cat need most?</string>
     <string name="sighting_details">Sighting Details</string>
-    <string name="add_photo_sighting">📸 Add Cat Photo Sighting</string>
+    <string name="add_photo_sighting">ðŸ“¸ Add Cat Photo Sighting</string>
     <string name="add_photo_desc">Choose a cute cat illustration preset, or take/upload a photo from your device.</string>
     <string name="active_preset">Active Preset: %1$s CAT</string>
     <string name="location_capture">Automatic Sighting Location Capture</string>
     <string name="captured_coords">Captured Coordinates: Lat %1$s, Lng %2$s</string>
     <string name="submit_sighting">Submit Sighting Report</string>
-    <string name="report_registered">🎉 Report Registered!</string>
+    <string name="report_registered">ðŸŽ‰ Report Registered!</string>
     <string name="report_registered_desc">Thank you so much! Your report has been pinned to the shared community database. Caregivers nearby can now coordinate help.</string>
     <string name="reminders_title">Reminders</string>
     <string name="settings_weather_alerts">Weather Alerts</string>
@@ -1927,10 +1927,10 @@
     <string name="weight_history">Weight History</string>
     <string name="no_weights_recorded">No weights recorded yet.</string>
     <string name="weight_entry">%1$s kg</string>
-    <string name="weight_gained">📈 Gained +%1$s kg since last weigh-in</string>
-    <string name="weight_lost">📉 Lost -%1$s kg since last weigh-in</string>
-    <string name="weight_no_change">⚖️ No change in weight since last weigh-in</string>
-    <string name="weight_tracker_info">ℹ️ Log at least 2 weigh-ins to track difference</string>
+    <string name="weight_gained">ðŸ“ˆ Gained +%1$s kg since last weigh-in</string>
+    <string name="weight_lost">ðŸ“‰ Lost -%1$s kg since last weigh-in</string>
+    <string name="weight_no_change">âš–ï¸ No change in weight since last weigh-in</string>
+    <string name="weight_tracker_info">â„¹ï¸ Log at least 2 weigh-ins to track difference</string>
     <string name="offline_tips_title">No Mobile Data? Offline Quick Tips:</string>
     <string name="offline_tip_1">1. Safety First: Don\'t get scratched. Move cat to a ventilated box.</string>
     <string name="offline_tip_2">2. Keep Warm: Wrap in a blanket. Heat is crucial for weak kittens.</string>
@@ -1939,11 +1939,11 @@
     <string name="diary_room_title">Choose your diary room</string>
     <string name="help_stray_title">Help a stray cat</string>
     <string name="cats_near_me_subtitle">Browse nearby reported stray cats or report a stray cat.</string>
-    <string name="care_academy_title">TinyPaws Care Academy 🎓</string>
-    <string name="review_needed_title">Review Needed 🐾</string>
+    <string name="care_academy_title">TinyPaws Care Academy ðŸŽ“</string>
+    <string name="review_needed_title">Review Needed ðŸ¾</string>
     <string name="review_needed_desc">You got some questions incorrect. Let\'s go back and answer them correctly to complete the level and unlock the next one!</string>
     <string name="retry_incorrect_btn">Retry Incorrect Questions (%1$d)</string>
-    <string name="certificate_title">Community Care Certificate 📜</string>
+    <string name="certificate_title">Community Care Certificate ðŸ“œ</string>
     <string name="certificate_desc">This certifies that</string>
     <string name="certificate_footer">Has successfully completed the TinyPaws Care Academy and demonstrated exceptional knowledge in community cat welfare.</string>
     <string name="date_label">Date: %1$s</string>
@@ -1955,14 +1955,14 @@
         <item>Cats can rotate their ears 180 degrees.</item>
         <item>A cat\'s nose print is unique, like a human fingerprint.</item>
     </string-array>
-    <string name="tip_of_day_title">💡 Tip of the Day</string>
+    <string name="tip_of_day_title">ðŸ’¡ Tip of the Day</string>
     <string name="cats_loc_active">Location access active!</string>
     <string name="cats_loc_granted">Location access granted!</string>
     <string name="cats_loc_denied">Permission denied. Using a simulated local community map.</string>
     <string name="cats_back_home">Back to home</string>
     <string name="cats_loc_warning">Location Warning</string>
     <string name="cats_grant">Grant</string>
-    <string name="cats_radar_title">📡 Interactive Stray Radar Map</string>
+    <string name="cats_radar_title">ðŸ“¡ Interactive Stray Radar Map</string>
     <string name="cats_img_desc">Reported cat image</string>
     <string name="cats_food_water">Food &amp; Water</string>
     <string name="cats_medical">Medical Attention</string>
@@ -1976,208 +1976,208 @@
     <string name="cats_calico">Calico</string>
     <string name="cats_device">Device</string>
     <string name="cats_custom_photo">Selected custom photo</string>
-    <string name="cats_img_loaded">Custom Image Loaded ✅</string>
+    <string name="cats_img_loaded">Custom Image Loaded âœ…</string>
     <string name="cats_loc_pin">Location Pin</string>
     <string name="cats_add_icon">Add Icon</string>
     <string name="cats_super_browse">Super, take me to Browse!</string>
     <string name="cats_selected">Selected</string>
     <string name="cats_reported_needing">Reported a stray cat needing %s</string>
     <string name="cook_go_back">Go Back</string>
-    <string name="cook_hi_user">Hi, %s\'s Kitchen 👩‍🍳</string>
+    <string name="cook_hi_user">Hi, %s\'s Kitchen ðŸ‘©â€ðŸ³</string>
     <string name="cook_guide_desc">A feline culinary guide by lead chef Lily &amp; Pip</string>
-    <string name="cook_tab_kitchen">Chef\'s Kitchen 🍳</string>
-    <string name="cook_tab_library">Recipe Library 📚</string>
-    <string name="cook_select_2_ing">🐾 Select at least 2 ingredients to begin your visual culinary guide!</string>
-    <string name="cook_lilys_creation">✨ Lily\'s Custom Creation: </string>
+    <string name="cook_tab_kitchen">Chef\'s Kitchen ðŸ³</string>
+    <string name="cook_tab_library">Recipe Library ðŸ“š</string>
+    <string name="cook_select_2_ing">ðŸ¾ Select at least 2 ingredients to begin your visual culinary guide!</string>
+    <string name="cook_lilys_creation">âœ¨ Lily\'s Custom Creation: </string>
     <string name="cook_step">Step %s</string>
-    <string name="cook_next">Next ▶</string>
-    <string name="cook_prev">◀ Prev</string>
-    <string name="cook_ingredients">Ingredients 🥣</string>
-    <string name="cook_time">Time ⏱️</string>
-    <string name="cook_difficulty">Difficulty 🧠</string>
-    <string name="cook_how_to_prepare">How to Prepare 🍳</string>
-    <string name="cook_curated_collection">📚 Pip\'s Curated Collection</string>
-    <string name="quiz_q1">Cats are basically professional nappers. How many hours a day do they sleep? 😴</string>
+    <string name="cook_next">Next â–¶</string>
+    <string name="cook_prev">â—€ Prev</string>
+    <string name="cook_ingredients">Ingredients ðŸ¥£</string>
+    <string name="cook_time">Time â±ï¸</string>
+    <string name="cook_difficulty">Difficulty ðŸ§ </string>
+    <string name="cook_how_to_prepare">How to Prepare ðŸ³</string>
+    <string name="cook_curated_collection">ðŸ“š Pip\'s Curated Collection</string>
+    <string name="quiz_q1">Cats are basically professional nappers. How many hours a day do they sleep? ðŸ˜´</string>
     <string name="quiz_q1_opt0">4-6 hrs</string>
     <string name="quiz_q1_opt1">8-10 hrs</string>
     <string name="quiz_q1_opt2">12-16 hrs</string>
     <string name="quiz_q1_opt3">Basically never</string>
-    <string name="quiz_q1_cf">Yep! 12-16 hrs a day. Cats really said \'sleep is the main character\' 🛌✨</string>
+    <string name="quiz_q1_cf">Yep! 12-16 hrs a day. Cats really said \'sleep is the main character\' ðŸ›Œâœ¨</string>
     <string name="quiz_q1_wf">Nope, cats actually sleep 12-16 hrs a day. Absolute nap champions.</string>
-    <string name="quiz_q2">Why do cats purr? 🐱</string>
+    <string name="quiz_q2">Why do cats purr? ðŸ±</string>
     <string name="quiz_q2_opt0">Only when happy</string>
     <string name="quiz_q2_opt1">Only when hungry</string>
     <string name="quiz_q2_opt2">When happy, stressed, or healing</string>
     <string name="quiz_q2_opt3">To clean their ears</string>
     <string name="quiz_q2_cf">Correct! Purring releases endorphins and can even help soothe or heal their bones/muscles.</string>
     <string name="quiz_q2_wf">Actually, cats purr to soothe themselves when stressed or injured, not just when happy!</string>
-    <string name="quiz_q3">If a cat\'s ears are pinned flat against its head, it feels: 😾</string>
+    <string name="quiz_q3">If a cat\'s ears are pinned flat against its head, it feels: ðŸ˜¾</string>
     <string name="quiz_q3_opt0">Super happy</string>
     <string name="quiz_q3_opt1">Threatened or very angry</string>
     <string name="quiz_q3_opt2">Bored</string>
     <string name="quiz_q3_opt3">Sleepy</string>
-    <string name="quiz_q3_cf">Correct! Pinned ears mean \'back off, I\'m not happy\' 😾</string>
-    <string name="quiz_q3_wf">Nope — that\'s a classic anger or fear sign. Give them some space! 😾</string>
-    <string name="quiz_q4">What does a slow blink from a cat mean? 😉❤️</string>
+    <string name="quiz_q3_cf">Correct! Pinned ears mean \'back off, I\'m not happy\' ðŸ˜¾</string>
+    <string name="quiz_q3_wf">Nope â€” that\'s a classic anger or fear sign. Give them some space! ðŸ˜¾</string>
+    <string name="quiz_q4">What does a slow blink from a cat mean? ðŸ˜‰â¤ï¸</string>
     <string name="quiz_q4_opt0">They are tired</string>
     <string name="quiz_q4_opt1">They are plotting</string>
     <string name="quiz_q4_opt2">They trust and love you</string>
     <string name="quiz_q4_opt3">Dust in their eyes</string>
-    <string name="quiz_q4_cf">Yes! A slow blink is known as a \'kitty kiss\' — it\'s the ultimate sign of trust.</string>
-    <string name="quiz_q4_wf">It\'s actually a sign of affection and trust, often called a kitty kiss! ❤️</string>
-    <string name="quiz_q5">What\'s a group of cats called? (just fun trivia lol) 🐱🐱🐱</string>
+    <string name="quiz_q4_cf">Yes! A slow blink is known as a \'kitty kiss\' â€” it\'s the ultimate sign of trust.</string>
+    <string name="quiz_q4_wf">It\'s actually a sign of affection and trust, often called a kitty kiss! â¤ï¸</string>
+    <string name="quiz_q5">What\'s a group of cats called? (just fun trivia lol) ðŸ±ðŸ±ðŸ±</string>
     <string name="quiz_q5_opt0">A clowder</string>
     <string name="quiz_q5_opt1">A squad</string>
     <string name="quiz_q5_opt2">A pack</string>
     <string name="quiz_q5_opt3">A meow-b</string>
-    <string name="quiz_q5_cf">Yesss, a \'clowder\' 🐱🐱🐱 use it to sound smart at parties.</string>
+    <string name="quiz_q5_cf">Yesss, a \'clowder\' ðŸ±ðŸ±ðŸ± use it to sound smart at parties.</string>
     <string name="quiz_q5_wf">Close energy but a group of cats is officially called a \'clowder\'.</string>
-    <string name="quiz_q6">How do cats usually mark their territory? 🐾</string>
+    <string name="quiz_q6">How do cats usually mark their territory? ðŸ¾</string>
     <string name="quiz_q6_cf">Correct! Scent glands on cheeks and paws leave pheromone markers.</string>
     <string name="quiz_q6_wf">Cheek rubbing and scratching release scents to mark their safe spaces!</string>
-    <string name="quiz_q7">What is a cat\'s primary sensory tool? 👁️👃</string>
+    <string name="quiz_q7">What is a cat\'s primary sensory tool? ðŸ‘ï¸ðŸ‘ƒ</string>
     <string name="quiz_q7_cf">Yes! Whiskers help them detect air currents and measure spaces!</string>
     <string name="quiz_q7_wf">Whiskers are incredibly sensitive navigational and sensory tools!</string>
-    <string name="quiz_q8">A cat with a straight vertical tail with a tiny curl at the tip is feeling: 🐾</string>
+    <string name="quiz_q8">A cat with a straight vertical tail with a tiny curl at the tip is feeling: ðŸ¾</string>
     <string name="quiz_q8_cf">Correct! A high tail with a hook means a happy greeting!</string>
     <string name="quiz_q8_wf">A tail held high with a slight curl indicates friendliness and curiosity!</string>
-    <string name="quiz_q9">At what age do kittens typically open their eyes? 🍼👀</string>
+    <string name="quiz_q9">At what age do kittens typically open their eyes? ðŸ¼ðŸ‘€</string>
     <string name="quiz_q9_cf">Correct! Newborn kittens are blind and open their eyes around 1-2 weeks.</string>
     <string name="quiz_q9_wf">Kittens open their eyes at 7-14 days after birth.</string>
-    <string name="quiz_q10">Why do cats groom themselves so much? 🧼👅</string>
+    <string name="quiz_q10">Why do cats groom themselves so much? ðŸ§¼ðŸ‘…</string>
     <string name="quiz_q10_cf">Yes! Grooming keeps them clean, regulates body temp, and lowers stress.</string>
     <string name="quiz_q10_wf">Grooming acts as a cooling mechanism, hygiene routine, and a self-soother.</string>
-    <string name="quiz_q11">Can cats eat chocolate? 🍫❌</string>
+    <string name="quiz_q11">Can cats eat chocolate? ðŸ«âŒ</string>
     <string name="quiz_q11_cf">Correct! Chocolate contains theobromine, which is highly toxic to cats.</string>
     <string name="quiz_q11_wf">No way! Chocolate contains theobromine which is highly toxic to cats.</string>
-    <string name="quiz_q12">Is cow\'s milk actually good for cats? 🥛🐾</string>
+    <string name="quiz_q12">Is cow\'s milk actually good for cats? ðŸ¥›ðŸ¾</string>
     <string name="quiz_q12_cf">Correct! Most cats lack the enzyme to digest lactose properly, causing stomach upset.</string>
     <string name="quiz_q12_wf">Cartoons lied! Most cats are actually lactose intolerant.</string>
-    <string name="quiz_q13">What type of diet do cats absolutely require? 🥩🥦</string>
+    <string name="quiz_q13">What type of diet do cats absolutely require? ðŸ¥©ðŸ¥¦</string>
     <string name="quiz_q13_cf">Correct! Cats are obligate carnivores and need animal protein to survive.</string>
     <string name="quiz_q13_wf">Cats are obligate carnivores. They cannot survive on vegetarian diets.</string>
-    <string name="quiz_q14">Why is raw or stagnant water outdoors risky for stray cats? 🦠💧</string>
+    <string name="quiz_q14">Why is raw or stagnant water outdoors risky for stray cats? ðŸ¦ ðŸ’§</string>
     <string name="quiz_q14_cf">Correct! Stagnant puddles can harbor giardia, leptospirosis, or chemical runoff.</string>
     <string name="quiz_q14_wf">Unclean water carries dangerous parasites like Giardia. Fresh water is best.</string>
-    <string name="quiz_q15">Which of these is safe for cats to eat? 🍗🍇</string>
+    <string name="quiz_q15">Which of these is safe for cats to eat? ðŸ—ðŸ‡</string>
     <string name="quiz_q15_cf">Yes! Plain, cooked chicken is a wonderful, safe high-protein treat.</string>
     <string name="quiz_q15_wf">Onions, garlic, grapes, and raw dough are toxic. Plain cooked chicken is safe!</string>
-    <string name="quiz_q16">How often should adult cats be fed ideally? 🥣🕰️</string>
+    <string name="quiz_q16">How often should adult cats be fed ideally? ðŸ¥£ðŸ•°ï¸</string>
     <string name="quiz_q16_cf">Correct! 1-2 measured meals per day helps maintain a healthy weight.</string>
     <string name="quiz_q16_wf">Feeding 1-2 scheduled meals per day is ideal to prevent obesity.</string>
-    <string name="quiz_q17">What crucial nutrient do cats need from meat that they can\'t synthesize themselves? 👁️⚡</string>
+    <string name="quiz_q17">What crucial nutrient do cats need from meat that they can\'t synthesize themselves? ðŸ‘ï¸âš¡</string>
     <string name="quiz_q17_cf">Yes! Taurine is vital for their heart and eye health. Deficiency causes blindness.</string>
     <string name="quiz_q17_wf">Taurine is an essential amino acid only found in meat that cats must eat!</string>
-    <string name="quiz_q18">Should you feed a newborn kitten (under 4 weeks) cow\'s milk? 🍼🥛</string>
+    <string name="quiz_q18">Should you feed a newborn kitten (under 4 weeks) cow\'s milk? ðŸ¼ðŸ¥›</string>
     <string name="quiz_q18_cf">Correct! Regular milk will cause severe diarrhea. KMR is the only safe option.</string>
     <string name="quiz_q18_wf">Never give cow\'s milk. Newborn kittens need special Kitten Milk Replacer (KMR).</string>
-    <string name="quiz_q19">What\'s the best way to keep a cat hydrated if they don\'t drink enough water? 🥫💧</string>
+    <string name="quiz_q19">What\'s the best way to keep a cat hydrated if they don\'t drink enough water? ðŸ¥«ðŸ’§</string>
     <string name="quiz_q19_cf">Correct! Wet food has a high water content and helps prevent kidney disease.</string>
     <string name="quiz_q19_wf">Wet food is an excellent way to boost hydration in cats who dislike water!</string>
-    <string name="quiz_q20">Is dry kibble alone always sufficient for a cat\'s lifetime diet? 🥩🦴</string>
+    <string name="quiz_q20">Is dry kibble alone always sufficient for a cat\'s lifetime diet? ðŸ¥©ðŸ¦´</string>
     <string name="quiz_q20_cf">Yes! Adding wet food keeps their kidneys flushed and healthy.</string>
     <string name="quiz_q20_wf">Relying on dry kibble alone can lead to dehydration; mixing wet food is highly recommended.</string>
-    <string name="quiz_q21">What is \'TNR\' in community cat care? 🐾🏡</string>
+    <string name="quiz_q21">What is \'TNR\' in community cat care? ðŸ¾ðŸ¡</string>
     <string name="quiz_q21_cf">Correct! Trap-Neuter-Return is the most humane, effective way to stabilize stray populations.</string>
     <string name="quiz_q21_wf">TNR stands for Trap-Neuter-Return. It stops the cycle of stray overpopulation!</string>
-    <string name="quiz_q22">How can you tell if a stray community cat has already been neutered/vaccinated? 👂✂️</string>
+    <string name="quiz_q22">How can you tell if a stray community cat has already been neutered/vaccinated? ðŸ‘‚âœ‚ï¸</string>
     <string name="quiz_q22_cf">Yes! A small, painless ear tip done during surgery is the universal sign of a TNR cat.</string>
     <string name="quiz_q22_wf">Look for an ear tip! A straight cut across the left ear tip means they\'ve been fixed.</string>
-    <string name="quiz_q23">What is the normal body temperature of a healthy cat? 🌡️🐾</string>
-    <string name="quiz_q23_cf">Correct! Cats run warmer than humans. Anything above 103°F is a fever.</string>
-    <string name="quiz_q23_wf">Cats have a higher baseline temp: usually between 100.5°F and 102.5°F!</string>
-    <string name="quiz_q24">Which of these is a major sign of a sick stray cat needing vet care? 😿🩺</string>
+    <string name="quiz_q23">What is the normal body temperature of a healthy cat? ðŸŒ¡ï¸ðŸ¾</string>
+    <string name="quiz_q23_cf">Correct! Cats run warmer than humans. Anything above 103Â°F is a fever.</string>
+    <string name="quiz_q23_wf">Cats have a higher baseline temp: usually between 100.5Â°F and 102.5Â°F!</string>
+    <string name="quiz_q24">Which of these is a major sign of a sick stray cat needing vet care? ðŸ˜¿ðŸ©º</string>
     <string name="quiz_q24_cf">Correct. Matted fur, eye discharge, or lethargy are clear distress signals.</string>
     <string name="quiz_q24_wf">Lethargy, discharge, and unkempt fur mean a kitty is sick and needs help!</string>
-    <string name="quiz_q25">What should you do if you suspect a stray cat has rabies? 📞🐈</string>
+    <string name="quiz_q25">What should you do if you suspect a stray cat has rabies? ðŸ“žðŸˆ</string>
     <string name="quiz_q25_cf">Absolutely. Rabies is 100% fatal and highly contagious. Call professionals.</string>
     <string name="quiz_q25_wf">Safety first! Keep away from aggressive/drooling animals and alert animal control.</string>
-    <string name="quiz_q26">Why should you never use human medication like Tylenol (Acetaminophen) on a cat? 🚫💊</string>
+    <string name="quiz_q26">Why should you never use human medication like Tylenol (Acetaminophen) on a cat? ðŸš«ðŸ’Š</string>
     <string name="quiz_q26_cf">Correct! Even a tiny crumb of Tylenol destroys a cat\'s red blood cells and is fatal.</string>
     <string name="quiz_q26_wf">Tylenol is highly poisonous to cats! Never give human meds without vet orders.</string>
-    <string name="quiz_q27">What is the primary way cats catch fleas? 🐜😿</string>
+    <string name="quiz_q27">What is the primary way cats catch fleas? ðŸœðŸ˜¿</string>
     <string name="quiz_q27_cf">Correct! Fleas jump from infested spots or contact with untreated animals.</string>
     <string name="quiz_q27_wf">Fleas are contracted from other animals or flea-laden outdoor spaces.</string>
-    <string name="quiz_q28">How often should indoor cats visit the vet for a checkup? 🩺🐈</string>
+    <string name="quiz_q28">How often should indoor cats visit the vet for a checkup? ðŸ©ºðŸˆ</string>
     <string name="quiz_q28_cf">Correct! Annual visits catch hidden issues early (cats hide pain very well).</string>
     <string name="quiz_q28_wf">Annual exams are crucial since cats are masters of hiding their illnesses!</string>
-    <string name="quiz_q29">A healthy cat\'s nose is usually: 👃🐈</string>
+    <string name="quiz_q29">A healthy cat\'s nose is usually: ðŸ‘ƒðŸˆ</string>
     <string name="quiz_q29_cf">Correct! A cool, moist nose is healthy, though slight dry variation is normal.</string>
     <string name="quiz_q29_wf">Normally, a cat\'s nose is cool and slightly damp. Extremes can signal fever.</string>
-    <string name="quiz_q30">Why do cats need scratching posts? 💅🐈</string>
+    <string name="quiz_q30">Why do cats need scratching posts? ðŸ’…ðŸˆ</string>
     <string name="quiz_q30_cf">Correct! Scratching is crucial for nail health, marking scent, and stretching.</string>
     <string name="quiz_q30_wf">Scratching sheds the outer nail sheath and keeps their shoulder muscles strong!</string>
-    <string name="quiz_q31">How should you approach a stray cat for the first time? 🤫🐾</string>
+    <string name="quiz_q31">How should you approach a stray cat for the first time? ðŸ¤«ðŸ¾</string>
     <string name="quiz_q31_cf">Correct! Letting them sniff you first builds trust and avoids scratches.</string>
     <string name="quiz_q31_wf">Never rush a stray. Speak softly, crouch low, and let them come to you.</string>
-    <string name="quiz_q32">If you find a litter of kittens without a mother, what\'s the first step? 👀🍼</string>
+    <string name="quiz_q32">If you find a litter of kittens without a mother, what\'s the first step? ðŸ‘€ðŸ¼</string>
     <string name="quiz_q32_cf">Yes! Mother cats are often out hunting or moving nests. Monitor for 2-4 hours first.</string>
     <string name="quiz_q32_wf">Wait! The mom is usually nearby. Observe from a distance before intervening.</string>
-    <string name="quiz_q33">Which item is safest for capturing an injured stray cat? 📦🧣</string>
+    <string name="quiz_q33">Which item is safest for capturing an injured stray cat? ðŸ“¦ðŸ§£</string>
     <string name="quiz_q33_cf">Correct! Wrapping them in a thick towel/blanket protects both of you, but a trap is safest.</string>
     <string name="quiz_q33_wf">Bare hands lead to deep scratches. Use a towel/blanket or a proper trap.</string>
-    <string name="quiz_q34">What should you do if a stray cat scratches or bites you? 🩹🩸</string>
+    <string name="quiz_q34">What should you do if a stray cat scratches or bites you? ðŸ©¹ðŸ©¸</string>
     <string name="quiz_q34_cf">Yes! Cat bites carry bacteria that can cause serious infections (like Cat Scratch Fever) fast.</string>
     <string name="quiz_q34_wf">Cat bites infect easily! Wash thoroughly with soap and seek medical advice.</string>
-    <string name="quiz_q35">What\'s the best time of day to spot or trap stray cats? 🌅🌌</string>
+    <string name="quiz_q35">What\'s the best time of day to spot or trap stray cats? ðŸŒ…ðŸŒŒ</string>
     <string name="quiz_q35_cf">Correct! Cats are crepuscular, meaning they are most active during dawn and dusk.</string>
     <string name="quiz_q35_wf">Cats are crepuscular. They are naturally active during twilight hours.</string>
-    <string name="quiz_q36">What kind of scent is known to soothe stressed-out cats? 🌸🐈</string>
+    <string name="quiz_q36">What kind of scent is known to soothe stressed-out cats? ðŸŒ¸ðŸˆ</string>
     <string name="quiz_q36_cf">Yes! Synthetic facial pheromones (Feliway) or mild lavender can calm them.</string>
     <string name="quiz_q36_wf">Citrus is actually repulsive to cats! Use feline pheromones like Feliway instead.</string>
-    <string name="quiz_q37">Why is feeding stray cats in the exact same spot daily helpful? 🥣📅</string>
+    <string name="quiz_q37">Why is feeding stray cats in the exact same spot daily helpful? ðŸ¥£ðŸ“…</string>
     <string name="quiz_q37_cf">Correct! Predictable feeding times make trapping for neutering incredibly simple.</string>
     <string name="quiz_q37_wf">Routine feeding makes trapping for TNR way more predictable and successful.</string>
-    <string name="quiz_q38">A cat with dilated (very large, round) pupils in bright light is likely: 😳🐈</string>
+    <string name="quiz_q38">A cat with dilated (very large, round) pupils in bright light is likely: ðŸ˜³ðŸˆ</string>
     <string name="quiz_q38_cf">Correct! Dilated pupils in bright light mean adrenaline is pumping (fear or prey drive).</string>
     <string name="quiz_q38_wf">Wide eyes mean adrenaline! The cat is highly excited, scared, or alert.</string>
-    <string name="quiz_q39">Should you hold a cat by the \'scruff\' (back of the neck) in an emergency? 🐈🚨</string>
+    <string name="quiz_q39">Should you hold a cat by the \'scruff\' (back of the neck) in an emergency? ðŸˆðŸš¨</string>
     <string name="quiz_q39_cf">Yes. Scruffing adult cats can stress them. Only do it briefly to prevent a bite, always supporting their weight.</string>
     <string name="quiz_q39_wf">Scruffing can scare adult cats. Use a towel wrap (burrito style) instead if possible.</string>
-    <string name="quiz_q40">How can you gain a feral cat\'s trust over several weeks? 🥣⏳</string>
+    <string name="quiz_q40">How can you gain a feral cat\'s trust over several weeks? ðŸ¥£â³</string>
     <string name="quiz_q40_cf">Perfect! Patience and consistent food are the keys to a feral cat\'s heart.</string>
     <string name="quiz_q40_wf">Patience wins! Give them space, feed consistently, and let them set the pace.</string>
-    <string name="quiz_q41">What should you do if you find a kitten with \'fading kitten syndrome\' (lethargic, cold)? 🚨🍼</string>
+    <string name="quiz_q41">What should you do if you find a kitten with \'fading kitten syndrome\' (lethargic, cold)? ðŸš¨ðŸ¼</string>
     <string name="quiz_q41_cf">Correct! Hypothermia and low blood sugar are the main threats. Warmth and sugar are critical first aid.</string>
     <string name="quiz_q41_wf">Lethargic kittens need immediate warmth and glucose on their gums, then a vet!</string>
-    <string name="quiz_q42">What\'s the safest material to line an outdoor winter shelter for strays? 🌾❄️</string>
+    <string name="quiz_q42">What\'s the safest material to line an outdoor winter shelter for strays? ðŸŒ¾â„ï¸</string>
     <string name="quiz_q42_cf">Correct! Blankets absorb air moisture and freeze, making the cat colder. Straw repels moisture and traps heat.</string>
     <string name="quiz_q42_wf">Never use blankets outdoors! They hold moisture and freeze. Straw is the gold standard.</string>
-    <string name="quiz_q43">If a cat is choking, what should you do first? 🐱🚨</string>
+    <string name="quiz_q43">If a cat is choking, what should you do first? ðŸ±ðŸš¨</string>
     <string name="quiz_q43_cf">Yes. Carefully check the mouth, or perform gentle abdominal compressions if trained, then vet immediately.</string>
     <string name="quiz_q43_wf">Check mouth gently for obstructions, perform modified compressions, and rush to a vet!</string>
-    <string name="quiz_q44">Which of these household plants is EXTREMELY toxic to cats (even a single leaf can cause kidney failure)? 🚫💐</string>
+    <string name="quiz_q44">Which of these household plants is EXTREMELY toxic to cats (even a single leaf can cause kidney failure)? ðŸš«ðŸ’</string>
     <string name="quiz_q44_cf">Correct. Lilies are incredibly deadly. Even drinking the water from a lily vase can kill a cat.</string>
     <string name="quiz_q44_wf">Lilies are fatal! Any contact with lilies requires emergency veterinary care.</string>
-    <string name="quiz_q45">What does it mean if a male cat is straining to urinate and crying in the litter box? 🚨🐈</string>
+    <string name="quiz_q45">What does it mean if a male cat is straining to urinate and crying in the litter box? ðŸš¨ðŸˆ</string>
     <string name="quiz_q45_cf">Yes! Male cats have narrow urethras. A blockage can be fatal within 24-48 hours. This is a red-alert emergency.</string>
     <string name="quiz_q45_wf">Red Alert! A male cat unable to urinate is a life-threatening medical emergency.</string>
-    <string name="quiz_q46">What should you do if a community cat has a deep, open wound? 🩹🩺</string>
+    <string name="quiz_q46">What should you do if a community cat has a deep, open wound? ðŸ©¹ðŸ©º</string>
     <string name="quiz_q46_cf">Correct. Hydrogen peroxide destroys healthy cells and slows healing. Professional wound care is needed.</string>
     <string name="quiz_q46_wf">Skip the peroxide! Wash with clean water/saline and seek professional veterinary treatment.</string>
-    <string name="quiz_q47">If a kitten is severely flea-infested and too young for chemical flea meds, how do you treat them? 🧼🧴</string>
+    <string name="quiz_q47">If a kitten is severely flea-infested and too young for chemical flea meds, how do you treat them? ðŸ§¼ðŸ§´</string>
     <string name="quiz_q47_cf">Correct! Blue Dawn dish soap safely drowns fleas on contact without chemical toxicity.</string>
     <string name="quiz_q47_wf">Dawn dish soap bath is the safest, most effective way to save a flea-anemic kitten!</string>
-    <string name="quiz_q48">Why are essential oil diffusers risky around cats? 🚫💨</string>
+    <string name="quiz_q48">Why are essential oil diffusers risky around cats? ðŸš«ðŸ’¨</string>
     <string name="quiz_q48_cf">Yes! Cats lack liver enzymes to metabolize essential oils, leading to rapid toxicity.</string>
     <string name="quiz_q48_wf">Oils like tea tree, eucalyptus, and mint are toxic to cats\' livers. Avoid diffusers!</string>
-    <string name="quiz_q49">How can you safely transport a fractious (highly aggressive/terrified) stray cat to the vet? 🧺🐾</string>
+    <string name="quiz_q49">How can you safely transport a fractious (highly aggressive/terrified) stray cat to the vet? ðŸ§ºðŸ¾</string>
     <string name="quiz_q49_cf">Yes! Covering the carrier with a towel blocks visual triggers and keeps them calm.</string>
     <string name="quiz_q49_wf">Use a safe, closed carrier wrapped in a dark towel to keep them feeling safe and hidden.</string>
-    <string name="quiz_q50">What is the primary rule of any animal rescue situation? 🛡️❤️</string>
+    <string name="quiz_q50">What is the primary rule of any animal rescue situation? ðŸ›¡ï¸â¤ï¸</string>
     <string name="quiz_q50_cf">Exactly! If you get severely injured, you cannot help the cat and become another casualty yourself.</string>
     <string name="quiz_q50_wf">Safety first! Your safety is paramount. An injured rescuer cannot save anyone.</string>
     <string name="main_my_kitty_corner">My Kitty\'s Corner</string>
     <string name="main_about_title">About TinyPaws</string>
     <string name="main_about_desc">Made by a teenager, for teenagers, and anyone who wants to help but doesn\'t have the tools.</string>
-    <string name="main_discover_title">✨ Discover TinyPaws</string>
+    <string name="main_discover_title">âœ¨ Discover TinyPaws</string>
     <string name="main_discover_desc">Unlock a random guide or a fun DIY project you haven\'t seen recently!</string>
-    <string name="main_cats_near_me_title">🐾 Cats Near Me</string>
+    <string name="main_cats_near_me_title">ðŸ¾ Cats Near Me</string>
     <string name="main_cats_near_me_desc">Help nearby stray cats by reporting sight logs or locating strays in distress within your immediate community.</string>
-    <string name="main_report_stray">📢 Report Stray</string>
-    <string name="main_browse_nearby">🔍 Browse Nearby</string>
+    <string name="main_report_stray">ðŸ“¢ Report Stray</string>
+    <string name="main_browse_nearby">ðŸ” Browse Nearby</string>
     <string name="main_settings">Settings</string>
-    <string name="main_leaderboard">Leaderboard 🏆</string>
+    <string name="main_leaderboard">Leaderboard ðŸ†</string>
     <string name="main_dark_mode">Dark Mode</string>
     <string name="hub_title">My Cat Hub</string>
     <string name="hub_back">Back</string>
@@ -2192,19 +2192,19 @@
     <string name="feeding_station_name">Station Name</string>
     <string name="feeding_station_desc">Station Details</string>
     <string name="feeding_station_needs">Station Needs</string>
-    <string name="feeding_station_success">Feeding station successfully logged! 🥣</string>
+    <string name="feeding_station_success">Feeding station successfully logged! ðŸ¥£</string>
     <string name="feeding_station_welcome_title">Log a Neighborhood Feeding Spot</string>
     <string name="feeding_station_welcome_desc">Help other caregivers know which areas are taken care of, who is feeding, and what supplies are needed.</string>
     <string name="feeding_station_placeholder">e.g. Sidi Bou Said Main Street Feeding Station</string>
     <string name="feeding_station_desc_placeholder">Describe the feeding station (e.g., "We feed them kibble every morning around 8 AM. Needs clean bowls.")</string>
     <string name="stray_feeding_stations_count">Feeding Stations Near You (%1$d)</string>
     <string name="no_feeding_stations_reports">No feeding stations found within %1$.1f km of your area.</string>
-    <string name="open_settings">Settings ⚙️</string>
-    <string name="manual_pin_instruction">📍 Manual Pin Mode: Tap anywhere on the map below to position your cat sighting pin.</string>
+    <string name="open_settings">Settings âš™ï¸</string>
+    <string name="manual_pin_instruction">ðŸ“ Manual Pin Mode: Tap anywhere on the map below to position your cat sighting pin.</string>
     <string name="weather_cooldown_active">Weather alerts limited to max 1 per 4 hours to prevent duplicate notifications.</string>
     <string name="report_cooldown_active">Duplicate report notification cooldown: max 1 alert per report per 24 hours.</string>
     <string name="cached_weather_indicator">Offline Cached Forecast (Last Updated: %1$s)</string>
-    <string name="custom_notification_sound_label">Calming Kitty Chime Sound Enabled 🔔</string>
+    <string name="custom_notification_sound_label">Calming Kitty Chime Sound Enabled ðŸ””</string>
     <string name="location_accuracy_label">Location Accuracy: %1$s</string>
     <string name="map_preview_label">Map Preview &amp; Pin Selector</string>
     <string name="offline_mode_indicator">Offline Mode Active</string>
@@ -2218,7 +2218,7 @@
     <string name="settings_mission_statement">Crafted with love for cat caregivers everywhere. Dedicated to Lily &amp; Pip.</string>
 
     <!-- Certificate Preview & Screen -->
-    <string name="cert_preview_title">🏆 Future Reward</string>
+    <string name="cert_preview_title">ðŸ† Future Reward</string>
     <string name="cert_preview_desc">Complete all 50 quizzes to unlock your Cat Champion Certificate!</string>
     <string name="cert_preview_btn">Keep Playing</string>
     <string name="cert_fallback_name">TinyPaws Cat Champion</string>
@@ -2236,7 +2236,7 @@
     <string name="auth_err_default">An error occurred. Please try again.</string>
     <string name="auth_err_configuration">Authentication is not configured in this app. Please try Guest Mode.</string>
     <string name="cloud_restore_success">Successfully restored data from cloud (%1$s)!</string>
-    <string name="cloud_restore_no_data">No existing cloud data found. Starting fresh! ✨</string>
+    <string name="cloud_restore_no_data">No existing cloud data found. Starting fresh! âœ¨</string>
     <string name="cloud_restore_failed">Cloud restore failed. Please try again later.</string>
     <string name="cloud_backup_success">Backup uploaded to cloud (%1$s)</string>
     <string name="cloud_backup_failed">Cloud backup failed. Check your connection.</string>
@@ -2254,27 +2254,36 @@
     <string name="datasync_csv_err">Unable to export CSV file.</string>
     <string name="datasync_csv_success">CSV exported successfully!</string>
     <string name="auth_reset_sent_msg">If an account exists for this email, a reset link has been sent.</string>
-    <string name="auth_signup_title">Create Account 🎒</string>
-    <string name="auth_login_title">Welcome Back! 🐾</string>
-    <string name="auth_forgot_title">Reset Password 🔑</string>
+    <string name="auth_reset_title">Reset Your Password</string>
+    <string name="auth_reset_desc">Enter a new password for your TinyPaws account.</string>
+    <string name="auth_new_password_label">New Password</string>
+    <string name="auth_confirm_new_password_label">Confirm New Password</string>
+    <string name="auth_reset_submit_btn">Update Password</string>
+    <string name="auth_reset_success_msg">Your password has been updated. Please sign in with your new password.</string>
+    <string name="auth_reset_invalid_link">This reset link is invalid or has expired. Please request a new one.</string>
+    <string name="auth_reset_email_hint">Resetting password for %1$s</string>
+    <string name="auth_reset_verifying">Checking your reset link…</string>
+    <string name="auth_signup_title">Create Account ðŸŽ’</string>
+    <string name="auth_login_title">Welcome Back! ðŸ¾</string>
+    <string name="auth_forgot_title">Reset Password ðŸ”‘</string>
     <string name="auth_forgot_desc">Enter your account email to receive a password reset link.</string>
     <string name="auth_forgot_link">Forgot password?</string>
-    <string name="auth_send_reset_btn">Send Reset Link 📧</string>
+    <string name="auth_send_reset_btn">Send Reset Link ðŸ“§</string>
     <string name="auth_back_to_login">Back to Sign In</string>
     <string name="auth_confirm_password_label">Confirm Password</string>
     <string name="auth_full_name_label">Full Name</string>
-    <string name="auth_welcome_guest_title">Welcome to TinyPaws 🐾</string>
+    <string name="auth_welcome_guest_title">Welcome to TinyPaws ðŸ¾</string>
     <string name="auth_welcome_guest_desc">Enter your name or rescue nickname to get started instantly!</string>
     <string name="auth_login_desc">Sign in to access your cat\'s secure diary.</string>
     <string name="auth_signup_desc">Join TinyPaws to start tracking stray rescue growth.</string>
-    <string name="auth_guest_entry_title">Guest Entry 🐾</string>
+    <string name="auth_guest_entry_title">Guest Entry ðŸ¾</string>
     <string name="auth_guest_name_label">Your Name or Nickname</string>
     <string name="auth_guest_name_hint">e.g. Alex or CatLover22</string>
-    <string name="auth_guest_submit_btn">Enter Without Account 🚀</string>
-    <string name="auth_switch_to_guest_btn">Or start instantly as Guest 🐾</string>
-    <string name="auth_switch_to_email_btn">Or sign in with email &amp; password ✉️</string>
+    <string name="auth_guest_submit_btn">Enter Without Account ðŸš€</string>
+    <string name="auth_switch_to_guest_btn">Or start instantly as Guest ðŸ¾</string>
+    <string name="auth_switch_to_email_btn">Or sign in with email &amp; password âœ‰ï¸</string>
     <string name="auth_full_name_hint">e.g. Lily Smith</string>
-    <string name="auth_country_label">Country 🌍</string>
+    <string name="auth_country_label">Country ðŸŒ</string>
     <string name="auth_country_hint">e.g. United States, France, Tunisia</string>
     <string name="auth_email_label">Email Address</string>
     <string name="auth_password_label">Password</string>
@@ -2287,7 +2296,7 @@
     <string name="auth_password_hint">Min 6 characters</string>
     <string name="auth_toggle_password">Toggle password visibility</string>
     <string name="auth_toggle_confirm_password">Toggle confirm password visibility</string>
-    <string name="auth_verification_sent_msg">We sent a verification link to your email — please confirm it. 📧</string>
+    <string name="auth_verification_sent_msg">We sent a verification link to your email â€” please confirm it. ðŸ“§</string>
     <string name="auth_resend_verification">Resend verification email</string>
     <string name="auth_resend_cooldown">Resend available in %1$d seconds</string>
     <string name="auth_check_verification">Check Verification Status</string>
@@ -2297,17 +2306,17 @@
     <string name="auth_already_verified">Your email is already verified.</string>
     <string name="auth_err_user_not_found">User account not found or session expired. Please sign in again.</string>
     <string name="auth_verifying">Checking verification status...</string>
-    <string name="auth_email_verified_status">Email verified ✅</string>
-    <string name="auth_email_unverified_status">Email not verified — check your inbox.</string>
-    <string name="guest_warning_banner">You\'re using TinyPaws as a guest. Your data is only saved on this phone — if you lose this phone or delete the app, it\'s gone. Create a free account to keep it safe forever.</string>
-    <string name="guest_upgrade_btn">Create Account 🎒</string>
+    <string name="auth_email_verified_status">Email verified âœ…</string>
+    <string name="auth_email_unverified_status">Email not verified â€” check your inbox.</string>
+    <string name="guest_warning_banner">You\'re using TinyPaws as a guest. Your data is only saved on this phone â€” if you lose this phone or delete the app, it\'s gone. Create a free account to keep it safe forever.</string>
+    <string name="guest_upgrade_btn">Create Account ðŸŽ’</string>
     <string name="cat_personality_label">Personality &amp; Traits</string>
     <string name="cat_adoption_photo_label">Kitten / Adoption Photo</string>
     <string name="cat_food_pref_label">Food Preferences &amp; Allergies</string>
     <string name="cat_chronic_cond_label">Chronic Conditions &amp; Health Notes</string>
-    <string name="choose_language_title">Choose your language 🌍</string>
+    <string name="choose_language_title">Choose your language ðŸŒ</string>
     <string name="choose_language_subtitle">Select your preferred language to customize your TinyPaws rescue experience.</string>
-    <string name="continue_btn">Continue 🐾</string>
+    <string name="continue_btn">Continue ðŸ¾</string>
     <string name="cook_disclaimer_notice">Always consult a veterinarian before introducing new homemade foods to your cat\'s regular diet. These recipes are intended as supplemental treats or emergency food options, never a full-time nutritional replacement.</string>
     <string name="ai_helper_fab_text">AI Helper</string>
     <string name="hub_cat_profile_title">Cat Profile</string>
@@ -2327,9 +2336,9 @@
     <string name="stat_saved_cats">Saved Cats</string>
     <string name="stat_community_users">Community Users</string>
 
-    <string name="hub_take_photo">Take Profile Photo 📸</string>
-    <string name="hub_choose_gallery">Choose from Gallery 🖼️</string>
-    <string name="hub_remove_photo">Remove Photo ❌</string>
+    <string name="hub_take_photo">Take Profile Photo ðŸ“¸</string>
+    <string name="hub_choose_gallery">Choose from Gallery ðŸ–¼ï¸</string>
+    <string name="hub_remove_photo">Remove Photo âŒ</string>
     <string name="hub_photo_preview">Photo Preview</string>
     <string name="hub_camera_permission_denied">Camera permission is required to take photos.</string>
     <string name="hub_weight_history">Weigh-in History</string>
@@ -2341,7 +2350,7 @@
     <string name="hub_previous_weight">Previous: %1$s kg</string>
     <string name="hub_current_weight">Current: %1$s kg</string>
     <string name="hub_weight_trend_title">Weight History Chart</string>
-    <string name="hub_history_log_title">Cat History Log 📖</string>
+    <string name="hub_history_log_title">Cat History Log ðŸ“–</string>
     <string name="hub_history_log_desc">Keep track of vet visits, vaccinations, medications, and milestones.</string>
     <string name="hub_history_add_entry">Add History Entry</string>
     <string name="hub_history_edit_entry">Edit History Entry</string>
@@ -2351,47 +2360,47 @@
     <string name="hub_history_title_label">Title</string>
     <string name="hub_history_notes_label">Notes (Optional)</string>
     <string name="hub_history_save">Save Entry</string>
-    <string name="hub_history_cat_vet">Vet Visit 🩺</string>
-    <string name="hub_history_cat_vac">Vaccination 💉</string>
-    <string name="hub_history_cat_med">Medication 💊</string>
-    <string name="hub_history_cat_milestone">Milestone 🎉</string>
-    <string name="hub_history_cat_other">Other Event 🐾</string>
+    <string name="hub_history_cat_vet">Vet Visit ðŸ©º</string>
+    <string name="hub_history_cat_vac">Vaccination ðŸ’‰</string>
+    <string name="hub_history_cat_med">Medication ðŸ’Š</string>
+    <string name="hub_history_cat_milestone">Milestone ðŸŽ‰</string>
+    <string name="hub_history_cat_other">Other Event ðŸ¾</string>
     <string name="settings_theme_title">App Theme</string>
-    <string name="theme_light_coral">🌸 Light Coral</string>
-    <string name="theme_dark_velvet">🌙 Dark Velvet</string>
-    <string name="reminder_type_meal">🍽️ Meal / Feeding</string>
-    <string name="reminder_type_medication">💊 Medication</string>
-    <string name="reminder_type_vet">🏥 Vet Visit</string>
-    <string name="reminder_type_vaccine">💉 Vaccination</string>
-    <string name="reminder_type_general">✨ General Care</string>
+    <string name="theme_light_coral">ðŸŒ¸ Light Coral</string>
+    <string name="theme_dark_velvet">ðŸŒ™ Dark Velvet</string>
+    <string name="reminder_type_meal">ðŸ½ï¸ Meal / Feeding</string>
+    <string name="reminder_type_medication">ðŸ’Š Medication</string>
+    <string name="reminder_type_vet">ðŸ¥ Vet Visit</string>
+    <string name="reminder_type_vaccine">ðŸ’‰ Vaccination</string>
+    <string name="reminder_type_general">âœ¨ General Care</string>
     <string name="reminder_recurring_daily">Daily Recurring</string>
     <string name="reminder_enabled">Enabled</string>
     <string name="reminder_disabled">Disabled</string>
     <string name="reminder_edit_title">Edit Care Reminder</string>
     <string name="reminder_add_title">Schedule Care Reminder</string>
-    <string name="reminder_meal_default_text">It\'s time to feed your cat 🍽️</string>
-    <string name="reminder_medication_default_text">It\'s time for your cat\'s medication 💊</string>
+    <string name="reminder_meal_default_text">It\'s time to feed your cat ðŸ½ï¸</string>
+    <string name="reminder_medication_default_text">It\'s time for your cat\'s medication ðŸ’Š</string>
     <string name="multi_cat_active_label">Active Cat Profile</string>
     <string name="multi_cat_add_new">+ Add Cat Profile</string>
     <string name="multi_cat_switch">Switch Active Cat</string>
     <string name="multi_cat_confirm_delete_title">Delete Cat Profile?</string>
     <string name="multi_cat_confirm_delete_msg">Are you sure you want to delete %1$s? All weight logs, history, and care checklists for this cat will be deleted.</string>
-    <string name="multi_cat_new_cat_title">Add New Cat Profile 🐱</string>
+    <string name="multi_cat_new_cat_title">Add New Cat Profile ðŸ±</string>
     <string name="multi_cat_new_cat_name">Cat\'s Name</string>
     <string name="multi_cat_select_cats">Select Cat(s) for Reminder</string>
-    <string name="multi_cat_all_cats">All My Cats 🐾</string>
+    <string name="multi_cat_all_cats">All My Cats ðŸ¾</string>
     <string name="multi_cat_limit_reached">Maximum of 7 cats reached.</string>
     <string name="multi_cat_count">%1$d / 7 Cats</string>
-    <string name="drawer_ai_chatbot">AI Chatbot 🤖</string>
-    <string name="drawer_rescue_profile">Rescue Profile 👤</string>
-    <string name="drawer_discover_tinypaws">Discover TinyPaws 🌟</string>
-    <string name="guest_warning_title">Guest Mode Warning ⚠️</string>
+    <string name="drawer_ai_chatbot">AI Chatbot ðŸ¤–</string>
+    <string name="drawer_rescue_profile">Rescue Profile ðŸ‘¤</string>
+    <string name="drawer_discover_tinypaws">Discover TinyPaws ðŸŒŸ</string>
+    <string name="guest_warning_title">Guest Mode Warning âš ï¸</string>
     <string name="about_title">About TinyPaws</string>
     <string name="about_subtitle">SPEAK FOR THE VOICELESS</string>
     <string name="about_mission_header">Our Sacred Mission</string>
-    <string name="about_mission_desc">TinyPaws Diary was born from a simple promise: to speak on behalf of every stray cat and kitten who cannot speak for themselves. I’m Bochra Rhayem, a 17-year-old from Tunisia, and I created TinyPaws with the ambition of making it easier for people to help, even when they don’t have the resources to rescue a cat themselves. By bringing together care guides, health information, nutrition help, reporting tools, and community support, TinyPaws gives everyone a way to contribute and reminds us that every small act of kindness can make a difference.</string>
-    <string name="about_creator_note">Made by a teenager, for teenagers, and for anyone who wants to help but doesn’t have the tools.</string>
-    <string name="about_final_note">You don’t need to have everything to help. You just need to care enough to start. 🐾🤍</string>
+    <string name="about_mission_desc">TinyPaws Diary was born from a simple promise: to speak on behalf of every stray cat and kitten who cannot speak for themselves. Iâ€™m Bochra Rhayem, a 17-year-old from Tunisia, and I created TinyPaws with the ambition of making it easier for people to help, even when they donâ€™t have the resources to rescue a cat themselves. By bringing together care guides, health information, nutrition help, reporting tools, and community support, TinyPaws gives everyone a way to contribute and reminds us that every small act of kindness can make a difference.</string>
+    <string name="about_creator_note">Made by a teenager, for teenagers, and for anyone who wants to help but doesnâ€™t have the tools.</string>
+    <string name="about_final_note">You donâ€™t need to have everything to help. You just need to care enough to start. ðŸ¾ðŸ¤</string>
     <string name="diary_new_entry">New Entry</string>
     <string name="diary_close">Close</string>
     <string name="diary_add_title">Add Cat Diary Entry</string>
@@ -2403,12 +2412,12 @@
     <string name="diary_weight_placeholder">e.g. 4.2</string>
     <string name="diary_attach_photos">Attach Cat Photos:</string>
     <string name="diary_save_btn">Save Entry</string>
-    <string name="weather_title">🌤️ Weather &amp; Heatwave Alert</string>
+    <string name="weather_title">ðŸŒ¤ï¸ Weather &amp; Heatwave Alert</string>
     <string name="weather_retry">Retry Connection</string>
     <string name="weather_syncing">Syncing...</string>
     <string name="weather_sync_now">Sync Now</string>
-    <string name="weather_hot">🔥 Hot Weather:</string>
-    <string name="weather_cold">❄️ Cold Weather:</string>
+    <string name="weather_hot">ðŸ”¥ Hot Weather:</string>
+    <string name="weather_cold">â„ï¸ Cold Weather:</string>
     <string name="cert_generating">Generating Image...</string>
     <string name="cert_download">Download Certificate</string>
     <string name="cert_share">Share Certificate</string>
@@ -2422,46 +2431,46 @@
     <string name="cert_honor">HONOR</string>
     <string name="profile_notes_placeholder">e.g. Playful, shy around strangers, loves sunbathing</string>
     <string name="profile_image_placeholder">Optional image link when first adopted</string>
-    <string name="profile_food_placeholder">e.g. Loves salmon pâté, allergic to chicken</string>
+    <string name="profile_food_placeholder">e.g. Loves salmon pÃ¢tÃ©, allergic to chicken</string>
     <string name="profile_medical_placeholder">e.g. Mild asthma, special renal diet</string>
-    <string name="profile_current_photo">Current Photo 📸</string>
-    <string name="profile_adopted_photo">When Adopted 🍼</string>
+    <string name="profile_current_photo">Current Photo ðŸ“¸</string>
+    <string name="profile_adopted_photo">When Adopted ðŸ¼</string>
     <string name="weight_checkup_placeholder">e.g. Annual Checkup</string>
     <string name="weight_notes_placeholder">e.g. Weight: 4.2kg, next due in 1 year</string>
-    <string name="guide_prev">◀ Prev</string>
-    <string name="settings_trigger_email">Trigger Test Welcome Email 📩</string>
+    <string name="guide_prev">â—€ Prev</string>
+    <string name="settings_trigger_email">Trigger Test Welcome Email ðŸ“©</string>
     <string name="settings_no_mail">No mail documents found in Firestore queue.</string>
     <string name="settings_no_fcm">No FCM payloads recorded yet. (Trigger a rescue report to test).</string>
     <string name="diary_feed_title">Cat Diary Feed</string>
     <string name="diary_search_placeholder">Search by date or keyword (e.g. vet, vaccine, happy)...</string>
     <string name="diary_filter_all">All Feed</string>
-    <string name="diary_filter_vet">🏥 Vet Visits</string>
-    <string name="diary_filter_vaccination">💉 Vaccines</string>
-    <string name="diary_filter_grooming">✂️ Grooming</string>
-    <string name="diary_filter_general">📝 General Notes</string>
-    <string name="mood_happy">😊 Happy</string>
-    <string name="mood_playful">🧶 Playful</string>
-    <string name="mood_relaxed">😴 Relaxed</string>
-    <string name="mood_unwell">🤒 Unwell</string>
+    <string name="diary_filter_vet">ðŸ¥ Vet Visits</string>
+    <string name="diary_filter_vaccination">ðŸ’‰ Vaccines</string>
+    <string name="diary_filter_grooming">âœ‚ï¸ Grooming</string>
+    <string name="diary_filter_general">ðŸ“ General Notes</string>
+    <string name="mood_happy">ðŸ˜Š Happy</string>
+    <string name="mood_playful">ðŸ§¶ Playful</string>
+    <string name="mood_relaxed">ðŸ˜´ Relaxed</string>
+    <string name="mood_unwell">ðŸ¤’ Unwell</string>
     <string name="diary_saved_photos">Saved Photos (%1$d)</string>
-    <string name="diary_cat_general">📝 General</string>
-    <string name="diary_cat_vet">🏥 Vet</string>
-    <string name="diary_cat_vaccination">💉 Vaccine</string>
-    <string name="diary_cat_grooming">✂️ Groom</string>
+    <string name="diary_cat_general">ðŸ“ General</string>
+    <string name="diary_cat_vet">ðŸ¥ Vet</string>
+    <string name="diary_cat_vaccination">ðŸ’‰ Vaccine</string>
+    <string name="diary_cat_grooming">âœ‚ï¸ Groom</string>
     <string name="cancel_btn">Cancel</string>
     <string name="main_open">Open</string>
     <string name="main_close">Close</string>
     <string name="main_ok">OK</string>
-    <string name="main_prev">◀ Prev</string>
+    <string name="main_prev">â—€ Prev</string>
     <string name="cats_near_me_current_needs">Current Needs</string>
     <string name="cats_near_me_calc_dist">Calculated Distance</string>
     <string name="cats_near_me_dist_away">%1$.2f km away</string>
     <string name="cats_near_me_exact_loc">Exact Location</string>
     <string name="cats_near_me_report_date">Report Date</string>
-    <string name="cats_near_me_take_me_there">Take me there 🗺️</string>
-    <string name="cats_near_me_helped_cat">I helped this cat 🐾 (+2 ⭐)</string>
-    <string name="cats_near_me_rescued_cat">Adopted / Permanently rescued 💜 (+5 ⭐)</string>
-    <string name="cats_near_me_fed_cat">I fed this cat 🥣 (+1 ⭐)</string>
+    <string name="cats_near_me_take_me_there">Take me there ðŸ—ºï¸</string>
+    <string name="cats_near_me_helped_cat">I helped this cat ðŸ¾ (+2 â­)</string>
+    <string name="cats_near_me_rescued_cat">Adopted / Permanently rescued ðŸ’œ (+5 â­)</string>
+    <string name="cats_near_me_fed_cat">I fed this cat ðŸ¥£ (+1 â­)</string>
     <string name="connection_required_title">Connection Required</string>
     <string name="connection_required_desc">You need Wi-Fi or mobile data to access this part or this feature.</string>
     
@@ -2471,34 +2480,34 @@
     <string name="weather_protection_title">Extreme Weather Protection Alerts</string>
     <string name="weather_protection_enabled">Push alerts enabled for extreme cold &amp; heatwaves</string>
     <string name="weather_protection_disabled">Get notified when street cats need emergency shelter</string>
-    <string name="weather_select_location">📍 Select Location</string>
-    <string name="weather_gps_location">📡 Current GPS</string>
-    <string name="weather_heat_extreme">EXTREME HEATWAVE WARNING (&gt;45°C / 113°F)</string>
-    <string name="weather_heat_severe">SEVERE HEATWAVE ALERT (&gt;40°C / 104°F)</string>
-    <string name="weather_heat_warning">HEATWAVE WARNING (&gt;35°C / 95°F)</string>
+    <string name="weather_select_location">ðŸ“ Select Location</string>
+    <string name="weather_gps_location">ðŸ“¡ Current GPS</string>
+    <string name="weather_heat_extreme">EXTREME HEATWAVE WARNING (&gt;45Â°C / 113Â°F)</string>
+    <string name="weather_heat_severe">SEVERE HEATWAVE ALERT (&gt;40Â°C / 104Â°F)</string>
+    <string name="weather_heat_warning">HEATWAVE WARNING (&gt;35Â°C / 95Â°F)</string>
     <string name="weather_heat_desc">Temperatures reach up to %1$s this week! Provide shade and shallow bowls of cool fresh water for outdoor cats.</string>
-    <string name="weather_send_notif">🔔 Send Phone Notification</string>
-    <string name="weather_cold_freezing">FREEZING COLD WARNING (≤5°C / 41°F)</string>
-    <string name="weather_cold_severe">SEVERE COLD WEATHER (≤10°C / 50°F)</string>
-    <string name="weather_cold_chilly">CHILLY WEATHER ALERT (≤15°C / 59°F)</string>
+    <string name="weather_send_notif">ðŸ”” Send Phone Notification</string>
+    <string name="weather_cold_freezing">FREEZING COLD WARNING (â‰¤5Â°C / 41Â°F)</string>
+    <string name="weather_cold_severe">SEVERE COLD WEATHER (â‰¤10Â°C / 50Â°F)</string>
+    <string name="weather_cold_chilly">CHILLY WEATHER ALERT (â‰¤15Â°C / 59Â°F)</string>
     <string name="weather_cold_desc">Temperatures drop to %1$s! Keep cat shelters elevated off the ground and insulated with fresh dry straw.</string>
-    <string name="weather_legend_title">🎨 Temperature Color Highlighting Guide</string>
-    <string name="weather_legend_hot">🔥 Hot Weather:</string>
-    <string name="weather_legend_35">&gt; 35°C Pastel Red</string>
-    <string name="weather_legend_40">&gt; 40°C Darker Red</string>
-    <string name="weather_legend_45">&gt; 45°C Dark Red</string>
-    <string name="weather_legend_cold">❄️ Cold Weather:</string>
-    <string name="weather_legend_15">≤ 15°C Vibrant Blue</string>
-    <string name="weather_legend_10">≤ 10°C Darker Blue</string>
-    <string name="weather_legend_5">≤ 5°C Dark Blue</string>
-    <string name="weather_forecast_title">📅 7-Day Forecast</string>
+    <string name="weather_legend_title">ðŸŽ¨ Temperature Color Highlighting Guide</string>
+    <string name="weather_legend_hot">ðŸ”¥ Hot Weather:</string>
+    <string name="weather_legend_35">&gt; 35Â°C Pastel Red</string>
+    <string name="weather_legend_40">&gt; 40Â°C Darker Red</string>
+    <string name="weather_legend_45">&gt; 45Â°C Dark Red</string>
+    <string name="weather_legend_cold">â„ï¸ Cold Weather:</string>
+    <string name="weather_legend_15">â‰¤ 15Â°C Vibrant Blue</string>
+    <string name="weather_legend_10">â‰¤ 10Â°C Darker Blue</string>
+    <string name="weather_legend_5">â‰¤ 5Â°C Dark Blue</string>
+    <string name="weather_forecast_title">ðŸ“… 7-Day Forecast</string>
     <string name="weather_updated_for">Updated for %1$s</string>
-    <string name="weather_syncing_toast">🔄 Syncing weather data for %1$s...</string>
+    <string name="weather_syncing_toast">ðŸ”„ Syncing weather data for %1$s...</string>
     <string name="weather_syncing_btn">Syncing...</string>
     <string name="weather_fetching_forecast">Fetching 7-Day Weather Forecast...</string>
     <string name="weather_analyzing_thresholds">Analyzing temperature thresholds for outdoor cat protection</string>
     <string name="weather_safety_tips_title">Weather Safety Tips for Stray Cats</string>
-    <string name="weather_safety_tips_desc">• In Hot Weather (&gt;35°C): Put out extra water dishes in shady areas. Avoid metal water bowls as they heat up quickly.\n• In Extreme Heat (&gt;40°C): Create shaded shelters using damp towels or cardboard boxes.\n• In Cold Weather (≤15°C): Use dry straw inside DIY shelters. Never use blankets or towels outdoors because they absorb moisture and freeze.</string>
+    <string name="weather_safety_tips_desc">â€¢ In Hot Weather (&gt;35Â°C): Put out extra water dishes in shady areas. Avoid metal water bowls as they heat up quickly.\nâ€¢ In Extreme Heat (&gt;40Â°C): Create shaded shelters using damp towels or cardboard boxes.\nâ€¢ In Cold Weather (â‰¤15Â°C): Use dry straw inside DIY shelters. Never use blankets or towels outdoors because they absorb moisture and freeze.</string>
     <string name="weather_today">Today</string>
     <string name="weather_low_temp">Low %1$s</string>
     
@@ -2531,18 +2540,18 @@
     
     
     
-    <string name="guide_badge_vaccine">💉 Vaccine</string>
-    <string name="guide_badge_hygiene">🧼 Hygiene</string>
-    <string name="guide_badge_flea">🦟 Flea Control</string>
-    <string name="guide_badge_quarantine">🧴 Quarantine</string>
-    <string name="guide_badge_emergency">🩹 Emergency Care</string>
+    <string name="guide_badge_vaccine">ðŸ’‰ Vaccine</string>
+    <string name="guide_badge_hygiene">ðŸ§¼ Hygiene</string>
+    <string name="guide_badge_flea">ðŸ¦Ÿ Flea Control</string>
+    <string name="guide_badge_quarantine">ðŸ§´ Quarantine</string>
+    <string name="guide_badge_emergency">ðŸ©¹ Emergency Care</string>
     <string name="guide_fav_remove">Remove</string>
-    <string name="guide_cook_ingredients_title">🥗 Ingredients &amp; Materials:</string>
-    <string name="guide_cook_visual_guide">🎬 Interactive Visual Cooking Guide:</string>
-    <string name="guide_cook_tap_open">✨ Tap to open full 10-step visual cooking storyboard</string>
+    <string name="guide_cook_ingredients_title">ðŸ¥— Ingredients &amp; Materials:</string>
+    <string name="guide_cook_visual_guide">ðŸŽ¬ Interactive Visual Cooking Guide:</string>
+    <string name="guide_cook_tap_open">âœ¨ Tap to open full 10-step visual cooking storyboard</string>
     <string name="guide_cook_prep_step">Preparation Step %1$d of %2$d</string>
-    <string name="guide_cook_prev">◀ Prev</string>
-    <string name="guide_cook_next">Next ▶</string>
+    <string name="guide_cook_prev">â—€ Prev</string>
+    <string name="guide_cook_next">Next â–¶</string>
     <string name="guide_cook_dismiss">Dismiss</string>
     <string name="guide_lily_pip_alt">Illustration of Lily &amp; Pip</string>
     <string name="guide_cook_step">Step %1$s</string>
@@ -2879,14 +2888,14 @@
     <string name="diy_generic_guide">To complete the project, gather all required materials, prepare your work area, follow each step carefully as shown, and assemble the structure. Finish by checking for safety and placing it in a cozy spot for your cat.</string>
     <string name="diy_overview">The %1$s is a %2$s DIY project (%3$s, %4$s) designed to give your kitty a comfortable space. Lily and Pip created this simple version using everyday items, making it easy to assemble step-by-step without requiring specialized equipment.</string>
     <string name="diy_weather_tracker_title">Heatwave &amp; Weather Tracker</string>
-    <string name="diy_weather_tracker_desc">Check 7-day temperature alerts (&gt;35°C red, &lt;15°C blue) for stray cat shelters.</string>
+    <string name="diy_weather_tracker_desc">Check 7-day temperature alerts (&gt;35Â°C red, &lt;15Â°C blue) for stray cat shelters.</string>
     <string name="diy_fav_desc">Favorite</string>
     <string name="diy_storyboard_sub">Step-by-step action illustrations with Pip the cat and Lily working together!</string>
     <string name="diy_step_count">Step %1$d of %2$d</string>
-    <string name="diy_proj_overview">📝 Project Overview</string>
-    <string name="diy_hide_guide">Hide Full Guide ▲</string>
-    <string name="diy_view_more">View More (Full Step-by-Step Guide) ▼</string>
-    <string name="diy_full_guide_title">📖 Full Step-by-Step Guide</string>
+    <string name="diy_proj_overview">ðŸ“ Project Overview</string>
+    <string name="diy_hide_guide">Hide Full Guide â–²</string>
+    <string name="diy_view_more">View More (Full Step-by-Step Guide) â–¼</string>
+    <string name="diy_full_guide_title">ðŸ“– Full Step-by-Step Guide</string>
     <string name="my_cat_profile_title">My Cat Profile</string>
     <string name="my_cat_growth_title">Growth &amp; Weight Tracking</string>
     <string name="my_cat_back_alt">Back</string>
@@ -2895,18 +2904,18 @@
     <string name="my_cat_preview_photo_alt">Preview Photo</string>
     <string name="my_cat_personality_hint">e.g. Playful, shy around strangers, loves sunbathing</string>
     <string name="my_cat_adoption_photo_hint">Optional image link when first adopted</string>
-    <string name="my_cat_food_pref_hint">e.g. Loves salmon pâté, allergic to chicken</string>
+    <string name="my_cat_food_pref_hint">e.g. Loves salmon pÃ¢tÃ©, allergic to chicken</string>
     <string name="my_cat_chronic_cond_hint">e.g. Mild asthma, special renal diet</string>
     <string name="my_cat_main_photo_alt">Main Photo</string>
-    <string name="my_cat_current_photo_label">Current Photo 📸</string>
+    <string name="my_cat_current_photo_label">Current Photo ðŸ“¸</string>
     <string name="my_cat_adoption_photo_alt">Adoption Photo</string>
-    <string name="my_cat_adoption_photo_label">When Adopted 🍼</string>
+    <string name="my_cat_adoption_photo_label">When Adopted ðŸ¼</string>
     <string name="my_cat_age_label">Age:</string>
     <string name="my_cat_age_value">%1$d years, %2$d months</string>
     <string name="my_cat_coat_pattern_label">Coat Pattern:</string>
-    <string name="my_cat_personality_title">Personality &amp; Traits 🐱</string>
-    <string name="my_cat_food_pref_title">Food Preferences &amp; Allergies 🍲</string>
-    <string name="my_cat_chronic_cond_title">Chronic Conditions 🩺</string>
+    <string name="my_cat_personality_title">Personality &amp; Traits ðŸ±</string>
+    <string name="my_cat_food_pref_title">Food Preferences &amp; Allergies ðŸ²</string>
+    <string name="my_cat_chronic_cond_title">Chronic Conditions ðŸ©º</string>
     <string name="my_cat_coat_pattern_title">Coat Pattern &amp; Color</string>
     <string name="my_cat_update_weight_btn">Update Weight</string>
     <string name="my_cat_cancel_btn">Cancel</string>
@@ -2920,20 +2929,20 @@
     <string name="my_cat_history_save_btn">Save Entry</string>
     <string name="my_cat_history_delete_btn">Delete Entry</string>
     <string name="leaderboard_title">Community Champions</string>
-    <string name="leaderboard_tab_reporting">Reporting 🐱</string>
-    <string name="leaderboard_tab_rescue">Rescue 🏆</string>
-    <string name="leaderboard_no_reporting">No Reporting Champions yet 🐱</string>
-    <string name="leaderboard_no_rescue">No Rescue Champions yet ⭐</string>
+    <string name="leaderboard_tab_reporting">Reporting ðŸ±</string>
+    <string name="leaderboard_tab_rescue">Rescue ðŸ†</string>
+    <string name="leaderboard_no_reporting">No Reporting Champions yet ðŸ±</string>
+    <string name="leaderboard_no_rescue">No Rescue Champions yet â­</string>
     <string name="leaderboard_cats_reported">%1$d cats reported</string>
     <string name="leaderboard_rescue_spirit">%1$d Rescue Spirit</string>
     <string name="leaderboard_anonymous">Anonymous Guardian</string>
     <string name="hub_age_years_label">Age (Years)</string>
     <string name="hub_breed_coat_label">Breed / Coat Color:</string>
-    <string name="hub_add_cat_confirm">Add Cat 🐾</string>
+    <string name="hub_add_cat_confirm">Add Cat ðŸ¾</string>
     <string name="cats_loc_req_msg">Location permission required. Requesting now...</string>
     <string name="cats_open_settings_msg">Open app settings on device</string>
     <string name="cats_loc_req_toast">Location permission requested...</string>
-    <string name="cats_feeding_station_marker">📍 Feeding Station</string>
+    <string name="cats_feeding_station_marker">ðŸ“ Feeding Station</string>
     <string name="cats_dist_km_approx">~%1$.2f km</string>
     <string name="cats_feeding_station_caregiver_hint">Your name or anonymous caregiver</string>
     <string name="cats_choose_marker_title">Choose Map Marker Icon</string>
@@ -2944,26 +2953,26 @@
     <string name="cats_search_stations_near_you">Search Feeding Stations Near You</string>
     <string name="cats_search_radius">Search Radius: %1$.1f km</string>
     <string name="cats_distance_km">Distance: %1$.2f km</string>
-    <string name="cats_station_logged_title">Station Logged! 🎉</string>
+    <string name="cats_station_logged_title">Station Logged! ðŸŽ‰</string>
     <string name="cats_station_logged_msg">Your neighborhood feeding station has been successfully recorded. It will now appear on the Interactive Stray Radar Map!</string>
-    <string name="cats_rescue_details_title">Cat Rescue Details 🐾</string>
-    <string name="cats_status_helped">Helped 🩷</string>
-    <string name="cats_status_adopted">Adopted 💜</string>
-    <string name="cats_status_needs_help">Needs Help 🚨</string>
+    <string name="cats_rescue_details_title">Cat Rescue Details ðŸ¾</string>
+    <string name="cats_status_helped">Helped ðŸ©·</string>
+    <string name="cats_status_adopted">Adopted ðŸ’œ</string>
+    <string name="cats_status_needs_help">Needs Help ðŸš¨</string>
     <string name="cats_no_desc_provided">No description provided.</string>
-    <string name="cats_helped_success_msg">Thank you! You helped this cat 🐾 (+2 Stars ⭐⭐)</string>
-    <string name="cats_adopted_success_msg">Hooray! Cat permanently adopted 💜 (+5 Stars ⭐⭐⭐⭐⭐)</string>
-    <string name="cats_fed_success_msg">Recorded feeding this cat 🥣 (+1 Star ⭐)</string>
-    <string name="stations_browse_tab">🍽️ Browse Stations</string>
-    <string name="stations_report_tab">➕ Report Station</string>
-    <string name="stations_registered_success">Feeding station successfully registered! 🥣</string>
+    <string name="cats_helped_success_msg">Thank you! You helped this cat ðŸ¾ (+2 Stars â­â­)</string>
+    <string name="cats_adopted_success_msg">Hooray! Cat permanently adopted ðŸ’œ (+5 Stars â­â­â­â­â­)</string>
+    <string name="cats_fed_success_msg">Recorded feeding this cat ðŸ¥£ (+1 Star â­)</string>
+    <string name="stations_browse_tab">ðŸ½ï¸ Browse Stations</string>
+    <string name="stations_report_tab">âž• Report Station</string>
+    <string name="stations_registered_success">Feeding station successfully registered! ðŸ¥£</string>
     <string name="stations_search_radius_title">Search Radius</string>
     <string name="stations_nearby_title">Nearby Feeding Stations (%1$d)</string>
     <string name="stations_no_nearby_msg">No feeding stations found within %1$.1f km.</string>
-    <string name="stations_gps_coords">📍 GPS Coordinates: %1$.4f, %2$.4f</string>
-    <string name="stations_real_dist">⚡ Real Distance: %1$.2f km away</string>
-    <string name="stations_refill_toast">Feeding station refilled! (+3 ⭐)</string>
-    <string name="stations_refill_btn">Refill 🥣 (+3 ⭐)</string>
+    <string name="stations_gps_coords">ðŸ“ GPS Coordinates: %1$.4f, %2$.4f</string>
+    <string name="stations_real_dist">âš¡ Real Distance: %1$.2f km away</string>
+    <string name="stations_refill_toast">Feeding station refilled! (+3 â­)</string>
+    <string name="stations_refill_btn">Refill ðŸ¥£ (+3 â­)</string>
     <string name="stations_register_title">Register a Feeding Station</string>
     <string name="stations_register_desc">Add local feeding bowls so nearby caregivers can coordinate food replenishment.</string>
     <string name="stations_name_label">Feeding Station Name</string>
@@ -2977,14 +2986,14 @@
     <string name="loc_tunis">Tunis, Tunisia</string>
     <string name="loc_back_to_home">Back to home</string>
     <string name="loc_detect_loc">Detect my location</string>
-    <string name="loc_dynamic_map_title">🗺️ Dynamic Map View</string>
+    <string name="loc_dynamic_map_title">ðŸ—ºï¸ Dynamic Map View</string>
     <string name="loc_close_map">Close map</string>
-    <string name="loc_pin_name">🐾 PIN: %1$s</string>
+    <string name="loc_pin_name">ðŸ¾ PIN: %1$s</string>
     <string name="loc_pin_coords">Coordinates: Lat %1$.4f, Lng %2$.4f</string>
-    <string name="loc_take_me_there">Take me there 🚀</string>
+    <string name="loc_take_me_there">Take me there ðŸš€</string>
     <string name="loc_discovered_results">Discovered results sorted by distance:</string>
     <string name="loc_no_results">No results found. Select a category or input an address above!</string>
-    <string name="loc_rating">★ %1$.1f</string>
+    <string name="loc_rating">â˜… %1$.1f</string>
     <string name="loc_phone">Phone</string>
     <string name="creation_art_default_prompt">A soft watercolor painting of a sleepy ginger kitten cuddling a tiny blue teddy bear, pastel colors</string>
     <string name="creation_music_default_prompt">A soothing acoustic lullaby with gentle purring and soft wind chimes for kitten sleep</string>
@@ -3000,27 +3009,27 @@
     <string name="checklist_meds">Medication / Supplements</string>
     <string name="checklist_change_date">Change Date</string>
     <string name="checklist_progress">%1$d of %2$d tasks completed</string>
-    <string name="checklist_all_done">🎉 All daily care tasks completed! Your kitty is happy and well cared for.</string>
-    <string name="rescue_stories_title">Already Helped Cats 💜</string>
-    <string name="rescue_stories_empty">No helped or adopted cats recorded yet. Be the first hero! 🐾</string>
-    <string name="rescue_stories_adopted">Adopted &amp; Safe Home 💜</string>
-    <string name="rescue_stories_helped">Received Help 🩷</string>
+    <string name="checklist_all_done">ðŸŽ‰ All daily care tasks completed! Your kitty is happy and well cared for.</string>
+    <string name="rescue_stories_title">Already Helped Cats ðŸ’œ</string>
+    <string name="rescue_stories_empty">No helped or adopted cats recorded yet. Be the first hero! ðŸ¾</string>
+    <string name="rescue_stories_adopted">Adopted &amp; Safe Home ðŸ’œ</string>
+    <string name="rescue_stories_helped">Received Help ðŸ©·</string>
     <string name="rescue_stories_recently">Recently</string>
     <string name="rescue_stories_cat_alt">Helped Cat</string>
     <string name="rescue_stories_stray_cat">Community stray cat</string>
     <string name="rescue_stories_needs">Needs: %1$s</string>
     <string name="rescue_stories_needs_default">Care &amp; Food</string>
     <string name="rescue_stories_rescued_alt">Rescued Cat</string>
-    <string name="rescue_stories_rescued_badge">Rescued! 🎉</string>
+    <string name="rescue_stories_rescued_badge">Rescued! ðŸŽ‰</string>
     
-    <string name="cert_saved_success">🏆 Certificate saved to your Gallery!</string>
+    <string name="cert_saved_success">ðŸ† Certificate saved to your Gallery!</string>
     <string name="cert_save_failed">Unable to save certificate to storage.</string>
     <string name="cert_gen_error">Error generating certificate bitmap</string>
-    <string name="cert_share_text">🐾 I earned my Official TinyPaws Cat Care Mastery Certificate! #TinyPaws</string>
+    <string name="cert_share_text">ðŸ¾ I earned my Official TinyPaws Cat Care Mastery Certificate! #TinyPaws</string>
     <string name="cert_share_chooser">Share Certificate</string>
     <string name="cert_share_error">Error sharing certificate</string>
-    <string name="cert_title">🏆 Official Certificate</string>
-    <string name="cert_congrats">Congratulations on Completing Your Training! 🎉</string>
+    <string name="cert_title">ðŸ† Official Certificate</string>
+    <string name="cert_congrats">Congratulations on Completing Your Training! ðŸŽ‰</string>
     <string name="cert_bg_alt">Certificate Background</string>
     <string name="cert_academy_label">TINYPAWS ACADEMY</string>
     <string name="cert_mastery_label">CERTIFICATE OF MASTERY</string>
@@ -3033,8 +3042,8 @@
     <string name="cert_download_btn">Download Certificate</string>
     <string name="cert_share_btn">Share Certificate</string>
     <string name="cert_graduate_fallback">Academy Graduate</string>
-    <string name="quiz_academy_title">TinyPaws Care Academy 🎓</string>
-    <string name="quiz_review_needed">Review Needed 🐾</string>
+    <string name="quiz_academy_title">TinyPaws Care Academy ðŸŽ“</string>
+    <string name="quiz_review_needed">Review Needed ðŸ¾</string>
     <string name="quiz_retry_desc">You got some questions incorrect. Let\'s go back and answer them correctly to complete the level and unlock the next one!</string>
     <string name="quiz_retry_btn">Retry Incorrect Questions (%1$d)</string>
     
@@ -3042,5 +3051,8 @@
     
     
     <string name="cert_preview_name">The certificate will be issued to: %1$s</string>
-    <string name="cert_claim_btn">Claim My Diploma 🏆</string>
+    <string name="cert_claim_btn">Claim My Diploma ðŸ†</string>
+
+    <string name="nearby_report_alert_title">A cat needs help near you 💾</string>
+    <string name="nearby_report_alert_body">%1$s &#8212; %2$s km away. Can you help?</string>
 </resources>

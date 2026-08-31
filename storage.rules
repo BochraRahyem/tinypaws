@@ -1,29 +1,74 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /cat_photos/{imageId} {
+
+    // Cat photos are world-readable (public stray-cat map) but writes are
+    // segmented by uploader. Signed-in users own their folder.
+    // NOTE: Storage rules are evaluated with OR semantics - no broad
+    // authenticated-write catch-all exists here on purpose.
+    match /cat_photos/{userId}/{imageId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Guests may only add brand-new photos under the anonymous "guest" segment.
+    match /cat_photos/guest/{imageId} {
       allow read: if true;
       allow create: if request.resource.size < 10 * 1024 * 1024
-                   && request.resource.contentType.matches('image/.*');
-      allow update, delete: if true;
+                    && request.resource.contentType.matches('image/.*');
+      allow update, delete: if false;
     }
+
+    // Feeding station & rescue photos: owner-segmented, signed-in only.
+    match /feeding_stations/{userId}/{imageId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /rescue_photos/{userId}/{imageId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Legacy flat uploads from older app versions: readable for backward
+    // compatibility, writes locked down (cat_photos was previously anonymous-writable).
+    match /cat_photos/{imageId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /feeding_stations/{imageId} {
       allow read: if true;
-      allow create: if request.auth != null
-                   && request.resource.size < 10 * 1024 * 1024
-                   && request.resource.contentType.matches('image/.*');
-      allow update, delete: if request.auth != null;
+      allow write: if false;
     }
+
     match /rescue_photos/{imageId} {
       allow read: if true;
-      allow create: if request.auth != null
-                   && request.resource.size < 10 * 1024 * 1024
-                   && request.resource.contentType.matches('image/.*');
-      allow update, delete: if request.auth != null;
-    }
-    match /{allPaths=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if false;
     }
   }
 }

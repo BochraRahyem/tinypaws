@@ -213,10 +213,15 @@ fun GameModuleScreen(
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                                 Button(
-                                    onClick = com.example.ui.theme.rememberHapticOnClick { 
+                                    onClick = com.example.ui.theme.rememberHapticOnClick {
                                         activeQuestionIndices = wrongQuestionIndices.toList()
                                         wrongQuestionIndices = emptySet()
                                         showRetryRoundScreen = false
+                                        // Explicit reset: when every question was wrong again,
+                                        // the new index list equals the old one so the
+                                        // rememberSaveable key would NOT reset these states.
+                                        currentQuestionIdx = 0
+                                        selectedOptionIdx = null
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = PastelPurpleDark),
                                     shape = RoundedCornerShape(12.dp),

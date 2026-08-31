@@ -14,6 +14,65 @@ export default {
       return new Response("Method Not Allowed", { status: 405 });
     }
 
+    // ---------------------------------------------------------------
+    // Photo upload relay: POST /upload
+    // Authenticated with a Firebase ID token; forwards the image to imgbb
+    // using the IMGBB_API_KEY Worker secret (never shipped in the APK).
+    // Free-tier replacement for Firebase Storage.
+    // ---------------------------------------------------------------
+    const reqUrl = new URL(request.url);
+    if (reqUrl.pathname === "/upload") {
+      try {
+        const authHeader = request.headers.get("Authorization") || "";
+        const idToken = authHeader.replace("Bearer ", "").trim();
+        if (!idToken) {
+          return new Response(JSON.stringify({ error: "Missing Authorization header" }), { status: 401, headers: { "Content-Type": "application/json" } });
+        }
+
+        const FIREBASE_API_KEY = "AIzaSyBmSigm47Rn7JwOyGtUm1Rv3sqQET8Gbr0"; // public client key
+        const verifyRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken })
+        });
+        if (!verifyRes.ok) {
+          return new Response(JSON.stringify({ error: "Invalid or expired Firebase ID token" }), { status: 401, headers: { "Content-Type": "application/json" } });
+        }
+
+        if (!env.IMGBB_API_KEY) {
+          return new Response(JSON.stringify({ error: "Image hosting not configured yet" }), { status: 503, headers: { "Content-Type": "application/json" } });
+        }
+
+        const imgBuffer = await request.arrayBuffer();
+        if (imgBuffer.byteLength === 0) {
+          return new Response(JSON.stringify({ error: "Empty image body" }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }
+        if (imgBuffer.byteLength > 10 * 1024 * 1024) {
+          return new Response(JSON.stringify({ error: "Image too large (max 10 MB)" }), { status: 413, headers: { "Content-Type": "application/json" } });
+        }
+
+        const form = new FormData();
+        form.append("image", new Blob([imgBuffer], { type: request.headers.get("Content-Type") || "image/jpeg" }));
+        const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(env.IMGBB_API_KEY)}`, {
+          method: "POST",
+          body: form
+        });
+
+        const imgbbData = await imgbbRes.json().catch(() => null);
+        if (!imgbbRes.ok || !imgbbData || !imgbbData.success) {
+          return new Response(JSON.stringify({ error: "Image host rejected upload", details: JSON.stringify(imgbbData).slice(0, 300) }), { status: 502, headers: { "Content-Type": "application/json" } });
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          url: imgbbData.data.display_url || imgbbData.data.url,
+          deleteUrl: imgbbData.data.delete_url || null
+        }), { status: 200, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: "Upload failed", message: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+      }
+    }
+
     try {
       // 1. Authenticate Request via Firebase ID Token
       const authHeader = request.headers.get("Authorization") || "";

@@ -9,8 +9,8 @@ import androidx.room.Update
 
 @Dao
 interface ReminderDao {
-    @Query("SELECT * FROM reminders WHERE catId = :catId OR catIds LIKE '%' || :catId || '%' ORDER BY timeMillis ASC")
-    fun getRemindersForCat(catId: Int): Flow<List<Reminder>>
+    // NOTE: catIds membership is resolved in Kotlin (CatRepository.getRemindersForCat)
+    // because SQL LIKE substring matching wrongly matched cat 1 against catIds "11,21".
 
     @Query("SELECT * FROM reminders ORDER BY timeMillis ASC")
     fun getAllReminders(): Flow<List<Reminder>>

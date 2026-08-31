@@ -1,7 +1,5 @@
 package com.example.ui
 
-import androidx.compose.ui.res.stringResource
-
 import com.example.R
 
 import android.content.Context
@@ -109,7 +107,21 @@ fun WeatherAppScreen(
     val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
     val userLoc by viewModel.userLocation.collectAsStateWithLifecycle()
 
-    var selectedCity by remember { mutableStateOf(PRESET_CITIES[0]) }
+    var selectedCity by remember {
+        val savedName = context.getSharedPreferences("weather_cache_prefs", Context.MODE_PRIVATE)
+            .getString("alert_city_name", null)
+        val restored = savedName?.let { saved -> PRESET_CITIES.firstOrNull { it.name == saved } }
+        mutableStateOf(restored ?: PRESET_CITIES[0])
+    }
+    // Keep the persisted alert city in sync so cold-start background scheduling
+    // (MainActivity) uses the same location the user chose.
+    androidx.compose.runtime.LaunchedEffect(selectedCity) {
+        context.getSharedPreferences("weather_cache_prefs", Context.MODE_PRIVATE).edit()
+            .putLong("alert_city_lat", java.lang.Double.doubleToRawLongBits(selectedCity.lat))
+            .putLong("alert_city_lon", java.lang.Double.doubleToRawLongBits(selectedCity.lon))
+            .putString("alert_city_name", selectedCity.name)
+            .apply()
+    }
     var forecastList by remember { mutableStateOf<List<DailyWeatherForecast>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -262,35 +274,39 @@ fun WeatherAppScreen(
                 val urlString = "https://api.open-meteo.com/v1/forecast?latitude=$targetLat&longitude=$targetLon&daily=temperature_2m_max,temperature_2m_min,weathercode&current_weather=true&timezone=auto"
                 val url = URL(urlString)
                 val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "GET"
-                conn.connectTimeout = 8000
-                conn.readTimeout = 8000
+                try {
+                    conn.requestMethod = "GET"
+                    conn.connectTimeout = 8000
+                    conn.readTimeout = 8000
 
-                if (conn.responseCode == 200) {
-                    val stream = conn.inputStream
-                    val jsonText = stream.bufferedReader().use { it.readText() }
-                    val resultList = parseMeteoJson(jsonText)
+                    if (conn.responseCode == 200) {
+                        val stream = conn.inputStream
+                        val jsonText = stream.bufferedReader().use { it.readText() }
+                        val resultList = parseMeteoJson(jsonText)
 
-                    // Save to SharedPreferences cache
-                    weatherPrefs.edit()
-                        .putString("cached_json_${selectedCity.name}", jsonText)
-                        .putLong("cached_time_${selectedCity.name}", System.currentTimeMillis())
-                        .apply()
+                        // Save to SharedPreferences cache
+                        weatherPrefs.edit()
+                            .putString("cached_json_${selectedCity.name}", jsonText)
+                            .putLong("cached_time_${selectedCity.name}", System.currentTimeMillis())
+                            .apply()
 
-                    withContext(Dispatchers.Main) {
-                        forecastList = resultList
-                        isCachedData = false
-                        isLoading = false
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        val loaded = loadCachedForecast()
-                        if (!loaded) {
-                            forecastList = generateFallbackForecast()
+                        withContext(Dispatchers.Main) {
+                            forecastList = resultList
                             isCachedData = false
+                            isLoading = false
                         }
-                        isLoading = false
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            val loaded = loadCachedForecast()
+                            if (!loaded) {
+                                forecastList = generateFallbackForecast()
+                                isCachedData = false
+                            }
+                            isLoading = false
+                        }
                     }
+                } finally {
+                    conn.disconnect()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {

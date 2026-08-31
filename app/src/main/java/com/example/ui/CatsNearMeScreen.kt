@@ -1042,7 +1042,10 @@ fun BrowseNearbySection(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = stringResource(R.string.reported_by, report.reporterName),
+                                    text = if (report.reporterName.isBlank())
+                                        stringResource(R.string.leaderboard_anonymous)
+                                    else
+                                        stringResource(R.string.reported_by, report.reporterName),
                                     fontSize = 10.sp,
                                     color = inkColor.copy(alpha = 0.6f),
                                     fontFamily = QuicksandFontFamily

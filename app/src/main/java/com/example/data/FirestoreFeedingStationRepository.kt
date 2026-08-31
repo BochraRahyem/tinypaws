@@ -16,6 +16,7 @@ class FirestoreFeedingStationRepository(
     fun getFeedingStations(): Flow<List<FeedingStation>> = callbackFlow {
         val subscription = firestore.collection("feedingStations")
             .orderBy("createdAt", Query.Direction.DESCENDING)
+            .limit(100)
             .addSnapshotListener { snapshot, _ ->
                 trySend(snapshot?.toObjects(FeedingStation::class.java) ?: emptyList())
             }
@@ -23,26 +24,48 @@ class FirestoreFeedingStationRepository(
     }
 
     suspend fun createFeedingStation(station: FeedingStation) {
-        val uid = auth.currentUser?.uid ?: return
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Not signed in")
         val newStation = station.copy(
             createdBy = uid,
             status = station.status.ifBlank { "active" }
         )
         firestore.collection("feedingStations").add(newStation).await()
+        // Free-tier replacement for onStationCreated stats.
+        try {
+            firestore.collection("statistics").document("global").set(
+                mapOf("totalFeedingStations" to FieldValue.increment(1)),
+                com.google.firebase.firestore.SetOptions.merge()
+            ).await()
+        } catch (e: Exception) {
+            android.util.Log.w("FirestoreFeedingStationRepo", "Stats update skipped: ${e.message}")
+        }
     }
 
     suspend fun reachFeedingStation(stationId: String, foodAvailable: Boolean) {
-        val uid = auth.currentUser?.uid ?: return
-        val reachDoc = firestore.collection("feedingStations").document(stationId)
-            .collection("reaches").document(uid)
-        
-        reachDoc.set(mapOf("createdAt" to FieldValue.serverTimestamp())).await()
-        
-        firestore.collection("feedingStations").document(stationId).update(
+        val uid = auth.currentUser?.uid
+            ?: throw IllegalStateException("Not signed in")
+
+        // Atomic: the reach record AND the public counters move together.
+        val batch = firestore.batch()
+        batch.set(
+            firestore.collection("feedingStations").document(stationId)
+                .collection("reaches").document(uid),
+            mapOf("createdAt" to FieldValue.serverTimestamp())
+        )
+        batch.update(
+            firestore.collection("feedingStations").document(stationId),
             mapOf(
                 "foodAvailable" to foodAvailable,
+                "reachedCount" to FieldValue.increment(1),
                 "lastUpdated" to FieldValue.serverTimestamp()
             )
-        ).await()
+        )
+        batch.set(
+            firestore.collection("statistics").document("global"),
+            mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
+            com.google.firebase.firestore.SetOptions.merge()
+        )
+        batch.commit().await()
     }
 }

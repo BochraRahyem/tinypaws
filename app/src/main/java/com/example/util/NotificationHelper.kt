@@ -428,7 +428,26 @@ class NotificationHelper(private val context: Context) {
         }
 
         prefs.edit().putLong("last_report_alert_$reportId", System.currentTimeMillis()).apply()
+        pruneReportAlertTimestamps()
         return true
+    }
+
+    /**
+     * Keeps the cooldown SharedPreferences file bounded by evicting the oldest
+     * per-report timestamps once the map grows past 100 entries.
+     */
+    private fun pruneReportAlertTimestamps() {
+        try {
+            val entries = prefs.all.entries
+                .filter { it.key.startsWith("last_report_alert_") }
+                .mapNotNull { (k, v) -> (v as? Long)?.let { k to it } }
+            if (entries.size <= 100) return
+            entries.sortedBy { it.second }
+                .take(entries.size - 80)
+                .forEach { (key, _) -> prefs.edit().remove(key).apply() }
+        } catch (e: Exception) {
+            android.util.Log.w("NotificationHelper", "Failed pruning report alert timestamps", e)
+        }
     }
 
     fun triggerFeedingStationNotification(

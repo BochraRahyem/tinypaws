@@ -51,6 +51,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.platform.testTag
 import kotlinx.coroutines.launch
 import com.example.ui.stringResource
+import com.example.ui.stringArrayResource
 import com.example.ui.LocalLanguage
 import com.example.ui.FeedingStationsScreen
 import androidx.compose.ui.res.painterResource
@@ -106,9 +107,44 @@ class MainActivity : AppCompatActivity() {
         SunsetSoundscapePlayer.stop()
     }
 
+    /** Deep-link target screen parsed from the latest launch/view Intent. */
+    private val deepLinkTarget = androidx.compose.runtime.mutableStateOf<String?>(null)
+
+    /** Firebase password-reset action code (oobCode) from a reset email link. */
+    private val resetOobCode = androidx.compose.runtime.mutableStateOf<String?>(null)
+
+    private fun screenForIntent(intent: android.content.Intent?): String? {
+        val data = intent?.data ?: return null
+        val mode = data.getQueryParameter("mode")
+        val oob = data.getQueryParameter("oobCode")
+        if (mode == "resetPassword" && !oob.isNullOrBlank() &&
+            data.scheme in listOf("http", "https") &&
+            data.host in listOf("tinypaws-diary.web.app", "tinypaws.example.com")
+        ) {
+            resetOobCode.value = oob
+            return null
+        }
+        return when {
+            // tinypaws://diary
+            data.scheme == "tinypaws" && data.host?.contains("diary", ignoreCase = true) == true -> "diary_feed"
+            // https://tinypaws-diary.web.app/diary (App Links)
+            data.scheme in listOf("http", "https") &&
+                data.host in listOf("tinypaws-diary.web.app", "tinypaws.example.com") &&
+                data.pathSegments.firstOrNull()?.contains("diary", ignoreCase = true) == true -> "diary_feed"
+            else -> null
+        }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        screenForIntent(intent)?.let { deepLinkTarget.value = it }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        deepLinkTarget.value = screenForIntent(intent)
 
         // Initialize SharedPreferences name persistence
         val sharedPrefs = getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
@@ -116,15 +152,27 @@ class MainActivity : AppCompatActivity() {
         // Initialize Room Database & Repository
         val database = AppDatabase.getDatabase(applicationContext)
         val repository = LogRepository(database.logDao(), database.favoriteDao())
-        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao(), database.dailyCareLogDao(), database.catHistoryEntryDao())
+        val catRepository = CatRepository(database.catProfileDao(), database.catWeightLogDao(), database.catCheckInLogDao(), database.reminderDao(), database.dailyCareLogDao(), database.catHistoryEntryDao(), database)
         
         // Instantiate ViewModel
         val viewModel: TinyPawsViewModel by viewModels {
             TinyPawsViewModelFactory(application, repository, catRepository)
         }
 
-        // Schedule periodic background weather alerts using WorkManager
-        com.example.worker.WeatherAlertWorker.schedulePeriodicWeatherCheck(applicationContext)
+        // Schedule periodic background weather alerts using WorkManager.
+        // Uses the user's persisted city when available instead of hardcoding Tunis.
+        val weatherPrefs = getSharedPreferences("weather_cache_prefs", Context.MODE_PRIVATE)
+        val alertLat = java.lang.Double.longBitsToDouble(
+            weatherPrefs.getLong("alert_city_lat", java.lang.Double.doubleToRawLongBits(36.8065))
+        )
+        val alertLon = java.lang.Double.longBitsToDouble(
+            weatherPrefs.getLong("alert_city_lon", java.lang.Double.doubleToRawLongBits(10.1815))
+        )
+        val alertCity = weatherPrefs.getString("alert_city_name", "Local Area") ?: "Local Area"
+        com.example.worker.WeatherAlertWorker.schedulePeriodicWeatherCheck(applicationContext, alertLat, alertLon, alertCity)
+
+        // Free-tier proximity alerts: local notifications for new stray reports nearby.
+        com.example.worker.NearbyReportAlertWorker.schedulePeriodicCheck(applicationContext)
 
         // Load existing onboarded name and language
         val savedName = sharedPrefs.getString("user_name", "") ?: ""
@@ -186,13 +234,19 @@ class MainActivity : AppCompatActivity() {
 
             MyApplicationTheme(darkTheme = isDarkMode) {
                 ThemeProvider(currentLanguage = currentLang) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        containerColor = PastelBlueBg,
-                        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-                    ) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    // Keep the pastel identity in light mode; use the theme
+                    // background in dark mode so the root surface no longer
+                    // bleeds a light color behind dark screens.
+                    containerColor = if (isDarkMode) MaterialTheme.colorScheme.background else PastelBlueBg,
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                ) { innerPadding ->
                         TinyPawsMainContainer(
                             viewModel = viewModel,
+                            deepLinkState = deepLinkTarget,
+                            resetOobCode = resetOobCode.value,
+                            onResetHandled = { resetOobCode.value = null },
                             onSaveName = { name ->
                                 sharedPrefs.edit().putString("user_name", name).apply()
                                 viewModel.updateOnboardedName(name)
@@ -221,6 +275,9 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun TinyPawsMainContainer(
     viewModel: TinyPawsViewModel,
+    deepLinkState: androidx.compose.runtime.State<String?>,
+    resetOobCode: String?,
+    onResetHandled: () -> Unit,
     onSaveName: (String) -> Unit,
     onLanguageChange: (String) -> Unit,
     onLogout: () -> Unit,
@@ -231,7 +288,33 @@ fun TinyPawsMainContainer(
     val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
     val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
     val isExtremeWeatherNotify by viewModel.isExtremeWeatherNotify.collectAsStateWithLifecycle()
-    var currentScreen by remember { mutableStateOf("dashboard") } // "dashboard", "guide", "play", "find", "cook", "chat"
+    // rememberSaveable so process death / config change keeps the user on their screen.
+    var currentScreen by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("dashboard") }
+
+    // Truthful failure surfacing for Firestore-backed user actions.
+    val actionError by viewModel.actionError.collectAsStateWithLifecycle()
+    val activityContext = androidx.compose.ui.platform.LocalContext.current
+    androidx.compose.runtime.LaunchedEffect(actionError) {
+        actionError?.let {
+            android.widget.Toast.makeText(activityContext, it, android.widget.Toast.LENGTH_LONG).show()
+            viewModel.clearActionError()
+        }
+    }
+
+    // System Back walks up the screen hierarchy instead of exiting the app;
+    // root screens keep default Android behavior.
+    val backTarget: String? = when (currentScreen) {
+        "my_cat_profile", "weight_tracker", "data_sync", "daily_checklist",
+        "daily_checkin", "diary_feed", "reminders", "vet_reminders", "care_reminders" -> "my_cat_hub"
+        "certificate" -> "play"
+        "my_cat_hub", "guide", "weather", "play", "cats_near_me", "rescue_stories",
+        "feeding_stations", "find", "cook", "chat", "community_tracker",
+        "settings", "profile", "user_profile" -> "dashboard"
+        else -> null
+    }
+    backTarget?.let { parent ->
+        androidx.activity.compose.BackHandler { currentScreen = parent }
+    }
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -245,6 +328,21 @@ fun TinyPawsMainContainer(
 
     LaunchedEffect(Unit) {
         viewModel.reloadUser()
+        // Honor a deep link that launched the app (tinypaws://diary etc.)
+        deepLinkState.value?.let { currentScreen = it }
+    }
+    androidx.compose.runtime.LaunchedEffect(deepLinkState.value) {
+        deepLinkState.value?.let { currentScreen = it }
+    }
+
+    if (resetOobCode != null) {
+        com.example.ui.ResetPasswordScreen(
+            oobCode = resetOobCode,
+            viewModel = viewModel,
+            onDone = onResetHandled,
+            onBackToLogin = onResetHandled
+        )
+        return
     }
 
     if (!hasSelectedLang) {
@@ -1280,7 +1378,7 @@ fun TinyPawsDashboard(
 @Composable
 fun TipOfTheDayCard() {
 
-    val facts = androidx.compose.ui.res.stringArrayResource(id = R.array.cat_facts)
+    val facts = stringArrayResource(id = R.array.cat_facts)
     val fact = remember { facts.random() }
 
     com.example.ui.PixelCard(
