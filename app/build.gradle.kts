@@ -113,7 +113,6 @@ dependencies {
   implementation(libs.firebase.auth)
   implementation(libs.firebase.analytics)
   implementation(libs.firebase.messaging)
-  implementation(libs.firebase.storage)
   implementation(libs.play.services.auth)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)

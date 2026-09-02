@@ -179,21 +179,6 @@ class FirebaseRepository {
         }
     }
 
-    suspend fun deleteImageFromStorage(imageUrl: String) {
-        try {
-            // Only Firebase Storage URLs can be deleted this way; relay-hosted
-            // images (imgbb) are intentionally left in place - deletion URLs are
-            // returned at upload time and managed by the host's retention policy.
-            if (imageUrl.startsWith("http") && imageUrl.contains("firebasestorage.googleapis.com")) {
-                val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
-                storageRef.delete().await()
-                android.util.Log.d("FirebaseRepo", "Successfully deleted uploaded image from Storage")
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("FirebaseRepo", "Error deleting image from Storage", e)
-        }
-    }
-
     // Reports
     suspend fun createReport(report: CatReport, reportId: String = "") {
         val currentUser = auth.currentUser

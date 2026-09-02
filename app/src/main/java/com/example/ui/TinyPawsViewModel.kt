@@ -345,13 +345,7 @@ fun createReport(
             } catch (e: Exception) {
                 android.util.Log.e("TinyPawsVM", "Failed to create report", e)
                 if (newlyUploadedUrl != null) {
-                    android.util.Log.d("TinyPawsVM", "Attempting Storage cleanup for $newlyUploadedUrl")
-                    try {
-                        firebaseRepository.deleteImageFromStorage(newlyUploadedUrl)
-                        android.util.Log.d("TinyPawsVM", "Storage cleanup succeeded")
-                    } catch (cleanupEx: Exception) {
-                        android.util.Log.e("TinyPawsVM", "Storage cleanup failed", cleanupEx)
-                    }
+                    android.util.Log.d("TinyPawsVM", "Image uploaded to relay host but report write failed; image remains on ImgBB (host-managed retention)")
                 }
                 onComplete(false, e.localizedMessage ?: "Failed to submit report. Please check your connection and try again.")
             } finally {
