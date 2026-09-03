@@ -5,13 +5,19 @@ import com.example.ui.TranslationManager
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
-import com.google.firebase.firestore.MemoryCacheSettings
 import com.google.firebase.firestore.PersistentCacheSettings
 
 class TinyPawsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        FirebaseApp.initializeApp(this)
+        // FirebaseApp.initializeApp can throw on devices without Play services
+        // or with a missing/malformed google-services.json. Wrapping in try/catch
+        // ensures the app still starts and serves local-only features.
+        try {
+            FirebaseApp.initializeApp(this)
+        } catch (e: Exception) {
+            android.util.Log.e("TinyPawsApp", "FirebaseApp.initializeApp failed: ${e.message}")
+        }
 
         // Configure Firestore for offline persistence (capped so the cache
         // cannot grow without bound on disk; LRU eviction handles the rest).
