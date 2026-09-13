@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.map
@@ -82,6 +83,29 @@ class TinyPawsViewModel(
     private val stationRepository: FirestoreFeedingStationRepository = FirestoreFeedingStationRepository()
 ) : AndroidViewModel(application) {
 
+    private val sharedPrefs = application.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
+
+    private val _onboardedName = MutableStateFlow("")
+    val onboardedName = _onboardedName.asStateFlow()
+
+    private val _selectedCatId = MutableStateFlow(sharedPrefs.getInt("active_cat_id", 1))
+    val selectedCatId: StateFlow<Int> = _selectedCatId.asStateFlow()
+
+    private val _currentIsland = MutableStateFlow(sharedPrefs.getInt("quiz_current_island", 0))
+    val currentIsland = _currentIsland.asStateFlow()
+
+    private val _quizCompletedOnCurrentIsland = MutableStateFlow(sharedPrefs.getBoolean("quiz_completed_on_current", false))
+    val quizCompletedOnCurrentIsland = _quizCompletedOnCurrentIsland.asStateFlow()
+
+    private val _completedIslands = MutableStateFlow<Set<Int>>(
+        sharedPrefs.getString("quiz_completed_islands", "")?.takeIf { it.isNotEmpty() }
+            ?.split(",")?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet()
+    )
+    val completedIslands = _completedIslands.asStateFlow()
+
+    private val _scoreOnCurrentIsland = MutableStateFlow(sharedPrefs.getInt("quiz_score_on_current", 0))
+    val scoreOnCurrentIsland = _scoreOnCurrentIsland.asStateFlow()
+
     private val auth = FirebaseAuth.getInstance()
     private val authListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
         _user.value = firebaseAuth.currentUser
@@ -128,13 +152,6 @@ class TinyPawsViewModel(
     init {
         auth.addAuthStateListener(authListener)
         syncUserAccountState(auth.currentUser?.uid)
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                firebaseRepository.initializeGlobalStatsIfMissing()
-            } catch (e: Exception) {
-                android.util.Log.e("TinyPawsVM", "Error initializing stats/global", e)
-            }
-        }
     }
 
     override fun onCleared() {
@@ -202,6 +219,10 @@ class TinyPawsViewModel(
     val actionError = _actionError.asStateFlow()
     fun clearActionError() { _actionError.value = null }
 
+    // P0-8: Track in-flight actions to prevent duplicate submissions from
+    // double-taps, rapid retries, recomposition/re-render, or repeated screen entry.
+    private val _pendingActions = MutableStateFlow<Set<String>>(emptySet())
+
     private suspend fun reportActionFailure(what: String, e: Exception) {
         android.util.Log.e("TinyPawsVM", "$what failed", e)
         _actionError.value = when {
@@ -214,6 +235,9 @@ class TinyPawsViewModel(
     }
 
     fun helpCat(reportId: String, actionType: String = "helped") {
+        val actionKey = "help_${reportId}_$actionType"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             try {
                 firebaseRepository.helpCat(reportId, actionType)
@@ -221,11 +245,16 @@ class TinyPawsViewModel(
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Marking cat as helped", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
 
     fun adoptCat(reportId: String) {
+        val actionKey = "adopt_$reportId"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             try {
                 firebaseRepository.adoptCat(reportId)
@@ -233,11 +262,16 @@ class TinyPawsViewModel(
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Adoption update", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
 
     fun feedCat(reportId: String) {
+        val actionKey = "feed_$reportId"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             try {
                 firebaseRepository.feedCat(reportId)
@@ -245,11 +279,16 @@ class TinyPawsViewModel(
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Feeding log", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
 
     fun fillFeedingStation(stationId: String) {
+        val actionKey = "fill_$stationId"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             try {
                 firebaseRepository.fillFeedingStation(stationId)
@@ -257,6 +296,8 @@ class TinyPawsViewModel(
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Feeding station update", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
@@ -383,6 +424,7 @@ fun createReport(
                     finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "feeding_stations", getApplication())
                 } catch (e: Exception) {
                     android.util.Log.e("TinyPawsVM", "Error uploading station photo", e)
+                    reportActionFailure("Uploading station photo", e)
                 }
             }
             try {
@@ -405,6 +447,9 @@ fun createReport(
     }
 
     fun reachCat(reportId: String) {
+        val actionKey = "reach_$reportId"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             try {
                 reportRepository.reachCat(reportId)
@@ -412,11 +457,16 @@ fun createReport(
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Recording your reach", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
 
     fun reachFeedingStation(stationId: String, foodAvailable: Boolean) {
+        val actionKey = "reach_station_$stationId"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             try {
                 stationRepository.reachFeedingStation(stationId, foodAvailable)
@@ -424,6 +474,8 @@ fun createReport(
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Feeding station update", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
@@ -434,6 +486,9 @@ fun createReport(
         desc: String,
         imageUri: android.net.Uri? = null
     ) {
+        val actionKey = "rescue_$reportId"
+        if (_pendingActions.value.contains(actionKey)) return
+        _pendingActions.value = _pendingActions.value + actionKey
         viewModelScope.launch {
             var finalPhotoUrl = photoUrl
             if (imageUri != null) {
@@ -441,38 +496,45 @@ fun createReport(
                     finalPhotoUrl = firebaseRepository.uploadImageToStorage(imageUri, "rescue_photos", getApplication())
                 } catch (e: Exception) {
                     android.util.Log.e("TinyPawsVM", "Error uploading rescue photo", e)
+                    reportActionFailure("Uploading rescue photo", e)
+                    _pendingActions.value = _pendingActions.value - actionKey
+                    return@launch
                 }
             }
             try {
-                reportRepository.markAsRescued(reportId, finalPhotoUrl, desc)
-                // Reward parity with the other rescue paths: record the 10-star action.
-                firebaseRepository.recordUserAction(
-                    com.example.data.UserAction(
-                        actionType = "adopt_cat",
-                        starsEarned = 10,
-                        rewardAmount = 10,
-                        description = "Adopted/rescued cat permanently",
-                        relatedCatId = reportId,
-                        catId = reportId
+                // P0-8: markAsRescued returns false if already rescued — skip reward.
+                val wasUpdated = reportRepository.markAsRescued(reportId, finalPhotoUrl, desc)
+                if (wasUpdated) {
+                    firebaseRepository.recordUserAction(
+                        com.example.data.UserAction(
+                            actionType = "adopt_cat",
+                            starsEarned = 10,
+                            rewardAmount = 10,
+                            description = "Adopted/rescued cat permanently",
+                            relatedCatId = reportId,
+                            catId = reportId
+                        )
                     )
-                )
+                }
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: Exception) {
                 reportActionFailure("Marking cat as rescued", e)
+            } finally {
+                _pendingActions.value = _pendingActions.value - actionKey
             }
         }
     }
 
     fun signInAnonymously(name: String, onResult: (Boolean, String?) -> Unit) {
         val displayName = if (name.isBlank()) "Rescue Friend" else name.trim()
-        _onboardedName.value = displayName
         try {
             auth.signInAnonymously()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val firebaseUser = auth.currentUser
                         _user.value = firebaseUser
+                        _onboardedName.value = displayName
                         if (firebaseUser != null) {
                             viewModelScope.launch {
                                 val profile = UserProfile(
@@ -489,14 +551,17 @@ fun createReport(
                                 flushPendingFcmToken()
                             }
                         }
+                        onResult(true, null)
                     } else {
-                        android.util.Log.w("TinyPawsVM", "Firebase anonymous sign in warning: ${task.exception?.message}")
+                        // P0-2: Never swallow auth failures. Return the failure to the caller.
+                        android.util.Log.w("TinyPawsVM", "Firebase anonymous sign in failed: ${task.exception?.message}")
+                        onResult(false, "Sign-in failed. Please check your connection and try again.")
                     }
-                    onResult(true, null)
                 }
         } catch (e: Exception) {
-            android.util.Log.w("TinyPawsVM", "Firebase auth exception: ${e.message}")
-            onResult(true, null)
+            // P0-2: Network or unexpected errors must not silently succeed.
+            android.util.Log.e("TinyPawsVM", "Firebase auth exception during anonymous sign-in", e)
+            onResult(false, "Sign-in failed. Please check your connection and try again.")
         }
     }
 
@@ -576,6 +641,8 @@ fun createReport(
     }
 
     fun signIn(email: String, pass: String, context: Context, onResult: (Boolean, String?) -> Unit) {
+        // P1-2: Capture the previous user ID BEFORE signing in so we can detect account switching.
+        val previousUserId = auth.currentUser?.uid
         auth.signInWithEmailAndPassword(email.trim(), pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -586,14 +653,46 @@ fun createReport(
                             updateOnboardedName(name)
                         }
                     }
-                    // Automatically restore data from cloud on sign in
+                    // P1-2: Restore data from cloud on sign in. Only clear local data
+                    // when switching accounts (different UID). Never clear before confirming
+                    // the restore can proceed.
                     viewModelScope.launch(Dispatchers.IO) {
-                        com.example.data.AppDatabase.getDatabase(getApplication()).clearAllTables()
-
+                        val newUserId = firebaseUser?.uid
+                        val isAccountSwitch = previousUserId != null && newUserId != null && previousUserId != newUserId
+                        if (isAccountSwitch) {
+                            // Backup previous account's data before clearing to prevent data loss.
+                            // If backup fails, abort the account switch to protect local data.
+                            try {
+                                val backupResult = com.example.data.FirestoreBackupHelper.backupDataToCloud(
+                                    allProfiles = catRepository.allCatProfiles.first(),
+                                    careLogs = catRepository.allCareLogs.first(),
+                                    weightLogs = catRepository.allWeightLogs.first(),
+                                    diaryLogs = catRepository.allCheckInLogs.first(),
+                                    reminders = catRepository.allReminders.first(),
+                                    historyEntries = catRepository.allHistoryEntries.first()
+                                )
+                                if (backupResult.isFailure) {
+                                    android.util.Log.e("TinyPawsVM", "Pre-switch backup failed — aborting account switch", backupResult.exceptionOrNull())
+                                    viewModelScope.launch(Dispatchers.Main) {
+                                        onResult(false, "Cannot switch accounts: backup failed. Please check your connection and try again.")
+                                    }
+                                    return@launch
+                                }
+                            } catch (e: Exception) {
+                                android.util.Log.e("TinyPawsVM", "Pre-switch backup failed", e)
+                                viewModelScope.launch(Dispatchers.Main) {
+                                    onResult(false, "Cannot switch accounts: backup failed. Please check your connection and try again.")
+                                }
+                                return@launch
+                            }
+                            com.example.data.AppDatabase.getDatabase(getApplication()).clearAllTables()
+                        }
                         restoreDataFromCloud(context) { resultMsg ->
                             android.util.Log.d("TinyPawsVM", "Auto-restore after sign-in: $resultMsg")
+                            val restoreSucceeded = !resultMsg.contains("failed", ignoreCase = true)
+                                    && !resultMsg.contains("error", ignoreCase = true)
                             viewModelScope.launch(Dispatchers.Main) {
-                                onResult(true, null)
+                                onResult(restoreSucceeded, if (restoreSucceeded) null else resultMsg)
                             }
                         }
                         flushPendingFcmToken()
@@ -643,7 +742,12 @@ fun createReport(
             return
         }
 
-        user.sendEmailVerification().addOnCompleteListener { task ->
+        val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
+            .setUrl("https://tinypaws-diary.web.app/verify-email")
+            .setHandleCodeInApp(true)
+            .setAndroidPackageName("com.tinypaws.app", true, null)
+            .build()
+        user.sendEmailVerification(actionSettings).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 startResendCooldown(60)
                 onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
@@ -714,7 +818,12 @@ fun createReport(
                         flushPendingFcmToken()
                     }
 
-                    updatedUser.sendEmailVerification().addOnCompleteListener { emailTask ->
+                    val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
+                        .setUrl("https://tinypaws-diary.web.app/verify-email")
+                        .setHandleCodeInApp(true)
+                        .setAndroidPackageName("com.tinypaws.app", true, null)
+                        .build()
+                    updatedUser.sendEmailVerification(actionSettings).addOnCompleteListener { emailTask ->
                         if (emailTask.isSuccessful) {
                             startResendCooldown(60)
                             onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
@@ -763,7 +872,12 @@ fun createReport(
                             flushPendingFcmToken()
                         }
 
-                        firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
+                        val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
+                            .setUrl("https://tinypaws-diary.web.app/verify-email")
+                            .setHandleCodeInApp(true)
+                            .setAndroidPackageName("com.tinypaws.app", true, null)
+                            .build()
+                        firebaseUser.sendEmailVerification(actionSettings).addOnCompleteListener { emailTask ->
                             if (emailTask.isSuccessful) {
                                 startResendCooldown(60)
                                 onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
@@ -832,7 +946,8 @@ fun createReport(
         val currentUser = auth.currentUser
         if (currentUser != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                try {
+                // P1-1: Backup MUST succeed before wiping local data.
+                val backupResult = try {
                     com.example.data.FirestoreBackupHelper.backupDataToCloud(
                         allProfiles = catRepository.allCatProfiles.first(),
                         careLogs = catRepository.allCareLogs.first(),
@@ -843,25 +958,47 @@ fun createReport(
                     )
                 } catch (e: Exception) {
                     android.util.Log.e("TinyPawsVM", "Automatic backup on logout failed", e)
+                    Result.failure(e)
                 }
-                com.example.data.AppDatabase.getDatabase(getApplication()).clearAllTables()
-                kotlinx.coroutines.withContext(Dispatchers.Main) {
-                    auth.signOut()
+                if (backupResult.isFailure) {
+                    // P1-1: Do NOT wipe local data if backup fails.
+                    withContext(Dispatchers.Main) {
+                        _actionError.value = "Backup failed. Your local data is preserved. Please check your connection and try again."
+                    }
+                    return@launch
+                }
+                try {
+                    com.example.data.AppDatabase.getDatabase(getApplication()).clearAllTables()
+                } catch (e: Exception) {
+                    android.util.Log.e("TinyPawsVM", "clearAllTables failed during signOut", e)
+                }
+                withContext(Dispatchers.Main) {
+                    // P0-1: Clear auth-dependent navigation state BEFORE signing out.
+                    _onboardedName.value = ""
+                    sharedPrefs.edit()
+                        .remove("${getAccountPrefix()}onboarded_name")
+                        .remove("user_name")
+                        .apply()
                     _user.value = null
+                    auth.signOut()
                     syncUserAccountState(null)
+                    _user.value = auth.currentUser
                 }
             }
         } else {
-            auth.signOut()
             _user.value = null
+            auth.signOut()
+            _onboardedName.value = ""
+            sharedPrefs.edit()
+                .remove("${getAccountPrefix()}onboarded_name")
+                .remove("user_name")
+                .apply()
             viewModelScope.launch(Dispatchers.IO) {
                 com.example.data.AppDatabase.getDatabase(getApplication()).clearAllTables()
             }
             syncUserAccountState(null)
         }
     }
-
-    private val sharedPrefs = application.getSharedPreferences("tinypaws_prefs", Context.MODE_PRIVATE)
 
     // Multi-Cat Profiles & Active Cat State
     val allCatProfiles: StateFlow<List<CatProfile>> = catRepository.allCatProfiles
@@ -870,9 +1007,6 @@ fun createReport(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    private val _selectedCatId = MutableStateFlow(sharedPrefs.getInt("active_cat_id", 1))
-    val selectedCatId: StateFlow<Int> = _selectedCatId.asStateFlow()
 
     fun selectCat(catId: Int) {
         _selectedCatId.value = catId
@@ -1125,7 +1259,10 @@ fun createReport(
     }
 
     fun restoreDataFromCloud(context: Context, onResult: (String) -> Unit) {
-        if (_isCloudSyncing.value) return
+        if (_isCloudSyncing.value) {
+            onResult("Sync already in progress. Please try again.")
+            return
+        }
         _isCloudSyncing.value = true
         viewModelScope.launch {
             val res = com.example.data.FirestoreBackupHelper.restoreDataFromCloud(catRepository)
@@ -1177,22 +1314,36 @@ fun createReport(
         reminderTimeMillis: Long? = null
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            firebaseRepository.saveDiaryEntry(
-                DiaryEntry(
-                    date = date,
-                    mood = mood,
-                    notes = notes,
-                    weight = weight,
-                    photos = photos,
-                    diaryEntryType = diaryEntryType
+            try {
+                firebaseRepository.saveDiaryEntry(
+                    DiaryEntry(
+                        date = date,
+                        mood = mood,
+                        notes = notes,
+                        weight = weight,
+                        photos = photos,
+                        diaryEntryType = diaryEntryType
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                android.util.Log.e("TinyPawsVM", "Failed to save diary entry", e)
+                withContext(Dispatchers.Main) {
+                    _actionError.value = "Failed to save diary entry. Please check your connection."
+                }
+            }
         }
     }
 
     fun deleteCheckInLog(entryId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            firebaseRepository.deleteDiaryEntry(entryId)
+            try {
+                firebaseRepository.deleteDiaryEntry(entryId)
+            } catch (e: Exception) {
+                android.util.Log.e("TinyPawsVM", "Failed to delete diary entry", e)
+                withContext(Dispatchers.Main) {
+                    _actionError.value = "Failed to delete diary entry. Please check your connection."
+                }
+            }
         }
     }
 
@@ -1329,10 +1480,6 @@ fun createReport(
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    // Onboarded Name State
-    private val _onboardedName = MutableStateFlow("")
-    val onboardedName = _onboardedName.asStateFlow()
-
     private val _currentLanguage = MutableStateFlow(sharedPrefs.getString("user_lang", "en") ?: "en")
     val currentLanguage = _currentLanguage.asStateFlow()
 
@@ -1369,12 +1516,13 @@ fun createReport(
         val prefix = getAccountPrefix()
         sharedPrefs.edit()
             .putString("${prefix}onboarded_name", name)
-            .putString("user_name", name)
             .apply()
     }
 
     fun setLanguage(langCode: String) {
         _currentLanguage.value = langCode
+        // Persist to SharedPreferences so language survives restart (even offline/guest).
+        sharedPrefs.edit().putString("user_lang", langCode).apply()
         val currentUser = _user.value
         if (currentUser != null) {
             viewModelScope.launch {
@@ -1397,27 +1545,11 @@ fun createReport(
     private val _catAgeGroup = MutableStateFlow<String?>(null) // "baby", "young", "adult"
     val catAgeGroup = _catAgeGroup.asStateFlow()
 
-    // 2. Growth Journey Game States (Persisted in SharedPreferences)
-    private val _currentIsland = MutableStateFlow(sharedPrefs.getInt("quiz_current_island", 0)) // 0 to 4 (Islands 1 to 5)
-    val currentIsland = _currentIsland.asStateFlow()
-
     private val _currentQuestionIndex = MutableStateFlow(0) // 0 to 19
     val currentQuestionIndex = _currentQuestionIndex.asStateFlow()
 
-    private val _quizCompletedOnCurrentIsland = MutableStateFlow(sharedPrefs.getBoolean("quiz_completed_on_current", false))
-    val quizCompletedOnCurrentIsland = _quizCompletedOnCurrentIsland.asStateFlow()
-
-    private val _completedIslands = MutableStateFlow<Set<Int>>(
-        sharedPrefs.getString("quiz_completed_islands", "")?.takeIf { it.isNotEmpty() }
-            ?.split(",")?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet()
-    )
-    val completedIslands = _completedIslands.asStateFlow()
-
     val allQuizzesCompleted = _completedIslands.map { it.size == 5 }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-    private val _scoreOnCurrentIsland = MutableStateFlow(sharedPrefs.getInt("quiz_score_on_current", 0))
-    val scoreOnCurrentIsland = _scoreOnCurrentIsland.asStateFlow()
 
     private val _selectedAnswers = MutableStateFlow<Map<Int, Int>>(emptyMap()) // index -> selectedOptionIndex
     val selectedAnswers = _selectedAnswers.asStateFlow()
@@ -1438,9 +1570,6 @@ fun createReport(
             .putInt("${prefix}quiz_score_on_current", correctCount)
             .putBoolean("${prefix}quiz_completed_on_current", true)
             .putString("${prefix}quiz_completed_islands", updated.joinToString(","))
-            .putInt("quiz_score_on_current", correctCount)
-            .putBoolean("quiz_completed_on_current", true)
-            .putString("quiz_completed_islands", updated.joinToString(","))
             .apply()
         logActivity("complete_quiz", "Completed Level ${_currentIsland.value + 1} Quiz (Score: $correctCount/10)")
     }
@@ -1459,9 +1588,6 @@ fun createReport(
                 .putInt("${prefix}quiz_current_island", next)
                 .putBoolean("${prefix}quiz_completed_on_current", false)
                 .putInt("${prefix}quiz_score_on_current", 0)
-                .putInt("quiz_current_island", next)
-                .putBoolean("quiz_completed_on_current", false)
-                .putInt("quiz_score_on_current", 0)
                 .apply()
         }
     }
@@ -1478,9 +1604,6 @@ fun createReport(
                 .putInt("${prefix}quiz_current_island", islandIndex)
                 .putBoolean("${prefix}quiz_completed_on_current", false)
                 .putInt("${prefix}quiz_score_on_current", 0)
-                .putInt("quiz_current_island", islandIndex)
-                .putBoolean("quiz_completed_on_current", false)
-                .putInt("quiz_score_on_current", 0)
                 .apply()
         }
     }
@@ -1498,10 +1621,6 @@ fun createReport(
             .putBoolean("${prefix}quiz_completed_on_current", false)
             .putInt("${prefix}quiz_score_on_current", 0)
             .putString("${prefix}quiz_completed_islands", "")
-            .putInt("quiz_current_island", 0)
-            .putBoolean("quiz_completed_on_current", false)
-            .putInt("quiz_score_on_current", 0)
-            .putString("quiz_completed_islands", "")
             .apply()
     }
 
@@ -1790,12 +1909,30 @@ fun createReport(
         _isChatLoading.value = true
         viewModelScope.launch {
             var fullResponse = ""
-            com.example.data.GroqClient.chatStream(systemInstruction, history) { chunk ->
-                fullResponse += chunk
+            try {
+                com.example.data.GroqClient.chatStream(systemInstruction, history) { chunk ->
+                    fullResponse += chunk
+                    // chatStream callback runs on IO thread; dispatch UI update to Main.
+                    viewModelScope.launch(Dispatchers.Main) {
+                        val currentMessages = _chatMessages.value.toMutableList()
+                        if (currentMessages.isNotEmpty()) {
+                            val lastIdx = currentMessages.lastIndex
+                            currentMessages[lastIdx] = ChatMessage("model", fullResponse, isPending = false)
+                            _chatMessages.value = currentMessages
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("TinyPawsVM", "Chat stream failed", e)
                 val currentMessages = _chatMessages.value.toMutableList()
                 if (currentMessages.isNotEmpty()) {
                     val lastIdx = currentMessages.lastIndex
-                    currentMessages[lastIdx] = ChatMessage("model", fullResponse, isPending = false)
+                    val errorMsg = when {
+                        e.message?.contains("timeout", true) == true -> "Sorry, the response timed out. Please try again 🐾"
+                        e.message?.contains("network", true) == true -> "Network issue — please check your connection and try again 🐾"
+                        else -> "Something went wrong. Please try again 🐾"
+                    }
+                    currentMessages[lastIdx] = ChatMessage("model", errorMsg, isPending = false)
                     _chatMessages.value = currentMessages
                 }
             }

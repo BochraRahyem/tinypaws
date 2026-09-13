@@ -111,7 +111,7 @@ fun DiaryFeedScreen(
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.back_desc),
                             tint = DeepBurgundy
                         )
                     }
@@ -400,7 +400,7 @@ fun DiaryEntryCard(
                     onClick = com.example.ui.theme.rememberHapticOnClick { onDelete() },
                     modifier = Modifier.size(28.dp).testTag("delete_diary_${log.id}")
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = RedError.copy(alpha = 0.8f))
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(id = R.string.delete_desc), tint = RedError.copy(alpha = 0.8f))
                 }
             }
 

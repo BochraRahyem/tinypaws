@@ -31,7 +31,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,9 +49,9 @@ fun MyCatHubScreen(
 ) {
     val scrollState = rememberScrollState()
 
-    val allProfiles by viewModel.allCatProfiles.collectAsState()
-    val activeCatId by viewModel.selectedCatId.collectAsState()
-    val currentCat by viewModel.catProfile.collectAsState()
+    val allProfiles by viewModel.allCatProfiles.collectAsStateWithLifecycle()
+    val activeCatId by viewModel.selectedCatId.collectAsStateWithLifecycle()
+    val currentCat by viewModel.catProfile.collectAsStateWithLifecycle()
 
     var showAddCatDialog by remember { mutableStateOf(false) }
     var catToDelete by remember { mutableStateOf<com.example.data.CatProfile?>(null) }
@@ -714,7 +714,7 @@ fun HubButton(
 
 @Composable
 fun DailyCatFactCard(viewModel: TinyPawsViewModel) {
-    val currentLang by viewModel.currentLanguage.collectAsState()
+    val currentLang by viewModel.currentLanguage.collectAsStateWithLifecycle()
     var catFact by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()

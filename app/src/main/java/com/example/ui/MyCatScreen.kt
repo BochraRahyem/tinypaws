@@ -1,6 +1,9 @@
 package com.example.ui
 
 import android.widget.Toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -79,14 +82,19 @@ fun MyCatScreen(
     var photoUrlInput by remember { mutableStateOf<String?>(null) }
     var tempPhotoUri by remember { mutableStateOf<android.net.Uri?>(null) }
     var tempPhotoFile by remember { mutableStateOf<java.io.File?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
     ) { uri: android.net.Uri? ->
         if (uri != null) {
-            val savedFile = saveImageToInternalStorage(context, uri)
-            if (savedFile != null) {
-                photoUrlInput = savedFile.absolutePath
+            coroutineScope.launch(Dispatchers.IO) {
+                val savedFile = saveImageToInternalStorage(context, uri)
+                withContext(Dispatchers.Main) {
+                    if (savedFile != null) {
+                        photoUrlInput = savedFile.absolutePath
+                    }
+                }
             }
         }
     }
@@ -993,9 +1001,9 @@ fun MyCatScreen(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Delete,
-                                                    contentDescription = "Delete",
-                                                    tint = RedError.copy(alpha = 0.7f),
-                                                    modifier = Modifier.size(16.dp)
+                                                     contentDescription = stringResource(id = R.string.delete_desc),
+                                                     tint = RedError.copy(alpha = 0.7f),
+                                                     modifier = Modifier.size(16.dp)
                                                 )
                                             }
                                         }
@@ -1529,7 +1537,7 @@ fun WeightHistoryChart(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                "No weight data points recorded yet.",
+                stringResource(id = R.string.hub_no_weight_data),
                 fontFamily = QuicksandFontFamily,
                 color = Wine.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center

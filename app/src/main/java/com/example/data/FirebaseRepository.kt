@@ -30,7 +30,14 @@ class FirebaseRepository {
         "feed_cat" -> 2
         "vet_visit", "vet" -> 3
         "fill_station" -> 5
-        "adopt_cat", "rescue" -> 10
+        "adopt_cat", "rescue", "rescue_cat" -> 10
+        "helped" -> 2
+        "build_shelter" -> 60
+        "donate_supplies" -> 30
+        "cuddle_socialize" -> 10
+        "complete_quiz" -> 20
+        "generate_art" -> 10
+        "generate_music" -> 15
         else -> 0
     }
 
@@ -52,13 +59,17 @@ class FirebaseRepository {
 
     private suspend fun bumpOwnRewards(reportedCats: Long = 0, catBadges: Long = 0, stars: Long = 0) {
         try {
+            // P0-9: Clamp reward increments to safe bounds to prevent client-side inflation.
+            val safeReportedCats = reportedCats.coerceIn(0, 5)
+            val safeCatBadges = catBadges.coerceIn(0, 10)
+            val safeStars = stars.coerceIn(0, 50)
             val uid = auth.currentUser?.uid ?: return
             val inc: MutableMap<String, Any> = mutableMapOf()
-            if (reportedCats > 0) inc["reportedCatsCount"] = com.google.firebase.firestore.FieldValue.increment(reportedCats)
-            if (catBadges > 0) inc["catBadges"] = com.google.firebase.firestore.FieldValue.increment(catBadges)
-            if (stars > 0) {
-                inc["totalStars"] = com.google.firebase.firestore.FieldValue.increment(stars)
-                inc["rescueStars"] = com.google.firebase.firestore.FieldValue.increment(stars)
+            if (safeReportedCats > 0) inc["reportedCatsCount"] = com.google.firebase.firestore.FieldValue.increment(safeReportedCats)
+            if (safeCatBadges > 0) inc["catBadges"] = com.google.firebase.firestore.FieldValue.increment(safeCatBadges)
+            if (safeStars > 0) {
+                inc["totalStars"] = com.google.firebase.firestore.FieldValue.increment(safeStars)
+                inc["rescueStars"] = com.google.firebase.firestore.FieldValue.increment(safeStars)
             }
             if (inc.isEmpty()) return
             firestore.collection("users").document(uid)
@@ -144,13 +155,14 @@ class FirebaseRepository {
         context: android.content.Context
     ): String {
         val user = auth.currentUser ?: throw IllegalStateException("Not signed in")
-        val token = user.getIdToken(true).await().token
-            ?: throw IllegalStateException("Could not refresh sign-in credentials")
-        val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            ?: throw IllegalStateException("Could not read the selected image")
-        if (bytes.size > 10 * 1024 * 1024) throw IllegalStateException("Image too large (max 10 MB)")
 
         return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            val token = user.getIdToken(true).await().token
+                ?: throw IllegalStateException("Could not refresh sign-in credentials")
+            val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                ?: throw IllegalStateException("Could not read the selected image")
+            if (bytes.size > 10 * 1024 * 1024) throw IllegalStateException("Image too large (max 10 MB)")
+
             val conn = java.net.URL("$imageRelayUrl?folder=${java.net.URLEncoder.encode(folder, "UTF-8")}")
                 .openConnection() as java.net.HttpURLConnection
             try {
@@ -208,42 +220,14 @@ class FirebaseRepository {
         bumpGlobalStats(mapOf("totalCatsReported" to 1L))
     }
 
-    fun getActiveReports(): Flow<List<CatReport>> = callbackFlow {
-        // Newest 150 only: bounds billable reads and memory.
-        val subscription = firestore.collection("reports")
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .limit(150)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(emptyList())
-                    return@addSnapshotListener
-                }
-                val list = snapshot?.toObjects(CatReport::class.java) ?: emptyList()
-                val activeList = list.filter { !it.rescued && (it.status.isBlank() || it.status == "active" || it.status == "helped") }
-                trySend(activeList)
-            }
-        awaitClose { subscription.remove() }
-    }
-
-    fun getRescueStories(): Flow<List<CatReport>> = callbackFlow {
-        val subscription = firestore.collection("reports")
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .limit(100)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(emptyList())
-                    return@addSnapshotListener
-                }
-                val list = snapshot?.toObjects(CatReport::class.java) ?: emptyList()
-                val rescueList = list.filter { it.rescued || it.status == "rescued" }
-                trySend(rescueList)
-            }
-        awaitClose { subscription.remove() }
-    }
-
     suspend fun reachCat(reportId: String) {
         val uid = auth.currentUser?.uid
             ?: throw IllegalStateException("Not signed in")
+
+        // P0-8: Check if this user already reached this report to prevent inflated reachedCount.
+        val existingReach = firestore.collection("reports").document(reportId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
 
         // Atomic: the reach record AND the public reachedCount move together.
         val batch = firestore.batch()
@@ -252,10 +236,12 @@ class FirebaseRepository {
                 .collection("reaches").document(uid),
             mapOf("createdAt" to FieldValue.serverTimestamp())
         )
-        batch.update(
-            firestore.collection("reports").document(reportId),
-            mapOf("reachedCount" to FieldValue.increment(1))
-        )
+        if (!isDuplicate) {
+            batch.update(
+                firestore.collection("reports").document(reportId),
+                mapOf("reachedCount" to FieldValue.increment(1))
+            )
+        }
         batch.commit().await()
     }
 
@@ -269,6 +255,11 @@ class FirebaseRepository {
     suspend fun helpCat(reportId: String, actionType: String = "helped") {
         val uid = requireUid()
 
+        // P0-8: Check if this user already helped this report to prevent stats double-counting.
+        val existingReach = firestore.collection("reports").document(reportId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
+
         // Atomic: recording the reach and flipping the report status succeed or fail together.
         val batch = firestore.batch()
         batch.set(
@@ -280,42 +271,53 @@ class FirebaseRepository {
                 "actionType" to actionType
             )
         )
-        batch.update(
-            firestore.collection("reports").document(reportId),
-            mapOf(
-                "status" to "helped",
-                "helpedBy" to uid,
-                "helpedAt" to FieldValue.serverTimestamp()
+        if (!isDuplicate) {
+            batch.update(
+                firestore.collection("reports").document(reportId),
+                mapOf(
+                    "status" to "helped",
+                    "helpedBy" to uid,
+                    "helpedAt" to FieldValue.serverTimestamp()
+                )
             )
-        )
-        // Free-tier replacement for onReportUpdated stats.
-        batch.set(
-            firestore.collection("statistics").document("global"),
-            mapOf(
-                "totalCatsHelped" to FieldValue.increment(1),
-                "totalCatsRescued" to FieldValue.increment(1)
-            ),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
+            // Free-tier replacement for onReportUpdated stats — only on first action.
+            // Bounded by Firestore rules (max +5 per write). Client-side duplicate
+            // check (reach document) prevents the same user from counting twice.
+            batch.set(
+                firestore.collection("statistics").document("global"),
+                mapOf(
+                    "totalCatsHelped" to FieldValue.increment(1),
+                    "totalCatsRescued" to FieldValue.increment(1)
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+        }
         batch.commit().await()
 
         // Record user action (triggers server-side stats/global update)
-        val stars = if (actionType == "vet_visit") 3 else 2
-        val desc = if (actionType == "vet_visit") "Took cat to veterinarian" else "Helped stray cat"
-        recordUserAction(
-            UserAction(
-                actionType = actionType,
-                starsEarned = stars,
-                rewardAmount = stars,
-                description = desc,
-                relatedCatId = reportId,
-                catId = reportId
+        if (!isDuplicate) {
+            val stars = if (actionType == "vet_visit") 3 else 2
+            val desc = if (actionType == "vet_visit") "Took cat to veterinarian" else "Helped stray cat"
+            recordUserAction(
+                UserAction(
+                    actionType = actionType,
+                    starsEarned = stars,
+                    rewardAmount = stars,
+                    description = desc,
+                    relatedCatId = reportId,
+                    catId = reportId
+                )
             )
-        )
+        }
     }
 
     suspend fun adoptCat(reportId: String) {
         val uid = requireUid()
+
+        // P0-8: Check if this user already adopted this report to prevent double-counting.
+        val existingReach = firestore.collection("reports").document(reportId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
 
         val batch = firestore.batch()
         batch.set(
@@ -327,45 +329,76 @@ class FirebaseRepository {
                 "actionType" to "adopt_cat"
             )
         )
-        batch.update(
-            firestore.collection("reports").document(reportId),
-            mapOf(
-                "status" to "adopted",
-                "adoptedBy" to uid,
-                "adoptedAt" to FieldValue.serverTimestamp()
+        if (!isDuplicate) {
+            batch.update(
+                firestore.collection("reports").document(reportId),
+                mapOf(
+                    "status" to "adopted",
+                    "adoptedBy" to uid,
+                    "adoptedAt" to FieldValue.serverTimestamp()
+                )
             )
-        )
-        // Free-tier replacement for onReportUpdated stats.
-        batch.set(
-            firestore.collection("statistics").document("global"),
-            mapOf(
-                "totalAdoptedCats" to FieldValue.increment(1),
-                "totalCatsHelped" to FieldValue.increment(1),
-                "totalCatsRescued" to FieldValue.increment(1)
-            ),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
+            // Free-tier replacement for onReportUpdated stats — only on first action.
+            // Bounded by Firestore rules (max +5 per write). Client-side duplicate
+            // check (reach document) prevents the same user from counting twice.
+            batch.set(
+                firestore.collection("statistics").document("global"),
+                mapOf(
+                    "totalAdoptedCats" to FieldValue.increment(1),
+                    "totalCatsHelped" to FieldValue.increment(1),
+                    "totalCatsRescued" to FieldValue.increment(1)
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+        }
         batch.commit().await()
 
         // Record user action with 10 stars (triggers server-side stats/global update)
-        recordUserAction(
-            UserAction(
-                actionType = "adopt_cat",
-                starsEarned = 10,
-                rewardAmount = 10,
-                description = "Adopted/rescued cat permanently",
-                relatedCatId = reportId,
-                catId = reportId
+        if (!isDuplicate) {
+            recordUserAction(
+                UserAction(
+                    actionType = "adopt_cat",
+                    starsEarned = 10,
+                    rewardAmount = 10,
+                    description = "Adopted/rescued cat permanently",
+                    relatedCatId = reportId,
+                    catId = reportId
+                )
             )
-        )
+        }
     }
 
     suspend fun feedCat(reportId: String) {
+        val uid = requireUid()
+
+        // P0-8 + TOCTOU fix: Use a Firestore transaction so the duplicate check + reach write
+        // are atomic. Without a transaction, two rapid taps could both see isDuplicate=false
+        // and both grant rewards.
+        val isDuplicate = firestore.runTransaction<Boolean> { transaction ->
+            val reachRef = firestore.collection("reports").document(reportId)
+                .collection("reaches").document(uid)
+            val existing = transaction.get(reachRef)
+            if (!existing.exists()) {
+                transaction.set(reachRef, mapOf(
+                    "userId" to uid,
+                    "timestamp" to FieldValue.serverTimestamp(),
+                    "actionType" to "feed_cat"
+                ))
+                transaction.update(
+                    firestore.collection("reports").document(reportId),
+                    mapOf("reachedCount" to FieldValue.increment(1))
+                )
+                false // new reach
+            } else {
+                true // duplicate
+            }
+        }.await()
+
         recordUserAction(
             UserAction(
                 actionType = "feed_cat",
-                starsEarned = 2,
-                rewardAmount = 2,
+                starsEarned = if (isDuplicate) 0 else 2,
+                rewardAmount = if (isDuplicate) 0 else 2,
                 description = "Fed individual stray cat",
                 relatedCatId = reportId,
                 catId = reportId
@@ -375,6 +408,11 @@ class FirebaseRepository {
 
     suspend fun fillFeedingStation(stationId: String) {
         val uid = requireUid()
+
+        // P0-8: Check if this user already filled this station to prevent stats double-counting.
+        val existingReach = firestore.collection("feedingStations").document(stationId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
 
         // Atomic: reach + station status update in one batch.
         val batch = firestore.batch()
@@ -395,35 +433,56 @@ class FirebaseRepository {
                 "lastUpdated" to FieldValue.serverTimestamp()
             )
         )
-        batch.set(
-            firestore.collection("statistics").document("global"),
-            mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
+        if (!isDuplicate) {
+            // Free-tier replacement for onStationUpdated stats — only on first fill.
+            batch.set(
+                firestore.collection("statistics").document("global"),
+                mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+        }
         batch.commit().await()
 
         // Record user action with 5 stars (triggers server-side stats/global update)
-        recordUserAction(
-            UserAction(
-                actionType = "fill_station",
-                starsEarned = 5,
-                rewardAmount = 5,
-                description = "Filled feeding station",
-                relatedStationId = stationId,
-                stationId = stationId
+        if (!isDuplicate) {
+            recordUserAction(
+                UserAction(
+                    actionType = "fill_station",
+                    starsEarned = 5,
+                    rewardAmount = 5,
+                    description = "Filled feeding station",
+                    relatedStationId = stationId,
+                    stationId = stationId
+                )
             )
-        )
+        }
     }
 
     suspend fun recordUserAction(action: UserAction) {
         val uid = requireUid()
-        val reward = if (action.rewardAmount > 0) action.rewardAmount else rewardFor(action.actionType)
+        // P0-9: Server-side reward validation.
+        // For community actions (helpCat, adoptCat, etc.), use the known server reward.
+        // For personal activities (quiz, art, music), allow client-defined rewards
+        // but clamp to safe bounds.
+        val knownReward = rewardFor(action.actionType)
+        val safeReward = when {
+            knownReward > 0 -> knownReward  // Community action: use server-defined reward
+            action.rewardAmount in 1..100 -> action.rewardAmount  // Personal activity: bounded
+            else -> 0
+        }
+        val safeAction = action.copy(
+            starsEarned = safeReward,
+            rewardAmount = safeReward,
+            userId = uid
+        )
         firestore.collection("users").document(uid).collection("actions")
-            .add(action.copy(rewardAmount = reward)).await()
+            .add(safeAction).await()
         // Free-tier replacement for onUserActionCreated (monotonic, rule-guarded).
         // Global statistics are bumped by the calling functions (helpCat, adoptCat,
         // fillFeedingStation) in their own atomic batches to avoid double-counting.
-        bumpOwnRewards(stars = reward.toLong())
+        if (safeReward > 0) {
+            bumpOwnRewards(stars = safeReward.toLong())
+        }
     }
 
     fun getUserActions(userId: String): Flow<List<UserAction>> = callbackFlow {
@@ -492,6 +551,11 @@ class FirebaseRepository {
     suspend fun reachFeedingStation(stationId: String, foodAvailable: Boolean) {
         val uid = requireUid()
 
+        // P0-8: Check if this user already reached this station to prevent stats double-counting.
+        val existingReach = firestore.collection("feedingStations").document(stationId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
+
         // Atomic: reach + station counters in one batch.
         val batch = firestore.batch()
         batch.set(
@@ -507,25 +571,29 @@ class FirebaseRepository {
                 "lastUpdated" to FieldValue.serverTimestamp()
             )
         )
-        batch.set(
-            firestore.collection("statistics").document("global"),
-            mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
+        if (!isDuplicate) {
+            batch.set(
+                firestore.collection("statistics").document("global"),
+                mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+        }
         batch.commit().await()
     }
 
     suspend fun incrementDownloads(count: Long = 1L) {
         try {
+            // Firestore rules only allow +1 increments. Clamp to 1.
+            val safeCount = count.coerceAtLeast(1)
             val statsRef = firestore.collection("stats").document("global")
             statsRef.set(
                 mapOf(
-                    "downloads" to FieldValue.increment(count),
+                    "downloads" to FieldValue.increment(1L),
                     "updatedAt" to FieldValue.serverTimestamp()
                 ),
                 com.google.firebase.firestore.SetOptions.merge()
             ).await()
-            android.util.Log.d("FirebaseRepo", "Incremented stats/global downloads by $count")
+            android.util.Log.d("FirebaseRepo", "Incremented stats/global downloads by 1")
         } catch (e: Exception) {
             android.util.Log.e("FirebaseRepo", "Error incrementing stats/global downloads", e)
         }

@@ -495,7 +495,7 @@ fun FavoritesSection(
     viewModel: TinyPawsViewModel,
     onSelectProject: (String) -> Unit
 ) {
-    val favoriteIds by viewModel.favoriteDiyIds.collectAsState()
+    val favoriteIds by viewModel.favoriteDiyIds.collectAsStateWithLifecycle()
     val allProjects = DiyProjectsData.projects
     val favoritedProjects = allProjects.filter { favoriteIds.contains(it.id) }
 
@@ -690,7 +690,7 @@ fun VisualNarrativePlaceholder(
     modifier: Modifier = Modifier
 ) {
 
-    val stepImageCache by viewModel.stepImageCache.collectAsState()
+    val stepImageCache by viewModel.stepImageCache.collectAsStateWithLifecycle()
     val stepId = "diy_step_$stepIndex"
     val altText = stringResource(altTextResId)
     val stepDetail = stringResource(stepDetailResId)
@@ -1149,7 +1149,7 @@ fun NewDiyProjectsSection(
 ) {
     var activeCategory by remember { mutableStateOf("shelter") }
     val allProjects = DiyProjectsData.projects
-    val stepImageCache by viewModel.stepImageCache.collectAsState()
+    val stepImageCache by viewModel.stepImageCache.collectAsStateWithLifecycle()
 
     if (selectedProject == null) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -1262,7 +1262,7 @@ fun NewDiyProjectsSection(
             }
 
             filteredProjects.forEach { project ->
-                val favoriteIds by viewModel.favoriteDiyIds.collectAsState()
+                val favoriteIds by viewModel.favoriteDiyIds.collectAsStateWithLifecycle()
                 val isFavorite = favoriteIds.contains(project.id)
 
                 PixelCard(
@@ -1361,7 +1361,7 @@ fun NewDiyProjectsSection(
                     emblemType = "star"
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        val favoriteIds by viewModel.favoriteDiyIds.collectAsState()
+    val favoriteIds by viewModel.favoriteDiyIds.collectAsStateWithLifecycle()
                         val isFavorite = favoriteIds.contains(project.id)
 
                         Row(
@@ -2181,7 +2181,7 @@ fun RecipeLibrarySubSection(viewModel: TinyPawsViewModel) {
 fun RecipeStoryboardCard(viewModel: TinyPawsViewModel, recipe: CuratedRecipeData) {
 
     var stepIdx by remember { mutableStateOf(0) }
-    val stepImageCache by viewModel.stepImageCache.collectAsState()
+    val stepImageCache by viewModel.stepImageCache.collectAsStateWithLifecycle()
     val steps = stringArrayResource(recipe.stepsRes)
     val altTexts = stringArrayResource(recipe.altTextsRes)
     val recipeTitle = stringResource(recipe.titleRes)

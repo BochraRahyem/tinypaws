@@ -48,5 +48,8 @@ tip_of_day.kt
 build*.log
 stray_report_*.kt
 
+# Firebase config (download from Firebase Console, do not commit)
+app/google-services.json
+
 # OS
 Thumbs.db

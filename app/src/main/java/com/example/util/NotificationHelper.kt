@@ -6,10 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.example.MainActivity
 import com.example.R
 
@@ -31,6 +33,7 @@ class NotificationHelper(private val context: Context) {
         private const val KEY_LAST_WEATHER_ALERT = "last_weather_alert_time"
 
         val VIBRATION_PATTERN = longArrayOf(0, 250, 250, 250)
+        private const val TAG = "NotificationHelper"
     }
 
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -106,8 +109,33 @@ class NotificationHelper(private val context: Context) {
     }
 
     /**
-     * Cleans up legacy unconfigured static reminders (8001/8002) so no unsolicited grooming/feeding alarms fire.
+     * Returns true if POST_NOTIFICATIONS permission is granted (or device < Android 13).
      */
+    private fun hasNotificationPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(
+                context, android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+        return true
+    }
+
+    /**
+     * Posts a notification only if permission is granted. Returns false if blocked.
+     */
+    private fun safeNotify(manager: NotificationManager, id: Int, notification: android.app.Notification): Boolean {
+        if (!hasNotificationPermission()) {
+            android.util.Log.w(TAG, "POST_NOTIFICATIONS permission not granted — skipping notification $id")
+            return false
+        }
+        try {
+            manager.notify(id, notification)
+            return true
+        } catch (e: SecurityException) {
+            android.util.Log.e(TAG, "SecurityException posting notification $id", e)
+            return false
+        }
+    }
     fun cancelOrphanedDailyReminders() {
         cancelNotification(8001)
         cancelNotification(8002)
@@ -126,7 +154,7 @@ class NotificationHelper(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
         
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -167,7 +195,7 @@ class NotificationHelper(private val context: Context) {
     }
 
     fun scheduleDailyRecurringNotification(reminderId: Int, title: String, hour: Int, minute: Int) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
         val intent = Intent(context, ReminderReceiver::class.java).apply {
             putExtra("reminder_id", reminderId)
             putExtra("reminder_title", title)
@@ -196,7 +224,7 @@ class NotificationHelper(private val context: Context) {
     }
 
     fun cancelNotification(reminderId: Int) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
         val intent = Intent(context, ReminderReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -291,16 +319,13 @@ class NotificationHelper(private val context: Context) {
         android.util.Log.d("NotificationHelper", "WeatherAlert build check: channelId = $channelId")
         val builtNotification = builder.build()
         android.util.Log.d("NotificationHelper", "WeatherAlert build successful. Posting via NotificationManager with ID $notificationId...")
-        try {
-            manager.notify(notificationId, builtNotification)
-            android.util.Log.d("NotificationHelper", "WeatherAlert notify call completed successfully for ID $notificationId")
-        } catch (e: Exception) {
-            android.util.Log.e("NotificationHelper", "WeatherAlert notify call threw exception!", e)
-        }
+        val posted = safeNotify(manager, notificationId, builtNotification)
 
-        // Save timestamp
-        prefs.edit().putLong(KEY_LAST_WEATHER_ALERT, System.currentTimeMillis()).apply()
-        return true
+        // Only save cooldown if notification was actually posted
+        if (posted) {
+            prefs.edit().putLong(KEY_LAST_WEATHER_ALERT, System.currentTimeMillis()).apply()
+        }
+        return posted
     }
 
     /**
@@ -356,12 +381,7 @@ class NotificationHelper(private val context: Context) {
         android.util.Log.d("NotificationHelper", "DuplicateReport build check: channelId = $channelId")
         val builtNotification = builder.build()
         android.util.Log.d("NotificationHelper", "DuplicateReport build successful. Posting via NotificationManager with ID $notifId...")
-        try {
-            manager.notify(notifId, builtNotification)
-            android.util.Log.d("NotificationHelper", "DuplicateReport notify call completed successfully for ID $notifId")
-        } catch (e: Exception) {
-            android.util.Log.e("NotificationHelper", "DuplicateReport notify call threw exception!", e)
-        }
+        safeNotify(manager, notifId, builtNotification)
 
         prefs.edit().putLong("last_report_alert_$reportId", System.currentTimeMillis()).apply()
         pruneReportAlertTimestamps()
@@ -378,9 +398,11 @@ class NotificationHelper(private val context: Context) {
                 .filter { it.key.startsWith("last_report_alert_") }
                 .mapNotNull { (k, v) -> (v as? Long)?.let { k to it } }
             if (entries.size <= 100) return
+            val editor = prefs.edit()
             entries.sortedBy { it.second }
                 .take(entries.size - 80)
-                .forEach { (key, _) -> prefs.edit().remove(key).apply() }
+                .forEach { (key, _) -> editor.remove(key) }
+            editor.apply()
         } catch (e: Exception) {
             android.util.Log.w("NotificationHelper", "Failed pruning report alert timestamps", e)
         }

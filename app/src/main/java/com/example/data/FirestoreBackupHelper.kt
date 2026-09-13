@@ -51,7 +51,8 @@ object FirestoreBackupHelper {
             val backups = db.collection("users").document(user.uid).collection("backups")
 
             // Profiles keep their ids; child rows now export ids too so restores are idempotent.
-            backups.document("latest_profiles").set(
+            // Each write is awaited to guarantee ordering before the metadata document.
+            Tasks.await(backups.document("latest_profiles").set(
                 mapOf("items" to allProfiles.map { profile ->
                     mapOf(
                         "id" to profile.id,
@@ -67,9 +68,9 @@ object FirestoreBackupHelper {
                     )
                 }),
                 SetOptions.merge()
-            )
+            ), 10, java.util.concurrent.TimeUnit.SECONDS)
 
-            backups.document("latest_careLogs").set(
+            Tasks.await(backups.document("latest_careLogs").set(
                 mapOf("items" to careLogs.map { log ->
                     mapOf(
                         "catId" to log.catId,
@@ -84,9 +85,9 @@ object FirestoreBackupHelper {
                     )
                 }),
                 SetOptions.merge()
-            )
+            ), 10, java.util.concurrent.TimeUnit.SECONDS)
 
-            backups.document("latest_weightLogs").set(
+            Tasks.await(backups.document("latest_weightLogs").set(
                 mapOf("items" to weightLogs.map { log ->
                     mapOf(
                         "id" to log.id,
@@ -96,9 +97,9 @@ object FirestoreBackupHelper {
                     )
                 }),
                 SetOptions.merge()
-            )
+            ), 10, java.util.concurrent.TimeUnit.SECONDS)
 
-            backups.document("latest_diaryLogs").set(
+            Tasks.await(backups.document("latest_diaryLogs").set(
                 mapOf("items" to diaryLogs.map { log ->
                     mapOf(
                         "id" to log.id,
@@ -114,9 +115,9 @@ object FirestoreBackupHelper {
                     )
                 }),
                 SetOptions.merge()
-            )
+            ), 10, java.util.concurrent.TimeUnit.SECONDS)
 
-            backups.document("latest_reminders").set(
+            Tasks.await(backups.document("latest_reminders").set(
                 mapOf("items" to reminders.map { reminder ->
                     mapOf(
                         "id" to reminder.id,
@@ -130,9 +131,9 @@ object FirestoreBackupHelper {
                     )
                 }),
                 SetOptions.merge()
-            )
+            ), 10, java.util.concurrent.TimeUnit.SECONDS)
 
-            backups.document("latest_historyEntries").set(
+            Tasks.await(backups.document("latest_historyEntries").set(
                 mapOf("items" to historyEntries.map { entry ->
                     mapOf(
                         "id" to entry.id,
@@ -144,7 +145,7 @@ object FirestoreBackupHelper {
                     )
                 }),
                 SetOptions.merge()
-            )
+            ), 10, java.util.concurrent.TimeUnit.SECONDS)
 
             // Metadata document written last marks the backup as complete.
             val metaTask = backups.document("latest").set(

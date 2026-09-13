@@ -60,9 +60,22 @@ class TinyPawsMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Channel is created centrally by NotificationHelper (with sound/vibration).
-        // Creating it again here with different settings would be ignored by the OS.
+        // Ensure channel exists even on cold-start FCM delivery.
         val channelId = com.example.util.NotificationHelper.CHANNEL_DUPLICATE_REPORT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (manager.getNotificationChannel(channelId) == null) {
+                val channel = NotificationChannel(
+                    channelId, "TinyPaws Community Cat Reports",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Duplicate or updated cat sighting reports"
+                    enableVibration(true)
+                }
+                manager.createNotificationChannel(channel)
+            }
+        }
+
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_paw_notification)
             .setContentTitle(title)

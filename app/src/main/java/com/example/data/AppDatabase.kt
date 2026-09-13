@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [LogEntry::class, FavoriteDiy::class, StrayReport::class, CatProfile::class, CatWeightLog::class, CatCheckInLog::class, Reminder::class, DailyCareLog::class, CatHistoryEntry::class], version = 12, exportSchema = false)
+@Database(entities = [LogEntry::class, FavoriteDiy::class, StrayReport::class, CatProfile::class, CatWeightLog::class, CatCheckInLog::class, Reminder::class, DailyCareLog::class, CatHistoryEntry::class], version = 12, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun logDao(): LogDao
     abstract fun favoriteDao(): FavoriteDao

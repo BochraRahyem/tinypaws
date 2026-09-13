@@ -2656,4 +2656,15 @@
 
     <string name="nearby_report_alert_title">Un chat a besoin d\'aide près de vous 🐾</string>
     <string name="nearby_report_alert_body">%1$s — à %2$s km. Peux-tu aider ?</string>
+
+    <!-- Password Reset -->
+    <string name="auth_reset_title">Réinitialiser votre mot de passe</string>
+    <string name="auth_reset_desc">Entrez un nouveau mot de passe pour votre compte TinyPaws.</string>
+    <string name="auth_new_password_label">Nouveau mot de passe</string>
+    <string name="auth_confirm_new_password_label">Confirmer le nouveau mot de passe</string>
+    <string name="auth_reset_submit_btn">Mettre à jour le mot de passe</string>
+    <string name="auth_reset_success_msg">Votre mot de passe a été mis à jour. Veuillez vous connecter avec votre nouveau mot de passe.</string>
+    <string name="auth_reset_invalid_link">Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.</string>
+    <string name="auth_reset_email_hint">Réinitialisation du mot de passe pour %1$s</string>
+    <string name="auth_reset_verifying">Vérification de votre lien de réinitialisation…</string>
 </resources>

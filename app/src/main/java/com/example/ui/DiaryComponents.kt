@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.DiaryEntry
 import com.example.ui.theme.*
 import java.text.SimpleDateFormat
@@ -55,7 +56,7 @@ fun SwipeableDiaryEntry(
             ) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(id = R.string.delete_desc),
                     modifier = Modifier.padding(end = 24.dp),
                     tint = Color.White
                 )

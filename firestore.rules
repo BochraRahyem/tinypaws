@@ -33,13 +33,57 @@ service cloud.firestore {
                 request.resource.data.totalStars >= resource.data.totalStars);
     }
 
-    // Aggregate statistic fields clients may increment (free-tier replacement
-    // for server-side stat processing). Nothing else on these docs is writable,
-    // and no client can delete or reset them.
+    // P0-7: Reward counters can only increase by a bounded amount per write.
+    // This prevents a single write from adding an unreasonably large value
+    // (e.g. setting stars to 999999 instead of incrementing by 1–10).
+    function rewardIncrementBounded() {
+      return (!('reportedCatsCount' in request.resource.data) ||
+                request.resource.data.reportedCatsCount - resource.data.reportedCatsCount <= 50) &&
+             (!('rescueStars' in request.resource.data) ||
+                request.resource.data.rescueStars - resource.data.rescueStars <= 100) &&
+             (!('catBadges' in request.resource.data) ||
+                request.resource.data.catBadges - resource.data.catBadges <= 10) &&
+             (!('totalStars' in request.resource.data) ||
+                request.resource.data.totalStars - resource.data.totalStars <= 100);
+    }
+
+    // P0-6: Fields clients may increment on statistics/global (free-tier aggregation).
+    // totalCatsHelped is included but bounded: each action increments by exactly 1,
+    // and the client-side duplicate-check (reach document) prevents the same user
+    // from counting the same action twice. Cloud Functions would be the ideal
+    // server-side solution, but require the Blaze plan.
     function statisticsFields() {
       return ['totalUsers', 'totalRegisteredUsers', 'totalCatsReported',
               'totalCatsHelped', 'totalCatsRescued', 'totalAdoptedCats',
               'totalFeedingStations', 'totalFeedingStationsReached'];
+    }
+
+    // P0-6: Stats increments must be bounded to prevent unlimited inflation.
+    function statsIncrementBounded() {
+      return (!('totalUsers' in request.resource.data) ||
+                request.resource.data.totalUsers - resource.data.totalUsers <= 1) &&
+             (!('totalRegisteredUsers' in request.resource.data) ||
+                request.resource.data.totalRegisteredUsers - resource.data.totalRegisteredUsers <= 1) &&
+             (!('totalCatsReported' in request.resource.data) ||
+                request.resource.data.totalCatsReported - resource.data.totalCatsReported <= 5) &&
+             (!('totalCatsHelped' in request.resource.data) ||
+                request.resource.data.totalCatsHelped - resource.data.totalCatsHelped <= 5) &&
+             (!('totalCatsRescued' in request.resource.data) ||
+                request.resource.data.totalCatsRescued - resource.data.totalCatsRescued <= 5) &&
+             (!('totalAdoptedCats' in request.resource.data) ||
+                request.resource.data.totalAdoptedCats - resource.data.totalAdoptedCats <= 5) &&
+             (!('totalFeedingStations' in request.resource.data) ||
+                request.resource.data.totalFeedingStations - resource.data.totalFeedingStations <= 5) &&
+             (!('totalFeedingStationsReached' in request.resource.data) ||
+                request.resource.data.totalFeedingStationsReached - resource.data.totalFeedingStationsReached <= 5);
+    }
+
+    // Allowed action fields that a user may write into reports/reaches.
+    // P0-4: Only status-variant fields may be updated by non-owners.
+    function reportActionFields() {
+      return ['status', 'reachedCount', 'helpedBy', 'helpedAt', 'adoptedBy',
+              'adoptedAt', 'rescued', 'rescuedBy', 'rescuedAt',
+              'rescuedPhotoUrl', 'rescuedDescription'];
     }
 
     // Users collection: PRIVATE. Only the owner can read or write their document.
@@ -52,14 +96,14 @@ service cloud.firestore {
                       request.resource.data.get('catBadges', 0) == 0 &&
                       request.resource.data.get('rescueStars', 0) == 0 &&
                       request.resource.data.get('totalStars', 0) == 0));
-      // Two legal shapes:
+      // P0-7: Two legal shapes:
       //  a) normal metadata/profile updates that never touch reward counters
-      //  b) reward-counter-only updates, which must be monotonic (never decrease)
+      //  b) reward-counter-only updates, which must be monotonic AND bounded
       allow update: if isOwner(userId) && (
                       !request.resource.data.diff(resource.data).affectedKeys()
                         .hasAny(['reportedCatsCount', 'catBadges', 'rescueStars', 'totalStars']) ||
                       (request.resource.data.diff(resource.data).affectedKeys()
-                        .hasOnly(rewardKeys()) && rewardsNotDecreased())
+                        .hasOnly(rewardKeys()) && rewardsNotDecreased() && rewardIncrementBounded())
                     );
       allow delete: if isOwner(userId);
 
@@ -87,15 +131,16 @@ service cloud.firestore {
     }
 
     // Public leaderboard profiles: minimal, non-identifying fields only.
-    // Owner maintains it (creation + monotonic counter increases); Cloud
-    // Functions mirror server-side too when/if a paid backend ever exists.
+    // P0-9: Owner maintains it (creation + monotonic counter increases);
+    // Cloud Functions mirror server-side too when/if a paid backend ever exists.
     match /publicProfiles/{userId} {
       allow read: if true;
       allow create: if isOwner(userId)
                     && request.resource.data.keys().hasOnly(publicProfileFields());
       allow update: if isOwner(userId)
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(publicProfileFields())
-                    && rewardsNotDecreased();
+                    && rewardsNotDecreased()
+                    && rewardIncrementBounded();
       allow delete: if false;
     }
 
@@ -107,8 +152,16 @@ service cloud.firestore {
       allow create: if ((request.auth != null && request.resource.data.reportedBy == request.auth.uid)
                     || (request.auth == null && request.resource.data.reportedBy == ""))
                    && !request.resource.data.keys().hasAny(['reporterName']);
-      allow update: if isAuthenticated()
-                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['reporterName', 'reportedBy', 'latitude', 'longitude', 'createdAt']);
+      // P0-4: Reporter owns their report and may update any field.
+      // Other authenticated users may ONLY update action/status fields
+      // (status, reachedCount, helpedBy/At, adoptedBy/At, rescued/By/At).
+      // Unauthenticated users may not update.
+      allow update: if isAuthenticated() && (
+                      resource.data.reportedBy == request.auth.uid
+                      || request.resource.data.diff(resource.data).affectedKeys().hasOnly(reportActionFields())
+                    )
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['reportedBy', 'reporterName', 'latitude', 'longitude', 'createdAt']);
       allow delete: if false;
 
       // Reaches subcollection: only owner of the reach can create/update
@@ -124,7 +177,17 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated()
                    && request.resource.data.createdBy == request.auth.uid;
-      allow update: if isAuthenticated();
+      // P0-5: Creator owns their station and may update any field.
+      // Other authenticated users may ONLY update action-related fields
+      // (foodAvailable, reachedCount, lastUpdated).
+      allow update: if isAuthenticated() && (
+                      resource.data.createdBy == request.auth.uid
+                      || request.resource.data.diff(resource.data).affectedKeys()
+                           .hasOnly(['foodAvailable', 'reachedCount', 'lastUpdated'])
+                    )
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['createdBy', 'createdAt']);
+      allow delete: if false;
 
       // Reaches subcollection: only owner of the reach can create/update
       match /reaches/{userId} {
@@ -161,9 +224,12 @@ service cloud.firestore {
       allow create: if isAuthenticated()
                     && docId == 'global'
                     && request.resource.data.keys().hasOnly(statisticsFields());
+      // P0-6: Only whitelisted fields may be updated, increments must be bounded,
+      // and totalCatsHelped is NOT in statisticsFields (server-side only).
       allow update: if isAuthenticated()
                     && docId == 'global'
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(statisticsFields());
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(statisticsFields())
+                    && statsIncrementBounded();
       allow delete: if false;
     }
 

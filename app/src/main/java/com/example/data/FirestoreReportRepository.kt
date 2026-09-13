@@ -72,36 +72,53 @@ class FirestoreReportRepository(
         }
     }
 
-    suspend fun markAsRescued(reportId: String, photoUrl: String, description: String) {
+    /** Returns true if the report was actually updated (not already rescued). */
+    suspend fun markAsRescued(reportId: String, photoUrl: String, description: String): Boolean {
         val uid = auth.currentUser?.uid
             ?: throw IllegalStateException("Not signed in")
-        firestore.collection("reports").document(reportId).update(
-            mapOf(
-                "rescued" to true,
-                "status" to "rescued",
-                "rescuedPhotoUrl" to photoUrl,
-                "rescuedDescription" to description,
-                "rescuedBy" to uid,
-                "rescuedAt" to FieldValue.serverTimestamp()
-            )
-        ).await()
-        // Free-tier replacement for onReportUpdated rescue stats.
-        try {
-            firestore.collection("statistics").document("global").set(
+
+        // P0-8: Check if this report was already rescued to prevent stats double-counting.
+        val reportDoc = firestore.collection("reports").document(reportId).get().await()
+        val alreadyRescued = reportDoc.getBoolean("rescued") == true
+
+        if (!alreadyRescued) {
+            firestore.collection("reports").document(reportId).update(
                 mapOf(
-                    "totalCatsHelped" to FieldValue.increment(1),
-                    "totalCatsRescued" to FieldValue.increment(1)
-                ),
-                com.google.firebase.firestore.SetOptions.merge()
+                    "rescued" to true,
+                    "status" to "rescued",
+                    "rescuedPhotoUrl" to photoUrl,
+                    "rescuedDescription" to description,
+                    "rescuedBy" to uid,
+                    "rescuedAt" to FieldValue.serverTimestamp()
+                )
             ).await()
-        } catch (e: Exception) {
-            android.util.Log.w("FirestoreReportRepo", "Stats update skipped: ${e.message}")
+            // Free-tier replacement for onReportUpdated rescue stats — only on first rescue.
+            // Bounded by Firestore rules (max +5 per write). Client-side duplicate
+            // check (alreadyRescued) prevents the same user from counting twice.
+            try {
+                firestore.collection("statistics").document("global").set(
+                    mapOf(
+                        "totalCatsHelped" to FieldValue.increment(1),
+                        "totalCatsRescued" to FieldValue.increment(1)
+                    ),
+                    com.google.firebase.firestore.SetOptions.merge()
+                ).await()
+            } catch (e: Exception) {
+                android.util.Log.w("FirestoreReportRepo", "Stats update skipped: ${e.message}")
+            }
+            return true
         }
+        return false
     }
 
     suspend fun reachCat(reportId: String) {
         val uid = auth.currentUser?.uid
             ?: throw IllegalStateException("Not signed in")
+
+        // P0-8: Check if this user already reached this report to prevent stats double-counting.
+        val existingReach = firestore.collection("reports").document(reportId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
 
         // Atomic: the reach record AND the public reachedCount move together.
         val batch = firestore.batch()
@@ -110,10 +127,12 @@ class FirestoreReportRepository(
                 .collection("reaches").document(uid),
             mapOf("createdAt" to FieldValue.serverTimestamp())
         )
-        batch.update(
-            firestore.collection("reports").document(reportId),
-            mapOf("reachedCount" to FieldValue.increment(1))
-        )
+        if (!isDuplicate) {
+            batch.update(
+                firestore.collection("reports").document(reportId),
+                mapOf("reachedCount" to FieldValue.increment(1))
+            )
+        }
         batch.commit().await()
     }
 }

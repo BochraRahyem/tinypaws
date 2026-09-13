@@ -16,7 +16,7 @@ android {
   defaultConfig {
     applicationId = "com.tinypaws.app"
     minSdk = 24
-    targetSdk = 34
+    targetSdk = 35
     versionCode = 3
     versionName = "1.2"
 
@@ -42,7 +42,8 @@ android {
   buildTypes {
     release {
       isCrunchPngs = false
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfig = signingConfigs.getByName("release")
     }
@@ -139,4 +140,8 @@ dependencies {
   debugImplementation(libs.androidx.compose.ui.tooling)
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
+}
+
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
 }

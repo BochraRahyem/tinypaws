@@ -46,6 +46,11 @@ class FirestoreFeedingStationRepository(
         val uid = auth.currentUser?.uid
             ?: throw IllegalStateException("Not signed in")
 
+        // P0-8: Check if this user already reached this station to prevent stats double-counting.
+        val existingReach = firestore.collection("feedingStations").document(stationId)
+            .collection("reaches").document(uid).get().await()
+        val isDuplicate = existingReach.exists()
+
         // Atomic: the reach record AND the public counters move together.
         val batch = firestore.batch()
         batch.set(
@@ -61,11 +66,13 @@ class FirestoreFeedingStationRepository(
                 "lastUpdated" to FieldValue.serverTimestamp()
             )
         )
-        batch.set(
-            firestore.collection("statistics").document("global"),
-            mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
+        if (!isDuplicate) {
+            batch.set(
+                firestore.collection("statistics").document("global"),
+                mapOf("totalFeedingStationsReached" to FieldValue.increment(1)),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+        }
         batch.commit().await()
     }
 }

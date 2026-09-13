@@ -135,6 +135,9 @@ class WeatherAlertWorker(
             } finally {
                 conn.disconnect()
             }
+        } catch (e: org.json.JSONException) {
+            android.util.Log.e("WeatherAlertWorker", "doWork: Unexpected API response format (permanent)", e)
+            Result.failure()
         } catch (e: Exception) {
             android.util.Log.e("WeatherAlertWorker", "doWork: WorkManager task execution failed due to exception: ${e.message}", e)
             if (runAttemptCount < 3) {

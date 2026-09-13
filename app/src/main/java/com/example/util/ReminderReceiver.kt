@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.MainActivity
@@ -82,6 +83,15 @@ class ReminderReceiver : BroadcastReceiver() {
                     .setContentIntent(pendingIntent)
 
                 try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+                            context, android.Manifest.permission.POST_NOTIFICATIONS
+                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                        if (!granted) {
+                            android.util.Log.w("ReminderReceiver", "POST_NOTIFICATIONS not granted, skipping notification")
+                            return@launch
+                        }
+                    }
                     with(NotificationManagerCompat.from(context)) {
                         notify(reminderId, builder.build())
                     }

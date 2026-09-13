@@ -13,6 +13,34 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 object GroqClient {
+
+    private suspend inline fun <T> retryOnRateLimit(maxRetries: Int = 3, block: suspend () -> T): T {
+        var lastException: Exception? = null
+        repeat(maxRetries + 1) { attempt ->
+            try {
+                return block()
+            } catch (e: java.io.IOException) {
+                lastException = e
+                val statusCode = extractStatusCode(e)
+                if (statusCode == 429 || statusCode == 503) {
+                    if (attempt < maxRetries) {
+                        val delayMs = 1000L * (1 shl attempt)
+                        Log.w(TAG, "Rate limited ($statusCode), retrying in ${delayMs}ms (attempt ${attempt + 1}/$maxRetries)")
+                        kotlinx.coroutines.delay(delayMs)
+                        return@repeat
+                    }
+                }
+                throw e
+            }
+        }
+        throw lastException ?: java.io.IOException("Max retries exceeded")
+    }
+
+    private fun extractStatusCode(e: Exception): Int {
+        val message = e.message ?: return 0
+        val regex = Regex("""HTTP\s+(\d{3})""")
+        return regex.find(message)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+    }
     private const val TAG = "GroqClient"
     private const val BASE_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -54,7 +82,7 @@ object GroqClient {
         }
 
         val requestBodyJson = JSONObject().apply {
-            put("model", "llama-3.3-70b-versatile")
+            put("model", "qwen/qwen3.8-27b")
             put("messages", messages)
             put("stream", true)
             put("max_tokens", 700)
@@ -68,31 +96,32 @@ object GroqClient {
             .build()
 
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    Log.e(TAG, "Groq API call failed: ${response.code}")
-                    onChunkReceived("Error: ${response.code} ${response.message}")
-                    return@withContext
-                }
+            retryOnRateLimit {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        Log.e(TAG, "Groq API call failed: ${response.code}")
+                        throw RuntimeException("API error ${response.code}: ${response.message}")
+                    }
 
-                val source = response.body?.source() ?: return@withContext
-                while (!source.exhausted()) {
-                    val line = source.readUtf8Line() ?: break
-                    if (line.startsWith("data: ")) {
-                        val data = line.substring(6).trim()
-                        if (data == "[DONE]") break
+                    val source = response.body?.source() ?: return@withContext
+                    while (!source.exhausted()) {
+                        val line = source.readUtf8Line() ?: break
+                        if (line.startsWith("data: ")) {
+                            val data = line.substring(6).trim()
+                            if (data == "[DONE]") break
 
-                        try {
-                            val jsonChunk = JSONObject(data)
-                            val choices = jsonChunk.optJSONArray("choices")
-                            val delta = choices?.optJSONObject(0)?.optJSONObject("delta")
-                            val content = delta?.optString("content") ?: ""
+                            try {
+                                val jsonChunk = JSONObject(data)
+                                val choices = jsonChunk.optJSONArray("choices")
+                                val delta = choices?.optJSONObject(0)?.optJSONObject("delta")
+                                val content = delta?.optString("content") ?: ""
 
-                            if (content.isNotEmpty()) {
-                                onChunkReceived(content)
+                                if (content.isNotEmpty()) {
+                                    onChunkReceived(content)
+                                }
+                            } catch (e: Exception) {
+                                // Skip invalid JSON chunks in stream
                             }
-                        } catch (e: Exception) {
-                            // Skip invalid JSON chunks in stream
                         }
                     }
                 }
@@ -101,7 +130,7 @@ object GroqClient {
             throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error in Groq chatStream", e)
-            onChunkReceived("Error: ${e.localizedMessage}")
+            throw e
         }
     }
 }

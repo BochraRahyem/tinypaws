@@ -6,6 +6,7 @@ import android.content.Intent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 /**
  * Restores care-reminder alarms after the device reboots (Android clears all
@@ -25,9 +26,11 @@ class BootReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Instantiating NotificationHelper also (re)creates channels.
-                NotificationHelper(context.applicationContext)
-                ReminderScheduler.rescheduleAll(context.applicationContext)
+                withTimeout(8_000L) {
+                    // Instantiating NotificationHelper also (re)creates channels.
+                    NotificationHelper(context.applicationContext)
+                    ReminderScheduler.rescheduleAll(context.applicationContext)
+                }
                 android.util.Log.d("BootReceiver", "Reminders restored after $action")
             } catch (e: Exception) {
                 android.util.Log.e("BootReceiver", "Failed to restore reminders after boot", e)

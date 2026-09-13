@@ -1,6 +1,10 @@
 package com.example.ui
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,6 +57,23 @@ fun SettingsScreen(
     var dailyReminder by remember { mutableStateOf(sharedPrefs.getBoolean("daily_reminder", true)) }
     var nearbyAlertsEnabled by remember { mutableStateOf(sharedPrefs.getBoolean("nearby_report_alerts", true)) }
 
+    val notifPermLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { /* granted or denied — user sees system settings if denied */ }
+
+    fun ensureNotifPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+                context, android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                notifPermLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+            return granted
+        }
+        return true
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,7 +94,7 @@ fun SettingsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.back_desc),
                             tint = DeepBurgundy
                         )
                     }
@@ -302,6 +323,7 @@ fun SettingsScreen(
                         Switch(
                             checked = isExtremeWeatherNotify,
                             onCheckedChange = { notify ->
+                                if (notify) ensureNotifPermission()
                                 sharedPrefs.edit().putBoolean("extreme_weather_notifications", notify).apply()
                                 viewModel.setExtremeWeatherNotify(notify)
                             },
@@ -341,6 +363,7 @@ fun SettingsScreen(
                         Switch(
                             checked = nearbyAlertsEnabled,
                             onCheckedChange = { enabled ->
+                                if (enabled) ensureNotifPermission()
                                 nearbyAlertsEnabled = enabled
                                 sharedPrefs.edit().putBoolean("nearby_report_alerts", enabled).apply()
                             },

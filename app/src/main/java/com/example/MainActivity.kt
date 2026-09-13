@@ -97,9 +97,32 @@ import java.util.Date
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    private var mainViewModel: TinyPawsViewModel? = null
+
+    private val notifPermissionLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { /* no-op: notification posting handles SecurityException gracefully */ }
+
+    private fun requestNotifPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.POST_NOTIFICATIONS
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                notifPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         SunsetSoundscapePlayer.start(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainViewModel?.reloadUser()
     }
 
     override fun onStop() {
@@ -144,6 +167,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        requestNotifPermissionIfNeeded()
+
         deepLinkTarget.value = screenForIntent(intent)
 
         // Initialize SharedPreferences name persistence
@@ -158,6 +183,7 @@ class MainActivity : AppCompatActivity() {
         val viewModel: TinyPawsViewModel by viewModels {
             TinyPawsViewModelFactory(application, repository, catRepository)
         }
+        mainViewModel = viewModel
 
         // Schedule periodic background weather alerts using WorkManager.
         // Uses the user's persisted city when available instead of hardcoding Tunis.
@@ -207,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         val savedDarkMode = sharedPrefs.getBoolean("user_dark_mode", false)
         viewModel.setDarkMode(savedDarkMode)
         
-        val savedExtremeWeather = sharedPrefs.getBoolean("extreme_weather_notifications", false)
+        val savedExtremeWeather = sharedPrefs.getBoolean("extreme_weather_notifications", true)
         viewModel.setExtremeWeatherNotify(savedExtremeWeather)
         
         // Ensure AppCompatDelegate has the right locale on startup
@@ -327,7 +353,6 @@ fun TinyPawsMainContainer(
     var hasSeenIntro by remember { mutableStateOf(sharedPrefs.getBoolean("has_seen_intro", false)) }
 
     LaunchedEffect(Unit) {
-        viewModel.reloadUser()
         // Honor a deep link that launched the app (tinypaws://diary etc.)
         deepLinkState.value?.let { currentScreen = it }
     }
@@ -1938,7 +1963,7 @@ fun MyCatAndRemindersSection(onNavigate: (String) -> Unit) {
             backgroundColor = BlushPink.copy(alpha = 0.2f),
             accentColor = DeepBurgundy,
             modifier = Modifier.weight(1f),
-            onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("my_cat") }
+            onClick = com.example.ui.theme.rememberHapticOnClick {  onNavigate("my_cat_hub") }
         )
         // Reminders Card (Small)
         NavigationCard(
@@ -2886,7 +2911,7 @@ fun HistoryLogItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(id = R.string.delete_desc),
                     tint = RedError.copy(alpha = 0.8f),
                     modifier = Modifier.size(18.dp)
                 )

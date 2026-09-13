@@ -475,7 +475,7 @@ fun ReminderItemCard(
                         onClick = com.example.ui.theme.rememberHapticOnClick { onDelete() },
                         modifier = Modifier.testTag("delete_reminder_${reminder.id}")
                     ) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = RedError.copy(alpha = 0.8f))
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(id = R.string.delete_desc), tint = RedError.copy(alpha = 0.8f))
                     }
                 }
             }

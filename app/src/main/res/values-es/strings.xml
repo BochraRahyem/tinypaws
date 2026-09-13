@@ -2656,4 +2656,15 @@
 
     <string name="nearby_report_alert_title">¡Un gato necesita ayuda cerca de ti! 🐾</string>
     <string name="nearby_report_alert_body">%1$s — a %2$s km. ¿Puedes ayudar?</string>
+
+    <!-- Password Reset -->
+    <string name="auth_reset_title">Restablecer contraseña</string>
+    <string name="auth_reset_desc">Ingresa una nueva contraseña para tu cuenta de TinyPaws.</string>
+    <string name="auth_new_password_label">Nueva contraseña</string>
+    <string name="auth_confirm_new_password_label">Confirmar nueva contraseña</string>
+    <string name="auth_reset_submit_btn">Actualizar contraseña</string>
+    <string name="auth_reset_success_msg">Tu contraseña ha sido actualizada. Por favor inicia sesión con tu nueva contraseña.</string>
+    <string name="auth_reset_invalid_link">Este enlace de restablecimiento no es válido o ha expirado. Por favor solicita uno nuevo.</string>
+    <string name="auth_reset_email_hint">Restableciendo contraseña para %1$s</string>
+    <string name="auth_reset_verifying">Verificando tu enlace de restablecimiento…</string>
 </resources>

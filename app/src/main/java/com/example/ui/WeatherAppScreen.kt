@@ -144,7 +144,7 @@ fun WeatherAppScreen(
     }
 
     // Helper to send weather notification to phone
-    fun sendWeatherPhoneNotification(maxT: Double, minT: Double, cityName: String, bypassCooldown: Boolean = true) {
+    fun sendWeatherPhoneNotification(maxT: Double, minT: Double, cityName: String, bypassCooldown: Boolean = false) {
         if (!isWarningEnabled) return
         ensureNotifPermission()
         val currentLang = viewModel.currentLanguage.value
@@ -335,7 +335,7 @@ fun WeatherAppScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = rememberHapticOnClick { onBack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_desc))
                     }
                 },
                 actions = {

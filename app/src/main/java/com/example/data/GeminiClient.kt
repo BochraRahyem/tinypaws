@@ -19,6 +19,34 @@ import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
 
 object GeminiClient {
+
+    private suspend inline fun <T> retryOnRateLimit(maxRetries: Int = 3, block: suspend () -> T): T {
+        var lastException: Exception? = null
+        repeat(maxRetries + 1) { attempt ->
+            try {
+                return block()
+            } catch (e: java.io.IOException) {
+                lastException = e
+                val statusCode = extractStatusCode(e)
+                if (statusCode == 429 || statusCode == 503) {
+                    if (attempt < maxRetries) {
+                        val delayMs = 1000L * (1 shl attempt)
+                        Log.w(TAG, "Rate limited ($statusCode), retrying in ${delayMs}ms (attempt ${attempt + 1}/$maxRetries)")
+                        kotlinx.coroutines.delay(delayMs)
+                        return@repeat
+                    }
+                }
+                throw e
+            }
+        }
+        throw lastException ?: java.io.IOException("Max retries exceeded")
+    }
+
+    private fun extractStatusCode(e: Exception): Int {
+        val message = e.message ?: return 0
+        val regex = Regex("""HTTP\s+(\d{3})""")
+        return regex.find(message)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+    }
     private const val TAG = "GeminiClient"
     private const val BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/"
 
@@ -87,26 +115,28 @@ object GeminiClient {
             .build()
 
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    Log.e(TAG, "API call failed with code: ${response.code}")
-                    return@withContext emptyList()
+            retryOnRateLimit {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        Log.e(TAG, "API call failed with code: ${response.code}")
+                        return@withContext emptyList()
+                    }
+
+                    val bodyString = response.body?.string() ?: ""
+                    if (com.example.BuildConfig.DEBUG) {
+                        Log.d(TAG, "Search places raw response: $bodyString")
+                    }
+
+                    val jsonResponse = JSONObject(bodyString)
+                    val candidates = jsonResponse.optJSONArray("candidates")
+                    val textResponse = candidates?.optJSONObject(0)
+                        ?.optJSONObject("content")
+                        ?.optJSONArray("parts")
+                        ?.optJSONObject(0)
+                        ?.optString("text") ?: ""
+
+                    parsePlacesFromJson(textResponse, queryType)
                 }
-
-                val bodyString = response.body?.string() ?: ""
-                if (com.example.BuildConfig.DEBUG) {
-                    Log.d(TAG, "Search places raw response: $bodyString")
-                }
-
-                val jsonResponse = JSONObject(bodyString)
-                val candidates = jsonResponse.optJSONArray("candidates")
-                val textResponse = candidates?.optJSONObject(0)
-                    ?.optJSONObject("content")
-                    ?.optJSONArray("parts")
-                    ?.optJSONObject(0)
-                    ?.optString("text") ?: ""
-
-                parsePlacesFromJson(textResponse, queryType)
             }
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
@@ -161,31 +191,33 @@ object GeminiClient {
             .build()
 
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    onChunkReceived("Error: ${response.code} ${response.message}")
-                    return@withContext
-                }
+            retryOnRateLimit {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        onChunkReceived("Error: ${response.code} ${response.message}")
+                        return@withContext
+                    }
 
-                val source = response.body?.source() ?: return@withContext
-                while (!source.exhausted()) {
-                    val line = source.readUtf8Line() ?: break
-                    if (line.startsWith("data: ")) {
-                        val data = line.substring(6)
-                        try {
-                            val jsonChunk = JSONObject(data)
-                            val candidates = jsonChunk.optJSONArray("candidates")
-                            val textChunk = candidates?.optJSONObject(0)
-                                ?.optJSONObject("content")
-                                ?.optJSONArray("parts")
-                                ?.optJSONObject(0)
-                                ?.optString("text") ?: ""
+                    val source = response.body?.source() ?: return@withContext
+                    while (!source.exhausted()) {
+                        val line = source.readUtf8Line() ?: break
+                        if (line.startsWith("data: ")) {
+                            val data = line.substring(6)
+                            try {
+                                val jsonChunk = JSONObject(data)
+                                val candidates = jsonChunk.optJSONArray("candidates")
+                                val textChunk = candidates?.optJSONObject(0)
+                                    ?.optJSONObject("content")
+                                    ?.optJSONArray("parts")
+                                    ?.optJSONObject(0)
+                                    ?.optString("text") ?: ""
 
-                            if (textChunk.isNotEmpty()) {
-                                onChunkReceived(textChunk)
+                                if (textChunk.isNotEmpty()) {
+                                    onChunkReceived(textChunk)
+                                }
+                            } catch (e: Exception) {
+                                // Skip invalid JSON chunks in stream
                             }
-                        } catch (e: Exception) {
-                            // Skip invalid JSON chunks in stream
                         }
                     }
                 }
@@ -281,36 +313,38 @@ object GeminiClient {
             .build()
 
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    Log.e(TAG, "Image API call failed with code: ${response.code}")
-                    return@withContext null
-                }
+            retryOnRateLimit {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        Log.e(TAG, "Image API call failed with code: ${response.code}")
+                        return@withContext null
+                    }
 
-                val bodyString = response.body?.string() ?: ""
-                val jsonResponse = JSONObject(bodyString)
-                val candidates = jsonResponse.optJSONArray("candidates")
-                val parts = candidates?.optJSONObject(0)
-                    ?.optJSONObject("content")
-                    ?.optJSONArray("parts")
+                    val bodyString = response.body?.string() ?: ""
+                    val jsonResponse = JSONObject(bodyString)
+                    val candidates = jsonResponse.optJSONArray("candidates")
+                    val parts = candidates?.optJSONObject(0)
+                        ?.optJSONObject("content")
+                        ?.optJSONArray("parts")
 
-                if (parts != null) {
-                    for (i in 0 until parts.length()) {
-                        val part = parts.getJSONObject(i)
-                        val inlineData = part.optJSONObject("inlineData")
-                        if (inlineData != null) {
-                            val mimeType = inlineData.optString("mimeType", "")
-                            if (mimeType.startsWith("image/")) {
-                                val base64Data = inlineData.optString("data", "")
-                                if (base64Data.isNotEmpty()) {
-                                    val imageBytes = Base64.decode(base64Data, Base64.DEFAULT)
-                                    return@withContext BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    if (parts != null) {
+                        for (i in 0 until parts.length()) {
+                            val part = parts.getJSONObject(i)
+                            val inlineData = part.optJSONObject("inlineData")
+                            if (inlineData != null) {
+                                val mimeType = inlineData.optString("mimeType", "")
+                                if (mimeType.startsWith("image/")) {
+                                    val base64Data = inlineData.optString("data", "")
+                                    if (base64Data.isNotEmpty()) {
+                                        val imageBytes = Base64.decode(base64Data, Base64.DEFAULT)
+                                        return@withContext BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                                    }
                                 }
                             }
                         }
                     }
+                    null
                 }
-                null
             }
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
@@ -360,37 +394,39 @@ object GeminiClient {
             .build()
 
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    Log.e(TAG, "Music API call failed with code: ${response.code}")
-                    return@withContext null
-                }
+            retryOnRateLimit {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        Log.e(TAG, "Music API call failed with code: ${response.code}")
+                        return@withContext null
+                    }
 
-                val bodyString = response.body?.string() ?: ""
-                val jsonResponse = JSONObject(bodyString)
-                val candidates = jsonResponse.optJSONArray("candidates")
-                val parts = candidates?.optJSONObject(0)
-                    ?.optJSONObject("content")
-                    ?.optJSONArray("parts")
+                    val bodyString = response.body?.string() ?: ""
+                    val jsonResponse = JSONObject(bodyString)
+                    val candidates = jsonResponse.optJSONArray("candidates")
+                    val parts = candidates?.optJSONObject(0)
+                        ?.optJSONObject("content")
+                        ?.optJSONArray("parts")
 
-                if (parts != null) {
-                    for (i in 0 until parts.length()) {
-                        val part = parts.getJSONObject(i)
-                        val inlineData = part.optJSONObject("inlineData")
-                        if (inlineData != null) {
-                            val base64Data = inlineData.optString("data", "")
-                            if (base64Data.isNotEmpty()) {
-                                val audioBytes = Base64.decode(base64Data, Base64.DEFAULT)
-                                val file = File(context.cacheDir, "lyria_temp_song.mp3")
-                                FileOutputStream(file).use { fos ->
-                                    fos.write(audioBytes)
+                    if (parts != null) {
+                        for (i in 0 until parts.length()) {
+                            val part = parts.getJSONObject(i)
+                            val inlineData = part.optJSONObject("inlineData")
+                            if (inlineData != null) {
+                                val base64Data = inlineData.optString("data", "")
+                                if (base64Data.isNotEmpty()) {
+                                    val audioBytes = Base64.decode(base64Data, Base64.DEFAULT)
+                                    val file = File(context.cacheDir, "lyria_temp_song.mp3")
+                                    FileOutputStream(file).use { fos ->
+                                        fos.write(audioBytes)
+                                    }
+                                    return@withContext file
                                 }
-                                return@withContext file
                             }
                         }
                     }
+                    null
                 }
-                null
             }
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
@@ -474,22 +510,24 @@ object GeminiClient {
             .post(requestBodyJson.toString().toRequestBody(mediaTypeJson))
             .build()
         try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    return@withContext defaultFallback
-                }
-                val bodyString = response.body?.string() ?: ""
-                val jsonResponse = JSONObject(bodyString)
-                val candidates = jsonResponse.optJSONArray("candidates")
-                val textResponse = candidates?.optJSONObject(0)
-                    ?.optJSONObject("content")
-                    ?.optJSONArray("parts")
-                    ?.optJSONObject(0)
-                    ?.optString("text")
-                if (!textResponse.isNullOrBlank()) {
-                    textResponse.trim()
-                } else {
-                    defaultFallback
+            retryOnRateLimit {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        return@withContext defaultFallback
+                    }
+                    val bodyString = response.body?.string() ?: ""
+                    val jsonResponse = JSONObject(bodyString)
+                    val candidates = jsonResponse.optJSONArray("candidates")
+                    val textResponse = candidates?.optJSONObject(0)
+                        ?.optJSONObject("content")
+                        ?.optJSONArray("parts")
+                        ?.optJSONObject(0)
+                        ?.optString("text")
+                    if (!textResponse.isNullOrBlank()) {
+                        textResponse.trim()
+                    } else {
+                        defaultFallback
+                    }
                 }
             }
         } catch (e: kotlinx.coroutines.CancellationException) {

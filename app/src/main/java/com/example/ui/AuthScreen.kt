@@ -117,8 +117,8 @@ fun AuthScreen(
                     OutlinedTextField(
                         value = guestName,
                         onValueChange = { guestName = it; errorMsg = null },
-                        label = { Text("Your Name or Nickname", fontFamily = QuicksandFontFamily) },
-                        placeholder = { Text("e.g. Alex or CatLover22", fontFamily = QuicksandFontFamily) },
+                        label = { Text(stringResource(R.string.auth_guest_name_label), fontFamily = QuicksandFontFamily) },
+                        placeholder = { Text(stringResource(R.string.auth_guest_name_hint), fontFamily = QuicksandFontFamily) },
                         modifier = Modifier.fillMaxWidth().testTag("auth_guest_name_field"),
                         shape = RoundedCornerShape(16.dp),
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Mauve) },
@@ -149,9 +149,13 @@ fun AuthScreen(
                             isLoading = true
                             val nameToSave = guestName.trim()
                             onGuestEntry(nameToSave)
-                            viewModel.signInAnonymously(nameToSave) { _, _ ->
+                            viewModel.signInAnonymously(nameToSave) { success, error ->
                                 isLoading = false
-                                onAuthSuccess()
+                                if (success) {
+                                    onAuthSuccess()
+                                } else {
+                                    errorMsg = error ?: context.getString(R.string.auth_err_default)
+                                }
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(56.dp).testTag("auth_guest_submit_btn"),
@@ -330,7 +334,7 @@ fun AuthScreen(
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it; errorMsg = null },
-                        label = { Text("Email Address", fontFamily = QuicksandFontFamily) },
+                        label = { Text(stringResource(R.string.auth_email_label), fontFamily = QuicksandFontFamily) },
                         modifier = Modifier.fillMaxWidth().testTag("auth_email_field"),
                         shape = RoundedCornerShape(16.dp),
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Mauve) },

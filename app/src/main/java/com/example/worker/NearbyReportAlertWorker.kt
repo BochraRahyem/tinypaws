@@ -12,6 +12,8 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.TimeoutCancellationException
 import com.example.util.NotificationHelper
 
 /**
@@ -45,18 +47,23 @@ class NearbyReportAlertWorker(
                 return@withContext Result.success() // silently skip; nothing to compare against
             }
             val fused = LocationServices.getFusedLocationProviderClient(applicationContext)
-            val location = fused.lastLocation.await()
+            val location = withTimeoutOrNull(10_000L) { fused.lastLocation.await() }
             if (location == null) {
                 return@withContext Result.success()
             }
 
-            // 2) Newest handful of active reports (bounded query).
-            val snapshot = FirebaseFirestore.getInstance()
-                .collection("reports")
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(40)
-                .get()
-                .await()
+            // 2) Newest handful of active reports (bounded query) with timeout.
+            val snapshot = withTimeoutOrNull(15_000L) {
+                FirebaseFirestore.getInstance()
+                    .collection("reports")
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .limit(40)
+                    .get()
+                    .await()
+            } ?: run {
+                android.util.Log.w("NearbyReports", "Firestore query timed out after 15s")
+                return@withContext Result.success()
+            }
 
             val helper = NotificationHelper(applicationContext)
             var alerted = 0
@@ -106,7 +113,7 @@ class NearbyReportAlertWorker(
 
     companion object {
         private const val WORK_NAME = "NearbyReportPeriodicWork"
-        private const val RADIUS_KM = 10f
+        private const val RADIUS_KM = 20f
         private const val MAX_ALERTS_PER_RUN = 3
 
         fun schedulePeriodicCheck(context: Context) {

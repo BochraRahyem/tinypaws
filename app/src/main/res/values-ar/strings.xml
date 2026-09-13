@@ -2859,4 +2859,15 @@
 
     <string name="nearby_report_alert_title">قطة تحتجكم قريبة 💾</string>
     <string name="nearby_report_alert_body">%1$s — %2$s كم! هل يمكنك مساعدتها?</string>
+
+    <!-- Password Reset -->
+    <string name="auth_reset_title">إعادة تعيين كلمة المرور</string>
+    <string name="auth_reset_desc">أدخل كلمة مرور جديدة لحساب TinyPaws الخاص بك.</string>
+    <string name="auth_new_password_label">كلمة المرور الجديدة</string>
+    <string name="auth_confirm_new_password_label">تأكيد كلمة المرور الجديدة</string>
+    <string name="auth_reset_submit_btn">تحديث كلمة المرور</string>
+    <string name="auth_reset_success_msg">تم تحديث كلمة المرور. يرجى تسجيل الدخول بكلمة المرور الجديدة.</string>
+    <string name="auth_reset_invalid_link">رابط إعادة التعيين غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.</string>
+    <string name="auth_reset_email_hint">إعادة تعيين كلمة المرور لـ %1$s</string>
+    <string name="auth_reset_verifying">جارٍ التحقق من رابط إعادة التعيين…</string>
 </resources>
