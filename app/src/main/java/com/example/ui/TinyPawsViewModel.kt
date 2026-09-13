@@ -742,12 +742,7 @@ fun createReport(
             return
         }
 
-        val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
-            .setUrl("https://tinypaws-diary.web.app/verify-email")
-            .setHandleCodeInApp(true)
-            .setAndroidPackageName("com.tinypaws.app", true, null)
-            .build()
-        user.sendEmailVerification(actionSettings).addOnCompleteListener { task ->
+        user.sendEmailVerification().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 startResendCooldown(60)
                 onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
@@ -818,18 +813,14 @@ fun createReport(
                         flushPendingFcmToken()
                     }
 
-                    val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
-                        .setUrl("https://tinypaws-diary.web.app/verify-email")
-                        .setHandleCodeInApp(true)
-                        .setAndroidPackageName("com.tinypaws.app", true, null)
-                        .build()
-                    updatedUser.sendEmailVerification(actionSettings).addOnCompleteListener { emailTask ->
+                    updatedUser.sendEmailVerification().addOnCompleteListener { emailTask ->
                         if (emailTask.isSuccessful) {
                             startResendCooldown(60)
                             onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
                         } else {
                             val mappedError = mapAuthError(emailTask.exception, context)
-                            onResult(true, context.getString(com.example.R.string.auth_account_created_email_failed, mappedError))
+                            android.util.Log.e("TinyPawsVM", "sendEmailVerification failed after linkWithCredential: $mappedError", emailTask.exception)
+                            onResult(false, context.getString(com.example.R.string.auth_account_created_email_failed, mappedError))
                         }
                     }
                 } else {
@@ -872,22 +863,19 @@ fun createReport(
                             flushPendingFcmToken()
                         }
 
-                        val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
-                            .setUrl("https://tinypaws-diary.web.app/verify-email")
-                            .setHandleCodeInApp(true)
-                            .setAndroidPackageName("com.tinypaws.app", true, null)
-                            .build()
-                        firebaseUser.sendEmailVerification(actionSettings).addOnCompleteListener { emailTask ->
+                        firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
                             if (emailTask.isSuccessful) {
                                 startResendCooldown(60)
                                 onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
                             } else {
                                 val mappedError = mapAuthError(emailTask.exception, context)
-                                onResult(true, context.getString(com.example.R.string.auth_account_created_email_failed, mappedError))
+                                android.util.Log.e("TinyPawsVM", "sendEmailVerification failed after account creation: $mappedError", emailTask.exception)
+                                onResult(false, context.getString(com.example.R.string.auth_account_created_email_failed, mappedError))
                             }
                         }
                     } else {
-                        onResult(true, context.getString(com.example.R.string.auth_verification_sent_msg))
+                        android.util.Log.e("TinyPawsVM", "firebaseUser is null immediately after createUserWithEmailAndPassword — this should never happen")
+                        onResult(false, context.getString(com.example.R.string.auth_err_default))
                     }
                 } else {
                     val mappedError = mapAuthError(task.exception, context)
@@ -897,12 +885,7 @@ fun createReport(
     }
 
     fun sendPasswordResetEmail(email: String, context: Context, onResult: (Boolean, String) -> Unit) {
-        val actionSettings = com.google.firebase.auth.ActionCodeSettings.newBuilder()
-            .setUrl("https://tinypaws-diary.web.app/reset-password")
-            .setHandleCodeInApp(true)
-            .setAndroidPackageName("com.tinypaws.app", true, null)
-            .build()
-        auth.sendPasswordResetEmail(email.trim(), actionSettings)
+        auth.sendPasswordResetEmail(email.trim())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     onResult(true, context.getString(com.example.R.string.auth_reset_sent_msg))
